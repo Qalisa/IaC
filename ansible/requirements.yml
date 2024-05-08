@@ -2,7 +2,6 @@
 roles:
   - name: diodonfrost.terraform
 collections:
-  - name: kubernetes_sigs.kubespray
-    source: https://github.com/kubernetes-sigs/kubespray
+  - name: https://github.com/kubernetes-sigs/kubespray
     type: git
     version: master
