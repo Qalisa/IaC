@@ -14,5 +14,5 @@
 # - name: Install Docker
 #  ansible.builtin.import_playbook: playbooks/docker.yml
 
-- name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster # runs the kubespray's "cluster.yml" playbook w/ local "kubespray_config" group_vars
+- name: Run Cluster configuration w/ Kubespray
+  ansible.builtin.import_playbook: playbooks/kubespray.yml
