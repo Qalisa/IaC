@@ -1,4 +1,8 @@
 ---
+##
+## COPIED FROM KUBESPRAY AND MODIFIED !
+##
+
 # Kubernetes configuration dirs and system namespace.
 # Those are where all the additional config stuff goes
 # the kubernetes normally puts in /srv/kubernetes.

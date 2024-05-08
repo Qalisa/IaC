@@ -1,4 +1,8 @@
 ---
+##
+## COPIED FROM KUBESPRAY AND MODIFIED !
+##
+
 # Please see roles/container-engine/containerd/defaults/main.yml for more configuration options
 
 # containerd_storage_dir: "/var/lib/containerd"

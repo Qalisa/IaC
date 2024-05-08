@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - {{ WEBMIN_PUBLIC_HOSTNAME }}
+    - {{ webmin_public_hostname }}
     secretName: webmin-certs
   rules:
-  - host: {{ WEBMIN_PUBLIC_HOSTNAME }}
+  - host: {{ webmin_public_hostname }}
     http:
       paths:
       - path: /

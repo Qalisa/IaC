@@ -1,4 +1,8 @@
 ---
+##
+## COPIED FROM KUBESPRAY AND MODIFIED !
+##
+
 # see roles/network_plugin/calico/defaults/main.yml
 
 # the default value of name

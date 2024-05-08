@@ -1,0 +1,49 @@
+---
+# https://webmin.com/download/#setup
+- name: Add key Webmin repository
+  ansible.builtin.apt_key:
+    url: https://www.webmin.com/jcameron-key.asc
+    state: present
+
+- name: Add Webmin repository
+  ansible.builtin.apt_repository:
+    repo: 'deb https://download.webmin.com/download/repository sarge contrib'
+    state: present
+    filename: webmin
+    update_cache: true
+
+- name: Install Webmin
+  ansible.builtin.apt:
+    name: webmin
+    state: present # latest
+    update_cache: true
+    install-recommends: true
+
+- name: Read multiple definition template file from the Ansible controller file system
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'webmin/service.yml.j2'
+      - path: 'webmin/ingress.yml.j2'
+
+# https://github.com/siarheidudko/webmin-under-kubernetes-ingress + https://stackoverflow.com/a/42235647/3021058
+- name: Force redirect on Webmin to use k8s proxy
+  ansible.builtin.lineinfile:
+    path: /etc/webmin/miniserv.conf
+    regexp: "^#? *{{ item.key | regex_escape() }}="
+    line: "{{ item.key }}={{ item.value }}"
+  with_dict:
+    'referers': '{{ webmin_public_hostname }}'
+    'redirect_ssl': 1
+    'redirect_host': '{{ webmin_public_hostname }}'
+  register: webmin_config
+
+# https://github.com/siarheidudko/webmin-under-kubernetes-ingress
+- name: Patch existing ingress service
+  kubernetes.core.k8s:
+    state: patched
+    kind: Service
+    name: ingress-nginx-controller
+    definition:
+      spec:
+        externalTrafficPolicy: "Local"

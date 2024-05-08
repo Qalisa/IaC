@@ -1,0 +1,21 @@
+---
+- name: Install etcd (requisite)
+  ansible.builtin.apt:
+    name: etcd
+    state: present # latest
+    update_cache: true
+
+- name: Run Pip w/ requisites
+  ansible.builtin.pip:
+    name:
+      - jinja2
+      - netaddr
+      - jsonschema
+
+# runs the kubespray's "reset.yml" playbook
+- name: Reset any Kubespray cluster installed
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+
+# runs the kubespray's "cluster.yml" playbook
+- name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster

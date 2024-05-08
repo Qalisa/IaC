@@ -1,4 +1,8 @@
 ---
+##
+## COPIED FROM KUBESPRAY AND MODIFIED !
+##
+
 # Kubernetes dashboard
 # RBAC required. see docs/getting-started.md for access details.
 dashboard_enabled: true

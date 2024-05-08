@@ -1,3 +1,8 @@
 {
     "editor.indentSize": 2,
+    "files.associations": {
+        "**/ansible/**/hosts": "ini",
+        "**/ansible/roles/**/{defaults,tasks,handlers,meta}/*.yml": "ansible",
+    },
+    // "ansible.python.interpreterPath": "/opt/homebrew/bin/python3",
 }

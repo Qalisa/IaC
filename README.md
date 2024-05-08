@@ -1,5 +1,7 @@
 # IaC Scripts for Nightworkers Labs
-Automatize infrastructure installation for a single baremetal
+Automatize infrastructure installation.
+
+Ansible directory layout follows best practices (https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#directory-layout).
 
 ## Pre-requisites (on Ubuntu Server)
 https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu
@@ -12,8 +14,8 @@ https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.
 
 ## How-To use (on server)
 - `git clone {this repo}`
-- `ansible-galaxy install -r requirements.yml`
-- `ansible-playbook -i kubespray_config/hosts.ini --become --become-user=root all-playbook.yml`
+- `ansible-galaxy install -r ansible/requirements.yml`
+- `ansible-playbook -i ansible/inventories/production/hosts --become --become-user=root ansible/site.yml`
 
 ## Pre-requisites (on dev machine)
 ### On MacOS

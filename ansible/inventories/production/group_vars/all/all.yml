@@ -1,4 +1,8 @@
 ---
+##
+## COPIED FROM KUBESPRAY AND MODIFIED !
+##
+
 ## Directory where the binaries will be installed
 bin_dir: /usr/local/bin
 

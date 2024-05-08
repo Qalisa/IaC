@@ -1,0 +1,14 @@
+---
+- name: Install ALL
+  hosts: all
+  become: true
+  vars:
+    nwl_domain: nightworkers-labs.io
+  roles:
+    - docker
+    - k8s_kubespray
+    - diodonfrost.terraform
+    - role: webmin
+      vars:
+        root_domain: "{{ nwl_domain }}"
+  
