@@ -4,14 +4,17 @@
   become: true
   tasks:
     # https://webmin.com/download/#setup
-    - name: Setup Webmin repos
-      ansible.builtin.get_url:
-        url: https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh
-        dest: /tmp/webmin-setup-repos.sh
-        mode: "0600"
+    - name: Add key Webmin repository
+      ansible.builtin.apt_key:
+        url: https://www.webmin.com/jcameron-key.asc
+        state: present
 
-    - name: Run Webmin repos setup script
-      ansible.builtin.script: /tmp/webmin-setup-repos.sh
+    - name: Add Webmin repository
+      ansible.builtin.apt_repository:
+        repo: 'deb https://download.webmin.com/download/repository sarge contrib'
+        state: present
+        filename: webmin
+        update_cache: true
 
     - name: Install Webmin
       ansible.builtin.apt:
