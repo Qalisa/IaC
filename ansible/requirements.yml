@@ -1,7 +1,6 @@
 ---
 roles:
   - name: diodonfrost.terraform
-  - name: k8s_kubespray
 collections:
   - name: kubernetes_sigs.kubespray
     source: https://github.com/kubernetes-sigs/kubespray
