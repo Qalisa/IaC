@@ -14,8 +14,12 @@
 
 # runs the kubespray's "reset.yml" playbook
 - name: Reset any Kubespray cluster installed
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+  ansible.builtin.include_role:
+    name: kubernetes_sigs.kubespray
+    tasks_from: reset
 
 # runs the kubespray's "cluster.yml" playbook
 - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+  ansible.builtin.include_role:
+    name: kubernetes_sigs.kubespray
+    tasks_from: cluster
