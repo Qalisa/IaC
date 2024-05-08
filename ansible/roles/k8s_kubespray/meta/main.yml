@@ -1,4 +1,4 @@
 ---
 dependencies:
   - { role: common }
-  - {role: kubernetes_sigs.kubespray }
+  - { role: kubernetes_sigs.kubespray }
