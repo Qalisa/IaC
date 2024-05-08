@@ -1,0 +1,15 @@
+---
+- name: Install All
+  hosts: all
+  become: true
+  roles:
+    - role: diodonfrost.terraform # installs terraform
+  tasks:
+    - name: Install Common Libs
+      ansible.builtin.import_playbook: playbooks/common.yml
+    - name: Install Webmin
+      ansible.builtin.import_playbook: playbooks/webmin.yml
+    # - name: Install Docker
+    #  ansible.builtin.import_playbook: playbooks/docker.yml
+    - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
+      ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster # runs the kubespray's "cluster.yml" playbook w/ local "kubespray_config" group_vars

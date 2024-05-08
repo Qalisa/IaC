@@ -1,0 +1,21 @@
+---
+- name: Install Webmin
+  hosts: all
+  become: true
+  tasks:
+    # https://webmin.com/download/#setup
+    - name: Setup Webmin repos
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh
+        dest: /tmp/webmin-setup-repos.sh
+        mode: "0600"
+
+    - name: Run Webmin repos setup script
+      ansible.builtin.script: /tmp/webmin-setup-repos.sh
+
+    - name: Install Webmin
+      ansible.builtin.apt:
+        name: webmin
+        state: present # latest
+        update_cache: true
+        install-recommends: true
