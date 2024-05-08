@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "redhat.ansible",
-        "hashicorp.terraform"
+        "hashicorp.terraform",
+        "samuelcolvin.jinjahtml"
     ]
 }

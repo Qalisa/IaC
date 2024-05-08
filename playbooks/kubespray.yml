@@ -3,6 +3,12 @@
   hosts: all
   become: true
   tasks:
+    - name: Install etcd (requisite)
+      ansible.builtin.apt:
+        name: etcd
+        state: present # latest
+        update_cache: true
+
     - name: Run Pip w/ requisites
       ansible.builtin.pip:
         name:
@@ -10,5 +16,10 @@
           - netaddr
           - jsonschema
 
+# runs the kubespray's "reset.yml" playbook w/ local "kubespray_config" group_vars
+- name: Reset any Kubespray cluster installed
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset 
+
+# runs the kubespray's "cluster.yml" playbook w/ local "kubespray_config" group_vars
 - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster # runs the kubespray's "cluster.yml" playbook w/ local "kubespray_config" group_vars
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster

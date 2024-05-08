@@ -2,6 +2,11 @@
 - name: Install Webmin
   hosts: all
   become: true
+  vars_files:
+    - /vars/default.yml
+  vars:
+    - WEBMIN_PUBLIC_HOSTNAME: webmin-m1.{{ ROOT_DOMAIN }}
+    - WEBMIN_SERVICE_HOSTNAME: k8s-m1.{{ ROOT_DOMAIN }}
   tasks:
     # https://webmin.com/download/#setup
     - name: Add key Webmin repository
@@ -22,3 +27,39 @@
         state: present # latest
         update_cache: true
         install-recommends: true
+
+    - name: Read multiple definition template file from the Ansible controller file system
+      kubernetes.core.k8s:
+        state: present
+        template:
+        - path: '/k8s_config/webmin/service.yml.j2'
+        - path: '/k8s_config/webmin/ingress.yml.j2'
+
+    # https://github.com/siarheidudko/webmin-under-kubernetes-ingress + https://stackoverflow.com/a/42235647/3021058
+    - name: force redirect on Webmin to use k8s proxy
+      ansible.builtin.lineinfile:
+        path: /etc/webmin/miniserv.conf
+        regexp: "^#? *{{ item.key | regex_escape() }}="
+        line: "{{ item.key }}={{ item.value }}"
+      with_dict:
+        'referers': '{{ WEBMIN_PUBLIC_HOSTNAME }}'
+        'redirect_ssl': 1
+        'redirect_host': '{{ WEBMIN_PUBLIC_HOSTNAME }}'
+      register: webmin_config
+
+    - name: Restart Webmin service to ack changes
+      ansible.builtin.systemd_service:
+          state: restarted
+          daemon_reload: true
+          name: webmin
+      when: webmin_config.changed
+
+    # https://github.com/siarheidudko/webmin-under-kubernetes-ingress
+    - name: Patch existing ingress service
+      kubernetes.core.k8s:
+        state: patched
+        kind: Service
+        name: ingress-nginx-controller
+        definition:
+          spec:
+            externalTrafficPolicy: "Local"

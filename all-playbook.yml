@@ -2,17 +2,18 @@
 - name: Install Common Libs
   ansible.builtin.import_playbook: playbooks/common.yml
 
-- name: Install Webmin
-  ansible.builtin.import_playbook: playbooks/webmin.yml
-  
 - name: Install Terraform
   hosts: all
   become: true
   roles:
     - role: diodonfrost.terraform # installs terraform
 
-# - name: Install Docker
-#  ansible.builtin.import_playbook: playbooks/docker.yml
+- name: Install Docker
+  ansible.builtin.import_playbook: playbooks/docker.yml
 
 - name: Run Cluster configuration w/ Kubespray
   ansible.builtin.import_playbook: playbooks/kubespray.yml
+
+- name: Install Webmin
+  ansible.builtin.import_playbook: playbooks/webmin.yml
+  
