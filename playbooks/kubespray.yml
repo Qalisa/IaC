@@ -3,10 +3,11 @@
   hosts: all
   become: true
   tasks:
-    - ansible.builtin.pip:
-      name:
-        - jinja2
-        - netaddr
+    - name: Run Pip w/ requisites
+      ansible.builtin.pip:
+        name:
+          - jinja2
+          - netaddr
 
 - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster # runs the kubespray's "cluster.yml" playbook w/ local "kubespray_config" group_vars
