@@ -5,8 +5,8 @@
   vars_files:
     - /vars/default.yml
   vars:
-    - WEBMIN_PUBLIC_HOSTNAME: webmin-m1.{{ ROOT_DOMAIN }}
-    - WEBMIN_SERVICE_HOSTNAME: k8s-m1.{{ ROOT_DOMAIN }}
+    WEBMIN_PUBLIC_HOSTNAME: webmin-m1.{{ ROOT_DOMAIN }}
+    WEBMIN_SERVICE_HOSTNAME: k8s-m1.{{ ROOT_DOMAIN }}
   tasks:
     # https://webmin.com/download/#setup
     - name: Add key Webmin repository
@@ -32,8 +32,8 @@
       kubernetes.core.k8s:
         state: present
         template:
-        - path: '/k8s_config/webmin/service.yml.j2'
-        - path: '/k8s_config/webmin/ingress.yml.j2'
+        - path: '../webmin/service.yml.j2'
+        - path: '../webmin/ingress.yml.j2'
 
     # https://github.com/siarheidudko/webmin-under-kubernetes-ingress + https://stackoverflow.com/a/42235647/3021058
     - name: force redirect on Webmin to use k8s proxy
