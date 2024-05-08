@@ -1,6 +1,7 @@
 ---
 dependencies:
   - { role: common }
-  - src: https://github.com/kubernetes-sigs/kubespray.git
+  - name: kubernetes_sigs.kubespray
+    src: https://github.com/kubernetes-sigs/kubespray.git
     scm: git
     version: master
