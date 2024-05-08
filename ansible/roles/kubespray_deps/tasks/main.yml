@@ -1,0 +1,13 @@
+---
+- name: Install etcd (requisite)
+  ansible.builtin.apt:
+    name: etcd
+    state: present # latest
+    update_cache: true
+
+- name: Run Pip w/ requisites
+  ansible.builtin.pip:
+    name:
+      - jinja2
+      - netaddr
+      - jsonschema

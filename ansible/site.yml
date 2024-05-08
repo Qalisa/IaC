@@ -6,10 +6,20 @@
     nwl_domain: nightworkers-labs.io
   roles:
     - docker
-    - k8s_kubespray
+    - kubespray_deps
     - diodonfrost.terraform
-    - role: webmin
+  tasks:
+    # runs the kubespray's "reset.yml" playbook
+    - name: Reset any Kubespray cluster installed
+      ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+
+    # runs the kubespray's "cluster.yml" playbook
+    - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
+      ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+
+    # ensure webmin role is ran AFTER kubernetes is configured
+    - name: Install Webmin w/in Kubernetes
+      ansible.builtin.include_role:
+        name: k8s.webmin
       vars:
         root_domain: "{{ nwl_domain }}"
-
-  
