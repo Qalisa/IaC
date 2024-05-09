@@ -41,11 +41,11 @@
     - Restart webmin daemon
 
 # https://github.com/siarheidudko/webmin-under-kubernetes-ingress
-- name: Patch existing ingress service
-  kubernetes.core.k8s:
-    state: patched
-    kind: Service
-    name: ingress-nginx-controller
-    definition:
-      spec:
-        externalTrafficPolicy: "Local"
+# - name: Patch existing ingress service (If LoadBalancer)
+#   kubernetes.core.k8s:
+#     state: patched
+#     kind: Service
+#     name: ingress-nginx-controller
+#     definition:
+#       spec:
+#         externalTrafficPolicy: "Local"

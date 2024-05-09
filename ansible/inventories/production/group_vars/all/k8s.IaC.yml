@@ -1,0 +1,12 @@
+---
+# refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
+cluster_issuer_name: letsencrypt-staging
+
+#
+root_domain: nightworkers-labs.io
+
+# which emails is to be said that will register the certificates
+acme_registrar_email: kingpin@{{ root_domain }}
+
+# should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
+ingress_nginx_class: nginx
