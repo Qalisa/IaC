@@ -1,3 +1,2 @@
 ---
 webmin_public_hostname: "webmin-m1.{{ root_domain }}"
-webmin_service_hostname: "k8s-m1.{{ root_domain }}"
