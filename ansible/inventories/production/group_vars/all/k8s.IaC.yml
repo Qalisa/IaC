@@ -1,6 +1,6 @@
 ---
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
-cluster_issuer_name: letsencrypt-staging
+cluster_issuer_name: letsencrypt-prod
 
 #
 root_domain: nightworkers-labs.io

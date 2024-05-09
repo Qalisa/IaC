@@ -1,11 +1,11 @@
 ---
 # https://webmin.com/download/#setup
-- name: Add key Webmin repository
+- name: Add OLD key Webmin repository
   ansible.builtin.apt_key:
     url: https://www.webmin.com/jcameron-key.asc
     state: present
 
-- name: Add Webmin repository
+- name: Add OLD Webmin repository
   ansible.builtin.apt_repository:
     repo: 'deb https://download.webmin.com/download/repository sarge contrib'
     state: present
@@ -26,26 +26,27 @@
       - path: 'templates/service.yml.j2'
       - path: 'templates/ingress.yml.j2'
 
-# https://github.com/siarheidudko/webmin-under-kubernetes-ingress + https://stackoverflow.com/a/42235647/3021058
+# https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
 - name: Force redirect on Webmin to use k8s proxy
   ansible.builtin.lineinfile:
     path: /etc/webmin/miniserv.conf
     regexp: "^#? *{{ item.key | regex_escape() }}="
     line: "{{ item.key }}={{ item.value }}"
   with_dict:
-    'referers': '{{ webmin_public_hostname }}'
     'redirect_ssl': 1
     'redirect_host': '{{ webmin_public_hostname }}'
-  register: webmin_config
+  register: webmin_miniserv_conf
   notify:
     - Restart webmin daemon
 
-# https://github.com/siarheidudko/webmin-under-kubernetes-ingress
-# - name: Patch existing ingress service (If LoadBalancer)
-#   kubernetes.core.k8s:
-#     state: patched
-#     kind: Service
-#     name: ingress-nginx-controller
-#     definition:
-#       spec:
-#         externalTrafficPolicy: "Local"
+# https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
+- name: Add FQDN to Webmin Trusted Websites 
+  ansible.builtin.lineinfile:
+    path: /etc/webmin/config
+    regexp: "^#? *{{ item.key | regex_escape() }}="
+    line: "{{ item.key }}={{ item.value }}"
+  with_dict:
+    'referers': '{{ webmin_public_hostname }}'
+  register: webmin_config
+  notify:
+    - Restart webmin daemon

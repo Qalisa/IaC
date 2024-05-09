@@ -8,7 +8,7 @@
 #     - kubespray_deps
 #     - diodonfrost.terraform
 
-# # runs the kubespray's "reset.yml" playbook
+# runs the kubespray's "reset.yml" playbook
 # - name: Reset any Kubespray cluster installed
 #   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
 
@@ -16,12 +16,23 @@
 # - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
 #   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
 
-# ensure webmin role is ran AFTER kubernetes is configured
+#
 # - name: Setup K8s Issuers
 #   hosts: all
 #   become: true
 #   roles:
 #     - role: k8s.cert-manager
+#   tasks:
+#     # https://github.com/siarheidudko/webmin-under-kubernetes-ingress
+#     - name: Patch existing ingress service (If LoadBalancer)
+#       kubernetes.core.k8s:
+#         state: patched
+#         kind: Service
+#         name: ingress-nginx
+#         namespace: ingress-nginx
+#         definition:
+#           spec:
+#             externalTrafficPolicy: "Local"
 
 # ensure webmin role is ran AFTER kubernetes is configured
 - name: Install Webmin w/in Kubernetes
