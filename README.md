@@ -39,7 +39,10 @@ Make sure you are locally logged on `git` w/ a registered account using :
 ### Startup
 - `git clone {this repo}`
 - `ansible-galaxy install -r ansible/requirements.yml`
-- `ansible-playbook -i ansible/inventories/production/hosts --become --become-user=root ansible/site.yml`
+- `ansible-playbook -i ansible/inventories/<environment>/hosts --become --become-user=root ansible/<playbook>.yml`
+
+If you want to recover, eg:
+- `ansible-playbook -i ansible/inventories/production/hosts --become --become-user=root ansible/site.yml --start-at-task="Install Webmin w/in Kubernetes"`
 
 ## Pre-requisites (on dev machine)
 ### On MacOS (Local Dev)

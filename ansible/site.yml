@@ -1,19 +1,20 @@
 ---
-- name: Install Docker + Terraform + KubeSpray requisites
-  hosts: all
-  become: true
-  roles:
-    - docker
-    - kubespray_deps
-    - diodonfrost.terraform
+# - name: Install Docker + Terraform + KubeSpray requisites
+#   hosts: all
+#   become: true
+#   roles:
+#     - common
+#     - docker
+#     - kubespray_deps
+#     - diodonfrost.terraform
 
-# runs the kubespray's "reset.yml" playbook
-- name: Reset any Kubespray cluster installed
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+# # runs the kubespray's "reset.yml" playbook
+# - name: Reset any Kubespray cluster installed
+#   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
 
-# runs the kubespray's "cluster.yml" playbook
-- name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+# # runs the kubespray's "cluster.yml" playbook
+# - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
+#   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
 
 # ensure webmin role is ran AFTER kubernetes is configured
 - name: Install Webmin w/in Kubernetes
@@ -22,6 +23,7 @@
   vars:
     nwl_domain: nightworkers-labs.io
   roles:
+    - kubespray_deps
     - role: k8s.webmin
       vars:
         root_domain: "{{ nwl_domain }}"

@@ -19,12 +19,12 @@
     update_cache: true
     install-recommends: true
 
-- name: Read multiple definition template file from the Ansible controller file system
+- name: Install Webmin as K8s Ingress + Service
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'webmin/service.yml.j2'
-      - path: 'webmin/ingress.yml.j2'
+      - path: 'templates/service.yml.j2'
+      - path: 'templates/ingress.yml.j2'
 
 # https://github.com/siarheidudko/webmin-under-kubernetes-ingress + https://stackoverflow.com/a/42235647/3021058
 - name: Force redirect on Webmin to use k8s proxy
@@ -37,6 +37,8 @@
     'redirect_ssl': 1
     'redirect_host': '{{ webmin_public_hostname }}'
   register: webmin_config
+  notify:
+    - Restart webmin daemon
 
 # https://github.com/siarheidudko/webmin-under-kubernetes-ingress
 - name: Patch existing ingress service

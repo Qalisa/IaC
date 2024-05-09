@@ -1,13 +1,14 @@
 ---
-- name: Install etcd (requisite)
+- name: Install etcd (kubespray requisite)
   ansible.builtin.apt:
     name: etcd
     state: present # latest
     update_cache: true
 
-- name: Run Pip w/ requisites
+- name: Run Pip w/ requisites (kubespray)
   ansible.builtin.pip:
     name:
       - jinja2
       - netaddr
       - jsonschema
+      - kubernetes
