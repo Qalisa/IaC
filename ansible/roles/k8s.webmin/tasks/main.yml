@@ -29,6 +29,7 @@
     template:
       - path: 'templates/service.yml.j2'
       - path: 'templates/ingress.yml.j2'
+      - path: 'templates/endpoints.yml.j2'
 
 # https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
 - name: Force redirect on Webmin to use k8s proxy
@@ -39,6 +40,8 @@
   with_dict:
     'redirect_ssl': 1
     'redirect_host': '{{ webmin_public_hostname }}'
+    # TODO
+    'bind': '{{ private_network_ip }}' # node1 ClusterIP
   register: webmin_miniserv_conf
   notify:
     - Restart webmin daemon

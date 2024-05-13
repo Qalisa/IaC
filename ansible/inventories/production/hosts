@@ -1,4 +1,15 @@
-node1 ansible_connection=local local_release_dir={{ansible_env.HOME}}/releases
+####
+# hosts
+###
+
+### DOC
+# "private_network_ip": alternative IP address bound the host, that hidden services served by k8s proxy can bind to
+
+node1 ansible_connection=local local_release_dir={{ansible_env.HOME}}/releases private_network_ip=10.0.0.1
+
+###
+# groups
+###
 
 [kube_control_plane]
 node1

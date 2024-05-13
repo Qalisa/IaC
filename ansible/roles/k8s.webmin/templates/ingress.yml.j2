@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: default
   name: webmin
+  namespace: default
   annotations:
     kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
     cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
@@ -20,6 +20,6 @@ spec:
         pathType: Prefix
         backend:
           service: 
-            name: webmin
+            name: webmin-svc
             port:
               number: 443
