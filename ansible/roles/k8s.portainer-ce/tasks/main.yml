@@ -1,0 +1,40 @@
+---
+- name: Define or create default StorageClass
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/sc.yml.j2'
+
+- name: Add stable chart repo Portainer CE
+  kubernetes.core.helm_repository:
+    name: portainer
+    repo_url: "https://portainer.github.io/k8s/"
+
+- name: Install Portainer CE w/ Helm
+  kubernetes.core.helm:
+    name: portainer
+    chart_ref: "portainer/portainer"
+    release_namespace: portainer
+    create_namespace: true
+    values:
+      service:
+        type: "ClusterIP"
+      tls:
+        force: true
+      ingress:
+        enabled: true
+        ingressClassName: "{{ ingress_nginx_class }}"
+        annotations:
+          kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
+          cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        hosts:
+          - host: "{{ portainer_host }}"
+            paths:
+              - path: "/"
+        tls:
+          - hosts:
+              - "{{ portainer_host }}"
+            secretName: "portainer-certs"
+  vars:
+    portainer_host: "portainer.{{ root_domain }}"

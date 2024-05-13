@@ -47,7 +47,7 @@
     - Restart webmin daemon
 
 # https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
-- name: Add FQDN to Webmin Trusted Websites 
+- name: Add FQDN to Webmin Trusted Websites
   ansible.builtin.lineinfile:
     path: /etc/webmin/config
     regexp: "^#? *{{ item.key | regex_escape() }}="

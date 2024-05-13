@@ -50,4 +50,4 @@ If you want to recover, eg:
 ### On Windows (Local Dev)
 - #TODO
 ### On Linux - Ubuntu / Debian - (Remote Dev / SSH)
-- #TODO
+- `pip3 install ansible-dev-tools`

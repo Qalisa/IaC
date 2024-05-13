@@ -13,6 +13,7 @@
 - name: Update apt and install docker
   ansible.builtin.apt:
     pkg:
+      - docker.io
       - docker-ce
       - docker-ce-cli
       - containerd.io
