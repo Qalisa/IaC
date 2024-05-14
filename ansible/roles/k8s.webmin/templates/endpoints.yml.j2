@@ -22,7 +22,7 @@ endpoints:
     conditions:
       ready: true
     # hostname: pod-1
-    nodeName: node1
+    nodeName: {{ master_node_name }}
     # zone: us-west2-a
 --- #}
 apiVersion: v1

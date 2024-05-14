@@ -1,9 +1,12 @@
 ---
-- name: Define or create default StorageClass
+- name: Define or create default StorageClass and Persistent volume
   kubernetes.core.k8s:
     state: present
     template:
       - path: 'templates/sc.yml.j2'
+      - path: 'templates/pv.yml.j2'
+  vars:
+    storage_class_name: local-storage
 
 - name: Add stable chart repo Portainer CE
   kubernetes.core.helm_repository:
@@ -17,10 +20,13 @@
     release_namespace: portainer
     create_namespace: true
     values:
+      nodeSelector:
+        kubernetes.io/hostname: "{{ master_node_name }}"
       service:
         type: "ClusterIP"
       tls:
         force: true
+        existingSecret: "portainer-certs"
       ingress:
         enabled: true
         ingressClassName: "{{ ingress_nginx_class }}"

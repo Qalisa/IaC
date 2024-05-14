@@ -1,0 +1,9 @@
+---
+- name: Install Ingress for k8s dashboard
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/ingress.yml.j2'
+      - path: 'templates/account.yml.j2'
+  vars:
+    dashboard_public_hostname: k8s-dashboard.{{ root_domain }}

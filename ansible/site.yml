@@ -16,15 +16,15 @@
 # - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
 #   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
 
-#
-- name: Helm plugins
-  hosts: all
-  become: true
-  tasks:
-    - name: Add helm diff plugin
-      kubernetes.core.helm_plugin:
-        plugin_path: https://github.com/databus23/helm-diff
-        state: present
+# #
+# - name: Helm plugins
+#   hosts: all
+#   become: true
+#   tasks:
+#     - name: Add helm diff plugin
+#       kubernetes.core.helm_plugin:
+#         plugin_path: https://github.com/databus23/helm-diff
+#         state: present
 
 # - name: Setup K8s Issuers
 #   hosts: all
@@ -48,5 +48,6 @@
   hosts: all
   become: true
   roles:
+    - role: k8s.dashboard
     # - role: k8s.webmin
-    - role: k8s.portainer-ce
+    # - role: k8s.portainer-ce

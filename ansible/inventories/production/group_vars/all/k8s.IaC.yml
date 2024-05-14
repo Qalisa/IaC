@@ -3,6 +3,9 @@
 cluster_issuer_name: letsencrypt-prod
 
 #
+master_node_name: node1
+
+#
 root_domain: nightworkers-labs.io
 
 # which emails is to be said that will register the certificates
