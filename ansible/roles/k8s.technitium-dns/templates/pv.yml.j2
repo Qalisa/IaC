@@ -1,15 +1,16 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: portainer
+  name: technitium-dns
+  namespace: default
   labels:
     type: local
 spec:
   storageClassName: "{{ storage_class_name }}"
   capacity:
-    storage: 10Gi 
+    storage: 1Gi 
   local:
-    path: {{ portainer_pv_path }}
+    path: {{ technitium_dns_pv_path }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -21,3 +22,15 @@ spec:
             operator: In
             values:
               - {{ master_node_name }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dns-data-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

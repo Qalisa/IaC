@@ -49,5 +49,6 @@
   become: true
   roles:
     - role: k8s.dashboard
-    # - role: k8s.webmin
-    # - role: k8s.portainer-ce
+    - role: k8s.webmin
+    - role: k8s.portainer-ce
+    - role: k8s.technitium-dns

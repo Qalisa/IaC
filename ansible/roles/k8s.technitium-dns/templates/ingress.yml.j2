@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: technitium-dns
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
+    cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  tls:
+  - hosts:
+    - {{ technitium_dns_public_hostname }}
+    secretName: technitium-dns-certs
+  rules:
+  - host: {{ technitium_dns_public_hostname }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: technitium-dns-service
+            port:
+              number: 5380

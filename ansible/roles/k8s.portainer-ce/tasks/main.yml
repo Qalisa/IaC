@@ -1,4 +1,10 @@
 ---
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ portainer_pv_path }}"
+    state: directory
+    mode: '0755'
+
 - name: Define or create default StorageClass and Persistent volume
   kubernetes.core.k8s:
     state: present
@@ -26,7 +32,7 @@
         type: "ClusterIP"
       tls:
         force: true
-        existingSecret: "portainer-certs"
+        # existingSecret: "portainer-ce-certs"
       ingress:
         enabled: true
         ingressClassName: "{{ ingress_nginx_class }}"
@@ -41,6 +47,6 @@
         tls:
           - hosts:
               - "{{ portainer_host }}"
-            secretName: "portainer-certs"
+            secretName: "portainer-ce-certs"
   vars:
     portainer_host: "portainer.{{ root_domain }}"

@@ -1,6 +1,7 @@
 ---
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
-cluster_issuer_name: letsencrypt-prod
+# CAREFUL ! In production, 50 requested certificates per week ! (https://letsencrypt.org/docs/rate-limits/)
+cluster_issuer_name: letsencrypt-staging # letsencrypt-prod
 
 #
 master_node_name: node1
@@ -13,3 +14,7 @@ acme_registrar_email: kingpin@{{ root_domain }}
 
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
+
+# where should the persistent volume created for X service, store its data on node
+portainer_pv_path: /var/k8s-data/portainer
+technitium_dns_pv_path: /var/k8s-data/technitium-dns

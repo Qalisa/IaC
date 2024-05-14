@@ -1,0 +1,19 @@
+---
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ technitium_dns_pv_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Install
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/sc.yml.j2'
+      - path: 'templates/pv.yml.j2'
+      - path: 'templates/service.yml.j2'
+      - path: 'templates/ingress.yml.j2'
+      - path: 'templates/deploy.yml.j2'
+  vars:
+    storage_class_name: local-storage
+    technitium_dns_public_hostname: dns-app.{{ root_domain }}
