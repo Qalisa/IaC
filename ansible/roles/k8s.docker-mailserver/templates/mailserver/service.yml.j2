@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: docker-mailserver
+  namespace: docker-mailserver
+  labels:
+    app: docker-mailserver
+  annotations:
+    metallb.universe.tf/address-pool: primary
+spec:
+  selector:
+    app: docker-mailserver
+  ports:
+    # smtp
+    - name: smtp
+      port: 25
+      targetPort: smtp
+      protocol: TCP
+    # submissions (ESMTP with implicit TLS)
+    - name: submissions
+      port: 465
+      targetPort: submissions
+      protocol: TCP
+    # submission (ESMTP with explicit TLS)
+    - name: submission
+      port: 587
+      targetPort: submission
+      protocol: TCP
+    # imap (explicit TLS)
+    - name: imap
+      port: 143
+      targetPort: imap
+      protocol: TCP
+    # imaps (implicit TLS)
+    - name: imaps
+      port: 993
+      targetPort: imaps
+      protocol: TCP

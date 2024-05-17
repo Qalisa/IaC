@@ -6,15 +6,16 @@ cluster_issuer_name: letsencrypt-staging # letsencrypt-prod
 #
 master_node_name: node1
 
-#
+# https://crt.sh/?q=nightworkers-labs.io
 root_domain: nightworkers-labs.io
 
 # which emails is to be said that will register the certificates
 acme_registrar_email: kingpin@{{ root_domain }}
+postmaster_email: postmaster@{{ root_domain }}
 
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
 
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer
-technitium_dns_pv_path: /var/k8s-data/technitium-dns
+docker_mailserver_pv_path: /var/k8s-data/mailserver

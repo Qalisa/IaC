@@ -1,0 +1,19 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run prod ansible",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/site.yml"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

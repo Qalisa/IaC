@@ -1,0 +1,6 @@
+---
+# https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html#keep-vaulted-variables-safely-visible
+# requires a brother encrypted file named "vault"
+# "ansible-vault encrypt ansible/inventories/production/group_vars/all/vault"
+cloudflare_dns_api_key: "{{ vault_cloudflare_dns_api_key }}"
+postmaster_password: "{{ vault_postmaster_password }}"

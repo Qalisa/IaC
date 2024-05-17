@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: docker-mailserver-autoconfig
+  namespace: docker-mailserver
+immutable: false
+data:
+    COMPANY_NAME: {{ root_domain }}
+    SUPPORT_URL: {{ autodiscover_fqdn }}
+    DOMAIN: {{ root_domain }}
+    # IMAP configuration (host mandatory to enable)
+    IMAP_HOST: {{ root_domain }}
+    IMAP_PORT: '993'
+    IMAP_SOCKET: SSL
+    # SMTP configuration (host mandatory to enable)
+    SMTP_HOST: {{ root_domain }}
+    SMTP_PORT: '587'
+    SMTP_SOCKET: STARTTLS

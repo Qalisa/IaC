@@ -1,0 +1,80 @@
+---
+- name: Install DNS Dig compatible lib
+  ansible.builtin.pip:
+    name: dnspython
+
+- name: Generate password hash for postmaster
+  ansible.builtin.command: |
+    kubectl run -it --rm --restart=Never \
+    --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
+    -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ vault_postmaster_password }}'
+  register: postmaster_pw_hash
+  changed_when: postmaster_pw_hash.rc != 0
+
+- name: Put in dict
+  ansible.builtin.set_fact:
+    default_accounts_dict: >
+      {
+        "{{ postmaster_email }}": "{{ postmaster_pw_hash.stdout_lines[0] }}",
+      }
+
+# https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
+- name: Create persistent volume local path path ALONG initial account definition. it does not erase other accounts :)
+  ansible.builtin.lineinfile:
+    path: "{{ path_to_config_folder }}/postfix-accounts.cf"
+    regexp: "^#? *{{ item.key | regex_escape() }}|"
+    line: "{{ item.key }}|{{ item.value }}"
+    create: true
+    mode: '0755'
+  with_dict: "{{ default_accounts_dict }}"
+
+- name: Install Docker Mailserver
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/mailserver/sc.yml.j2'
+      - path: 'templates/mailserver/pv.yml.j2'
+      - path: 'templates/mailserver/config.yml.j2'
+      - path: 'templates/mailserver/service.yml.j2'
+      - path: 'templates/mailserver/deploy.yml.j2'
+      - path: 'templates/mailserver/certificate.yml.j2'
+  vars:
+    storage_class_name: local-storage
+    docker_mailserver_host: "mail.{{ root_domain }}"
+
+- name: Install Docker Mailserver Autoconfig
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/autoconfig/config.yml.j2'
+      - path: 'templates/autoconfig/service.yml.j2'
+      - path: 'templates/autoconfig/deploy.yml.j2'
+      - path: 'templates/autoconfig/ingress.yml.j2'
+
+- name: Wait for control-plane pods become ready
+  ansible.builtin.command: "kubectl wait --namespace=docker-mailserver --for=condition=Ready pods --timeout=600s"
+  register: pods_ready
+  changed_when: pods_ready.rc != 0
+
+#
+- name: Generate DKIM
+  kubernetes.core.k8s_exec:
+    namespace: default
+    pod: docker-mailserver
+    command: setup config dkim
+  register: dkim_generation_cmd
+  notify:
+    - Restart mailserver pod
+
+- name: Set fact for DKIM line count
+  set_fact:
+    dkim_result_lc: "{{ dkim_generation_cmd.stdout_lines | length }}"
+
+
+- name: Debug output for line count
+  debug:
+    msg: "Number of lines in log file: {{ dkim_result_lc }}"
+
+#
+# - name: Add DKIM record on DNS
+#  community.general.cloudflare_dns:

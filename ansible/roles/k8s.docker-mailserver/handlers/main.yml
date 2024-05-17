@@ -1,0 +1,17 @@
+---
+- name: Restart docker-mailserver deployment, reloading DKIM
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: docker-mailserver
+        namespace: default
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubernetes.io/change-cause: "Restarted at {{ ansible_date_time.iso8601 }} because of DKIM"
+              reloaded-at: "{{ ansible_date_time.iso8601 }}"
+  when: (dkim_generation_cmd.stdout_lines | length) > 0

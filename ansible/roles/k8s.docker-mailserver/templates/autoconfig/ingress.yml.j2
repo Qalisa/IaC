@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: docker-mailserver-autoconfig
+  namespace: docker-mailserver
+  annotations:
+    kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
+    cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  tls:
+  - hosts:
+    - {{ autoconfig_fqdn }}
+    - {{ autodiscover_fqdn }}
+    secretName: docker-mailserver-autoconfig-certs
+  rules:
+  - host: {{ autoconfig_fqdn }}
+    http:
+      paths:
+      - path: /
+        backend:
+          service: 
+            name: docker-mailserver-autoconfig
+            port:
+              number: 8000
+  - host: {{ autodiscover_fqdn }}
+    http:
+      paths:
+      - path: /
+        backend:
+          service: 
+            name: docker-mailserver-autoconfig
+            port:
+              number: 8000

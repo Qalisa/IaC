@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-mailserver
+  namespace: docker-mailserver
+  annotations:
+    ignore-check.kube-linter.io/run-as-non-root: >-
+      'docker-mailserver' needs to run as root
+    ignore-check.kube-linter.io/privileged-ports: >-
+      'docker-mailserver' needs privileged ports
+    ignore-check.kube-linter.io/no-read-only-root-fs: >-
+      There are too many files written to make the root FS read-only
+spec:
+  # replicas: 1
+  selector:
+    matchLabels:
+      app: docker-mailserver
+  template:
+    metadata:
+      labels:
+        app: docker-mailserver
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/docker-mailserver: runtime/default
+    spec:
+      hostname: mail
+      containers:
+        - name: docker-mailserver
+          image: ghcr.io/docker-mailserver/docker-mailserver:latest
+          imagePullPolicy: IfNotPresent
+
+          securityContext:
+            # `allowPrivilegeEscalation: true` is required to support SGID via the `postdrop`
+            # executable in `/var/mail-state` for Postfix (maildrop + public dirs):
+            # https://github.com/docker-mailserver/docker-mailserver/pull/3625
+            allowPrivilegeEscalation: true
+            readOnlyRootFilesystem: false
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            privileged: false
+            capabilities:
+              add:
+                # file permission capabilities
+                - CHOWN
+                - FOWNER
+                - MKNOD
+                - SETGID
+                - SETUID
+                - DAC_OVERRIDE
+                # network capabilities
+                - NET_ADMIN  # needed for F2B
+                - NET_RAW    # needed for F2B
+                - NET_BIND_SERVICE
+                # miscellaneous  capabilities
+                - SYS_CHROOT
+                - KILL
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
+
+          # Tune this to your needs.
+          # If you disable ClamAV, you can use less RAM and CPU.
+          # This becomes important in case you're low on resources
+          # and Kubernetes refuses to schedule new pods.
+          resources:
+            limits:
+              memory: 4Gi
+              cpu: 1500m
+            requests:
+              memory: 2Gi
+              cpu: 600m
+
+          volumeMounts:
+            # configuration 
+            - name: data
+              mountPath: /tmp/docker-mailserver
+              subPath: tmp-docker-mailserver
+              readOnly: false
+
+            # other PVCs
+            - name: data
+              mountPath: /var/mail
+              subPath: data
+              readOnly: false
+            - name: data
+              mountPath: /var/mail-state
+              subPath: state
+              readOnly: false
+            - name: data
+              mountPath: /var/log/mail
+              subPath: log
+              readOnly: false
+
+            # certificates
+            - name: certificates-rsa
+              mountPath: /secrets/ssl/rsa/
+              readOnly: true
+
+          ports:
+            - name: smtp
+              containerPort: 25
+              protocol: TCP
+            - name: submissions
+              containerPort: 465
+              protocol: TCP
+            - name: submission
+              containerPort: 587
+            - name: imap
+              containerPort: 143
+              protocol: TCP
+            - name: imaps
+              containerPort: 993
+              protocol: TCP
+
+          envFrom:
+            - configMapRef:
+                name: docker-mailserver
+
+      restartPolicy: Always
+
+      volumes:
+        # PVCs
+        - name: data
+          persistentVolumeClaim:
+            claimName: docker-mailserver
+
+        # certificates
+        - name: certificates-rsa
+          secret:
+            secretName: docker-mailserver-certs
+            items:
+              - key: tls.key
+                path: tls.key
+              - key: tls.crt
+                path: tls.crt

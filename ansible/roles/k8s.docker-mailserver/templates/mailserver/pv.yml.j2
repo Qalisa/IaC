@@ -1,16 +1,15 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: technitium-dns
-  namespace: default
+  name: docker-mailserver
   labels:
     type: local
 spec:
   storageClassName: "{{ storage_class_name }}"
   capacity:
-    storage: 1Gi 
+    storage: 25Gi 
   local:
-    path: {{ technitium_dns_pv_path }}
+    path: {{ docker_mailserver_pv_path }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -26,11 +25,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: dns-data-pvc
-  namespace: default
+  name: docker-mailserver
+  namespace: docker-mailserver
 spec:
+  storageClassName: {{ storage_class_name }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 25Gi
