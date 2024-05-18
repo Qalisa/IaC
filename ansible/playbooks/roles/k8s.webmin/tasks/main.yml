@@ -27,6 +27,7 @@
   kubernetes.core.k8s:
     state: present
     template:
+      - path: 'templates/ns.yml.j2'
       - path: 'templates/service.yml.j2'
       - path: 'templates/ingress.yml.j2'
       - path: 'templates/endpoints.yml.j2'

@@ -28,8 +28,8 @@ endpoints:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: webmin-svc # Must be equal to Service name for automatic mapping
-  namespace: default
+  name: webmin # Must be equal to Service name for automatic mapping
+  namespace: webmin
 subsets:
 - addresses:
   - ip: {{ private_network_ip }} # IP address of your external service that you would like to proxy requests to

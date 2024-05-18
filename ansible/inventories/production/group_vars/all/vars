@@ -2,5 +2,11 @@
 # https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html#keep-vaulted-variables-safely-visible
 # requires a brother encrypted file named "vault"
 # "ansible-vault encrypt ansible/inventories/production/group_vars/all/vault"
+# "ansible-vault decrypt ansible/inventories/production/group_vars/all/vault"
+
+# https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
+# https://community.letsencrypt.org/t/acme-v2-production-environment-wildcards/55578
 cloudflare_dns_api_token: "{{ vault_cloudflare_dns_api_token }}"
+
+#
 postmaster_password: "{{ vault_postmaster_password }}"

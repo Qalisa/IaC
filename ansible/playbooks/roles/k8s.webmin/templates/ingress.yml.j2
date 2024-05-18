@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: webmin
-  namespace: default
+  namespace: webmin
   annotations:
     kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
     cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
@@ -12,8 +12,8 @@ spec:
   - hosts:
       - "*.{{ root_domain }}"
     secretName: nw-wildcard-certs
-      {# - {{ webmin_public_hostname }}
-    secretName: webmin-certs #}
+    #   - {{ webmin_public_hostname }}
+    # secretName: webmin-certs
   rules:
   - host: {{ webmin_public_hostname }}
     http:
@@ -22,6 +22,6 @@ spec:
         pathType: Prefix
         backend:
           service: 
-            name: webmin-svc
+            name: webmin
             port:
               number: 443

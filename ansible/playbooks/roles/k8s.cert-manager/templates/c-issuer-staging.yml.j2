@@ -7,12 +7,18 @@ spec:
     # The ACME server URL
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     # Email address used for ACME registration
-    email: {{ acme_registrar_email }}
+    email: {{ postmaster_email }}
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: letsencrypt-staging
     # Enable the HTTP-01 challenge provider
     solvers:
-      - http01:
-          ingress:
-            ingressClassName: {{ ingress_nginx_class }}
+      # http01 does not allow wildcard issuing
+      # - http01:
+      #    ingress:
+      #      ingressClassName: {{ ingress_nginx_class }}
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token

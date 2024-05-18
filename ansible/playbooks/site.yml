@@ -1,12 +1,11 @@
 ---
-# - name: Install Docker + Terraform + KubeSpray requisites
+# - name: Install Docker + KubeSpray requisites
 #   hosts: all
 #   become: true
 #   roles:
 #     - common
 #     - docker
 #     - kubespray_deps
-#     - diodonfrost.terraform
 
 # # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
 # - name: Reset any Kubespray cluster installed
@@ -48,7 +47,7 @@
   hosts: all
   become: true
   roles:
-  #  - role: k8s.dashboard
-  #  - role: k8s.webmin
-  #  - role: k8s.portainer-ce
+    # - role: k8s.dashboard
+    - role: k8s.webmin
+    # - role: k8s.portainer-ce
     - role: k8s.docker-mailserver

@@ -8,7 +8,7 @@ metadata:
   annotations:
     metallb.universe.tf/address-pool: primary
 spec:
-  type: LoadBalancer
+  type: LoadBalancer # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
   selector:
     app: docker-mailserver-autoconfig
   ports:

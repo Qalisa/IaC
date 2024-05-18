@@ -2,7 +2,7 @@
 
 ##
 ## DKIM
-## 
+##
 
 - name: Wait for docker-mailserver pod to become ready
   ansible.builtin.command: "kubectl wait --namespace=docker-mailserver -l app=docker-mailserver --for=condition=Ready pods --timeout=30s"
@@ -27,18 +27,18 @@
 
 - name: Extract DKIM TXT (1/2)
   ansible.builtin.set_fact:
-    DKIM_raw: "{{ lookup('ansible.builtin.file', '{{ path_to_config_folder }}/opendkim/keys/{{ root_domain }}/{{ mx_hostname }}.txt') }}"
+    dkim_raw: "{{ lookup('ansible.builtin.file', '{{ path_to_config_folder }}/opendkim/keys/{{ root_domain }}/{{ mx_hostname }}.txt') }}"
 
-- name:  Extract DKIM TXT (2/2)
+- name: Extract DKIM TXT (2/2)
   ansible.builtin.set_fact:
-    DKIM_txt: "{{ DKIM_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}"
+    dkim_txt: "{{ dkim_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}"
 
 - name: Add DKIM record on DNS
   community.general.cloudflare_dns:
     zone: "{{ root_domain }}"
     record: "{{ mx_hostname }}._domainkey"
     type: TXT
-    value: "{{ DKIM_txt }}"
+    value: "{{ dkim_txt }}"
     api_token: "{{ cloudflare_dns_api_token }}"
 
 ##

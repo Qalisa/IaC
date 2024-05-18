@@ -1,7 +1,6 @@
 {
     "recommendations": [
         "redhat.ansible",
-        "hashicorp.terraform",
         "samuelcolvin.jinjahtml",
         "shd101wyy.markdown-preview-enhanced"
     ]

@@ -1,7 +1,7 @@
 ---
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week ! (https://letsencrypt.org/docs/rate-limits/)
-cluster_issuer_name: letsencrypt-prod # letsencrypt-staging
+cluster_issuer_name: letsencrypt-staging #letsencrypt-prod
 
 #
 master_node_name: node1
@@ -10,7 +10,6 @@ master_node_name: node1
 root_domain: nightworkers-labs.io
 
 # which emails is to be said that will register the certificates
-acme_registrar_email: kingpin@{{ root_domain }}
 postmaster_email: postmaster@{{ root_domain }}
 
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class

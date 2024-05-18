@@ -1,6 +1,6 @@
 ---
 - name: Setup docker-mailserver + autoconfig services
-  import_tasks: setup.yml
+  ansible.builtin.import_tasks: setup.yml
 
 - name: Configure DNS records
-  import_tasks: dns-config.yml
+  ansible.builtin.import_tasks: dns-config.yml
