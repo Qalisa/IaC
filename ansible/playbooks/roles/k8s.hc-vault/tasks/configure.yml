@@ -1,0 +1,65 @@
+---
+- name: Wait for pod to become started
+  ansible.builtin.command: "kubectl wait pod --all --namespace=vault --for=condition=Initialized --timeout=30s"
+  register: pods_ready
+  changed_when: pods_ready.rc != 0
+
+# RC:
+# 0 - unsealed
+# 1 - error
+# 2 - sealed
+- name: Get Vault status
+  kubernetes.core.k8s_exec:
+    namespace: vault
+    pod: vault-0
+    command: vault status -format=json
+  register: vault_status
+  no_log: true
+  ignore_errors: true # rc <> 0 is normal
+
+# - name: log
+#   ansible.builtin.debug:
+#     msg: "{{ vault_status.stdout }}"
+
+- name: Generate sealing keys
+  kubernetes.core.k8s_exec:
+    namespace: vault
+    pod: vault-0
+    command: vault operator init --namespace='vault' -format=json -key-shares=1 -key-threshold=1
+  register: unseal_keys
+  when: not (vault_status.stdout | from_json).initialized
+
+- name: Show Unsealing keys to admin so he can save them
+  ansible.builtin.debug:
+    msg: "{{ unseal_keys.stdout }}"
+  when: unseal_keys is defined
+
+- pause:
+      prompt: Type Enter once keys have been saved
+  when: unseal_keys is defined
+  no_log: true
+
+- name: Unseal
+  kubernetes.core.k8s_exec:
+    namespace: vault
+    pod: vault-0
+    command: vault operator unseal {{ item }}
+  loop: "{{ (unseal_keys.stdout | from_json).unseal_keys_hex }}"
+  register: unsealing
+  when: unseal_keys is defined
+
+- name: Activate admin user
+  kubernetes.core.k8s_exec:
+    namespace: vault
+    pod: vault-0
+    command: "{{ item }}"
+  loop:
+    - vault login {{ (unseal_keys.stdout | from_json).root_token }}
+    - vault auth enable userpass
+    - vault write auth/userpass/users/admin password={{ hc_vault_admin_password }} policies=admins
+  when: unsealing.rc == 0
+
+- name: Wait for pod to become Ready
+  ansible.builtin.command: "kubectl wait pod --all --namespace=vault --for=condition=Ready --timeout=30s"
+  register: pods_ready
+  changed_when: pods_ready.rc != 0

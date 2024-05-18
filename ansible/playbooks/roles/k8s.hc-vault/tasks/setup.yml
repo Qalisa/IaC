@@ -1,0 +1,128 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: hashicorp
+    repo_url: https://helm.releases.hashicorp.com
+
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ hc_vault_pv_path }}/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - data-vault-0
+
+- name: Create Persistent Volumes + SSL certificates (injector, server)
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/pv.yml.j2'
+      - path: 'templates/injector/root-ca-issuer.yml.j2'
+      - path: 'templates/injector/certificate.yml.j2'
+  vars:
+    storage_class_name: local-storage
+  loop:
+    - data-vault-0
+
+- name: Install Hashicorp Vault w/ Helm
+  kubernetes.core.helm:
+    name: vault
+    chart_ref: hashicorp/vault
+    release_namespace: vault
+    create_namespace: true
+    values:
+      global:
+        enabled: true
+        tlsDisable: true # 
+      
+      injector:
+        enabled: true
+        leaderElector:
+          enabled: false
+        certs:
+          secretName: injector-tls
+        webhook:
+          annotations:
+            cert-manager.io/inject-ca-from: "vault/injector-certificate"
+
+        resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 256Mi
+              cpu: 250m
+      
+      server:      
+        # These Resource Limits are in line with node requirements in the
+        # Vault Reference Architecture for a Small Cluster
+        resources:
+          requests:
+            memory: 1Gi
+            cpu: 500m
+          limits:
+            memory: 2Gi
+            cpu: 1000m
+      
+        # extraEnvironmentVars is a list of extra environment variables to set with the stateful set. These could be
+        # used to include variables required for auto-unseal.
+        # extraEnvironmentVars:
+        #  VAULT_CACERT: /vault/userconfig/tls-ca/ca.crt
+      
+        ingress:
+          enabled: true
+          annotations:
+              kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
+              cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
+              nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          tls:
+            - hosts:
+                - "*.{{ root_domain }}"
+              secretName: nw-wildcard-certs
+            #  - vault.{{ root_domain }}
+            # secretName: hc-vault-certs
+          hosts:
+            - host: vault.{{ root_domain }}
+
+        # extraVolumes is a list of extra volumes to mount. These will be exposed
+        # to Vault in the path `/vault/userconfig/<name>/`.
+        # extraVolumes:
+        #   - type: secret
+        #     name: tls-server
+        #   - type: secret
+        #     name: tls-ca
+        #   - type: secret
+        #     name: kms-creds
+        
+        standalone:
+          enabled: true
+          config: |
+            ui = true
+      
+            listener "tcp" {
+              tls_disable = 1
+              address = "[::]:8200"
+              cluster_address = "[::]:8201"
+            }
+            storage "file" {
+              path = "/vault/data"
+            }
+      
+      service:
+        enabled: true
+
+      # This configures the Vault Statefulset to create a PVC for audit logs.
+      # See https://www.vaultproject.io/docs/audit/index.html to know more
+      auditStorage:
+        enabled: false
+      dataStorage:
+        enabled: true
+
+      # Vault UI
+      ui:
+        enabled: true
+        serviceType: "LoadBalancer"
+        externalTrafficPolicy: "Local"
+        # serviceNodePort: null
+        # externalPort: 8200
+

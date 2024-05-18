@@ -18,3 +18,4 @@ ingress_nginx_class: nginx
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer
 docker_mailserver_pv_path: /var/k8s-data/mailserver
+hc_vault_pv_path: /var/k8s-data/hc-vault

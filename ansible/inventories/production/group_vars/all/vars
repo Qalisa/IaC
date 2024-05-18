@@ -8,5 +8,8 @@
 # https://community.letsencrypt.org/t/acme-v2-production-environment-wildcards/55578
 cloudflare_dns_api_token: "{{ vault_cloudflare_dns_api_token }}"
 
-#
+# password for postmaster@{{ root_domain }}
 postmaster_password: "{{ vault_postmaster_password }}"
+
+# password for "admin" user on Hashicorp Vault
+hc_vault_admin_password: "{{ vault_hc_vault_admin_password }}"

@@ -3,9 +3,9 @@
 #   hosts: all
 #   become: true
 #   roles:
-#     - common
-#     - docker
-#     - kubespray_deps
+#     - base.common
+#     - base.docker
+#     - base.kubespray
 
 # # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
 # - name: Reset any Kubespray cluster installed
@@ -50,5 +50,7 @@
     # - role: k8s.dashboard
     # - role: k8s.webmin
     # - role: k8s.portainer-ce
-    - role: k8s.docker-mailserver
+    # - role: k8s.docker-mailserver
     # - role: k8s.argo-cd
+    - role: k8s.hc-vault
+    # - role: k8s.jx
