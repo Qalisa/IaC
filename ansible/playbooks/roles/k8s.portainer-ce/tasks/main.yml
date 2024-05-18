@@ -46,7 +46,9 @@
               - path: "/"
         tls:
           - hosts:
-              - "{{ portainer_host }}"
-            secretName: "portainer-ce-certs"
+              - "*.{{ root_domain }}"
+            secretName: nw-wildcard-certs
+            #   - "{{ portainer_host }}"
+            # secretName: "portainer-ce-certs"
   vars:
     portainer_host: "portainer.{{ root_domain }}"

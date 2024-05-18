@@ -1,7 +1,7 @@
 ---
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week ! (https://letsencrypt.org/docs/rate-limits/)
-cluster_issuer_name: letsencrypt-staging # letsencrypt-prod
+cluster_issuer_name: letsencrypt-prod # letsencrypt-staging
 
 #
 master_node_name: node1

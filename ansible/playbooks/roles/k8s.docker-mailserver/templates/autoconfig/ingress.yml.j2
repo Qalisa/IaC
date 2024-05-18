@@ -10,9 +10,11 @@ metadata:
 spec:
   tls:
   - hosts:
-    - {{ autoconfig_fqdn }}
-    - {{ autodiscover_fqdn }}
-    secretName: docker-mailserver-autoconfig-certs
+      - "*.{{ root_domain }}"
+    secretName: nw-wildcard-certs
+      {# - {{ autoconfig_fqdn }}
+      - {{ autodiscover_fqdn }}
+    secretName: docker-mailserver-autoconfig-certs #}
   rules:
   - host: {{ autoconfig_fqdn }}
     http:

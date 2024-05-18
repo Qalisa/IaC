@@ -10,8 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - {{ dashboard_public_hostname }}
-    secretName: k8s-dashboard-certs
+      - "*.{{ root_domain }}"
+    secretName: nw-wildcard-certs
+    {# - {{ dashboard_public_hostname }}
+    secretName: k8s-dashboard-certs #}
   rules:
   - host: {{ dashboard_public_hostname }}
     http:

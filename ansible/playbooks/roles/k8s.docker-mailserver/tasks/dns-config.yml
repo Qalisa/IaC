@@ -61,6 +61,7 @@
     priority: 10
     value: "{{ docker_mailserver_host }}"
     api_token: "{{ cloudflare_dns_api_token }}"
+  ignore_errors: true # might fail if already exists
 
 - name: Add SPF + mailconf records on DNS
   community.general.cloudflare_dns:
@@ -95,6 +96,7 @@
     service: "{{ item.service }}"
     port: "{{ item.port }}"
     value: "{{ item.value }}"
+  ignore_errors: true # might fail if already exists
   loop:
     - { service: "autodiscover", port: 443, value: "autodiscover.{{ root_domain }}" }
     - { service: "imap", port: 143, value: "{{ docker_mailserver_host }}" }
