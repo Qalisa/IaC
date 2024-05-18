@@ -6,7 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
     cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   tls:
   - hosts:
@@ -18,6 +18,7 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
           service: 
             name: docker-mailserver-autoconfig
@@ -27,6 +28,7 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
           service: 
             name: docker-mailserver-autoconfig

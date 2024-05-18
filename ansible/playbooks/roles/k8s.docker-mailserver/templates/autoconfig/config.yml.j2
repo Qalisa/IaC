@@ -6,7 +6,7 @@ metadata:
 immutable: false
 data:
     COMPANY_NAME: {{ root_domain }}
-    SUPPORT_URL: {{ autodiscover_fqdn }}
+    SUPPORT_URL: "https://{{ autodiscover_fqdn }}"
     DOMAIN: {{ root_domain }}
     # IMAP configuration (host mandatory to enable)
     IMAP_HOST: {{ root_domain }}

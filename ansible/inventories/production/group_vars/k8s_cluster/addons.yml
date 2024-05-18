@@ -122,8 +122,9 @@ ingress_publish_status_address: ""
 #   9000: "default/example-go:8080"
 # ingress_nginx_configmap_udp_services:
 #   53: "kube-system/coredns:53"
-# ingress_nginx_extra_args:
-#  - --default-ssl-certificate=default/letsencrypt-secret-prod
+ingress_nginx_extra_args:
+  - --default-backend-service= #disable default backend
+# - --default-ssl-certificate=default/letsencrypt-secret-prod
 # ingress_nginx_termination_grace_period_seconds: 300
 # ingress_nginx_class: nginx
 # ingress_nginx_without_class: true
@@ -174,24 +175,24 @@ cert_manager_enabled: true
 
 # MetalLB deployment
 metallb_enabled: true
-metallb_speaker_enabled: "{{ metallb_enabled }}"
+metallb_speaker_enabled: false # using calico (https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#advertise-service-load-balancer-ip-addresses)
 metallb_namespace: "metallb-system"
 # metallb_version: v0.13.9
 # metallb_protocol: "layer2"
 # metallb_port: "7472"
 # metallb_memberlist_port: "7946"
 metallb_config:
-  speaker:
+#  speaker:
 #     nodeselector:
 #       kubernetes.io/os: "linux"
-    tolerations:
-      - key: "node-role.kubernetes.io/control-plane"
-        operator: "Equal"
-        value: ""
-        effect: "NoSchedule"
+#    tolerations:
+#      - key: "node-role.kubernetes.io/control-plane"
+#        operator: "Equal"
+#        value: ""
+#        effect: "NoSchedule"
   controller:
-    # nodeselector:
-    #   kubernetes.io/os: "linux"
+    nodeselector:
+      kubernetes.io/os: "linux"
     tolerations:
       - key: "node-role.kubernetes.io/control-plane"
         operator: "Equal"
@@ -202,6 +203,7 @@ metallb_config:
       ip_range:
         - 10.5.0.0/16
       auto_assign: true
+      avoid_buggy_ips: true
     # pool1:
     #   ip_range:
     #     - 10.6.0.0/16
@@ -236,8 +238,9 @@ metallb_config:
 #             - NO_ADVERTISE
 #           address_pool:
 #             - pool2
+calico_advertise_service_loadbalancer_ips: "{{ metallb_config.address_pools.primary.ip_range }}"
 
-argocd_enabled: false
+argocd_enabled: true
 # argocd_version: v2.8.4
 # argocd_namespace: argocd
 # Default password:

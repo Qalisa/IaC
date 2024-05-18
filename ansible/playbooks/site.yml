@@ -8,11 +8,11 @@
 #     - kubespray_deps
 #     - diodonfrost.terraform
 
-# # runs the kubespray's "reset.yml" playbook
+# # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
 # - name: Reset any Kubespray cluster installed
 #   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
 
-# # runs the kubespray's "cluster.yml" playbook
+# # runs the kubespray's "cluster.yml" playbook - Installs Kubespray configuration
 # - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
 #   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
 
@@ -48,7 +48,7 @@
   hosts: all
   become: true
   roles:
-    # - role: k8s.dashboard
-    # - role: k8s.webmin
-    # - role: k8s.portainer-ce
+  #  - role: k8s.dashboard
+  #  - role: k8s.webmin
+  #  - role: k8s.portainer-ce
     - role: k8s.docker-mailserver

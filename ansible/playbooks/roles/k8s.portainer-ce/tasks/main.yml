@@ -29,7 +29,7 @@
       nodeSelector:
         kubernetes.io/hostname: "{{ master_node_name }}"
       service:
-        type: "ClusterIP"
+        type: "LoadBalancer" # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
       tls:
         force: true
         # existingSecret: "portainer-ce-certs"

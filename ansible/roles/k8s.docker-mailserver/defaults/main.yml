@@ -1,6 +1,0 @@
----
-config_folder_name: tmp-docker-mailserver
-path_to_config_folder: "{{ docker_mailserver_pv_path }}/{{ config_folder_name }}"
-
-autoconfig_fqdn: "https://autoconfig.{{ root_domain }}"
-autodiscover_fqdn: "https://autodiscover.{{ root_domain }}"

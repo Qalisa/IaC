@@ -1,5 +1,5 @@
 ---
-- name: Restart docker-mailserver deployment, reloading DKIM
+- name: DKIM - Reboot mailserver
   kubernetes.core.k8s:
     state: present
     definition:
@@ -7,7 +7,7 @@
       kind: Deployment
       metadata:
         name: docker-mailserver
-        namespace: default
+        namespace: docker-mailserver
       spec:
         template:
           metadata:

@@ -8,6 +8,7 @@ metadata:
   annotations:
     metallb.universe.tf/address-pool: primary
 spec:
+  type: LoadBalancer
   selector:
     app: docker-mailserver-autoconfig
   ports:
