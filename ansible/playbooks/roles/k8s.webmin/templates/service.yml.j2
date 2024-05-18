@@ -10,12 +10,3 @@ spec:
     port: 443
     protocol: TCP
     targetPort: 10000
-{# ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: webmin-ext-nm
-  namespace: default
-spec:
-  type: ExternalName
-  externalName: {{ webmin_public_hostname }} #}

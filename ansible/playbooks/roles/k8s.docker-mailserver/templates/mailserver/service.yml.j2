@@ -8,7 +8,7 @@ metadata:
   annotations:
     metallb.universe.tf/address-pool: primary
 spec:
-  type: LoadBalancer # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
+  type: ClusterIP
   selector:
     app: docker-mailserver
   ports:
@@ -37,3 +37,5 @@ spec:
       port: 993
       targetPort: imaps
       protocol: TCP
+  externalIPs:
+    - {{ lookup('community.general.dig', '{{ master_node_name }}.') }}
