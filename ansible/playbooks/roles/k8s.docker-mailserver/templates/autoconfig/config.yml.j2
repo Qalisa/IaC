@@ -9,10 +9,10 @@ data:
     SUPPORT_URL: "https://{{ autodiscover_fqdn }}"
     DOMAIN: {{ root_domain }}
     # IMAP configuration (host mandatory to enable)
-    IMAP_HOST: {{ root_domain }}
+    IMAP_HOST: imap.{{ root_domain }}
     IMAP_PORT: '993'
     IMAP_SOCKET: SSL
     # SMTP configuration (host mandatory to enable)
-    SMTP_HOST: {{ root_domain }}
+    SMTP_HOST: smtp.{{ root_domain }}
     SMTP_PORT: '587'
     SMTP_SOCKET: STARTTLS
