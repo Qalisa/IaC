@@ -1,0 +1,23 @@
+{% if is_cluster_issuer_staging %}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: roundcube.staging-ssl.config
+  namespace: docker-mailserver
+data:
+  more.inc.php: |
+    <?php
+
+    $config['smtp_conn_options'] = [
+        'ssl' => [
+            'verify_peer'  => false
+        ]
+    ];
+
+    $config['imap_conn_options'] = [
+        'ssl' => [
+            'verify_peer'  => false
+        ]
+    ];
+
+{% endif %}

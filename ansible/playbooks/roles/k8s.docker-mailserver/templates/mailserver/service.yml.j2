@@ -36,4 +36,4 @@ spec:
       targetPort: imaps
       protocol: TCP
   externalIPs:
-   - {{ lookup('community.general.dig', '{{ master_node_name }}.') }}
+   - {{ ipify_public_ip }}

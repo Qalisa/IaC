@@ -21,10 +21,23 @@ spec:
               mountPath: /var/www/html
               subPath: www
               readOnly: false
+
+            {% if is_cluster_issuer_staging %}
+
+            - name: config
+              mountPath: /var/roundcube/config/more.inc.php
+              subPath: more.inc.php
+              readOnly: true
+
+            {% else %}
+
             - name: data
               mountPath: /var/roundcube/config
               subPath: config
               readOnly: false
+
+            {% endif %}
+
             - name: data
               mountPath: /var/roundcube/db
               subpath: db
@@ -41,3 +54,11 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: roundcube
+            
+        {% if is_cluster_issuer_staging %}
+
+        - name: config
+          configMap:
+            name: roundcube.staging-ssl.config
+
+        {% endif %}

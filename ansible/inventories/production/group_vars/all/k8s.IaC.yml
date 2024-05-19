@@ -4,6 +4,9 @@
 cluster_issuer_name: letsencrypt-staging #letsencrypt-prod
 
 #
+is_cluster_issuer_staging: "{{ cluster_issuer_name == 'letsencrypt-staging' }}"
+
+#
 master_node_name: node1
 
 # https://crt.sh/?q=nightworkers-labs.io

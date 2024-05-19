@@ -30,10 +30,6 @@
   register: unseal_keys
   when: not (vault_status.stdout | from_json).initialized
 
-- name: Log
-  ansible.builtin.debug:
-    msg: "{{ unseal_keys }}"
-
 - name: Show Unsealing keys to admin so he can save them
   ansible.builtin.debug:
     msg: "{{ unseal_keys.stdout }}"
