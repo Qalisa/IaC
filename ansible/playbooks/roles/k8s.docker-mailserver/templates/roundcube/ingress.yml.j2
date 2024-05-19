@@ -11,10 +11,10 @@ metadata:
 spec:
   tls:
   - hosts:
-      - "*.{{ root_domain }}"
-    secretName: nw-wildcard-certs
-    #  - {{ docker_mailserver_host }}
-    # secretName: roundcube-certs
+    #  - "*.{{ root_domain }}"
+    # secretName: nw-wildcard-certs
+      - {{ docker_mailserver_host }}
+    secretName: roundcube-certs
   rules:
   - host: {{ docker_mailserver_host }}
     http:

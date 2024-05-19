@@ -14,10 +14,10 @@ metadata:
 spec:
   tls:
   - hosts:
-      - "*.{{ root_domain }}"
-    secretName: nw-wildcard-certs
-    #  - argocd.{{ root_domain }}
-    # secretName: argocd-server-certs
+    #  - "*.{{ root_domain }}"
+    # secretName: nw-wildcard-certs
+    - argocd.{{ root_domain }}
+    secretName: argocd-server-certs
   rules:
   - host: argocd.{{ root_domain }}
     http:

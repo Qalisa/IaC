@@ -1,56 +1,57 @@
 ---
-- name: Install Docker + KubeSpray requisites
-  hosts: all
-  become: true
-  roles:
-    - base.common
-    - base.docker
-    - base.kubespray
+# - name: Install Docker + KubeSpray requisites
+#   hosts: all
+#   become: true
+#   roles:
+#     - base.common
+#     - base.docker
+#     - base.kubespray
 
-# runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
-- name: Reset any Kubespray cluster installed
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+# # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
+# - name: Reset any Kubespray cluster installed
+#   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
 
-# runs the kubespray's "cluster.yml" playbook - Installs Kubespray configuration
-- name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+# # runs the kubespray's "cluster.yml" playbook - Installs Kubespray configuration
+# - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
+#   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
 
-#
-- name: Helm plugins
-  hosts: all
-  become: true
-  tasks:
-    - name: Add helm diff plugin
-      kubernetes.core.helm_plugin:
-        plugin_path: https://github.com/databus23/helm-diff
-        state: present
+# #
+# - name: Helm plugins
+#   hosts: all
+#   become: true
+#   tasks:
+#     - name: Add helm diff plugin
+#       kubernetes.core.helm_plugin:
+#         plugin_path: https://github.com/databus23/helm-diff
+#         state: present
 
-- name: Setup K8s Issuers
-  hosts: all
-  become: true
-  roles:
-    - role: k8s.cert-manager
-  tasks:
-    # https://github.com/siarheidudko/webmin-under-kubernetes-ingress
-    - name: Patch existing ingress service (If LoadBalancer)
-      kubernetes.core.k8s:
-        state: patched
-        kind: Service
-        name: ingress-nginx
-        namespace: ingress-nginx
-        definition:
-          spec:
-            externalTrafficPolicy: "Local"
+# - name: Setup K8s Issuers
+#   hosts: all
+#   become: true
+#   roles:
+#     - role: k8s.cert-manager
+#   tasks:
+#     # https://github.com/siarheidudko/webmin-under-kubernetes-ingress
+#     - name: Patch existing ingress service (If LoadBalancer)
+#       kubernetes.core.k8s:
+#         state: patched
+#         kind: Service
+#         name: ingress-nginx
+#         namespace: ingress-nginx
+#         definition:
+#           spec:
+#             externalTrafficPolicy: "Local"
 
 # ensure services roles are installed and configured AFTER kubernetes is set
 - name: Install Services w/in Kubernetes
   hosts: all
   become: true
   roles:
-    - role: k8s.dashboard
-    - role: k8s.webmin
-    - role: k8s.portainer-ce
-    - role: k8s.docker-mailserver
-    - role: k8s.argo-cd
+    # - role: k8s.registry
+    # - role: k8s.dashboard
+    # - role: k8s.webmin
+    # - role: k8s.portainer-ce
+    # - role: k8s.docker-mailserver
+    # - role: k8s.argo-cd
     - role: k8s.hc-vault
     - role: k8s.jx

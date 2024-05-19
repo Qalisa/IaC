@@ -1,0 +1,15 @@
+---
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ registry_pv_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Prepare image registry
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/pv.yml.j2'
+      - path: 'templates/sc.yml.j2'
+  vars:
+    storage_class_name: local-storage

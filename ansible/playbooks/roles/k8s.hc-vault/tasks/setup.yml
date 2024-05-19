@@ -77,10 +77,10 @@
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           tls:
             - hosts:
-                - "*.{{ root_domain }}"
-              secretName: nw-wildcard-certs
-            #  - vault.{{ root_domain }}
-            # secretName: hc-vault-certs
+              #  - "*.{{ root_domain }}"
+              # secretName: nw-wildcard-certs
+                - vault.{{ root_domain }}
+              secretName: hc-vault-certs
           hosts:
             - host: vault.{{ root_domain }}
 

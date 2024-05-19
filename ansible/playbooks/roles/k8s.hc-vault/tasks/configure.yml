@@ -59,14 +59,14 @@
     - vault login {{ (unseal_keys.stdout | from_json).root_token }}
     - vault auth list -format=json
   register: user_methods
-  when: not unseal_keys is skipped and unsealing.rc == 0
+  when: (not unseal_keys is skipped) and unsealing.rc == 0
 
 - name: Activate userpass method
   kubernetes.core.k8s_exec:
     namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault auth enable userpass
-  when: not user_methods is skipped and 'userpass/' in (user_methods.results[1].stdout | from_json)
+  when: (not user_methods is skipped) and 'userpass/' in (user_methods.results[1].stdout | from_json)
 
 
 - name: Check Already has admin user
@@ -82,7 +82,7 @@
     namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault write auth/userpass/users/admin password={{ hc_vault_admin_password }} policies=admins
-  when: not admin_exists is skipped and (admin_exists.stdout_lines | length) == 0
+  when: (not admin_exists is skipped) and (admin_exists.stdout_lines | length) == 0
 
 - name: Wait for pod to become Ready
   ansible.builtin.command: "kubectl wait pod/vault-0 --namespace=vault --for=condition=Ready --timeout=3s"

@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-      - "*.{{ root_domain }}"
-    secretName: nw-wildcard-certs
-      # - {{ webmin_public_hostname }}
-    # secretName: webmin-certs
+    #  - "*.{{ root_domain }}"
+    # secretName: nw-wildcard-certs
+       - {{ webmin_public_hostname }}
+    secretName: webmin-certs
   rules:
   - host: {{ webmin_public_hostname }}
     http:

@@ -24,10 +24,6 @@
     mode: '0755'
   with_dict: "{{ default_accounts_dict }}"
 
-# produces fact "ipify_public_ip"
-- name: Get my public IP
-  community.general.ipify_facts:
-
 - name: Install Docker Mailserver
   kubernetes.core.k8s:
     state: present
@@ -36,8 +32,17 @@
       - path: 'templates/sc.yml.j2'
       - path: 'templates/mailserver/pv.yml.j2'
       - path: 'templates/mailserver/config.yml.j2'
-      - path: 'templates/mailserver/service.yml.j2'
-      - path: 'templates/mailserver/deploy.yml.j2'
       - path: 'templates/mailserver/certificate.yml.j2'
   vars:
     storage_class_name: local-storage
+
+# produces fact "ipify_public_ip"
+- name: Get my public IP
+  community.general.ipify_facts:
+
+- name: Install Docker Mailserver
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/mailserver/service.yml.j2'
+      - path: 'templates/mailserver/deploy.yml.j2'
