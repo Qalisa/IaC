@@ -15,7 +15,7 @@
 # 2 - sealed
 - name: Get Vault status
   kubernetes.core.k8s_exec:
-    namespace: vault
+    namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault status -format=json
   register: vault_status
@@ -24,7 +24,7 @@
 
 - name: Generate sealing keys
   kubernetes.core.k8s_exec:
-    namespace: vault
+    namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault operator init --namespace='vault' -format=json -key-shares=1 -key-threshold=1
   register: unseal_keys
@@ -43,7 +43,7 @@
 
 - name: Unseal
   kubernetes.core.k8s_exec:
-    namespace: vault
+    namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault operator unseal {{ item }}
   loop: "{{ (unseal_keys.stdout | from_json).unseal_keys_hex }}"
@@ -52,7 +52,7 @@
 
 - name: List all user methods
   kubernetes.core.k8s_exec:
-    namespace: vault
+    namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: "{{ item }}"
   loop:
@@ -63,7 +63,7 @@
 
 - name: Activate userpass method
   kubernetes.core.k8s_exec:
-    namespace: vault
+    namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault auth enable userpass
   when: not user_methods is skipped and 'userpass/' in (user_methods.results[1].stdout | from_json)
@@ -71,7 +71,7 @@
 
 - name: Check Already has admin user
   kubernetes.core.k8s_exec:
-    namespace: vault
+    namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault list auth/userpass/users | grep -w "admin"
   register: admin_exists
@@ -79,7 +79,7 @@
 
 - name: Activate admin user
   kubernetes.core.k8s_exec:
-    namespace: vault
+    namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault write auth/userpass/users/admin password={{ hc_vault_admin_password }} policies=admins
   when: not admin_exists is skipped and (admin_exists.stdout_lines | length) == 0

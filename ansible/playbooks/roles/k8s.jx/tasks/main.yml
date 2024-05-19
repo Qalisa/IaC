@@ -1,3 +1,51 @@
 ---
 - name: Install jx CLI
-  
+  shell: "{{ item }}"
+  loop:
+    - curl -L  https://github.com/jenkins-x/jx/releases/latest/download/jx-linux-amd64.tar.gz | tar xzv
+    - chmod +x jx
+    - sudo mv jx /usr/local/bin
+    - jx version
+
+- name: Read-write git checkout from github
+  ansible.builtin.git:
+    repo: "{{ github_jx3_project_url }}"
+    dest: "{{ jx3_git_relative_path }}"
+
+#
+#
+#
+
+- name: Update jx-requirements
+  ansible.builtin.import_tasks: update-jx-file.yml
+  vars:
+    file_path: "jx-requirements.yml"
+    updates:
+      - path: old.spec.ingress.domain
+        value: "{{ root_domain }}"
+
+- name: Remove nginx from helmfile.yaml
+  ansible.builtin.lineinfile:
+    path: "{{ jx3_git_relative_path }}/helmfile.yaml"
+    state: absent
+    regexp: 'nginx'
+
+- name: Remove Nginx helmfiles
+  ansible.builtin.file:
+    path: "{{ jx3_git_relative_path }}/helmfiles/nginx"
+    state: absent
+
+- name: install jx operator
+  ansible.builtin.command: 
+    cmd: "{{ item }}"
+    chdir: "{{ jx3_git_relative_path }}"
+  loop:
+    #In this one-liner:
+    # If there are uncommitted changes or if the branch is not in sync with the remote, the exit code will be 1.
+    # If everything is fine (no uncommitted changes and the branch is in sync), the exit code will be 0.
+    # WE WANT TO PREVENT OPERATOR to install if so, because it fetches from remote
+    - git fetch && (git status --short | grep . || git rev-list --left-right --count origin/$(git rev-parse --abbrev-ref HEAD)...$(git rev-parse --abbrev-ref HEAD) | grep -E '^[^0]|[^0]$') && exit 1 || exit 0
+    # install operator
+    - jx admin operator --username {{ jx_github_operator_madeup_name }} --token {{ jx_github_token }}
+    # switch to namespace (https://jenkins-x.io/v3/admin/platforms/on-premises/)
+    - jx ns jx

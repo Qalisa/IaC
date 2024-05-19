@@ -29,7 +29,7 @@
   kubernetes.core.helm:
     name: vault
     chart_ref: hashicorp/vault
-    release_namespace: vault
+    release_namespace: "{{ hc_vault_namespace }}"
     values:
       global:
         enabled: true
@@ -43,7 +43,7 @@
           secretName: injector-tls
         webhook:
           annotations:
-            cert-manager.io/inject-ca-from: "vault/injector-certificate"
+            cert-manager.io/inject-ca-from: "{{ hc_vault_namespace }}/injector-certificate"
 
         resources:
           requests:

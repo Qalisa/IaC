@@ -13,3 +13,7 @@ postmaster_password: "{{ vault_postmaster_password }}"
 
 # password for "admin" user on Hashicorp Vault
 hc_vault_admin_password: "{{ vault_hc_vault_admin_password }}"
+
+#
+# https://github.com/settings/tokens/new?scopes=repo,read:user,read:org,user:email,admin:repo_hook,write:packages,read:packages,write:discussion,workflow
+jx_github_token: "{{ vault_jx_github_token }}"

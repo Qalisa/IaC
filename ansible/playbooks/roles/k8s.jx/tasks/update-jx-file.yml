@@ -1,0 +1,20 @@
+- name: Update file
+  vars:
+    from_file: "{{ jx3_git_relative_path }}/{{ file_path }}"
+  block:
+    - name: Get File (Raw)
+      ansible.builtin.slurp:
+        src: "{{ from_file }}"
+      register: file_raw
+    - name: File > Var
+      ansible.builtin.set_fact:
+        old: "{{ file_raw.content | b64decode | from_yaml }}"
+    - name: Update Var
+      ansible.utils.update_fact:
+        updates: "{{ updates }}"
+      register: updated
+    - name: Var > File
+      local_action:
+        module: copy
+        content: "{{ updated.old | to_nice_yaml }}"
+        dest: "{{ from_file }}"

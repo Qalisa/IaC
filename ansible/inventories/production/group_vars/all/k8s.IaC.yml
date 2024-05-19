@@ -18,6 +18,10 @@ postmaster_email: postmaster@{{ root_domain }}
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
 
+# https://jenkins-x.io/v3/admin/platforms/on-premises/vault/
+github_jx3_project_url: https://github.com/NightworkersLabs/jx3-kubernetes
+jx_github_operator_madeup_name: "NW Labs"
+
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer
 docker_mailserver_pv_path: /var/k8s-data/mailserver

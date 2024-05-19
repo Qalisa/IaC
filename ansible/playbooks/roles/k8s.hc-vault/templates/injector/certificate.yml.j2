@@ -2,7 +2,7 @@ vapiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: injector-certificate
-  namespace: vault
+  namespace: "{{ hc_vault_namespace }}"
 spec:
   secretName: injector-tls
   duration: 24h
