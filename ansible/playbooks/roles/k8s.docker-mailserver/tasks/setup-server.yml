@@ -29,7 +29,7 @@
     state: present
     template:
       - path: 'templates/ns.yml.j2'
-      - path: 'templates/mailserver/sc.yml.j2'
+      - path: 'templates/sc.yml.j2'
       - path: 'templates/mailserver/pv.yml.j2'
       - path: 'templates/mailserver/config.yml.j2'
       - path: 'templates/mailserver/service.yml.j2'
@@ -37,13 +37,3 @@
       - path: 'templates/mailserver/certificate.yml.j2'
   vars:
     storage_class_name: local-storage
-
-- name: Install Docker Mailserver Autoconfig
-  kubernetes.core.k8s:
-    state: present
-    template:
-      - path: 'templates/ns.yml.j2'
-      - path: 'templates/autoconfig/config.yml.j2'
-      - path: 'templates/autoconfig/service.yml.j2'
-      - path: 'templates/autoconfig/deploy.yml.j2'
-      - path: 'templates/autoconfig/ingress.yml.j2'

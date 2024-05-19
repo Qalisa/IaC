@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: roundcube
+  namespace: docker-mailserver
+  annotations:
+    kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
+    cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+      - "*.{{ root_domain }}"
+    secretName: nw-wildcard-certs
+    #  - {{ docker_mailserver_host }}
+    # secretName: roundcube-certs
+  rules:
+  - host: {{ docker_mailserver_host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: roundcube
+            port:
+              name: app

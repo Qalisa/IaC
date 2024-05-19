@@ -19,3 +19,4 @@ ingress_nginx_class: nginx
 portainer_pv_path: /var/k8s-data/portainer
 docker_mailserver_pv_path: /var/k8s-data/mailserver
 hc_vault_pv_path: /var/k8s-data/hc-vault
+roundcube_pv_path: /var/k8s-data/roundcube

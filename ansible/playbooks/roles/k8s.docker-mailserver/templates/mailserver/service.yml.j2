@@ -5,10 +5,8 @@ metadata:
   namespace: docker-mailserver
   labels:
     app: docker-mailserver
-  annotations:
-    metallb.universe.tf/address-pool: primary
 spec:
-  type: ClusterIP
+  type: ClusterIP # LoadBalancer
   selector:
     app: docker-mailserver
   ports:
@@ -38,4 +36,4 @@ spec:
       targetPort: imaps
       protocol: TCP
   externalIPs:
-    - {{ lookup('community.general.dig', '{{ master_node_name }}.') }}
+   - {{ lookup('community.general.dig', '{{ master_node_name }}.') }}
