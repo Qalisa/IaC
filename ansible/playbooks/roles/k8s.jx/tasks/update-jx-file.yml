@@ -16,5 +16,5 @@
     - name: Var > File
       local_action:
         module: copy
-        content: "{{ updated.old | to_nice_yaml }}"
+        content: "{{ updated.old | to_nice_yaml(indent=2, sort_keys=false) }}"
         dest: "{{ from_file }}"

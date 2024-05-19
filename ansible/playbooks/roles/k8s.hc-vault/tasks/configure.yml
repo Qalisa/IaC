@@ -33,12 +33,12 @@
 - name: Show Unsealing keys to admin so he can save them
   ansible.builtin.debug:
     msg: "{{ unseal_keys.stdout }}"
-  when: not unseal_keys is skipped
+  when: unseal_keys is not skipped
 
 - name: Pause
   ansible.builtin.pause:
     prompt: Type Enter once keys have been saved
-  when: not unseal_keys is skipped
+  when: unseal_keys is not skipped
   no_log: true
 
 - name: Unseal
@@ -47,8 +47,8 @@
     pod: vault-0
     command: vault operator unseal {{ item }}
   loop: "{{ (unseal_keys.stdout | from_json).unseal_keys_hex }}"
-  register: unsealing
-  when: not unseal_keys is skipped
+  register: unsealings
+  when: unseal_keys is not skipped
 
 - name: List all user methods
   kubernetes.core.k8s_exec:
@@ -59,30 +59,31 @@
     - vault login {{ (unseal_keys.stdout | from_json).root_token }}
     - vault auth list -format=json
   register: user_methods
-  when: (not unseal_keys is skipped) and unsealing.rc == 0
+  when: (unseal_keys is not skipped) and unsealings.results[0].rc == 0
 
 - name: Activate userpass method
   kubernetes.core.k8s_exec:
     namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault auth enable userpass
-  when: (not user_methods is skipped) and 'userpass/' in (user_methods.results[1].stdout | from_json)
+  when: (user_methods is not skipped) and ('userpass/' not in (user_methods.results[1].stdout | from_json))
 
-
+# err 2 indicates no users
 - name: Check Already has admin user
   kubernetes.core.k8s_exec:
     namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
-    command: vault list auth/userpass/users | grep -w "admin"
+    command: "vault list -format=json auth/userpass/users"
   register: admin_exists
-  when: not user_methods is skipped
+  when: user_methods is not skipped
+  ignore_errors: true
 
 - name: Activate admin user
   kubernetes.core.k8s_exec:
     namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault write auth/userpass/users/admin password={{ hc_vault_admin_password }} policies=admins
-  when: (not admin_exists is skipped) and (admin_exists.stdout_lines | length) == 0
+  when: (admin_exists is not skipped) and (admin_exists.rc != 1) and ((admin_exists.stdout | from_json | length) == 0)
 
 - name: Wait for pod to become Ready
   ansible.builtin.command: "kubectl wait pod/vault-0 --namespace=vault --for=condition=Ready --timeout=3s"
