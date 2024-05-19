@@ -16,6 +16,7 @@
   kubernetes.core.k8s:
     state: present
     template:
+      - path: 'templates/ns.yml.j2'
       - path: 'templates/pv.yml.j2'
       - path: 'templates/injector/root-ca-issuer.yml.j2'
       - path: 'templates/injector/certificate.yml.j2'
@@ -29,12 +30,11 @@
     name: vault
     chart_ref: hashicorp/vault
     release_namespace: vault
-    create_namespace: true
     values:
       global:
         enabled: true
-        tlsDisable: true # 
-      
+        tlsDisable: true #
+
       injector:
         enabled: true
         leaderElector:
@@ -46,14 +46,14 @@
             cert-manager.io/inject-ca-from: "vault/injector-certificate"
 
         resources:
-            requests:
-              memory: 256Mi
-              cpu: 250m
-            limits:
-              memory: 256Mi
-              cpu: 250m
-      
-      server:      
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 256Mi
+            cpu: 250m
+
+      server:
         # These Resource Limits are in line with node requirements in the
         # Vault Reference Architecture for a Small Cluster
         resources:
@@ -63,18 +63,18 @@
           limits:
             memory: 2Gi
             cpu: 1000m
-      
+
         # extraEnvironmentVars is a list of extra environment variables to set with the stateful set. These could be
         # used to include variables required for auto-unseal.
         # extraEnvironmentVars:
         #  VAULT_CACERT: /vault/userconfig/tls-ca/ca.crt
-      
+
         ingress:
           enabled: true
           annotations:
-              kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
-              cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
-              nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
+            cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           tls:
             - hosts:
                 - "*.{{ root_domain }}"
@@ -93,12 +93,12 @@
         #     name: tls-ca
         #   - type: secret
         #     name: kms-creds
-        
+
         standalone:
           enabled: true
           config: |
             ui = true
-      
+
             listener "tcp" {
               tls_disable = 1
               address = "[::]:8200"
@@ -107,7 +107,7 @@
             storage "file" {
               path = "/vault/data"
             }
-      
+
       service:
         enabled: true
 
@@ -125,4 +125,3 @@
         externalTrafficPolicy: "Local"
         # serviceNodePort: null
         # externalPort: 8200
-
