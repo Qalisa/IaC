@@ -3,7 +3,7 @@
 # CAREFUL ! In production, 50 requested certificates per week ! (https://letsencrypt.org/docs/rate-limits/)
 cluster_issuer_name: letsencrypt-staging #letsencrypt-prod
 
-auth_dir: ../../creds
+generated_creds_dir: ../../creds
 
 #
 is_cluster_issuer_staging: "{{ cluster_issuer_name == 'letsencrypt-staging' }}"
@@ -21,9 +21,16 @@ postmaster_email: postmaster@{{ root_domain }}
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
 
-# https://jenkins-x.io/v3/admin/platforms/on-premises/vault/
-github_jx3_project_url: https://github.com/NightworkersLabs/jx3-kubernetes
-jx_github_operator_madeup_name: "NW Labs"
+github_org_url: https://github.com/NightworkersLabs
+argocd_repository_url: https://github.com/NightworkersLabs/argocd-repository
+
+# ARC Github App
+arc_github_app_installation_id: 50966965
+arc_github_app_app_id: 902509
+
+# ArgoCD Github App
+argocd_github_app_installation_id: 50968159
+argocd_github_app_app_id: 902538
 
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer

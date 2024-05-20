@@ -1,0 +1,2 @@
+---
+argocd_admin_pwd_path: "{{ generated_creds_dir }}/argocd-init-admin-pwd.txt"

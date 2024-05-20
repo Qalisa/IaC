@@ -14,6 +14,8 @@ postmaster_password: "{{ vault_postmaster_password }}"
 # password for "admin" user on Hashicorp Vault
 hc_vault_admin_password: "{{ vault_hc_vault_admin_password }}"
 
+# https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
+arc_github_app_priv_key: "{{ vault_arc_github_app_priv_key }}"
+
 #
-# https://github.com/settings/tokens/new?scopes=repo,read:user,read:org,user:email,admin:repo_hook,write:packages,read:packages,write:discussion,workflow
-jx_github_token: "{{ vault_jx_github_token }}"
+argocd_github_app_priv_key: "{{ vault_argocd_github_app_priv_key }}"

@@ -17,9 +17,9 @@
   block:
     - name: Make sure destination dir exists
       ansible.builtin.file:
-        path: "{{ auth_dir }}"
+        path: "{{ generated_creds_dir }}"
         state: directory
     - name: Save
       ansible.builtin.copy:
         content: "{{ dashboard_token.stdout }}"
-        dest: "{{ auth_dir }}/k8s-dashboard.txt"
+        dest: "{{ generated_creds_dir }}/k8s-dashboard.txt"

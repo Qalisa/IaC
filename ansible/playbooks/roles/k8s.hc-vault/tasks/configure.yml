@@ -46,7 +46,7 @@
   block:
     - name: Make sure destination dir exists
       ansible.builtin.file:
-        path: "{{ auth_dir }}"
+        path: "{{ generated_creds_dir }}"
         state: directory
     - name: Save
       ansible.builtin.copy:

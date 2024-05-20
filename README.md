@@ -37,12 +37,12 @@ Make sure you are locally logged on `git` w/ a registered account using :
   - having your local Github SSH keys agent-forwarded through `ms-vscode-remote.remote-ssh` as this documentation recommands, and obviously configured on your own GitHub account.
 
 ### Startup
+- Define `./ansible/inventories/group_vars/all/vault` passwords and tokens as defined in `./ansible/inventories/group_vars/all/vars`
+- Encrypt `./ansible/inventories/group_vars/all/vault` using `ansible-vault encrypt ansible/inventories/production/group_vars/all/vault`
+- Fill `./ansible-vault-pw` file with previously set encrypting password
 - `git clone {this repo}`
 - `ansible-galaxy install -r ansible/requirements.yml`
-- `ansible-playbook -i ansible/inventories/<environment>/hosts --become --become-user=root ansible/<playbook>.yml`
-
-If you want to recover, eg:
-- `ansible-playbook -i ansible/inventories/production/hosts --become --become-user=root ansible/site.yml --start-at-task="Install Webmin w/in Kubernetes"`
+- Launch VSCode Task `Run prod ansible`
 
 ## Pre-requisites (on dev machine)
 ### On MacOS (Local Dev)
