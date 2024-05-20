@@ -3,14 +3,14 @@
   ansible.builtin.file:
     path: "{{ portainer_pv_path }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Define or create default StorageClass and Persistent volume
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/sc.yml.j2'
-      - path: 'templates/pv.yml.j2'
+      - path: "templates/sc.yml.j2"
+      - path: "templates/pv.yml.j2"
   vars:
     storage_class_name: local-storage
 
@@ -38,7 +38,9 @@
         ingressClassName: "{{ ingress_nginx_class }}"
         annotations:
           kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
-          cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
+          # when using Cloudflare's proxied DNS record
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         hosts:
           - host: "{{ portainer_host }}"
@@ -46,9 +48,9 @@
               - path: "/"
         tls:
           - hosts:
-            #   - "*.{{ root_domain }}"
-            # secretName: nw-wildcard-certs
-               - "{{ portainer_host }}"
+              #   - "*.{{ root_domain }}"
+              # secretName: nw-wildcard-certs
+              - "{{ portainer_host }}"
             secretName: "portainer-ce-certs"
   vars:
     portainer_host: "portainer.{{ root_domain }}"

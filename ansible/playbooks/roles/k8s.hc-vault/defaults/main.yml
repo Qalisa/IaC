@@ -1,3 +1,6 @@
 ---
 #
 hc_vault_namespace: vault
+
+#
+unseal_keys_path: "{{ auth_dir }}/hc-vault-seal-keys.json"

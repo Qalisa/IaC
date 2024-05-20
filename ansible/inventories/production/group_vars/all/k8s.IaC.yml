@@ -3,8 +3,11 @@
 # CAREFUL ! In production, 50 requested certificates per week ! (https://letsencrypt.org/docs/rate-limits/)
 cluster_issuer_name: letsencrypt-staging #letsencrypt-prod
 
+auth_dir: ../../creds
+
 #
 is_cluster_issuer_staging: "{{ cluster_issuer_name == 'letsencrypt-staging' }}"
+cloudflare_origin_ca_root_cert_url: https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem
 
 #
 master_node_name: node1

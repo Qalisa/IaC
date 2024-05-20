@@ -7,7 +7,7 @@
   register: pod_status
   until: pod_status.stdout == "Running"
   retries: 10
-  delay: 3
+  delay: 10
 
 # RC:
 # 0 - unsealed
@@ -22,6 +22,10 @@
   no_log: true
   failed_when: vault_status.rc == 1
 
+#
+# Generate and save keys
+#
+
 - name: Generate sealing keys
   kubernetes.core.k8s_exec:
     namespace: "{{ hc_vault_namespace }}"
@@ -30,16 +34,33 @@
   register: unseal_keys
   when: not (vault_status.stdout | from_json).initialized
 
-- name: Show Unsealing keys to admin so he can save them
-  ansible.builtin.debug:
-    msg: "{{ unseal_keys.stdout }}"
+#
+- name: Save sealing keys locally
+  block:
+  - name: Make sure destination dir exists
+    file:
+      path: "{{ auth_dir }}"
+      state: directory
+  - name: Save
+    ansible.builtin.copy:
+      content: "{{ unseal_keys.stdout }}"
+      dest: "{{ unseal_keys_path }}"
   when: unseal_keys is not skipped
 
-- name: Pause
-  ansible.builtin.pause:
-    prompt: Type Enter once keys have been saved
-  when: unseal_keys is not skipped
-  no_log: true
+- name: Read unseal keys if on local
+  slurp:
+    src: "{{ unseal_keys_path }}"
+  register: local_unseal_keys_raw
+  when: unseal_keys is skipped
+  ignore_errors: true
+- name: Load facts
+  set_fact:
+    unseal_keys: "{{ local_unseal_keys_raw.content | b64decode }}"
+  when: local_unseal_keys_raw is succeeded
+
+#
+#
+#
 
 - name: Unseal
   kubernetes.core.k8s_exec:

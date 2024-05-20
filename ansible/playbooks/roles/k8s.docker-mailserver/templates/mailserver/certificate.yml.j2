@@ -1,3 +1,4 @@
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -13,5 +14,6 @@ spec:
   dnsNames:
     - {{ docker_mailserver_host }}
   issuerRef:
-    name: {{ cluster_issuer_name }}
+    # when using Cloudflare's proxied DNS record
+    name: "selfsigned" # "{{ cluster_issuer_name }}"
     kind: ClusterIssuer

@@ -1,5 +1,4 @@
 ---
-
 ##
 ## DKIM
 ##
@@ -103,8 +102,20 @@
     value: "{{ item.value }}"
   ignore_errors: true # might fail if already exists
   loop:
-    - { service: "autodiscover", port: 443, value: "autodiscover.{{ root_domain }}" }
+    - {
+        service: "autodiscover",
+        port: 443,
+        value: "autodiscover.{{ root_domain }}",
+      }
     - { service: "imap", port: 143, value: "{{ docker_mailserver_host }}" }
     - { service: "imaps", port: 993, value: "{{ docker_mailserver_host }}" }
-    - { service: "submission", port: 587, value: "{{ docker_mailserver_host }}" }
-    - { service: "submissions", port: 465, value: "{{ docker_mailserver_host }}" }
+    - {
+        service: "submission",
+        port: 587,
+        value: "{{ docker_mailserver_host }}",
+      }
+    - {
+        service: "submissions",
+        port: 465,
+        value: "{{ docker_mailserver_host }}",
+      }

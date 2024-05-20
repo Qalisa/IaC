@@ -2,6 +2,7 @@
     "recommendations": [
         "redhat.ansible",
         "samuelcolvin.jinjahtml",
-        "shd101wyy.markdown-preview-enhanced"
+        "shd101wyy.markdown-preview-enhanced",
+        "sanaajani.taskrunnercode"
     ]
 }

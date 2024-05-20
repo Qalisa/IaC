@@ -5,7 +5,9 @@ metadata:
   namespace: docker-mailserver
   annotations:
     kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
-    cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
+    # when using Cloudflare's proxied DNS record
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   tls:

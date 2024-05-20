@@ -6,3 +6,4 @@
       - path: 'templates/cloudflare-api-secret.yml.j2'
       - path: 'templates/c-issuer-prod.yml.j2'
       - path: 'templates/c-issuer-staging.yml.j2'
+      - path: 'templates/c-issuer-ss.yml.j2'

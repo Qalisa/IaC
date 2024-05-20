@@ -3,7 +3,23 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/ingress.yml.j2'
-      - path: 'templates/account.yml.j2'
+      - path: "templates/ingress.yml.j2"
+      - path: "templates/account.yml.j2"
   vars:
     dashboard_public_hostname: k8s-dashboard.{{ root_domain }}
+
+- name: Get auth token
+  ansible.builtin.shell: kubectl get secret admin-user -n kube-system -o jsonpath={".data.token"} | base64 -d
+  register: dashboard_token
+
+#
+- name: Save Token
+  block:
+    - name: Make sure destination dir exists
+      ansible.builtin.file:
+        path: "{{ auth_dir }}"
+        state: directory
+    - name: Save
+      ansible.builtin.copy:
+        content: "{{ dashboard_token.stdout }}"
+        dest: "{{ auth_dir }}/k8s-dashboard.txt"
