@@ -2,7 +2,8 @@
     "editor.indentSize": 2,
     "files.associations": {
         "**/ansible/**/hosts": "ini",
-        "**/ansible/roles/**/{defaults,tasks,handlers,meta}/*.yml": "ansible",
+        "**/ansible/playbooks/*.yml": "ansible",
+        "**/ansible/playbooks/roles/**/{defaults,tasks,handlers,meta}/*.yml": "ansible",
     },
     "ansible.python.interpreterPath": "/usr/bin/python3",
     // "ansible.python.interpreterPath": "[PLEASE SET THIS IN YOUR User Settings, NOT in Workspace Settings !]",

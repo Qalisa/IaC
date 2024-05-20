@@ -1,7 +1,7 @@
 ---
 # Since pod wont be ready if it is not initialized
 - name: Wait for the pod to be running state
-  shell: >
+  ansible.builtin.shell: >
     kubectl get pod vault-0 -n vault
     -o jsonpath='{.status.phase}'
   register: pod_status
@@ -26,38 +26,46 @@
 # Generate and save keys
 #
 
+
 - name: Generate sealing keys
-  kubernetes.core.k8s_exec:
-    namespace: "{{ hc_vault_namespace }}"
-    pod: vault-0
-    command: vault operator init --namespace='vault' -format=json -key-shares=1 -key-threshold=1
-  register: unseal_keys
-  when: not (vault_status.stdout | from_json).initialized
+  block:
+    - name: Produce JSON file
+      kubernetes.core.k8s_exec:
+        namespace: "{{ hc_vault_namespace }}"
+        pod: vault-0
+        command: vault operator init --namespace='vault' -format=json -key-shares=1 -key-threshold=1
+      register: unseal_keys_raw
+      when: not (vault_status.stdout | from_json).initialized
+    - name: Load facts
+      ansible.builtin.set_fact:
+        unseal_keys: "{{ (unseal_keys_raw.stdout | from_json) }}"
+      when: unseal_keys_raw is not skipped
 
 #
 - name: Save sealing keys locally
   block:
-  - name: Make sure destination dir exists
-    file:
-      path: "{{ auth_dir }}"
-      state: directory
-  - name: Save
-    ansible.builtin.copy:
-      content: "{{ unseal_keys.stdout }}"
-      dest: "{{ unseal_keys_path }}"
-  when: unseal_keys is not skipped
+    - name: Make sure destination dir exists
+      ansible.builtin.file:
+        path: "{{ auth_dir }}"
+        state: directory
+    - name: Save
+      ansible.builtin.copy:
+        content: "{{ unseal_keys }}"
+        dest: "{{ unseal_keys_path }}"
+  when: unseal_keys is defined
 
-- name: Read unseal keys if on local
-  slurp:
-    src: "{{ unseal_keys_path }}"
-  register: local_unseal_keys_raw
-  when: unseal_keys is skipped
+- name: Load unseal keys if on local
   ignore_errors: true
-- name: Load facts
-  set_fact:
-    unseal_keys: "{{ local_unseal_keys_raw.content | b64decode }}"
-  when: local_unseal_keys_raw is succeeded
-
+  block:
+    - name: Read keys as raw bytes
+      ansible.builtin.slurp:
+        src: "{{ unseal_keys_path }}"
+      register: local_unseal_keys_raw
+    - name: Load facts
+      ansible.builtin.set_fact:
+        unseal_keys: "{{ local_unseal_keys_raw.content | b64decode }}"
+      when: local_unseal_keys_raw is not failed
+  when: unseal_keys is not defined
 #
 #
 #
@@ -67,9 +75,9 @@
     namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault operator unseal {{ item }}
-  loop: "{{ (unseal_keys.stdout | from_json).unseal_keys_hex }}"
+  loop: "{{ unseal_keys.unseal_keys_hex }}"
   register: unsealings
-  when: unseal_keys is not skipped
+  when: unseal_keys is defined
 
 - name: List all user methods
   kubernetes.core.k8s_exec:
@@ -77,9 +85,10 @@
     pod: vault-0
     command: "{{ item }}"
   loop:
-    - vault login {{ (unseal_keys.stdout | from_json).root_token }}
+    - vault login {{ unseal_keys.root_token }}
     - vault auth list -format=json
   register: user_methods
+  no_log: true
   when: (unseal_keys is not skipped) and unsealings.results[0].rc == 0
 
 - name: Activate userpass method
@@ -95,16 +104,24 @@
     namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: "vault list -format=json auth/userpass/users"
-  register: admin_exists
+  register: admin_exists_raw
   when: user_methods is not skipped
-  ignore_errors: true
+  failed_when: admin_exists_raw.rc == 1
+
+- name: Load facts
+  ansible.builtin.set_fact:
+    admin_user_exists: "{{ ((admin_exists_raw is not skipped)
+          and (admin_exists_raw.rc != 2)
+          and ((admin_exists_raw.stdout | from_json | length) == 0)
+        | bool) }}"
+  when: admin_exists_raw is defined
 
 - name: Activate admin user
   kubernetes.core.k8s_exec:
     namespace: "{{ hc_vault_namespace }}"
     pod: vault-0
     command: vault write auth/userpass/users/admin password={{ hc_vault_admin_password }} policies=admins
-  when: (admin_exists is not skipped) and (admin_exists.rc != 1) and ((admin_exists.stdout | from_json | length) == 0)
+  when: admin_user_exists
 
 - name: Wait for pod to become Ready
   ansible.builtin.command: "kubectl wait pod/vault-0 --namespace=vault --for=condition=Ready --timeout=3s"
