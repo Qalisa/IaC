@@ -40,19 +40,40 @@
       githubAppInstallationID: "{{ argocd_github_app_installation_id }}"
       githubAppPrivateKey: "{{ argocd_github_app_priv_key }}"
 
+#
+#
+#
+
+- name: Install ArgoCD notifications for Github
+  block:
+    # Download and apply manifest
+    - name: Download catalog
+      ansible.builtin.get_url:
+        url: https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+        dest: /tmp/argocd_notifications_catalog.yaml
+        mode: '0664'
+    - name: Apply catalog
+      kubernetes.core.k8s:
+        state: present
+        src: /tmp/argocd_notifications_catalog.yaml
+    # https://argo-cd.readthedocs.io/en/latest/operator-manual/notifications/
+    # https://argo-cd.readthedocs.io/en/latest/operator-manual/notifications/catalog/
+    - name: Apply configuration and github secret (Controller wide, eg applies to all apps)
+      kubernetes.core.k8s:
+        state: present
+        template:
+          - path: "templates/notifications/controller/secret.yml.j2"
+          - path: "templates/notifications/controller/config.yml.j2"
+
+#
+#
+#
+
 - name: Install App of apps repository to ArgoCD
   kubernetes.core.k8s:
     state: present
     template:
       - path: "templates/app-of-apps.yml.j2"
-
-#
-- name: Install ArgoCD notifications for Github
-  kubernetes.core.k8s:
-    state: present
-    template:
-      - path: "templates/github-notifications-secret.yml.j2"
-      - path: "templates/github-notifications-configuration.yml.j2"
 
 - name: Force sync of app of Apps repo
   ansible.builtin.uri:

@@ -9,6 +9,7 @@ data:
     installationID: {{ argocd_github_app_installation_id }}
     privateKey: $github-privateKey
   # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/
+  # https://argo-cd.readthedocs.io/en/latest/operator-manual/notifications/catalog/
   trigger.on-deployed: |
     - description: Application is synced and healthy. Triggered once per commit.
       oncePer: app.status.operationState.syncResult.revision
