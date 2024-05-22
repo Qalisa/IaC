@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  service.github: |
+    appID: {{ argocd_github_app_app_id }}
+    installationID: {{ argocd_github_app_installation_id }}
+    privateKey: $github-privateKey
+  # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/
+  trigger.on-deployed: |
+    - description: Application is synced and healthy. Triggered once per commit.
+      oncePer: app.status.operationState.syncResult.revision
+      send:
+        - app-deployed
+      when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+  # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/
+  template.app-deployed: |
+    message: |
+      Application {{ "{{.app.metadata.name}}" }} is now running new version of deployments manifests.
+    github:
+      status:
+        state: success
+        label: argo-cd/{{ "{{.app.metadata.name}}" }}
+        targetURL: {{ "{{.context.argocdUrl}}" }}/applications/{{ "{{.app.metadata.name}}" }}?operation=true

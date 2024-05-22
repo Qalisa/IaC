@@ -1,8 +1,4 @@
 ---
-#
-# https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential
-#
-
 - name: Search for pod exact name
   kubernetes.core.k8s_info:
     kind: Pod
@@ -10,45 +6,63 @@
       - app.kubernetes.io/name = argocd-server
   register: pod_name_search
 
-- name: Fu
-  vars:
-    url_part: https://argocd-server.argocd/api/v1
-  block:
-    - name: Read keys as raw bytes
-      ansible.builtin.slurp:
-        src: "{{ argocd_admin_pwd_path }}"
-      register: admin_pwd
+##
+## Interract with API, register repo and creds
+##
+- name: Read keys as raw bytes
+  ansible.builtin.slurp:
+    src: "{{ argocd_admin_pwd_path }}"
+  register: admin_pwd
+- name: Get ArgoCD authentication token
+  ansible.builtin.uri:
+    url: "{{ argocd_api_url_part }}/session"
+    validate_certs: false
+    method: POST
+    body_format: json
+    body:
+      username: "admin"
+      password: "{{ admin_pwd.content | b64decode }}"
+  register: argocd_auth_response
 
-    - name: Get ArgoCD authentication token
-      ansible.builtin.uri:
-        url: "{{ url_part }}/session"
-        validate_certs: false
-        method: POST
-        body_format: json
-        body:
-          username: "admin"
-          password: "{{ admin_pwd.content | b64decode }}"
-      register: argocd_auth_response
+- name: Add Github repository creds to ArgoCD
+  ansible.builtin.uri:
+    url: "{{ argocd_api_url_part }}/repocreds"
+    validate_certs: false
+    method: POST
+    headers:
+      Authorization: "Bearer {{ argocd_auth_response.json.token }}"
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      type: "git"
+      url: "{{ github_org_url }}"
+      githubAppID: "{{ argocd_github_app_app_id }}"
+      githubAppInstallationID: "{{ argocd_github_app_installation_id }}"
+      githubAppPrivateKey: "{{ argocd_github_app_priv_key }}"
 
-    - name: Add repository to ArgoCD
-      ansible.builtin.uri:
-        url: "{{ url_part }}/repositories"
-        validate_certs: false
-        method: POST
-        headers:
-          Authorization: "Bearer {{ argocd_auth_response.json.token }}"
-          Content-Type: "application/json"
-        body_format: json
-        body:
-          repo: "{{ argocd_repository_url }}"
-          githubAppID: "{{ argocd_github_app_app_id }}"
-          githubAppInstallationID: "{{ argocd_github_app_installation_id }}"
-          githubAppPrivateKey: "{{ argocd_github_app_priv_key }}"
-
-
-# https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
-
+- name: Install App of apps repository to ArgoCD
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: "templates/app-of-apps.yml.j2"
 
 #
-# https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
-#
+- name: Install ArgoCD notifications for Github
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: "templates/github-notifications-secret.yml.j2"
+      - path: "templates/github-notifications-configuration.yml.j2"
+
+- name: Force sync of app of Apps repo
+  ansible.builtin.uri:
+    url: "{{ argocd_api_url_part }}/applications/{{ argocd_app_of_apps_name }}/sync"
+    validate_certs: false
+    method: POST
+    headers:
+      Authorization: "Bearer {{ argocd_auth_response.json.token }}"
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      project: "default"
+      namespace: "{{ argocd_apps_namespace }}"

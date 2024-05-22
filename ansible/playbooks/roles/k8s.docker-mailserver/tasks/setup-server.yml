@@ -1,7 +1,13 @@
 ---
+- name: Create namespace
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/ns.yml.j2'
+
 - name: Generate password hash for postmaster
   ansible.builtin.command: |
-    kubectl run -it --rm --restart=Never \
+    kubectl run -n docker-mailserver -it --rm --restart=Never \
     --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ vault_postmaster_password }}'
   register: postmaster_pw_hash
@@ -32,7 +38,6 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/ns.yml.j2'
       - path: 'templates/sc.yml.j2'
       - path: 'templates/mailserver/certificate.yml.j2'
       - path: 'templates/mailserver/pv.yml.j2'

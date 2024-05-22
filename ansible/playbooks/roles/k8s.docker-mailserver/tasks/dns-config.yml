@@ -3,10 +3,9 @@
 ## DKIM
 ##
 
-- name: Wait for docker-mailserver pod to become ready
-  ansible.builtin.command: "kubectl wait --namespace=docker-mailserver -l app=docker-mailserver --for=condition=Ready pods --timeout=120s"
-  register: pods_ready
-  changed_when: pods_ready.rc != 0
+- name: Pause for 5 secs
+  ansible.builtin.pause:
+    seconds: 5
 
 - name: Search for docker-mailserver pod exact name
   kubernetes.core.k8s_info:
@@ -14,6 +13,16 @@
     label_selectors:
       - app = docker-mailserver
   register: docker_mailserver_pod_search
+
+- name: Wait for docker-mailserver pod to become ready
+  ansible.builtin.command: |
+    kubectl wait
+    pod/{{ docker_mailserver_pod_search.resources[0].metadata.name }}
+    --namespace=docker-mailserver
+    --for=condition=Ready
+    --timeout=120s
+  register: pods_ready
+  changed_when: pods_ready.rc != 0
 
 - name: Generate DKIM from pod
   kubernetes.core.k8s_exec:

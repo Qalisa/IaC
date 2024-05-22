@@ -15,5 +15,5 @@ spec:
     - {{ docker_mailserver_host }}
   issuerRef:
     # when using Cloudflare's proxied DNS record
-    name: "selfsigned" # "{{ cluster_issuer_name }}"
+    name: "{{ cluster_issuer_name }}" # "selfsigned"
     kind: ClusterIssuer

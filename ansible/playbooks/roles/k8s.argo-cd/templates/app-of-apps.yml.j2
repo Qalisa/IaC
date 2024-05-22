@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ argocd_app_of_apps_name }}
+  namespace: argocd
+  annotations:
+    # refers to "app-deployed" trigger declared in "github-notifications-configuration"
+    # https://docs.akuity.io/tutorials/notifications/
+    notifications.argoproj.io/subscribe.app-deployed.github: ""
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io # https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#cascading-deletion
+spec:
+  destination:
+    namespace: {{ argocd_apps_namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: apps
+    repoURL: {{ argocd_app_of_apps_repository_url }}
+    targetRevision: HEAD

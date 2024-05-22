@@ -1,13 +1,12 @@
 ---
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week ! (https://letsencrypt.org/docs/rate-limits/)
-cluster_issuer_name: letsencrypt-staging #letsencrypt-prod
+cluster_issuer_name: letsencrypt-prod # letsencrypt-staging
 
 generated_creds_dir: ../../creds
 
 #
 is_cluster_issuer_staging: "{{ cluster_issuer_name == 'letsencrypt-staging' }}"
-cloudflare_origin_ca_root_cert_url: https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem
 
 #
 master_node_name: node1
@@ -22,7 +21,8 @@ postmaster_email: postmaster@{{ root_domain }}
 ingress_nginx_class: nginx
 
 github_org_url: https://github.com/NightworkersLabs
-argocd_repository_url: https://github.com/NightworkersLabs/argocd-repository
+argocd_app_of_apps_repository_url: https://github.com/NightworkersLabs/argocd-repository
+argocd_apps_namespace: nw-labs
 
 # ARC Github App
 arc_github_app_installation_id: 50966965

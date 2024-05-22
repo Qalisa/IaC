@@ -14,8 +14,11 @@ postmaster_password: "{{ vault_postmaster_password }}"
 # password for "admin" user on Hashicorp Vault
 hc_vault_admin_password: "{{ vault_hc_vault_admin_password }}"
 
+### MAKE SURE GITHUB APP HAS BELOW RIGHTS
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
 arc_github_app_priv_key: "{{ vault_arc_github_app_priv_key }}"
 
-#
+### MAKE SURE GITHUB APP HAS BELOW RIGHTS
+# https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential
+# https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
 argocd_github_app_priv_key: "{{ vault_argocd_github_app_priv_key }}"
