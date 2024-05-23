@@ -12,7 +12,7 @@
       - path: "templates/sc.yml.j2"
       - path: "templates/pv.yml.j2"
   vars:
-    storage_class_name: local-storage
+    local_storage_class_name: local-storage
 
 - name: Add stable chart repo Portainer CE
   kubernetes.core.helm_repository:

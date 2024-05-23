@@ -45,4 +45,4 @@
       - path: 'templates/mailserver/service.yml.j2'
       - path: 'templates/mailserver/deploy.yml.j2'
   vars:
-    storage_class_name: local-storage
+    local_storage_class_name: local-storage

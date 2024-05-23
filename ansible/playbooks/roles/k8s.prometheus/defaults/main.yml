@@ -1,0 +1,5 @@
+---
+prometheus_alertmanager_pv_size: 2Gi # 2Gi default
+prometheus_server_pv_size: 8Gi # 8Gi default
+prometheus_alertmanager_pv_subpath: alertmanager
+prometheus_server_pv_subpath: server

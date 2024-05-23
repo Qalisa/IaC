@@ -12,4 +12,4 @@
       - path: 'templates/pv.yml.j2'
       - path: 'templates/sc.yml.j2'
   vars:
-    storage_class_name: local-storage
+    local_storage_class_name: local-storage

@@ -21,7 +21,7 @@
       - path: 'templates/injector/root-ca-issuer.yml.j2'
       - path: 'templates/injector/certificate.yml.j2'
   vars:
-    storage_class_name: local-storage
+    local_storage_class_name: local-storage
   loop:
     - data-vault-0
 
@@ -71,8 +71,8 @@
 
         ingress:
           enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
           annotations:
-            kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"

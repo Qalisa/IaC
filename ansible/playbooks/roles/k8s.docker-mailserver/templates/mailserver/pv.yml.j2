@@ -5,7 +5,7 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: "{{ storage_class_name }}"
+  storageClassName: "{{ local_storage_class_name }}"
   capacity:
     storage: 25Gi 
   local:
@@ -28,7 +28,7 @@ metadata:
   name: docker-mailserver
   namespace: docker-mailserver
 spec:
-  storageClassName: {{ storage_class_name }}
+  storageClassName: {{ local_storage_class_name }}
   accessModes:
     - ReadWriteOnce
   resources:

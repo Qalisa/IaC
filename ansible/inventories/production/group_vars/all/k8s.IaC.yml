@@ -38,3 +38,4 @@ docker_mailserver_pv_path: /var/k8s-data/mailserver
 hc_vault_pv_path: /var/k8s-data/hc-vault
 roundcube_pv_path: /var/k8s-data/roundcube
 registry_pv_path: /var/k8s-data/registry
+prometheus_pv_path: /var/k8s-data/prometheus

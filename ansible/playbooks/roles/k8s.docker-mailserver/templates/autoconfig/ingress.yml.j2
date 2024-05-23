@@ -4,19 +4,19 @@ metadata:
   name: docker-mailserver-autoconfig
   namespace: docker-mailserver
   annotations:
-    kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+    cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}" # "selfsigned"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
+  ingressClassName: "{{ ingress_nginx_class }}"
   tls:
   - hosts:
-    #  - "*.{{ root_domain }}"
-    # secretName: nw-wildcard-certs
-      - {{ autoconfig_fqdn }}
-      - {{ autodiscover_fqdn }}
-    secretName: docker-mailserver-autoconfig-certs
+      - "*.{{ root_domain }}"
+    secretName: nw-wildcard-certs
+    #  - {{ autoconfig_fqdn }}
+    #  - {{ autodiscover_fqdn }}
+    # secretName: docker-mailserver-autoconfig-certs
   rules:
   - host: {{ autoconfig_fqdn }}
     http:

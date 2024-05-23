@@ -18,4 +18,4 @@
       - path: 'templates/roundcube/deploy.yml.j2'
       - path: 'templates/roundcube/ingress.yml.j2'
   vars:
-    storage_class_name: local-storage
+    local_storage_class_name: local-storage

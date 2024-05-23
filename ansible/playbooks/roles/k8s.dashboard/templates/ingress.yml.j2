@@ -4,12 +4,12 @@ metadata:
   name: kubernetes-dashboard
   namespace: kube-system
   annotations:
-    kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
 spec:
+  ingressClassName: "{{ ingress_nginx_class }}"
   tls:
   - hosts:
     #  - "*.{{ root_domain }}"
