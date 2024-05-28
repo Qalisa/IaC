@@ -1,0 +1,14 @@
+haproxy_trusted_networks = {{ docker_mailserver_metallb_loadbalancer_ip }}
+
+service imap-login {
+  inet_listener imap-proxied {
+    haproxy = yes
+    port = 10143
+  }
+
+  inet_listener imaps-proxied {
+    haproxy = yes
+    port = 10993
+    ssl = yes
+  }
+}

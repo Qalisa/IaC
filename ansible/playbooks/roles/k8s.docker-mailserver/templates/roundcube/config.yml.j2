@@ -9,6 +9,6 @@ data:
     ROUNDCUBEMAIL_SKIN: elastic
     ROUNDCUBEMAIL_DEFAULT_HOST: "tls://{{ docker_mailserver_host }}"
     ROUNDCUBEMAIL_USERNAME_DOMAIN: "{{ root_domain }}"
-    # ROUNDCUBEMAIL_DEFAULT_PORT: "993"
+    ROUNDCUBEMAIL_DEFAULT_PORT: "10993" # proxied
     ROUNDCUBEMAIL_SMTP_SERVER: "tls://{{ docker_mailserver_host }}"
-    # ROUNDCUBEMAIL_SMTP_PORT: "587"
+    ROUNDCUBEMAIL_SMTP_PORT: "10587" # proxied

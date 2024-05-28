@@ -1,21 +1,4 @@
 ---
-# - name: Create Persistent Volume dir paths
-#   ansible.builtin.file:
-#     path: "{{ item }}"
-#     state: directory
-#     mode: '0755'
-#   loop:
-#     - "{{ prometheus_pv_path }}/{{ prometheus_alertmanager_pv_subpath }}"
-#     - "{{ prometheus_pv_path }}/{{ prometheus_server_pv_subpath }}"
-
-# - name: Install PVs
-#   kubernetes.core.k8s:
-#     state: present
-#     template:
-#       - path: 'templates/pv.yml.j2'
-#   vars:
-#     local_storage_class_name: local-storage
-
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: prometheus-community
@@ -30,14 +13,8 @@
     release_namespace: prometheus-stack
     create_namespace: true
     values:
-      # alertmanager:
-      #   persistence:
-      #     size: "{{ prometheus_alertmanager_pv_size }}"
-      # persistentVolume:
-      #   mountPath: "{{ prometheus_pv_path }}"
-      #   size: "{{ prometheus_server_pv_size }}"
-      #   storageClass: "{{ local_storage_class_name }}"
       grafana:
+        adminPassword: "{{ grafana_admin_pwd }}"
         service:
           type: LoadBalancer
         ingress:

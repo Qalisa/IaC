@@ -6,7 +6,8 @@ metadata:
   labels:
     app: docker-mailserver
 spec:
-  type: ClusterIP # LoadBalancer
+  type: LoadBalancer
+  loadBalancerIP: {{ docker_mailserver_metallb_loadbalancer_ip }} # must be enforced since it will be referenced in dovecot.cfg
   selector:
     app: docker-mailserver
   ports:
@@ -35,5 +36,3 @@ spec:
       port: 993
       targetPort: imaps
       protocol: TCP
-  externalIPs:
-   - {{ ipify_public_ip }}

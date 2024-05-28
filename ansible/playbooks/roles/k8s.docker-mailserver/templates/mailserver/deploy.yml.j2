@@ -11,7 +11,7 @@ metadata:
     ignore-check.kube-linter.io/no-read-only-root-fs: >-
       There are too many files written to make the root FS read-only
 spec:
-  # replicas: 1
+  replicas: 1
   selector:
     matchLabels:
       app: docker-mailserver
@@ -105,11 +105,29 @@ spec:
               protocol: TCP
             - name: submission
               containerPort: 587
+              protocol: TCP
             - name: imap
               containerPort: 143
               protocol: TCP
             - name: imaps
               containerPort: 993
+              protocol: TCP
+
+            # proxied ports (https://docker-mailserver.github.io/docker-mailserver/edge/config/advanced/kubernetes/#separate-proxy-protocol-ports-for-ingress)
+            - name: smtp-proxy
+              containerPort: 12525
+              protocol: TCP
+            - name: imap-proxy
+              containerPort: 10143
+              protocol: TCP
+            - name: subs-proxy
+              containerPort: 10465
+              protocol: TCP
+            - name: sub-proxy
+              containerPort: 10587
+              protocol: TCP
+            - name: imaps-proxy
+              containerPort: 10993
               protocol: TCP
 
           envFrom:

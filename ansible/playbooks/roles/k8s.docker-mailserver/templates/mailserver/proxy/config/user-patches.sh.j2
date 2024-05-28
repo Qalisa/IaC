@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Duplicate the config for the submission(s) service ports (587 / 465) with adjustments for the PROXY ports (10587 / 10465) and `syslog_name` setting:
+postconf -Mf submission/inet | sed -e s/^submission/10587/ -e 's/submission/submission-proxyprotocol/' >> /etc/postfix/master.cf
+postconf -Mf submissions/inet | sed -e s/^submissions/10465/ -e 's/submissions/submissions-proxyprotocol/' >> /etc/postfix/master.cf
+# Enable PROXY Protocol support for these new service variants:
+postconf -P 10587/inet/smtpd_upstream_proxy_protocol=haproxy
+postconf -P 10465/inet/smtpd_upstream_proxy_protocol=haproxy
+
+# Create a variant for port 25 too (NOTE: Port 10025 is already assigned in DMS to Amavis):
+postconf -Mf smtp/inet | sed -e s/^smtp/12525/ >> /etc/postfix/master.cf
+# Enable PROXY Protocol support (different setting as port 25 is handled via postscreen), optionally configure a `syslog_name` to distinguish in logs:
+postconf -P 12525/inet/postscreen_upstream_proxy_protocol=haproxy 12525/inet/syslog_name=smtp-proxyprotocol

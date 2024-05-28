@@ -16,6 +16,7 @@ root_domain: nightworkers-labs.io
 
 # which emails is to be said that will register the certificates
 postmaster_email: postmaster@{{ root_domain }}
+docker_mailserver_metallb_loadbalancer_ip: 10.5.0.40 # ensure this is in MetalLB range of distributed IPs
 
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
@@ -38,4 +39,3 @@ docker_mailserver_pv_path: /var/k8s-data/mailserver
 hc_vault_pv_path: /var/k8s-data/hc-vault
 roundcube_pv_path: /var/k8s-data/roundcube
 registry_pv_path: /var/k8s-data/registry
-prometheus_pv_path: /var/k8s-data/prometheus
