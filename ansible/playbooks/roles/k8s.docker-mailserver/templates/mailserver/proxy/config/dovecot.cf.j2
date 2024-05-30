@@ -1,4 +1,4 @@
-haproxy_trusted_networks = {{ docker_mailserver_metallb_loadbalancer_ip }}
+haproxy_trusted_networks = {{ kube_pods_subnet }}
 
 service imap-login {
   inet_listener imap-proxied {

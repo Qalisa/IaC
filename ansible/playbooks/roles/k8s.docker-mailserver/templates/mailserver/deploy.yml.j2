@@ -114,21 +114,21 @@ spec:
               protocol: TCP
 
             # proxied ports (https://docker-mailserver.github.io/docker-mailserver/edge/config/advanced/kubernetes/#separate-proxy-protocol-ports-for-ingress)
-            - name: smtp-proxy
-              containerPort: 12525
-              protocol: TCP
-            - name: imap-proxy
-              containerPort: 10143
-              protocol: TCP
-            - name: subs-proxy
-              containerPort: 10465
-              protocol: TCP
-            - name: sub-proxy
-              containerPort: 10587
-              protocol: TCP
-            - name: imaps-proxy
-              containerPort: 10993
-              protocol: TCP
+           # - name: smtp-proxy
+           #   containerPort: 12525
+           #   protocol: TCP
+           # - name: imap-proxy
+           #   containerPort: 10143
+           #   protocol: TCP
+           # - name: subs-proxy
+           #   containerPort: 10465
+           #   protocol: TCP
+           # - name: sub-proxy
+           #   containerPort: 10587
+           #   protocol: TCP
+           # - name: imaps-proxy
+           #   containerPort: 10993
+           #   protocol: TCP
 
           envFrom:
             - configMapRef:

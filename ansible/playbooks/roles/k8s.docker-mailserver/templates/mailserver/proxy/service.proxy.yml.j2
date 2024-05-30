@@ -1,38 +1,36 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: docker-mailserver
+  name: proxy
   namespace: docker-mailserver
   labels:
     app: docker-mailserver
 spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
   selector:
     app: docker-mailserver
   ports:
     # smtp
-    - name: smtp
+    - name: smtp-proxy
       port: 25
-      targetPort: smtp
+      targetPort: smtp-proxy
       protocol: TCP
     # submissions (ESMTP with implicit TLS)
-    - name: submissions
+    - name: subs-proxy
       port: 465
-      targetPort: submissions
+      targetPort: subs-proxy
       protocol: TCP
     # submission (ESMTP with explicit TLS)
-    - name: submission
+    - name: sub-proxy
       port: 587
-      targetPort: submission
+      targetPort: sub-proxy
       protocol: TCP
     # imap (explicit TLS)
-    - name: imap
+    - name: imap-proxy
       port: 143
-      targetPort: imap
+      targetPort: imap-proxy
       protocol: TCP
     # imaps (implicit TLS)
-    - name: imaps
+    - name: imaps-proxy
       port: 993
-      targetPort: imaps
+      targetPort: imaps-proxy
       protocol: TCP
