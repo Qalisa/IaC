@@ -5,31 +5,41 @@
     template:
       - path: 'templates/ns.yml.j2'
 
-- name: Generate password hash for postmaster
-  ansible.builtin.command: |
-    kubectl run -n docker-mailserver -it --rm --restart=Never \
-    --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
-    -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ vault_postmaster_password }}'
-  register: postmaster_pw_hash
-  changed_when: postmaster_pw_hash.rc != 0
-
-- name: Put in dict
-  ansible.builtin.set_fact:
-    default_accounts_dict: >
-      {
-        "{{ postmaster_email }}": "{{ postmaster_pw_hash.stdout_lines[0] }}",
-      }
-
-# https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
-# it does not erase other accounts :)
-- name: Create persistent volume local path path ALONG initial account definition
-  ansible.builtin.lineinfile:
-    path: "{{ path_to_config_folder }}/postfix-accounts.cf"
-    regexp: "^#? *{{ item.key | regex_escape() }}|"
-    line: "{{ item.key }}|{{ item.value }}"
-    create: true
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ path_to_config_folder }}"
+    state: directory
     mode: '0755'
-  with_dict: "{{ default_accounts_dict }}"
+
+##
+## Create required postmaster account (Only for "ACCOUNT_PROVISIONER: FILE")
+##
+
+# - name: Generate password hash for postmaster
+#   ansible.builtin.command: |
+#     kubectl run -n docker-mailserver -it --rm --restart=Never \
+#     --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
+#     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ postmaster_password }}'
+#   register: postmaster_pw_hash
+#   changed_when: postmaster_pw_hash.rc != 0
+
+# - name: Put in dict
+#   ansible.builtin.set_fact:
+#     default_accounts_dict: >
+#       {
+#         "{{ postmaster_email }}": "{{ postmaster_pw_hash.stdout_lines[0] }}",
+#       }
+
+# # https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
+# # it does not erase other accounts :)
+# - name: Create persistent volume local path path ALONG initial account definition
+#   ansible.builtin.lineinfile:
+#     path: "{{ path_to_config_folder }}/postfix-accounts.cf"
+#     regexp: "^#? *{{ item.key | regex_escape() }}|"
+#     line: "{{ item.key }}|{{ item.value }}"
+#     create: true
+#     mode: '0755'
+#   with_dict: "{{ default_accounts_dict }}"
 
 ##
 ## Patch With PROXY Protocol
@@ -108,6 +118,44 @@
 #
 ##
 #
+
+- name: Install Docker Module for Python
+  ansible.builtin.pip:
+    name: python-ldap
+
+- name: Ensure User group matching Docker usergroup exists to allow auto-creation of LDAP user mail directories
+  community.general.ldap_entry:
+    dn: cn={{ email_users_ldap_group_name }},{{ dc_query_string }}
+    server_uri: ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}/
+    bind_dn: cn=admin,{{ dc_query_string }}
+    bind_pw: "{{ openldap_pwd }}"
+    objectClass:
+      - posixGroup
+      - top
+    attributes:
+      gidnumber: 5000
+
+- name: Create postmaster account
+  community.general.ldap_entry:
+    dn: cn={{ postmaster_username }},cn={{ email_users_ldap_group_name }},{{ dc_query_string }}
+    server_uri: ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}/
+    bind_dn: cn=admin,{{ dc_query_string }}
+    bind_pw: "{{ openldap_pwd }}"
+    objectClass:
+      - inetOrgPerson
+      - posixAccount
+      - top
+    attributes:
+      gidnumber: 5000
+      homedirectory: /home/users/{{ postmaster_username }}
+      mail:
+        - "{{ postmaster_username }}"
+        - "{{ postmaster_email }}"
+      sn: "{{ postmaster_username }}"
+      uid: "{{ postmaster_username }}"
+      uidnumber: 1000
+      userpassword: "{CRYPT}{{ postmaster_password | password_hash('md5') }}"
+
 
 - name: Add whitelisted IPs for inner cluster access
   ansible.builtin.template:

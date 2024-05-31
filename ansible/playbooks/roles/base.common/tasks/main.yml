@@ -15,5 +15,9 @@
       - python3-pip
       - virtualenv
       - python3-setuptools
+      - python3-dev
+      - libldap2-dev
+      - libsasl2-dev
+      - libssl-dev
     state: present # latest
     update_cache: true

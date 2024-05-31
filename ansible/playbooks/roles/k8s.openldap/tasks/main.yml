@@ -52,7 +52,7 @@
           ingressClassName: nginx
           ## Ingress Host
           hosts:
-            - ldap.{{ root_domain }}
+            - admin-ldap.{{ root_domain }}
         env:
           PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: "never"
       ltb-passwd:
@@ -68,4 +68,4 @@
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           ingressClassName: nginx
           hosts:
-            - admin-ldap.{{ root_domain }}
+            - pwd-ldap.{{ root_domain }}

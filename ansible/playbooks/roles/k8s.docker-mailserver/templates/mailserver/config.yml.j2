@@ -29,8 +29,8 @@ data:
 
     # >>> Postfix LDAP Integration
     ACCOUNT_PROVISIONER: LDAP
-    LDAP_SERVER_HOST: "{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}"
-    LDAP_BIND_DN: cn=admin,ou=users,{{ dc_query_string }}
+    LDAP_SERVER_HOST: "ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}"
+    LDAP_BIND_DN: cn=admin,{{ dc_query_string }}
     # LDAP_BIND_PW: mypassword defined as separate secret manifest !!
     LDAP_SEARCH_BASE: {{ dc_query_string }}
     LDAP_QUERY_FILTER_DOMAIN: (|(mail=*@%s)(mailAlias=*@%s)(mailGroupMember=*@%s))
@@ -48,6 +48,9 @@ data:
     # <<< Dovecot LDAP Integration
 
     # >>> SASL LDAP Authentication
-    SASLAUTHD_MECHANISMS: rimap
-    SASLAUTHD_MECH_OPTIONS: "127.0.0.1"
+    ENABLE_SASLAUTHD: '1'
+    SASLAUTHD_MECHANISMS: ldap
+    SASLAUTHD_LDAP_FILTER: (&(mail=%U@{{ root_domain }})(objectClass=inetOrgPerson))
+    # SASLAUTHD_MECHANISMS: rimap
+    # SASLAUTHD_MECH_OPTIONS: "127.0.0.1"
     # <<< LDAP Authentication
