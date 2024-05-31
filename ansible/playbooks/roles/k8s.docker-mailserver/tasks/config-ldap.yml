@@ -1,0 +1,37 @@
+---
+- name: Install Docker Module for Python
+  ansible.builtin.pip:
+    name: python-ldap
+
+- name: Ensure User group matching Docker usergroup exists to allow auto-creation of LDAP user mail directories
+  community.general.ldap_entry:
+    dn: cn={{ email_users_ldap_group_name }},{{ dc_query_string }}
+    server_uri: ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}/
+    bind_dn: cn=admin,{{ dc_query_string }}
+    bind_pw: "{{ openldap_pwd }}"
+    objectClass:
+      - posixGroup
+      - top
+    attributes:
+      gidnumber: 5000
+
+- name: Create postmaster account
+  community.general.ldap_entry:
+    dn: cn={{ postmaster_username }},cn={{ email_users_ldap_group_name }},{{ dc_query_string }}
+    server_uri: ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}/
+    bind_dn: cn=admin,{{ dc_query_string }}
+    bind_pw: "{{ openldap_pwd }}"
+    objectClass:
+      - inetOrgPerson
+      - posixAccount
+      - top
+    attributes:
+      gidnumber: 5000
+      homedirectory: /home/users/{{ postmaster_username }}
+      mail:
+        - "{{ postmaster_username }}"
+        - "{{ postmaster_email }}"
+      sn: "{{ postmaster_username }}"
+      uid: "{{ postmaster_username }}"
+      uidnumber: 1000
+      userpassword: "{CRYPT}{{ postmaster_password | password_hash('md5') }}"
