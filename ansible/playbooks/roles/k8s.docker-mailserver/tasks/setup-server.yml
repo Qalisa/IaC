@@ -1,35 +1,35 @@
 ---
-# - name: Create namespace
-#   kubernetes.core.k8s:
-#     state: present
-#     template:
-#       - path: 'templates/ns.yml.j2'
+- name: Create namespace
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/ns.yml.j2'
 
-# - name: Generate password hash for postmaster
-#   ansible.builtin.command: |
-#     kubectl run -n docker-mailserver -it --rm --restart=Never \
-#     --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
-#     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ vault_postmaster_password }}'
-#   register: postmaster_pw_hash
-#   changed_when: postmaster_pw_hash.rc != 0
+- name: Generate password hash for postmaster
+  ansible.builtin.command: |
+    kubectl run -n docker-mailserver -it --rm --restart=Never \
+    --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
+    -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ vault_postmaster_password }}'
+  register: postmaster_pw_hash
+  changed_when: postmaster_pw_hash.rc != 0
 
-# - name: Put in dict
-#   ansible.builtin.set_fact:
-#     default_accounts_dict: >
-#       {
-#         "{{ postmaster_email }}": "{{ postmaster_pw_hash.stdout_lines[0] }}",
-#       }
+- name: Put in dict
+  ansible.builtin.set_fact:
+    default_accounts_dict: >
+      {
+        "{{ postmaster_email }}": "{{ postmaster_pw_hash.stdout_lines[0] }}",
+      }
 
-# # https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
-# - name: Create persistent volume local path path ALONG initial account definition. it does not erase other accounts :)
-#   ansible.builtin.lineinfile:
-#     path: "{{ path_to_config_folder }}/postfix-accounts.cf"
-#     regexp: "^#? *{{ item.key | regex_escape() }}|"
-#     line: "{{ item.key }}|{{ item.value }}"
-#     create: true
-#     mode: '0755'
-#   with_dict: "{{ default_accounts_dict }}"
-
+# https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
+# it does not erase other accounts :)
+- name: Create persistent volume local path path ALONG initial account definition
+  ansible.builtin.lineinfile:
+    path: "{{ path_to_config_folder }}/postfix-accounts.cf"
+    regexp: "^#? *{{ item.key | regex_escape() }}|"
+    line: "{{ item.key }}|{{ item.value }}"
+    create: true
+    mode: '0755'
+  with_dict: "{{ default_accounts_dict }}"
 
 ##
 ## Patch With PROXY Protocol
@@ -51,21 +51,21 @@
 #       - path: 'templates/mailserver/proxy/service.proxy.yml.j2'
 
 ##
-## Patch Nginx Ingress
+## Patch Nginx Ingress Controller (Requires PROXY protocol enabled ? https://kubernetes.github.io/ingress-nginx/user-guide/miscellaneous/#source-ip-address)
 ##
 
-# - name: Override proxy definition file
+# - name: Override additionnal TCP Services handled by NGinx Ingress Controller
 #   kubernetes.core.k8s:
 #     state: present
 #     template:
 #       - path: 'templates/mailserver/proxy/ingress-tcp.yml.j2'
 
-# - name: Restart ingress-nginx daemonset
+# - name: Restart ingress-nginx daemonset to ack new configuration
 #   ansible.builtin.command: kubectl rollout restart daemonset ingress-nginx-controller -n ingress-nginx
 #   register: inc_reset
 #   changed_when: inc_reset.rc != 0
 
-# - name: Patch existing ingress service exposed ports
+# - name: Patch existing NGinx Ingress Controller Service's exposed ports
 #   kubernetes.core.k8s:
 #     state: patched
 #     kind: Service
@@ -109,6 +109,17 @@
 ##
 #
 
+- name: Add whitelisted IPs for inner cluster access
+  ansible.builtin.template:
+    src: "templates/mailserver/{{ item }}.j2"
+    dest: "{{ path_to_config_folder }}/{{ item }}"
+    mode: '0755'
+  loop:
+    - fail2ban-jail.cf
+
+- name: Get my public IP from ipify.org
+  community.general.ipify_facts:
+
 - name: Install Docker Mailserver
   kubernetes.core.k8s:
     state: present
@@ -117,6 +128,7 @@
       - path: 'templates/mailserver/certificate.yml.j2'
       - path: 'templates/mailserver/pv.yml.j2'
       - path: 'templates/mailserver/config.yml.j2'
+      - path: 'templates/mailserver/ldap-secret.yml.j2'
       - path: 'templates/mailserver/service.yml.j2'
       - path: 'templates/mailserver/deploy.yml.j2'
   vars:

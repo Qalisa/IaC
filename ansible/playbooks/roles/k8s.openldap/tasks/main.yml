@@ -1,0 +1,71 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: helm-openldap
+    repo_url: https://jp-gouin.github.io/helm-openldap/
+
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ openldap_pv_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Create Persistent Volume
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/pv.yml.j2'
+  vars:
+    local_storage_class_name: local-storage
+
+- name: Install OpenLDAP Stack w/ Helm
+  vars:
+    local_storage_class_name: local-storage
+  kubernetes.core.helm:
+    name: "{{ openldap_stack_ldap_server_hostname }}"
+    chart_ref: helm-openldap/openldap-stack-ha
+    release_namespace: "{{ openldap_stack_namespace }}"
+    create_namespace: true
+    values:
+      replicaCount: 1
+      global:
+        ldapDomain: "{{ root_domain }}"
+        adminPassword: "{{ openldap_pwd }}"
+        configPassword: "{{ openldap_pwd }}"
+      replication:
+        enabled: false
+      persistence:
+        enabled: true
+        storageClass: "{{ local_storage_class_name }}"
+        size: "8Gi"
+      phpldapadmin:
+        enabled: true
+        service:
+          type: LoadBalancer
+        ingress:
+          enabled: true
+          annotations:
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          ingressClassName: nginx
+          ## Ingress Host
+          hosts:
+            - ldap.{{ root_domain }}
+        env:
+          PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: "never"
+      ltb-passwd:
+        enabled: true
+        service:
+          type: LoadBalancer
+        ingress:
+          enabled: true
+          annotations:
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          ingressClassName: nginx
+          hosts:
+            - admin-ldap.{{ root_domain }}

@@ -3,7 +3,7 @@
 ## DKIM
 ##
 
-- name: Pause for 5 secs
+- name: Pause for 5 secs (to wait to docker-mailserver pod to be invoked)
   ansible.builtin.pause:
     seconds: 5
 

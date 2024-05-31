@@ -43,6 +43,7 @@
 
 #
 - name: Save sealing keys locally
+  when: unseal_keys is defined
   block:
     - name: Make sure destination dir exists
       ansible.builtin.file:
@@ -52,10 +53,10 @@
       ansible.builtin.copy:
         content: "{{ unseal_keys }}"
         dest: "{{ unseal_keys_path }}"
-  when: unseal_keys is defined
 
 - name: Load unseal keys if on local
   ignore_errors: true
+  when: unseal_keys is not defined
   block:
     - name: Read keys as raw bytes
       ansible.builtin.slurp:
@@ -65,7 +66,6 @@
       ansible.builtin.set_fact:
         unseal_keys: "{{ local_unseal_keys_raw.content | b64decode }}"
       when: local_unseal_keys_raw is not failed
-  when: unseal_keys is not defined
 #
 #
 #

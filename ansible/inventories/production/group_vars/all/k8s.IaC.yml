@@ -32,9 +32,14 @@ arc_github_app_app_id: 902509
 argocd_github_app_installation_id: 50968159
 argocd_github_app_app_id: 902538
 
+# OpenLDAP
+openldap_stack_namespace: openldap-stack
+openldap_stack_ldap_server_hostname: openldap
+
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer
 docker_mailserver_pv_path: /var/k8s-data/mailserver
 hc_vault_pv_path: /var/k8s-data/hc-vault
 roundcube_pv_path: /var/k8s-data/roundcube
 registry_pv_path: /var/k8s-data/registry
+openldap_pv_path: /var/k8s-data/openldap

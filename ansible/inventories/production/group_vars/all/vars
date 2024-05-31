@@ -25,3 +25,6 @@ argocd_github_app_priv_key: "{{ vault_argocd_github_app_priv_key }}"
 
 #
 grafana_admin_pwd: "{{ vault_grafana_admin_pwd }}"
+
+#
+openldap_pwd: "{{ vault_openldap_pwd }}"

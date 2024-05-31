@@ -6,8 +6,10 @@ metadata:
   labels:
     app: docker-mailserver
 spec:
-  type: LoadBalancer
+  type: ClusterIP # LoadBalancer
   externalTrafficPolicy: Local
+  externalIPs:
+    - {{ ipify_public_ip }}
   selector:
     app: docker-mailserver
   ports:

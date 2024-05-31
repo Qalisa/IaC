@@ -52,7 +52,8 @@
     # - role: k8s.prometheus-stack
     # - role: k8s.webmin
     # - role: k8s.portainer-ce
-    - role: k8s.docker-mailserver
+    - role: k8s.openldap
+    # - role: k8s.docker-mailserver
     # - role: k8s.hc-vault
     # - role: k8s.github-arc
     # - role: k8s.argo-cd

@@ -9,10 +9,10 @@ data:
     SUPPORT_URL: "https://{{ autodiscover_fqdn }}"
     DOMAIN: {{ root_domain }}
     # IMAP configuration (host mandatory to enable)
-    IMAP_HOST: imap.{{ root_domain }}
-    IMAP_PORT: '993'
-    IMAP_SOCKET: SSL
+    IMAP_HOST: "{{ docker_mailserver_host }}"
+    IMAP_PORT: '143'
+    IMAP_SOCKET: STARTTLS
     # SMTP configuration (host mandatory to enable)
-    SMTP_HOST: smtp.{{ root_domain }}
+    SMTP_HOST: "{{ docker_mailserver_host }}"
     SMTP_PORT: '587'
     SMTP_SOCKET: STARTTLS

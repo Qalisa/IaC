@@ -131,6 +131,8 @@ spec:
            #   protocol: TCP
 
           envFrom:
+            - secretRef:
+                name: ldap
             - configMapRef:
                 name: docker-mailserver
 

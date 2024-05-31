@@ -6,3 +6,5 @@ autoconfig_fqdn: "autoconfig.{{ root_domain }}"
 autodiscover_fqdn: "autodiscover.{{ root_domain }}"
 mx_hostname: mail
 docker_mailserver_host: "{{ mx_hostname }}.{{ root_domain }}"
+
+dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
