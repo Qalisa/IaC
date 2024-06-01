@@ -34,3 +34,6 @@ listmonk_admin_password: "{{ vault_listmonk_admin_password }}"
 
 #
 registry_ui_password: "{{ vault_registry_ui_password }}"
+
+#
+matomo_password: "{{ vault_matomo_password }}"

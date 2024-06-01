@@ -52,6 +52,9 @@ listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
 #
 registry_ui_username: "admin"
 
+#
+matomo_username: admin
+
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer
 docker_mailserver_pv_path: /var/k8s-data/mailserver
@@ -61,3 +64,5 @@ registry_pv_path: /var/k8s-data/registry
 openldap_pv_path: /var/k8s-data/openldap
 listmonk_db_pv_path: /var/k8s-data/listmonk/db
 listmonk_uploads_pv_path: /var/k8s-data/listmonk/uploads
+matomo_pv_db_path: /var/k8s-data/matomo/db
+matomo_pv_app_path: /var/k8s-data/matomo/app

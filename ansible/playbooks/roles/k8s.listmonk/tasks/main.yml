@@ -1,40 +1,40 @@
 ---
-# - name: Create Persistent Volume dir paths
-#   ansible.builtin.file:
-#     path: "{{ item }}"
-#     state: directory
-#     mode: '0755'
-#   loop:
-#     - "{{ listmonk_db_pv_path }}"
-#     - "{{ listmonk_uploads_pv_path }}"
+- name: Create Persistent Volume dir paths
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ listmonk_db_pv_path }}"
+    - "{{ listmonk_uploads_pv_path }}"
 
 
-# - name: Install listmonk
-#   kubernetes.core.k8s:
-#     state: present
-#     template:
-#       - path: 'templates/ns.yml.j2'
-#       - path: 'templates/db/pv.yml.j2'
-#       - path: 'templates/db/pvc.yml.j2'
-#       - path: 'templates/db/service.yml.j2'
-#       - path: 'templates/db/deploy.yml.j2'
-#       - path: 'templates/db/config.yml.j2'
-#       - path: 'templates/app/pv-uploads.yml.j2'
-#       - path: 'templates/app/pvc-uploads.yml.j2'
-#       - path: 'templates/app/secret.yml.j2'
-#       - path: 'templates/app/service.yml.j2'
-#       - path: 'templates/app/deploy.yml.j2'
-#       - path: 'templates/app/ingress.yml.j2'
-#       - path: 'templates/app/config.yml.j2'
+- name: Install listmonk
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/ns.yml.j2'
+      - path: 'templates/db/pv.yml.j2'
+      - path: 'templates/db/pvc.yml.j2'
+      - path: 'templates/db/service.yml.j2'
+      - path: 'templates/db/deploy.yml.j2'
+      - path: 'templates/db/config.yml.j2'
+      - path: 'templates/app/pv-uploads.yml.j2'
+      - path: 'templates/app/pvc-uploads.yml.j2'
+      - path: 'templates/app/secret.yml.j2'
+      - path: 'templates/app/service.yml.j2'
+      - path: 'templates/app/deploy.yml.j2'
+      - path: 'templates/app/ingress.yml.j2'
+      - path: 'templates/app/config.yml.j2'
 
-# - name: Wait for pod to become ready
-#   ansible.builtin.command: "kubectl wait --namespace=listmonk -l app=listmonk --for=condition=Ready pods --timeout=120s"
-#   register: pods_ready
-#   changed_when: pods_ready.rc != 0
+- name: Wait for pod to become ready
+  ansible.builtin.command: "kubectl wait --namespace=listmonk -l app=listmonk --for=condition=Ready pods --timeout=120s"
+  register: pods_ready
+  changed_when: pods_ready.rc != 0
 
-# - name: Pause for 5 secs
-#   ansible.builtin.pause:
-#     seconds: 5
+- name: Pause for 5 secs
+  ansible.builtin.pause:
+    seconds: 5
 
 - name: Update settings
   ansible.builtin.uri:

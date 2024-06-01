@@ -1,0 +1,79 @@
+---
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ matomo_pv_db_path }}"
+    - "{{ matomo_pv_app_path }}"
+
+- name: Prepare volumes manifests
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/ns.yml.j2'
+      - path: 'templates/app/pv.yml.j2'
+      - path: 'templates/app/pvc.yml.j2'
+      - path: 'templates/db/pv.yml.j2'
+      - path: 'templates/db/pvc.yml.j2'
+
+- name: Install Matomo Stack w/ Helm
+  kubernetes.core.helm:
+    name: matomo
+    chart_ref: oci://registry-1.docker.io/bitnamicharts/matomo
+    release_namespace: matomo
+    create_namespace: false
+    values:
+      podLabels:
+        app: matomo
+      persistence:
+        existingClaim: app
+      mariadb:
+        primary:
+          persistence:
+            existingClaim: db
+      matomoUsername: "{{ matomo_username }}"
+      matomoPassword: "{{ matomo_password }}"
+      matomoEmail: "{{ postmaster_email }}"
+      matomoWebsiteName: Matomo
+      matomoWebsiteHost: https://matomo.{{ root_domain }}
+      #
+      smtpAuth: Login
+      smtpHost: docker-mailserver.docker-mailserver
+      smtpPort: 587
+      smtpUser: "{{ postmaster_username }}"
+      smtpPassword: "{{ postmaster_password }}"
+      smtpProtocol: tls
+      noreplyName: "Do Not Reply"
+      noreplyAddress: noreply@{{ root_domain }}
+      #
+      service:
+        type:	LoadBalancer
+        externalTrafficPolicy: Local 
+      ingress:
+        enabled: true
+        ingressClassName:	"{{ ingress_nginx_class }}"
+        hostname:	matomo.{{ root_domain }}
+        annotations:
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+- name: Wait for pod to become ready
+  ansible.builtin.command: "kubectl wait --namespace=matomo --for=condition=Ready pod -l app=matomo --timeout=120s"
+  register: pods_ready
+  changed_when: pods_ready.rc != 0
+
+- name: Pause for 5 secs
+  ansible.builtin.pause:
+    seconds: 5
+
+- name: Edit ini
+  community.general.ini_file:
+    path: "{{ matomo_pv_app_path }}/config/config.ini.php"
+    section: General
+    no_extra_spaces: true
+    option: assume_secure_protocol
+    values: '1'
