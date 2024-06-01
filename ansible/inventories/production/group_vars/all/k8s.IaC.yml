@@ -3,6 +3,9 @@
 # CAREFUL ! In production, 50 requested certificates per week ! (https://letsencrypt.org/docs/rate-limits/)
 cluster_issuer_name: letsencrypt-prod # letsencrypt-staging
 
+# default storage class
+local_storage_class_name: local-storage
+
 generated_creds_dir: ../../creds
 
 #
@@ -16,6 +19,9 @@ root_domain: nightworkers-labs.io
 
 # which emails is to be said that will register the certificates
 postmaster_email: postmaster@{{ root_domain }}
+mx_hostname: mail
+docker_mailserver_host: "{{ mx_hostname }}.{{ root_domain }}"
+postmaster_username: "{{ postmaster_email | split('@') | first }}"
 
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
@@ -36,6 +42,13 @@ argocd_github_app_app_id: 902538
 openldap_stack_namespace: openldap-stack
 openldap_stack_ldap_server_hostname: openldap
 
+#
+listmonk_admin_username: admin
+listmonk_site_name: Nightworkers Labs
+listmonk_logo_url: https://nightworkers-labs.io/logo.png
+listmonk_favicon_url: https://nightworkers-labs.io/logo.png
+listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
+
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer
 docker_mailserver_pv_path: /var/k8s-data/mailserver
@@ -43,3 +56,5 @@ hc_vault_pv_path: /var/k8s-data/hc-vault
 roundcube_pv_path: /var/k8s-data/roundcube
 registry_pv_path: /var/k8s-data/registry
 openldap_pv_path: /var/k8s-data/openldap
+listmonk_db_pv_path: /var/k8s-data/listmonk/db
+listmonk_uploads_pv_path: /var/k8s-data/listmonk/uploads

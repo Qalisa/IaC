@@ -20,8 +20,6 @@
       - path: 'templates/pv.yml.j2'
       - path: 'templates/injector/root-ca-issuer.yml.j2'
       - path: 'templates/injector/certificate.yml.j2'
-  vars:
-    local_storage_class_name: local-storage
   loop:
     - data-vault-0
 

@@ -28,3 +28,6 @@ grafana_admin_pwd: "{{ vault_grafana_admin_pwd }}"
 
 #
 openldap_pwd: "{{ vault_openldap_pwd }}"
+
+#
+listmonk_admin_password: "{{ vault_listmonk_admin_password }}"

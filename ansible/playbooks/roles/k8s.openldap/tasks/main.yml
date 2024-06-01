@@ -15,12 +15,8 @@
     state: present
     template:
       - path: 'templates/pv.yml.j2'
-  vars:
-    local_storage_class_name: local-storage
 
 - name: Install OpenLDAP Stack w/ Helm
-  vars:
-    local_storage_class_name: local-storage
   kubernetes.core.helm:
     name: "{{ openldap_stack_ldap_server_hostname }}"
     chart_ref: helm-openldap/openldap-stack-ha

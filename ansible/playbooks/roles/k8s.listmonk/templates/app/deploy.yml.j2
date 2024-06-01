@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: listmonk
+spec:
+  selector:
+    matchLabels:
+      app: listmonk
+  template:
+    metadata:
+      labels:
+        app: listmonk
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: listmonk
+          image: listmonk/listmonk:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh","-c"]
+          args: ["./listmonk --install --yes --idempotent || true && ./listmonk"]
+          volumeMounts:
+            - name: uploads
+              mountPath: "{{ listmonk_uploads_pv_path }}"
+              readOnly: false
+          envFrom:
+            - secretRef:
+                name: listmonk-admin
+            - configMapRef:
+                name: app
+          ports:
+            - name: app
+              containerPort: 9000
+              protocol: TCP
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: uploads

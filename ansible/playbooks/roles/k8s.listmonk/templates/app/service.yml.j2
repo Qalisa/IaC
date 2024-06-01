@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: roundcube
-  namespace: docker-mailserver
+  name: app
+  namespace: listmonk
   labels:
-    app: roundcube
+    app: listmonk
 spec:
   type: LoadBalancer
   selector:
-    app: roundcube
+    app: listmonk
   ports:
     - name: app
-      port: 80
+      port: 9000
       targetPort: app
       protocol: TCP

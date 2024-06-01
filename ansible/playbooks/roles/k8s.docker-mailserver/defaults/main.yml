@@ -4,10 +4,7 @@ path_to_config_folder: "{{ docker_mailserver_pv_path }}/{{ config_folder_name }}
 
 autoconfig_fqdn: "autoconfig.{{ root_domain }}"
 autodiscover_fqdn: "autodiscover.{{ root_domain }}"
-mx_hostname: mail
-docker_mailserver_host: "{{ mx_hostname }}.{{ root_domain }}"
 
 dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
 
 email_users_ldap_group_name: Email Users
-postmaster_username: "{{ postmaster_email | split('@') | first }}"

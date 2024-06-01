@@ -5,14 +5,11 @@
     state: directory
     mode: "0755"
 
-- name: Define or create default StorageClass and Persistent volume
+- name: Define or create Persistent volume
   kubernetes.core.k8s:
     state: present
     template:
-      - path: "templates/sc.yml.j2"
       - path: "templates/pv.yml.j2"
-  vars:
-    local_storage_class_name: local-storage
 
 - name: Add stable chart repo Portainer CE
   kubernetes.core.helm_repository:
