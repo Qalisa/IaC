@@ -48,7 +48,7 @@
     body_format: json
     body:
       # app
-      app.lang: en
+      app.lang: fr
       app.root_url: https://{{ listmonk_domain }}
       app.site_name: "{{ listmonk_site_name }}"
       app.logo_url: "{{ listmonk_logo_url }}"
@@ -75,20 +75,24 @@
       privacy.allow_export: true
       privacy.allow_wipe: true
       #
-      bounce.enabled: false
-      bounce.webhooks_enabled: true
-      bounce.count: 0
-      bounce.action: "none"
-      bounce.ses_enabled: false
-      bounce.sendgrid_enabled: false
-      bounce.sendgrid_key: ""
-      bounce.postmark_enabled: false
-      bounce.postmark_username: ""
-      bounce.postmark_password: ""
-      bounce.mailboxes: []
+      # bounce.enabled: false
+      # bounce.webhooks_enabled: true
+      # bounce.actions.soft.count: 1
+      # bounce.actions.soft.action: "none"
+      # bounce.actions.hard.count: 1
+      # bounce.actions.hard.action: "none"
+      # bounce.actions.complaint.count: 1
+      # bounce.actions.complaint.action: "none"
+      # bounce.ses_enabled: false
+      # bounce.sendgrid_enabled: false
+      # bounce.sendgrid_key: ""
+      # bounce.postmark.enabled: false
+      # bounce.postmark.username: ""
+      # bounce.postmark.password: ""
+      # bounce.mailboxes: []
       #
       smtp:
-        - uuid: "{{ '1' | to_uuid }}"
+        - uuid: ""
           enabled: true
           port: 587
           host: docker-mailserver.docker-mailserver

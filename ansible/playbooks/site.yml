@@ -28,10 +28,10 @@
     # - role: k8s.portainer-ce
     # - role: k8s.openldap
     # - role: k8s.docker-mailserver
-    - role: k8s.listmonk
+    # - role: k8s.listmonk
     # - role: k8s.registry
     # - role: k8s.github-arc
     # - role: k8s.argo-cd
-    # - role: k8s.matomo
+    - role: k8s.matomo
     # - role: k8s.hc-vault
     # - role: kompose.sentry

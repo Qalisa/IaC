@@ -49,6 +49,9 @@ listmonk_logo_url: https://nightworkers-labs.io/logo.png
 listmonk_favicon_url: https://nightworkers-labs.io/logo.png
 listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
 
+#
+registry_ui_username: "admin"
+
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer
 docker_mailserver_pv_path: /var/k8s-data/mailserver
