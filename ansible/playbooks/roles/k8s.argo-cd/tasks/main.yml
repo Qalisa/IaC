@@ -1,9 +1,9 @@
 ---
-# - name: End ArgoCD setup
-#   ansible.builtin.import_tasks: setup-more.yml
+- name: End ArgoCD setup
+  ansible.builtin.import_tasks: setup-more.yml
 
 - name: Install Metrics
   ansible.builtin.import_tasks: configure-metrics.yml
 
-# - name: Connect Github Org
-#  ansible.builtin.import_tasks: configure-repos.yml
+- name: Connect Github Org
+ ansible.builtin.import_tasks: configure-repos.yml

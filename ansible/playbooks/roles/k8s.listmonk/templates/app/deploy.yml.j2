@@ -13,16 +13,36 @@ spec:
         app: listmonk
     spec:
       restartPolicy: Always
+      initContainers:
+        # This container clones the desired git repo to the EmptyDir volume.
+        - name: git-clone
+          image: alpine/git # Any image with git will do
+          args:
+            - clone
+            - --single-branch
+            - --
+            - {{ listmonk_static_dir_repo_url }} # Your repo
+            - "{{ listmonk_static_dir }}" # Put it in the volume
+          securityContext:
+            runAsUser: 1 # Any non-root user will do. Match to the workload.
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: static
+              mountPath: "{{ listmonk_static_dir }}"
       containers:
         - name: listmonk
           image: listmonk/listmonk:latest
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh","-c"]
-          args: ["./listmonk --install --yes --idempotent || true && ./listmonk"]
+          args: ["./listmonk --install --yes --idempotent || true && ./listmonk --static-dir={{ listmonk_static_dir }}"]
           volumeMounts:
             - name: uploads
               mountPath: "{{ listmonk_uploads_pv_path }}"
               readOnly: false
+            - name: static
+              mountPath: "{{ listmonk_static_dir }}"
+              readOnly: true
           envFrom:
             - secretRef:
                 name: listmonk-admin
@@ -36,3 +56,5 @@ spec:
         - name: uploads
           persistentVolumeClaim:
             claimName: uploads
+        - name: static
+          emptyDir: {}

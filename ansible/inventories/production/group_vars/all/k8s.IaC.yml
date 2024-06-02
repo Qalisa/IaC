@@ -48,6 +48,7 @@ listmonk_site_name: Nightworkers Labs
 listmonk_logo_url: https://nightworkers-labs.io/logo.png
 listmonk_favicon_url: https://nightworkers-labs.io/logo.png
 listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
+listmonk_static_dir_repo_url: "https://github.com/NightworkersLabs/listmonk-static"
 
 #
 registry_ui_username: "admin"
