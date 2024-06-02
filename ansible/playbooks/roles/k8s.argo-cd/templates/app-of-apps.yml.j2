@@ -4,9 +4,10 @@ metadata:
   name: {{ argocd_app_of_apps_name }}
   namespace: argocd
   annotations:
-    # refers to "app-deployed" trigger declared in "github-notifications-configuration"
-    # https://docs.akuity.io/tutorials/notifications/
-    notifications.argoproj.io/subscribe.on-deployed.github: ""
+    notifications.argoproj.io/subscribe.on-sync-running.github: ""
+    notifications.argoproj.io/subscribe.on-sync-failed.github: ""
+    notifications.argoproj.io/subscribe.on-sync-succeeded.github: ""
+    notifications.argoproj.io/subscribe.on-sync-status-unknown.github: ""
   finalizers:
   - resources-finalizer.argocd.argoproj.io # https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#cascading-deletion
 spec:
