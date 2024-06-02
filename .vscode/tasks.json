@@ -15,5 +15,30 @@
             ],
             "problemMatcher": []
         },
+        {
+            "label": "Upgrade kubespray collection",
+            "type": "shell",
+            "command": "ansible-galaxy install -r requirements.yml",
+            "options": {
+                "cwd": "${workspaceFolder}/ansible",
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🔄 Upgrade cluster (kubespray)",
+            "type": "shell",
+            "dependsOn": "Upgrade kubespray collection",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/upgrade-cluster.yml"
+            ],
+            "problemMatcher": []
+        },
     ]
 }

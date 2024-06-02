@@ -10,20 +10,20 @@ data:
     privateKey: $github-privateKey
   # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/
   # https://argo-cd.readthedocs.io/en/latest/operator-manual/notifications/catalog/
+  # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/
   trigger.on-deployed: |
     - description: Application is synced and healthy. Triggered once per commit.
-      oncePer: app.status.operationState.syncResult.revision
+      oncePer: "[app.status?.operationState?.syncResult?.revision, app.status?.operationState?.syncResult?.revisions]"
       send:
         - app-deployed
-      when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
-  # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/
+      when: app.status.operationState != nil and app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
   {% raw %}
   template.app-deployed: |
     message: |
       Application {{.app.metadata.name}} is now running new version of deployments manifests.
     github:
       repoURLPath: "{{.app.spec.source.repoURL}}"
-      revisionPath: "{{.app.status.operationState.syncResult.revision}}"
+      # revisionPath: "{{.app.status.operationState.syncResult.revision}}"
       status:
         state: success
         label: "continuous-delivery/{{.app.metadata.name}}"

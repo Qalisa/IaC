@@ -74,16 +74,3 @@
     state: present
     template:
       - path: templates/app-of-apps.yml.j2
-
-- name: Force sync of app of Apps repo
-  ansible.builtin.uri:
-    url: "{{ argocd_api_url_part }}/applications/{{ argocd_app_of_apps_name }}/sync"
-    validate_certs: false
-    method: POST
-    headers:
-      Authorization: Bearer {{ argocd_auth_response.json.token }}
-      Content-Type: application/json
-    body_format: json
-    body:
-      project: default
-      namespace: "{{ argocd_apps_namespace }}"
