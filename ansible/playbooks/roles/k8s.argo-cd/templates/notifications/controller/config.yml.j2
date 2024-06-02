@@ -5,8 +5,8 @@ metadata:
   namespace: argocd
 data:
   service.github: |
-    appID: {{ argocd_github_app_app_id }}
-    installationID: {{ argocd_github_app_installation_id }}
+    appID: "{{ argocd_github_app_app_id }}"
+    installationID: "{{ argocd_github_app_installation_id }}"
     privateKey: $github-privateKey
   # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/
   # https://argo-cd.readthedocs.io/en/latest/operator-manual/notifications/catalog/
@@ -17,11 +17,28 @@ data:
         - app-deployed
       when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
   # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/
+  {% raw %}
   template.app-deployed: |
     message: |
-      Application {{ "{{.app.metadata.name}}" }} is now running new version of deployments manifests.
+      Application {{.app.metadata.name}} is now running new version of deployments manifests.
     github:
+      repoURLPath: "{{.app.spec.source.repoURL}}"
+      revisionPath: "{{.app.status.operationState.syncResult.revision}}"
       status:
         state: success
-        label: argo-cd/{{ "{{.app.metadata.name}}" }}
-        targetURL: {{ "{{.context.argocdUrl}}" }}/applications/{{ "{{.app.metadata.name}}" }}?operation=true
+        label: "continuous-delivery/{{.app.metadata.name}}"
+        targetURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+      deployment:
+        state: success
+        environment: production
+        environmentURL: "https://{{.app.metadata.name}}.example.com"
+        logURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+        requiredContexts: []
+        autoMerge: true
+        transientEnvironment: false
+        reference: v1.0.0
+      pullRequestComment:
+        content: |
+          Application {{.app.metadata.name}} is now running new version of deployments manifests.
+          See more here: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true
+  {% endraw %}

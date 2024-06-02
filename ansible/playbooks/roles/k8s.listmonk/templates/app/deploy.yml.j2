@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: app
   namespace: listmonk
+  annotations:
+    argocd.argoproj.io/sync-options: Delete=false # prevent deletion of this deployment on argocd chart deletion
 spec:
   selector:
     matchLabels:

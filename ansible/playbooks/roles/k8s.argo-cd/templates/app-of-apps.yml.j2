@@ -6,7 +6,7 @@ metadata:
   annotations:
     # refers to "app-deployed" trigger declared in "github-notifications-configuration"
     # https://docs.akuity.io/tutorials/notifications/
-    notifications.argoproj.io/subscribe.app-deployed.github: ""
+    notifications.argoproj.io/subscribe.on-deployed.github: ""
   finalizers:
   - resources-finalizer.argocd.argoproj.io # https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#cascading-deletion
 spec:
@@ -18,3 +18,10 @@ spec:
     path: apps
     repoURL: {{ argocd_app_of_apps_repository_url }}
     targetRevision: HEAD
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    # - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=true')
+    - CreateNamespace=true # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+
+    
