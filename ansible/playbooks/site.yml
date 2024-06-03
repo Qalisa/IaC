@@ -1,4 +1,4 @@
-# # ---
+---
 # - name: Install Docker + KubeSpray requisites
 #   hosts: all
 #   become: true
@@ -25,7 +25,7 @@
     # - role: k8s.dashboard
     # - role: k8s.prometheus-stack
     # - role: k8s.webmin
-    - role: k8s.portainer-ce
+    # - role: k8s.portainer-ce
     # - role: k8s.openldap
     # - role: k8s.docker-mailserver
     # - role: k8s.listmonk

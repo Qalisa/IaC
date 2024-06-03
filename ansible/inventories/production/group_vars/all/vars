@@ -33,10 +33,13 @@ openldap_pwd: "{{ vault_openldap_pwd }}"
 listmonk_admin_password: "{{ vault_listmonk_admin_password }}"
 
 #
-registry_ui_password: "{{ vault_registry_ui_password }}"
+registry_password: "{{ vault_registry_password }}"
 
 #
 matomo_password: "{{ vault_matomo_password }}"
 
 # 12 characters min
 portainer_admin_password: "{{ vault_portainer_admin_password }}"
+
+# need to allow secrets and variables updates on organization level
+ansible_github_var_secrets_pat: "{{ vault_ansible_github_var_secrets_pat }}"

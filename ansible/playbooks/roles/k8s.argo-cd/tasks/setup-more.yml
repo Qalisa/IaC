@@ -4,8 +4,10 @@
     state: present
     template:
       - path: "templates/ingress.yml.j2"
-      - path: "templates/argocd-cm.yml.j2"
-      - path: "templates/argocd-cmd-params-cm.yml.j2"
+      - path: "templates/config/argocd-cm.yml.j2"
+      - path: "templates/config/argocd-cmd-params-cm.yml.j2"
+      - path: "templates/config/argocd-rbac-cm.yml.j2"
+
 ##
 ##
 ##

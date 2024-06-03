@@ -26,8 +26,9 @@ postmaster_username: "{{ postmaster_email | split('@') | first }}"
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
 
-github_org_url: https://github.com/NightworkersLabs
-argocd_app_of_apps_repository_url: https://github.com/NightworkersLabs/argocd-repository
+github_org: NightworkersLabs
+github_org_url: https://github.com/{{ github_org }}
+argocd_app_of_apps_repository_url: https://github.com/{{ github_org }}/argocd-repository
 argocd_apps_namespace: nw-labs
 
 # ARC Github App
@@ -37,6 +38,10 @@ arc_github_app_app_id: 902509
 # ArgoCD Github App
 argocd_github_app_installation_id: 50968159
 argocd_github_app_app_id: 902538
+
+#
+argocd_github_syncer_acc_name: github-syncer
+argocd_syncer_token_path: "{{ generated_creds_dir }}/argocd-syncer-token.txt"
 
 # OpenLDAP
 openldap_stack_namespace: openldap-stack
@@ -51,7 +56,7 @@ listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
 listmonk_static_dir_repo_url: "https://github.com/NightworkersLabs/listmonk-static"
 
 #
-registry_ui_username: "admin"
+registry_username: "admin"
 
 #
 matomo_username: admin

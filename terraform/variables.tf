@@ -1,0 +1,31 @@
+variable "github_organization" {
+  description = "GitHub org"
+  type        = string
+  sensitive   = false
+}
+variable "github_token" {
+  description = "GitHub personal access token"
+  type        = string
+  sensitive   = true
+}
+
+#
+#
+#
+
+variable "orchestrated_repositories" {
+  description = "GitHub org's repositories that will have secrets setup"
+  type     = set(string)
+  default  = []
+  nullable = false
+}
+
+#
+#
+#
+
+variable "secrets" {
+  description = "Map of secrets to set for each repository"
+  type = map(string)
+  default = {}
+}

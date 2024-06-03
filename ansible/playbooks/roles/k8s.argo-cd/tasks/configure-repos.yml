@@ -33,6 +33,42 @@
       githubAppInstallationID: "{{ argocd_github_app_installation_id }}"
       githubAppPrivateKey: "{{ argocd_github_app_priv_key }}"
 
+- name: Create auth token for Github Syncer
+  block:
+    - name: Generate new token
+      register: syncer_token
+      ansible.builtin.uri:
+        url: "{{ argocd_api_url_part }}/account/{{ argocd_github_syncer_acc_name }}/token"
+        validate_certs: false
+        method: POST
+        headers:
+          Authorization: "Bearer {{ argocd_auth_response.json.token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          expiresIn: 0 # never expires
+    - name: Make sure destination dir exists
+      ansible.builtin.file:
+        path: "{{ generated_creds_dir }}"
+        state: directory
+    - name: Save
+      ansible.builtin.copy:
+        content: "{{ syncer_token.json.token }}"
+        dest: "{{ argocd_syncer_token_path }}"
+
+- name: Add secrets to Github org
+  community.general.terraform:
+    project_path: "../../../../terraform"
+    state: present
+    force_init: true
+    complex_vars: true
+    variables:
+      github_organization: "{{ github_org }}"
+      github_token: "{{ ansible_github_var_secrets_pat }}"
+      #
+      secrets:
+        argocd_syncer_token: "{{ lookup('ansible.builtin.file', argocd_syncer_token_path) }}"
+
 #
 #
 #
@@ -49,8 +85,8 @@
       kubernetes.core.k8s:
         state: present
         template:
-          - path: "templates/notifications/controller/argocd-notifications-secret.yml.j2"
-          - path: "templates/notifications/controller/argocd-notifications-cm.yml.j2"
+          - path: "templates/notifications/argocd-notifications-secret.yml.j2"
+          - path: "templates/notifications/argocd-notifications-cm.yml.j2"
 
 #
 #
@@ -60,4 +96,4 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: templates/app-of-apps.yml.j2
+      - path: templates/apps/app-of-apps.yml.j2
