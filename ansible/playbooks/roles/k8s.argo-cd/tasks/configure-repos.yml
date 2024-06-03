@@ -1,11 +1,4 @@
 ---
-- name: Search for pod exact name
-  kubernetes.core.k8s_info:
-    kind: Pod
-    label_selectors:
-      - app.kubernetes.io/name = argocd-server
-  register: pod_name_search
-
 ##
 ## Interract with API, register repo and creds
 ##

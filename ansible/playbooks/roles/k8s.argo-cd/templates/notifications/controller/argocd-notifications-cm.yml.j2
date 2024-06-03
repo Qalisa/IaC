@@ -19,7 +19,7 @@ data:
       Application {{.app.metadata.name}} sync succeeded at {{.app.status.operationState.finishedAt}}.
     github:
       repoURL: "{{.app.spec.source.repoURL}}"
-      revision: "{{.app.status.operationState.syncResult.revisions[0]}}"
+      revision: "{{.app.status.operationState.operation.sync.revision}}"
       status:
         state: success
         label: "continuous-delivery/{{.app.metadata.name}}"
@@ -33,7 +33,7 @@ data:
       Application {{.app.metadata.name}} sync failed at {{.app.status.operationState.finishedAt}}.
     github:
       repoURL: "{{.app.spec.source.repoURL}}"
-      revision: "{{.app.status.operationState.syncResult.revisions[0]}}"
+      revision: "{{.app.status.operationState.operation.sync.revision}}"
       status:
         state: failure
         label: "continuous-delivery/{{.app.metadata.name}}"
@@ -47,7 +47,7 @@ data:
       Application {{.app.metadata.name}} sync started at {{.app.status.operationState.startedAt}}.
     github:
       repoURL: "{{.app.spec.source.repoURL}}"
-      revision: "{{.app.status.operationState.syncResult.revisions[0]}}"
+      revision: "{{.app.status.operationState.operation.sync.revision}}"
       status:
         state: pending
         label: "continuous-delivery/{{.app.metadata.name}}"
@@ -61,7 +61,7 @@ data:
       Application {{.app.metadata.name}} sync status is unknown as of {{.app.status.operationState.finishedAt}}.
     github:
       repoURL: "{{.app.spec.source.repoURL}}"
-      revision: "{{.app.status.operationState.syncResult.revisions[0]}}"
+      revision: "{{.app.status.operationState.operation.sync.revision}}"
       status:
         state: error
         label: "continuous-delivery/{{.app.metadata.name}}"

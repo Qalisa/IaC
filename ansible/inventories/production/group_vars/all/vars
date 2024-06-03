@@ -37,3 +37,6 @@ registry_ui_password: "{{ vault_registry_ui_password }}"
 
 #
 matomo_password: "{{ vault_matomo_password }}"
+
+# 12 characters min
+portainer_admin_password: "{{ vault_portainer_admin_password }}"

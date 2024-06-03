@@ -16,38 +16,75 @@
 #
 #
 
+- name: Add a user to a password file
+  community.general.htpasswd:
+    path: "{{ htpasswd_local_path }}"
+    name: "{{ registry_ui_username }}"
+    password: "{{ registry_ui_password }}"
+    hash_scheme: bcrypt # only scheme handled
+
+#
+# Add auth to Docker Repository
+#
+
+- name: Load password
+  block:
+    - name: Load facts
+      ansible.builtin.set_fact:
+        registry_pod_env_replace:
+          op: replace
+          path: /spec/template/spec/containers/0/env
+          value:
+            - name: REGISTRY_AUTH
+              value: htpasswd
+            - name: REGISTRY_AUTH_HTPASSWD_REALM
+              value: "Registry Realm"
+            - name: REGISTRY_AUTH_HTPASSWD_PATH
+              value: /var/lib/registry/htpasswd
+            # COPIED from original
+            - name: REGISTRY_HTTP_ADDR
+              value: ":5000"
+            - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+              value: /var/lib/registry
+
+- name: Patch registry pod
+  ansible.builtin.command: |
+    kubectl patch rs registry -n kube-system --type='json' -p='[{{ registry_pod_env_replace | to_json }}]'
+
+- name: Search for pod exact name
+  kubernetes.core.k8s_info:
+    kind: Pod
+    label_selectors:
+      - k8s-app = registry
+  register: pod_name_search
+
+- name: Regenerate Registry Pod
+  ansible.builtin.command: kubectl delete pod {{ pod_name_search.resources[0].metadata.name }} -n kube-system
+
+#
+# DOCKER UI
+#
+
+# create secret with pwd
+# - name: Read as raw bytes
+#   ansible.builtin.slurp:
+#     src: "{{ htpasswd_local_path }}"
+#   register: registry_ui_keypair
+# - name: Load facts
+#   ansible.builtin.set_fact:
+#     registry_ui_pwdpair_crypt: "{{ registry_ui_keypair.content | b64decode }}"
+#   when: registry_ui_keypair is not failed
+# - name: Add secret for Registry UI
+#   kubernetes.core.k8s:
+#     state: present
+#     template:
+#       - path: 'templates/registry-ui-basic-auth-secret.yml.j2'
+
+# add helm
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: joxit
     repo_url: https://helm.joxit.dev
-
-- name: Install passlib
-  ansible.builtin.pip:
-    name: passlib
-
-- name: Add a user to a password file and ensure permissions are set
-  community.general.htpasswd:
-    path: /tmp/registry_ui
-    name: "{{ registry_ui_username }}"
-    password: "{{ registry_ui_password }}"
-
-- name: Load password
-  block:
-    - name: Read as raw bytes
-      ansible.builtin.slurp:
-        src: /tmp/registry_ui
-      register: registry_ui_keypair
-    - name: Load facts
-      ansible.builtin.set_fact:
-        registry_ui_pwdpair_crypt: "{{ registry_ui_keypair.content | b64decode | trim }}"
-      when: registry_ui_keypair is not failed
-
-- name: Add secret
-  kubernetes.core.k8s:
-    state: present
-    template:
-      - path: 'templates/secret.yml.j2'
-
 - name: Install docker registry ui w/ Helm
   kubernetes.core.helm:
     name: docker-registry-ui
@@ -79,8 +116,8 @@
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
             ###
             # # type of authentication
-            nginx.ingress.kubernetes.io/auth-type: basic
-            # name of the secret that contains the user/password definitions
-            nginx.ingress.kubernetes.io/auth-secret: basic-auth
-            # message to display with an appropriate context why the authentication is required
-            nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+            # nginx.ingress.kubernetes.io/auth-type: basic
+            # # name of the secret that contains the user/password definitions
+            # nginx.ingress.kubernetes.io/auth-secret: registry-ui-basic-auth
+            # # message to display with an appropriate context why the authentication is required
+            # nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'

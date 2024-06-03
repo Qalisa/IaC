@@ -1,2 +1,3 @@
 ---
 registry_storage_class_name: local-storage-kube
+htpasswd_local_path: "{{ registry_pv_path }}/htpasswd"

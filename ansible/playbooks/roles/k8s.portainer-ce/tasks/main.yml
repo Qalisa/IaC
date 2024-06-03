@@ -9,24 +9,27 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: "templates/pv.yml.j2"
+      - path: templates/pv.yml.j2
 
 - name: Add stable chart repo Portainer CE
   kubernetes.core.helm_repository:
     name: portainer
-    repo_url: "https://portainer.github.io/k8s/"
+    repo_url: https://portainer.github.io/k8s/
 
 - name: Install Portainer CE w/ Helm
+  vars:
+    portainer_host: portainer.{{ root_domain }}
   kubernetes.core.helm:
     name: portainer
-    chart_ref: "portainer/portainer"
+    chart_ref: portainer/portainer
     release_namespace: portainer
     create_namespace: true
+    wait: true
     values:
       nodeSelector:
         kubernetes.io/hostname: "{{ master_node_name }}"
       service:
-        type: "LoadBalancer" # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
+        type: LoadBalancer # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
       tls:
         force: true
         # existingSecret: "portainer-ce-certs"
@@ -42,12 +45,45 @@
         hosts:
           - host: "{{ portainer_host }}"
             paths:
-              - path: "/"
+              - path: /
         tls:
           - hosts:
               #   - "*.{{ root_domain }}"
               # secretName: nw-wildcard-certs
               - "{{ portainer_host }}"
-            secretName: "portainer-ce-certs"
-  vars:
-    portainer_host: "portainer.{{ root_domain }}"
+            secretName: portainer-ce-certs
+
+##
+## Password auto-config
+##
+
+- name: Add a user to a password file and ensure permissions are set
+  community.general.htpasswd:
+    path: /tmp/portainer_pair
+    name: whatever # Portainer's initial username is always "admin"
+    password: "{{ portainer_admin_password }}"
+    hash_scheme: bcrypt # only scheme handled
+
+- name: Load password
+  block:
+    - name: Read as raw bytes
+      ansible.builtin.slurp:
+        src: /tmp/portainer_pair
+      register: portainer_admin_keypair
+    - name: Load facts
+      ansible.builtin.set_fact:
+        portainer_adminpwd_crypt: |
+          {{ portainer_admin_keypair.content | b64decode | trim | replace('\n', '') | split(':') | last }}
+      when: portainer_admin_keypair is not failed
+    - name: Load facts
+      ansible.builtin.set_fact:
+        portainer_pod_args_replace:
+          - op: replace
+            path: /spec/template/spec/containers/0/args
+            value:
+              - --http-disabled
+              - --admin-password="{{ portainer_adminpwd_crypt }}"
+
+- name: Patch with admin password
+  ansible.builtin.command: |
+    kubectl patch deployment portainer -n portainer --type='json' -p='{{ portainer_pod_args_replace | to_json }}'

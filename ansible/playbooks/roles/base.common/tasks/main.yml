@@ -5,6 +5,10 @@
     state: present # latest
     update_cache: true
 
+- name: Install passlib
+  ansible.builtin.pip:
+    name: passlib
+
 - name: Install required system packages
   ansible.builtin.apt:
     pkg:
