@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-notifications-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  context: |
+    argocdUrl: {{ argocd_host_url }}
+  service.github: |
+    appID: "{{ argocd_github_app_app_id }}"
+    installationID: "{{ argocd_github_app_installation_id }}"
+    privateKey: $github-privateKey
+  {% raw %}
+  template.app-sync-succeeded: |
+    message: |
+      Application {{.app.metadata.name}} sync succeeded at {{.app.status.operationState.finishedAt}}.
+    github:
+      repoURL: "{{.app.spec.source.repoURL}}"
+      revision: "{{.app.status.operationState.syncResult.revision}}"
+      status:
+        state: success
+        label: "continuous-delivery/{{.app.metadata.name}}"
+        targetURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+      pullRequestComment:
+        content: |
+          Sync Succeeded
+
+  template.app-sync-failed: |
+    message: |
+      Application {{.app.metadata.name}} sync failed at {{.app.status.operationState.finishedAt}}.
+    github:
+      repoURL: "{{.app.spec.source.repoURL}}"
+      revision: "{{.app.status.operationState.syncResult.revision}}"
+      status:
+        state: failure
+        label: "continuous-delivery/{{.app.metadata.name}}"
+        targetURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+      pullRequestComment:
+        content: |
+          Sync Failed
+
+  template.app-sync-running: |
+    message: |
+      Application {{.app.metadata.name}} sync started at {{.app.status.operationState.startedAt}}.
+    github:
+      repoURL: "{{.app.spec.source.repoURL}}"
+      revision: "{{.app.status.operationState.syncResult.revision}}"
+      status:
+        state: pending
+        label: "continuous-delivery/{{.app.metadata.name}}"
+        targetURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+      pullRequestComment:
+        content: |
+          Sync Running
+
+  template.app-sync-status-unknown: |
+    message: |
+      Application {{.app.metadata.name}} sync status is unknown as of {{.app.status.operationState.finishedAt}}.
+    github:
+      repoURL: "{{.app.spec.source.repoURL}}"
+      revision: "{{.app.status.operationState.syncResult.revision}}"
+      status:
+        state: error
+        label: "continuous-delivery/{{.app.metadata.name}}"
+        targetURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+      pullRequestComment:
+        content: |
+          Sync Status Unknown
+
+  template.app-deployed: |
+    message: |
+      Application {{.app.metadata.name}} is now running new version of deployments manifests.
+    github:
+      repoURLPath: "{{.app.spec.source.repoURL}}"
+      revisionPath: "{{.app.status.operationState.syncResult.revision}}"
+      status:
+        state: success
+        label: "continuous-delivery/{{.app.metadata.name}}"
+        targetURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+      deployment:
+        state: success
+        environment: production
+        environmentURL: "https://{{.app.metadata.name}}.example.com"
+        logURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+        requiredContexts: []
+        autoMerge: true
+        transientEnvironment: false
+        reference: v1.0.0
+      pullRequestComment:
+        content: |
+          Application {{.app.metadata.name}} is now running new version of deployments manifests.
+          See more here: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true
+    {% endraw %}

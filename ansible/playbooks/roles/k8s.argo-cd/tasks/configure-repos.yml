@@ -56,8 +56,8 @@
       kubernetes.core.k8s:
         state: present
         template:
-          - path: "templates/notifications/controller/secret.yml.j2"
-          - path: "templates/notifications/controller/config.yml.j2"
+          - path: "templates/notifications/controller/argocd-notifications-secret.yml.j2"
+          - path: "templates/notifications/controller/argocd-notifications-cm.yml.j2"
 
 #
 #

@@ -38,6 +38,11 @@
                 "--become --become-user=root",
                 "ansible/playbooks/upgrade-cluster.yml"
             ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
             "problemMatcher": []
         },
     ]

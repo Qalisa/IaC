@@ -18,10 +18,10 @@ spec:
   - hosts:
     #  - "*.{{ root_domain }}"
     # secretName: nw-wildcard-certs
-    - argocd.{{ root_domain }}
+    - {{ argocd_host }}
     secretName: argocd-server-certs
   rules:
-  - host: argocd.{{ root_domain }}
+  - host: {{ argocd_host }}
     http:
       paths:
       - path: /

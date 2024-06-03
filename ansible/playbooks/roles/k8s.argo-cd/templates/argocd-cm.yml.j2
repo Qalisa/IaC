@@ -1,0 +1,18 @@
+##
+## see https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cm.yaml
+##
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # Argo CD's externally facing base URL (optional). Required when configuring SSO
+  url: {{ argocd_host_url }}
+
+  # Enables application status badge feature
+  statusbadge.enabled: "true"
