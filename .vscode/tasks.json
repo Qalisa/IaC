@@ -16,6 +16,17 @@
             "problemMatcher": []
         },
         {
+            "label": "🔓 Unseal HC Vault",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "ansible/playbooks/unseal-vault.yml",
+                "--tags", "unseal"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Upgrade kubespray collection",
             "type": "shell",
             "command": "ansible-galaxy install -r requirements.yml",

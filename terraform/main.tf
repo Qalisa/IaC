@@ -10,13 +10,14 @@ terraform {
 # Configure the GitHub Provider
 provider "github" {
     owner = var.github_organization
-    token = var.github_token
+    token = var.github_token # token must have admin read rights + secrets write
 }
 
 #
 #
 #
 
+## REQUIRED
 data "github_actions_public_key" "repo" {
   for_each = var.orchestrated_repositories
   repository = each.key

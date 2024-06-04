@@ -7,6 +7,7 @@
   loop:
     - "{{ matomo_pv_db_path }}"
     - "{{ matomo_pv_app_path }}"
+    - "{{ matomo_pv_archive_path }}"
 
 - name: Prepare volumes manifests
   kubernetes.core.k8s:
@@ -17,6 +18,8 @@
       - path: 'templates/app/pvc.yml.j2'
       - path: 'templates/db/pv.yml.j2'
       - path: 'templates/db/pvc.yml.j2'
+      - path: 'templates/archive/pv.yml.j2'
+      - path: 'templates/archive/pvc.yml.j2'
 
 - name: Install Matomo Stack w/ Helm
   kubernetes.core.helm:

@@ -1,0 +1,18 @@
+- name: Read keys as raw bytes
+  register: local_unseal_keys_raw
+  tags: [never, unseal]
+  ansible.builtin.slurp:
+    src: "{{ unseal_keys_path }}"
+
+- name: Load facts
+  tags: [never, unseal]
+  ansible.builtin.set_fact:
+    unseal_keys: "{{ local_unseal_keys_raw.content | b64decode }}"
+
+- name: Unseal
+  tags: [never, unseal]
+  loop: "{{ unseal_keys.unseal_keys_hex }}" # inject as array
+  kubernetes.core.k8s_exec:
+    namespace: "{{ hc_vault_namespace }}"
+    pod: "{{ hc_vault_pod_name }}"
+    command: vault operator unseal {{ item }}

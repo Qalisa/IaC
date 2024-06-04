@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: matomo-matomo # name required by helm chart
+  namespace: matomo
+  labels:
+    pvc-of: matomo-archive
+spec:
+  storageClassName: {{ local_storage_class_name }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  selector: 
+    matchLabels: 
+      name: matomo-archive

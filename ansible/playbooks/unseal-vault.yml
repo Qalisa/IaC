@@ -1,0 +1,5 @@
+- name: Install Services w/in Kubernetes
+  hosts: all
+  become: true
+  roles:
+    - role: k8s.hc-vault
