@@ -10,6 +10,7 @@ cloudflare_dns_api_token: "{{ vault_cloudflare_dns_api_token }}"
 
 # password for postmaster@{{ root_domain }}
 postmaster_password: "{{ vault_postmaster_password }}"
+donotreply_password: "{{ vault_donotreply_password }}"
 
 # password for "admin" user on Hashicorp Vault
 hc_vault_admin_password: "{{ vault_hc_vault_admin_password }}"

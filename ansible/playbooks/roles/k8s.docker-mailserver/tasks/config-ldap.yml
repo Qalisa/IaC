@@ -9,35 +9,48 @@
   ansible.builtin.command: |
     kubectl wait --namespace=openldap-stack --for=condition=Ready pod/openldap-0 --timeout=120s
 
+#
 - name: Ensure User group matching Docker usergroup exists to allow auto-creation of LDAP user mail directories
   community.general.ldap_entry:
-    dn: cn={{ email_users_ldap_group_name }},{{ dc_query_string }}
     server_uri: ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}/
     bind_dn: cn=admin,{{ dc_query_string }}
     bind_pw: "{{ openldap_pwd }}"
+    #
+    dn: cn={{ email_users_ldap_group_name }},{{ dc_query_string }}
     objectClass:
       - posixGroup
       - top
     attributes:
       gidnumber: 5000
 
-- name: Create postmaster account
+#
+- name: Create default accounts
   community.general.ldap_entry:
-    dn: cn={{ postmaster_username }},cn={{ email_users_ldap_group_name }},{{ dc_query_string }}
     server_uri: ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}/
     bind_dn: cn=admin,{{ dc_query_string }}
     bind_pw: "{{ openldap_pwd }}"
+    #
+    dn: cn={{ item.username }},cn={{ email_users_ldap_group_name }},{{ dc_query_string }}
     objectClass:
       - inetOrgPerson
       - posixAccount
       - top
     attributes:
       gidnumber: 5000
-      homedirectory: /home/users/{{ postmaster_username }}
+      homedirectory: /home/users/{{ item.username }}
       mail:
-        - "{{ postmaster_username }}"
-        - "{{ postmaster_email }}"
-      sn: "{{ postmaster_username }}"
-      uid: "{{ postmaster_username }}"
-      uidnumber: 1000
-      userpassword: "{CRYPT}{{ postmaster_password | password_hash('md5') }}"
+        - "{{ item.username }}"
+        - "{{ item.email }}"
+      sn: "{{ item.username }}"
+      uid: "{{ item.username }}"
+      uidnumber: "{{ item.uidn }}"
+      userpassword: "{CRYPT}{{ item.password | password_hash('md5') }}"
+  loop:
+    - username: "{{ postmaster_username }}"
+      password: "{{ postmaster_password }}"
+      email: "{{ postmaster_email }}"
+      uidn: 1000
+    - username: "{{ donotreply_username }}"
+      password: "{{ donotreply_password }}"
+      email: "{{ donotreply_email }}"
+      uidn: 10000

@@ -1,38 +1,37 @@
 ---
-# - name: Install Docker + KubeSpray requisites
-#   hosts: all
-#   become: true
-#   roles:
-#     - base.common
-#     - base.docker
-#     - base.kubespray
+- name: Install Docker + KubeSpray requisites
+  hosts: all
+  become: true
+  roles:
+    - base.common
+    - base.kubespray
 
-# # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
-# - name: Reset any Kubespray cluster installed
-#   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+# runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
+- name: Reset any Kubespray cluster installed
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
 
-# # runs the kubespray's "cluster.yml" playbook - Installs Kubespray configuration
-# - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
-#   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+# runs the kubespray's "cluster.yml" playbook - Installs Kubespray configuration
+- name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
 
 # ensure services roles are installed and configured AFTER kubernetes is set
 - name: Install Services w/in Kubernetes
   hosts: all
   become: true
   roles:
-    # - role: diodonfrost.terraform
-    # - role: more.kubespray # Finish kubespray configuration
-    # - role: k8s.registry # Finish registry configuration
-    # - role: k8s.cert-manager
-    # - role: k8s.dashboard
-    # - role: k8s.prometheus-stack
-    # - role: k8s.webmin
-    # - role: k8s.portainer-ce
-    # - role: k8s.openldap
-    # - role: k8s.docker-mailserver
-    # - role: k8s.listmonk
-    # - role: k8s.github-arc
-    ## - role: k8s.matomo
-    # - role: k8s.hc-vault
+    - role: diodonfrost.terraform # Install Terraform CLI
+    - role: more.kubespray # Finish kubespray configuration
+    - role: k8s.registry # Finish registry configuration (installed along kubespray)
+    - role: k8s.cert-manager # Finish cert-manager configuration (installed along kubespray)
+    - role: k8s.dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
+    - role: k8s.prometheus-stack
+    - role: k8s.webmin
+    - role: k8s.portainer-ce
+    - role: k8s.openldap
+    - role: k8s.docker-mailserver
+    - role: k8s.listmonk
+    - role: k8s.github-arc
+    # - role: k8s.matomo
+    - role: k8s.hc-vault
     - role: k8s.sentry
-    # - role: k8s.argo-cd
+    - role: k8s.argo-cd

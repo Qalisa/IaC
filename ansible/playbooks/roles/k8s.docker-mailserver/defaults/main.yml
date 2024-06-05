@@ -7,4 +7,5 @@ autodiscover_fqdn: "autodiscover.{{ root_domain }}"
 
 dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
 
-email_users_ldap_group_name: Email Users
+# Email users (possibly POSTFIX + DOVECOT, eg sending AND receiving email)
+email_users_ldap_group_name: "Email Users"

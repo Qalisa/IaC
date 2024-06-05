@@ -19,10 +19,12 @@ master_node_name: node1
 root_domain: nightworkers-labs.io
 
 # which emails is to be said that will register the certificates
-postmaster_email: postmaster@{{ root_domain }}
+postmaster_username: postmaster
+postmaster_email: "{{ postmaster_username }}@{{ root_domain }}"
+donotreply_username: donotreply
+donotreply_email: "{{ donotreply_username }}@{{ root_domain }}"
 mx_hostname: mail
 docker_mailserver_host: "{{ mx_hostname }}.{{ root_domain }}"
-postmaster_username: "{{ postmaster_email | split('@') | first }}"
 
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
@@ -73,4 +75,3 @@ listmonk_db_pv_path: /var/k8s-data/listmonk/db
 listmonk_uploads_pv_path: /var/k8s-data/listmonk/uploads
 matomo_pv_db_path: /var/k8s-data/matomo/db
 matomo_pv_app_path: /var/k8s-data/matomo/app
-sentry_pv_path: /var/k8s-data/sentry

@@ -96,6 +96,11 @@ spec:
               mountPath: /secrets/ssl/rsa/
               readOnly: true
 
+            #
+            - name: postfix-reject
+              mountPath: /etc/postfix/maps/header_checks.pcre
+              subPath: header_checks.pcre
+
           ports:
             - name: smtp
               containerPort: 25
@@ -153,3 +158,11 @@ spec:
                 path: tls.key
               - key: tls.crt
                 path: tls.crt
+
+        #
+        - name: postfix-reject
+          configMap:
+            name: postfix-reject
+            items:
+              - key: header_checks.pcre
+                path: header_checks.pcre

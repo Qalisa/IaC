@@ -130,11 +130,25 @@
 - name: Get my public IP from ipify.org
   community.general.ipify_facts:
 
-- name: Install Docker Mailserver
+## REQUIRED TO BE INSTALLED FIRST, since generated secret by this certificate is done async
+- name: Install Certificate first
   kubernetes.core.k8s:
     state: present
     template:
       - path: 'templates/mailserver/certificate.yml.j2'
+
+- name: Wait for the associated certificate's secret to be generated
+  ansible.builtin.command: kubectl get secret docker-mailserver-certs -n docker-mailserver
+  register: secret_status
+  until: secret_status.rc == 0
+  retries: 20
+  delay: 5
+
+- name: Then, Install Docker Mailserver
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: 'templates/mailserver/postfix-reject-config.yml.j2'
       - path: 'templates/mailserver/pv.yml.j2'
       - path: 'templates/mailserver/config.yml.j2'
       - path: 'templates/mailserver/ldap-secret.yml.j2'

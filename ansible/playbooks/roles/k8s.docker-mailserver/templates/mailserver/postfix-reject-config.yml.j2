@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postfix-reject
+  namespace: docker-mailserver
+immutable: false
+data:
+  header_checks.pcre: |
+    /^To:.*{{ donotreply_email | replace(".", "\.") }}/ REJECT

@@ -104,6 +104,6 @@
           max_msg_retries: 2
           idle_timeout: 15s
           wait_timeout: 5s
-          username: "{{ postmaster_username }}"
-          password: "{{ postmaster_password }}"
+          username: "{{ donotreply_username }}"
+          password: "{{ donotreply_password }}"
           email_headers: []

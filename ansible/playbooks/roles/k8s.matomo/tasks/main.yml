@@ -2,17 +2,17 @@
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
     path: "{{ item.path }}"
-    owner: "{{ item.owner }}"
-    group: "{{ item.group }}"
+    # owner: "{{ item.owner }}"
+    # group: "{{ item.group }}"
     state: directory
     mode: '0755'
   loop:
-    - owner: 1001
-      group: 1001
-      path: "{{ matomo_pv_db_path }}"
-    - owner: 1001
-      group: 0
-      path: "{{ matomo_pv_app_path }}"
+    - path: "{{ matomo_pv_db_path }}"
+      # owner: 1001
+      # group: 1001
+    - path: "{{ matomo_pv_app_path }}"
+      # owner: 1001
+      # group: 0
 
 - name: Prepare volumes manifests
   kubernetes.core.k8s:
@@ -31,18 +31,10 @@
     release_namespace: "{{ matomo_namespace }}"
     create_namespace: false
     values:
-      # externalDatabase:
-      #   host: "matomo-mariadb.matomo"
-      # extraEnvVars:
-      #   - name: ALLOW_EMPTY_PASSWORD
-      #     value: "false"
+      volumePermissions:
+        enabled: true
       podLabels:
         app: matomo
-      cronjobs:
-        taskScheduler:
-          enabled: false # this is bugged...
-        archive:
-          enabled: false # this is bugged...
       persistence:
         storageClass: "{{ local_storage_class_name }}"
         selector:
@@ -61,11 +53,12 @@
       smtpAuth: Login
       smtpHost: docker-mailserver.docker-mailserver
       smtpPort: 587
-      smtpUser: "{{ postmaster_username }}"
-      smtpPassword: "{{ postmaster_password }}"
+      smtpUser: "{{ donotreply_username }}"
+      smtpPassword: "{{ donotreply_password }}"
       smtpProtocol: tls
       noreplyName: "Do Not Reply"
-      noreplyAddress: noreply@{{ root_domain }}
+      noreplyAddress: "{{ donotreply_email }}"
+
       #
       service:
         type:	LoadBalancer
