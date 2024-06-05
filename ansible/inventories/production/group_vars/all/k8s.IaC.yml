@@ -6,7 +6,8 @@ cluster_issuer_name: letsencrypt-prod # letsencrypt-staging
 # default storage class
 local_storage_class_name: local-storage
 
-generated_creds_dir: ../../creds
+generated_creds_dir: "{{ playbook_dir ~ '/../../creds' }}"
+terraform_project_path: "{{ playbook_dir ~ '/../../terraform' }}"
 
 #
 is_cluster_issuer_staging: "{{ cluster_issuer_name == 'letsencrypt-staging' }}"
@@ -72,4 +73,4 @@ listmonk_db_pv_path: /var/k8s-data/listmonk/db
 listmonk_uploads_pv_path: /var/k8s-data/listmonk/uploads
 matomo_pv_db_path: /var/k8s-data/matomo/db
 matomo_pv_app_path: /var/k8s-data/matomo/app
-matomo_pv_archive_path: /var/k8s-data/matomo/archive
+sentry_pv_path: /var/k8s-data/sentry

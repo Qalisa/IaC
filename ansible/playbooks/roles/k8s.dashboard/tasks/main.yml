@@ -1,20 +1,54 @@
 ---
-- name: Install Ingress for k8s dashboard
+- name: Install service accounts
   kubernetes.core.k8s:
     state: present
     template:
-      - path: "templates/ingress.yml.j2"
-      - path: "templates/account.yml.j2"
-  vars:
-    dashboard_public_hostname: k8s-dashboard.{{ root_domain }}
+      - path: "templates/ns.yml.j2"
+      - path: "templates/admin-account.yml.j2"
 
-- name: Get auth token
-  ansible.builtin.shell: kubectl get secret admin-user -n kube-system -o jsonpath={".data.token"} | base64 -d
-  register: dashboard_token
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: kubernetes-dashboard
+    repo_url: https://kubernetes.github.io/dashboard/
+
+- name: Install Dashboard w/ Helm
+  kubernetes.core.helm:
+    name: kubernetes-dashboard
+    chart_ref: kubernetes-dashboard/kubernetes-dashboard
+    release_namespace: kubernetes-dashboard
+    create_namespace: false
+    values:
+      app:
+        kong:
+          enabled: false
+        ingress:
+          enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
+          annotations:
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+          useDefaultAnnotations: false
+          hosts:
+            - "{{ dashboard_public_hostname }}"
+          tls:
+            enabled: false
+            secretName: k8s-dashboard-certs
+
+- name: Fix Service
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: "templates/service.yml.j2"
 
 #
 - name: Save Token
   block:
+    - name: Get auth token
+      ansible.builtin.shell: |
+        kubectl get secret admin-user -n kubernetes-dashboard -o jsonpath={".data.token"} | base64 -d
+      register: dashboard_token
     - name: Make sure destination dir exists
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"

@@ -20,7 +20,9 @@
   hosts: all
   become: true
   roles:
-    # - role: more.kubespray
+    # - role: diodonfrost.terraform
+    # - role: more.kubespray # Finish kubespray configuration
+    # - role: k8s.registry # Finish registry configuration
     # - role: k8s.cert-manager
     # - role: k8s.dashboard
     # - role: k8s.prometheus-stack
@@ -29,9 +31,8 @@
     # - role: k8s.openldap
     # - role: k8s.docker-mailserver
     # - role: k8s.listmonk
-    # - role: k8s.registry
     # - role: k8s.github-arc
-    - role: k8s.matomo
+    ## - role: k8s.matomo
     # - role: k8s.hc-vault
-    # - role: kompose.sentry
+    - role: k8s.sentry
     # - role: k8s.argo-cd

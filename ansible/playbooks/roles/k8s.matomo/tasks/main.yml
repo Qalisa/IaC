@@ -1,13 +1,18 @@
 ---
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
     state: directory
     mode: '0755'
   loop:
-    - "{{ matomo_pv_db_path }}"
-    - "{{ matomo_pv_app_path }}"
-    - "{{ matomo_pv_archive_path }}"
+    - owner: 1001
+      group: 1001
+      path: "{{ matomo_pv_db_path }}"
+    - owner: 1001
+      group: 0
+      path: "{{ matomo_pv_app_path }}"
 
 - name: Prepare volumes manifests
   kubernetes.core.k8s:
@@ -15,23 +20,34 @@
     template:
       - path: 'templates/ns.yml.j2'
       - path: 'templates/app/pv.yml.j2'
-      - path: 'templates/app/pvc.yml.j2'
       - path: 'templates/db/pv.yml.j2'
       - path: 'templates/db/pvc.yml.j2'
-      - path: 'templates/archive/pv.yml.j2'
-      - path: 'templates/archive/pvc.yml.j2'
 
 - name: Install Matomo Stack w/ Helm
   kubernetes.core.helm:
     name: matomo
     chart_ref: oci://registry-1.docker.io/bitnamicharts/matomo
-    release_namespace: matomo
+    # chart_version: 7.2.0 # 7.3.0 is bugged ?
+    release_namespace: "{{ matomo_namespace }}"
     create_namespace: false
     values:
+      # externalDatabase:
+      #   host: "matomo-mariadb.matomo"
+      # extraEnvVars:
+      #   - name: ALLOW_EMPTY_PASSWORD
+      #     value: "false"
       podLabels:
         app: matomo
+      cronjobs:
+        taskScheduler:
+          enabled: false # this is bugged...
+        archive:
+          enabled: false # this is bugged...
       persistence:
-        existingClaim: app
+        storageClass: "{{ local_storage_class_name }}"
+        selector:
+          matchLabels:
+            name: matomo-app
       mariadb:
         primary:
           persistence:

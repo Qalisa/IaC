@@ -117,7 +117,8 @@
         enabled: false
       dataStorage:
         enabled: true
-
+        # well, do not work ?! (https://developer.hashicorp.com/vault/docs/platform/k8s/helm/configuration#storageclass)
+        storageClass: "{{ local_storage_class_name }}"
       # Vault UI
       ui:
         enabled: true
