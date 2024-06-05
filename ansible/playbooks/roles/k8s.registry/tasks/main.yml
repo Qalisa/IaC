@@ -117,16 +117,10 @@
           enabled: true
           host:	registry.{{ root_domain }}
           ingressClassName: "{{ ingress_nginx_class }}"
-          tls:
-            - hosts:
-              #  - "*.{{ root_domain }}"
-              # secretName: nw-wildcard-certs
-                - "registry.{{ root_domain }}"
-              secretName: registry-ui-certs
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+            cert-manager.io/cluster-issuer: "selfsigned"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
             ###
             # # type of authentication

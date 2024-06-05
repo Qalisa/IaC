@@ -21,7 +21,7 @@
           annotations:
             # Will be handled by Cloudflare proxy
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+            cert-manager.io/cluster-issuer: "selfsigned"
           hosts:
             - graphana.{{ root_domain }}
       prometheus:
@@ -33,6 +33,6 @@
           annotations:
             # Will be handled by Cloudflare proxy
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+            cert-manager.io/cluster-issuer: "selfsigned"
           hosts:
             - prometheus.{{ root_domain }}

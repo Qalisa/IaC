@@ -14,6 +14,5 @@ spec:
   dnsNames:
     - {{ docker_mailserver_host }}
   issuerRef:
-    # when using Cloudflare's proxied DNS record
-    name: "{{ cluster_issuer_name }}" # "selfsigned"
+    name: "{{ default_cluster_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
     kind: ClusterIssuer

@@ -4,19 +4,12 @@ metadata:
   name: webmin
   namespace: webmin
   annotations:
-    cert-manager.io/cluster-issuer: "{{ cluster_issuer_name }}"
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name  }}"
+    cert-manager.io/cluster-issuer: "selfsigned"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
-  tls:
-  - hosts:
-    #  - "*.{{ root_domain }}"
-    # secretName: nw-wildcard-certs
-       - {{ webmin_public_hostname }}
-    secretName: webmin-certs
   rules:
   - host: {{ webmin_public_hostname }}
     http:

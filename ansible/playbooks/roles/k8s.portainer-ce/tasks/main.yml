@@ -43,18 +43,12 @@
           kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
           # when using Cloudflare's proxied DNS record
           nginx.ingress.kubernetes.io/ssl-redirect: "false"
-          cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+          cert-manager.io/cluster-issuer: "selfsigned"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         hosts:
           - host: "{{ portainer_host }}"
             paths:
               - path: /
-        tls:
-          - hosts:
-              #   - "*.{{ root_domain }}"
-              # secretName: nw-wildcard-certs
-              - "{{ portainer_host }}"
-            secretName: portainer-ce-certs
 
 - name: Wait for pod to become ready
   ansible.builtin.command: "kubectl wait --namespace=portainer --for=condition=Ready pod -l app.kubernetes.io/name=portainer --timeout=120s"

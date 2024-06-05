@@ -70,7 +70,7 @@
         annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+            cert-manager.io/cluster-issuer: "selfsigned"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 
 - name: Wait for pod to become ready

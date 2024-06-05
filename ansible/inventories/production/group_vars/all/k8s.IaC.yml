@@ -1,16 +1,13 @@
 ---
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
-# CAREFUL ! In production, 50 requested certificates per week ! (https://letsencrypt.org/docs/rate-limits/)
-cluster_issuer_name: letsencrypt-prod # letsencrypt-staging
+# CAREFUL ! In production, 50 requested certificates per week for letsencrypt ! (https://letsencrypt.org/docs/rate-limits/)
+default_cluster_issuer: zerossl-prod # letsencrypt-prod
 
 # default storage class
 local_storage_class_name: local-storage
 
 generated_creds_dir: "{{ playbook_dir ~ '/../../creds' }}"
 terraform_project_path: "{{ playbook_dir ~ '/../../terraform' }}"
-
-#
-is_cluster_issuer_staging: "{{ cluster_issuer_name == 'letsencrypt-staging' }}"
 
 #
 master_node_name: node1
@@ -63,6 +60,9 @@ registry_username: "admin"
 
 #
 matomo_username: admin
+
+#
+zerossl_eab_kid: GkwRD2xlOs5VViczStfvlQ
 
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer

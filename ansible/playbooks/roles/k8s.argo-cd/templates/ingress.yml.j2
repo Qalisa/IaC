@@ -6,7 +6,7 @@ metadata:
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+    cert-manager.io/cluster-issuer: "selfsigned"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     # If you encounter a redirect loop or are getting a 307 response code
     # then you need to force the nginx ingress to connect to the backend using HTTPS.
@@ -14,12 +14,6 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
-  tls:
-  - hosts:
-    #  - "*.{{ root_domain }}"
-    # secretName: nw-wildcard-certs
-    - {{ argocd_host }}
-    secretName: argocd-server-certs
   rules:
   - host: {{ argocd_host }}
     http:

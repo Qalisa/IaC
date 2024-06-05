@@ -44,3 +44,5 @@ portainer_admin_password: "{{ vault_portainer_admin_password }}"
 
 # need to allow secrets and variables updates on organization level
 ansible_github_var_secrets_pat: "{{ vault_ansible_github_var_secrets_pat }}"
+
+zerossl_eab_hmac_key: "{{ vault_zerossl_eab_hmac_key }}"

@@ -22,7 +22,7 @@ spec:
               subPath: www
               readOnly: false
 
-            {% if is_cluster_issuer_staging %}
+            {% if roundcube_check_mailserver_certs %}
 
             - name: config
               mountPath: /var/roundcube/config/more.inc.php
@@ -55,7 +55,7 @@ spec:
           persistentVolumeClaim:
             claimName: roundcube
             
-        {% if is_cluster_issuer_staging %}
+        {% if roundcube_check_mailserver_certs %}
 
         - name: config
           configMap:

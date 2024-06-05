@@ -28,13 +28,12 @@
             nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+            cert-manager.io/cluster-issuer: "selfsigned"
           useDefaultAnnotations: false
           hosts:
             - "{{ dashboard_public_hostname }}"
           tls:
             enabled: false
-            secretName: k8s-dashboard-certs
 
 - name: Fix Service
   kubernetes.core.k8s:

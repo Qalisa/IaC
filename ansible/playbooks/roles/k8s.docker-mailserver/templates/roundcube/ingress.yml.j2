@@ -6,17 +6,11 @@ metadata:
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "selfsigned" # "{{ cluster_issuer_name }}"
+    cert-manager.io/cluster-issuer: "selfsigned"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
-  tls:
-  - hosts:
-    #  - "*.{{ root_domain }}"
-    # secretName: nw-wildcard-certs
-      - "web{{ docker_mailserver_host }}"
-    secretName: roundcube-certs
   rules:
   - host: "web{{ docker_mailserver_host }}"
     http:
