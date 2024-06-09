@@ -6,10 +6,10 @@
     repo_url: https://sentry-kubernetes.github.io/charts
 
 - name: Set facts
-  set_fact:
+  ansible.builtin.set_fact:
     tmp_path: /tmp/sentry_k8s
 - name: Set facts
-  set_fact:
+  ansible.builtin.set_fact:
     chart_path: "{{ tmp_path }}/sentry"
 - name: Git clone
   ansible.builtin.git:
@@ -30,14 +30,14 @@
 
 ##
 
-- name: postgres update
+- name: Postgres update
   register: postgres_pwd
-  shell: kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
+  ansible.builtin.shell: kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
   ignore_errors: true
 
-- name: kafka update
+- name: Kafka update
   register: kafka_cluster_id
-  shell: kubectl get secret -n sentry sentry-kafka-kraft-cluster-id -o jsonpath="{.data.kraft-cluster-id}" | base64 -d
+  ansible.builtin.shell: kubectl get secret -n sentry sentry-kafka-kraft-cluster-id -o jsonpath="{.data.kraft-cluster-id}" | base64 -d
   ignore_errors: true
 
 ###

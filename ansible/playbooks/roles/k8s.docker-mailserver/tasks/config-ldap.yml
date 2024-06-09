@@ -1,5 +1,5 @@
 ---
-- name: Install Docker Module for Python
+- name: Install LDAP for Python
   ansible.builtin.pip:
     name: python-ldap
 

@@ -25,7 +25,7 @@
 
 - name: postgres update
   register: postgres_pwd
-  shell: kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
+  ansible.builtin.shell: kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
   ignore_errors: true
 
 - name: Install Matomo Stack w/ Helm

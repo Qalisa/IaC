@@ -7,7 +7,7 @@
     create_namespace: true
 
 - name: Generate Access Token
-  set_fact:
+  ansible.builtin.set_fact:
     github_arc_access_token: "{{ lookup('password', '/dev/null chars=ascii_letters,digit length=32', seed=inventory_hostname) | lower }}"
 
 - name: Create Persistent Volume dir path
@@ -26,4 +26,5 @@
       - path: templates/local-cache-runner/secret.yml
       - path: templates/local-cache-runner/deploy.yml
       - path: templates/local-cache-runner/service.yml
+      - path: templates/runners-set/ns.yml.j2
       - path: templates/runners-set/gha-cache-access.yml.j2
