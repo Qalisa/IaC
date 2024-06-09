@@ -1,0 +1,79 @@
+---
+
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ registry_pv_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Prepare image registry
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/pv.yml.j2
+      - path: templates/sc.yml.j2
+
+#
+#
+#
+
+- name: Add a user to a password file
+  community.general.htpasswd:
+    path: "{{ htpasswd_local_path }}"
+    name: "{{ registry_username }}"
+    password: "{{ registry_password }}"
+    hash_scheme: bcrypt # only scheme handled
+
+- name: Add secrets to Github org
+  community.general.terraform:
+    project_path: "{{ terraform_project_path }}"
+    state: present
+    force_init: true
+    complex_vars: true
+    variables:
+      github_organization: "{{ github_org }}"
+      github_token: "{{ ansible_github_var_secrets_pat }}"
+      #
+      secrets:
+        registry_username: "{{ registry_username }}"
+        registry_password: "{{ registry_password }}"
+
+#
+# Add auth to Docker Repository
+#
+
+- name: Load password
+  block:
+    - name: Load facts
+      ansible.builtin.set_fact:
+        registry_pod_env_replace:
+          op: replace
+          path: /spec/template/spec/containers/0/env
+          value:
+            - name: REGISTRY_AUTH
+              value: htpasswd
+            - name: REGISTRY_AUTH_HTPASSWD_REALM
+              value: "Registry Realm"
+            - name: REGISTRY_AUTH_HTPASSWD_PATH
+              value: /var/lib/registry/htpasswd
+            - name: REGISTRY_STORAGE_DELETE_ENABLED
+              value: "true"
+            # COPIED from original
+            - name: REGISTRY_HTTP_ADDR
+              value: ":5000"
+            - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+              value: /var/lib/registry
+
+- name: Patch registry pod
+  ansible.builtin.command: |
+    kubectl patch rs registry -n kube-system --type='json' -p='[{{ registry_pod_env_replace | to_json }}]'
+
+- name: Search for pod exact name
+  kubernetes.core.k8s_info:
+    kind: Pod
+    label_selectors:
+      - k8s-app = registry
+  register: pod_name_search
+
+- name: Regenerate Registry Pod
+  ansible.builtin.command: kubectl delete pod {{ pod_name_search.resources[0].metadata.name }} -n kube-system

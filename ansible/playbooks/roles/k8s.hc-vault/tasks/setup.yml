@@ -16,10 +16,10 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/ns.yml.j2'
-      - path: 'templates/pv.yml.j2'
-      - path: 'templates/injector/root-ca-issuer.yml.j2'
-      - path: 'templates/injector/certificate.yml.j2'
+      - path: templates/ns.yml.j2
+      - path: templates/pv.yml.j2
+      - path: templates/injector/root-ca-issuer.yml.j2
+      - path: templates/injector/certificate.yml.j2
   loop:
     - data-vault-0
 

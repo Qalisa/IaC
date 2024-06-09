@@ -1,0 +1,6 @@
+---
+- name: Install operator
+  ansible.builtin.import_tasks: operator.yml
+
+- name: Install tenant
+  ansible.builtin.import_tasks: tenant.yml

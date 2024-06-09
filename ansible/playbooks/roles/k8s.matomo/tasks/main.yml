@@ -18,10 +18,10 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/ns.yml.j2'
-      - path: 'templates/app/pv.yml.j2'
-      - path: 'templates/db/pv.yml.j2'
-      - path: 'templates/db/pvc.yml.j2'
+      - path: templates/ns.yml.j2
+      - path: templates/app/pv.yml.j2
+      - path: templates/db/pv.yml.j2
+      - path: templates/db/pvc.yml.j2
 
 - name: postgres update
   register: postgres_pwd

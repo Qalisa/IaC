@@ -1,0 +1,24 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: minio-operator
+    repo_url: https://operator.min.io
+
+- name: Install minIO operator w/ Helm
+  kubernetes.core.helm:
+    name: operator
+    chart_ref: minio-operator/operator
+    release_namespace: minio-operator
+    values:
+      operator:
+        replicaCount: 1
+      console:
+      ingress:
+        enabled: true
+        ingressClassName: "{{ ingress_nginx_class }}"
+        host: minio-console.{{ root_domain }}
+        annotations:
+          # when using Cloudflare's proxied DNS record
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          cert-manager.io/cluster-issuer: "selfsigned"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"

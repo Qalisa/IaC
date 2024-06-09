@@ -1,0 +1,52 @@
+---
+# create secret with pwd
+# - name: Read as raw bytes
+#   ansible.builtin.slurp:
+#     src: "{{ htpasswd_local_path }}"
+#   register: registry_ui_keypair
+# - name: Load facts
+#   ansible.builtin.set_fact:
+#     registry_ui_pwdpair_crypt: "{{ registry_ui_keypair.content | b64decode }}"
+#   when: registry_ui_keypair is not failed
+# - name: Add secret for Registry UI
+#   kubernetes.core.k8s:
+#     state: present
+#     template:
+#       - path: templates/registry-ui-basic-auth-secret.yml.j2
+
+# add helm
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: joxit
+    repo_url: https://helm.joxit.dev
+    
+- name: Install docker registry UI w/ Helm
+  kubernetes.core.helm:
+    name: docker-registry-ui
+    chart_ref: joxit/docker-registry-ui
+    release_namespace: kube-system
+    values:
+      global:
+        name: registry # prefix applied to all manfests objects names
+      ui:
+        dockerRegistryUrl: http://registry.kube-system:5000
+        deleteImages: true
+        proxy: true
+        service:
+          type: LoadBalancer
+        ingress:
+          enabled: true
+          host:	registry.{{ root_domain }}
+          ingressClassName: "{{ ingress_nginx_class }}"
+          annotations:
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "selfsigned"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            ###
+            # # type of authentication
+            # nginx.ingress.kubernetes.io/auth-type: basic
+            # # name of the secret that contains the user/password definitions
+            # nginx.ingress.kubernetes.io/auth-secret: registry-ui-basic-auth
+            # # message to display with an appropriate context why the authentication is required
+            # nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'

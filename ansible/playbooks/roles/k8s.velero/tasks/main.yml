@@ -1,0 +1,31 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: vmware-tanzu
+    repo_url: https://vmware-tanzu.github.io/helm-charts
+
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ velero_pv_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Create Persistent Volumes + SSL certificates (injector, server)
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/pv.yml.j2
+      - path: templates/injector/root-ca-issuer.yml.j2
+      - path: templates/injector/certificate.yml.j2
+  loop:
+    - data-vault-0
+
+- name: Install Velero w/ Helm
+  kubernetes.core.helm:
+    name: velero
+    chart_ref: vmware-tanzu
+    release_namespace: velero
+    values:
+      credentials:
+        name: velero-secret

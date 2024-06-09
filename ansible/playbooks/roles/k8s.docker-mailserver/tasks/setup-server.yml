@@ -3,7 +3,7 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/ns.yml.j2'
+      - path: templates/ns.yml.j2
 
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
@@ -58,7 +58,7 @@
 #   kubernetes.core.k8s:
 #     state: present
 #     template:
-#       - path: 'templates/mailserver/proxy/service.proxy.yml.j2'
+#       - path: templates/mailserver/proxy/service.proxy.yml.j2
 
 ##
 ## Patch Nginx Ingress Controller (Requires PROXY protocol enabled ? https://kubernetes.github.io/ingress-nginx/user-guide/miscellaneous/#source-ip-address)
@@ -68,7 +68,7 @@
 #   kubernetes.core.k8s:
 #     state: present
 #     template:
-#       - path: 'templates/mailserver/proxy/ingress-tcp.yml.j2'
+#       - path: templates/mailserver/proxy/ingress-tcp.yml.j2
 
 # - name: Restart ingress-nginx daemonset to ack new configuration
 #   ansible.builtin.command: kubectl rollout restart daemonset ingress-nginx-controller -n ingress-nginx
@@ -135,7 +135,7 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/mailserver/certificate.yml.j2'
+      - path: templates/mailserver/certificate.yml.j2
 
 # might be extensively long depending on provider
 - name: Wait for the associated certificate's secret to be generated
@@ -149,9 +149,9 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/mailserver/postfix-reject-config.yml.j2'
-      - path: 'templates/mailserver/pv.yml.j2'
-      - path: 'templates/mailserver/config.yml.j2'
-      - path: 'templates/mailserver/ldap-secret.yml.j2'
-      - path: 'templates/mailserver/service.yml.j2'
-      - path: 'templates/mailserver/deploy.yml.j2'
+      - path: templates/mailserver/postfix-reject-config.yml.j2
+      - path: templates/mailserver/pv.yml.j2
+      - path: templates/mailserver/config.yml.j2
+      - path: templates/mailserver/ldap-secret.yml.j2
+      - path: templates/mailserver/service.yml.j2
+      - path: templates/mailserver/deploy.yml.j2

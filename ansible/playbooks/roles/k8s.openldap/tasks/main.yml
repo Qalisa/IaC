@@ -14,7 +14,7 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/pv.yml.j2'
+      - path: templates/pv.yml.j2
 
 - name: Install OpenLDAP Stack w/ Helm
   kubernetes.core.helm:
@@ -45,7 +45,7 @@
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "selfsigned"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-          ingressClassName: nginx
+          ingressClassName: "{{ ingress_nginx_class }}"
           ## Ingress Host
           hosts:
             - admin-ldap.{{ root_domain }}
@@ -62,6 +62,6 @@
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "selfsigned"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-          ingressClassName: nginx
+          ingressClassName: "{{ ingress_nginx_class }}"
           hosts:
             - pwd-ldap.{{ root_domain }}

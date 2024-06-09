@@ -3,8 +3,8 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: "templates/ns.yml.j2"
-      - path: "templates/admin-account.yml.j2"
+      - path: templates/ns.yml.j2
+      - path: templates/admin-account.yml.j2
 
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
@@ -39,7 +39,7 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: "templates/service.yml.j2"
+      - path: templates/service.yml.j2
 
 #
 - name: Save Token

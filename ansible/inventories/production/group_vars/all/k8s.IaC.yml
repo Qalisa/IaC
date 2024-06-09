@@ -103,3 +103,5 @@ listmonk_db_pv_path: /var/k8s-data/listmonk/db
 listmonk_uploads_pv_path: /var/k8s-data/listmonk/uploads
 matomo_pv_db_path: /var/k8s-data/matomo/db
 matomo_pv_app_path: /var/k8s-data/matomo/app
+github_arc_cache_pv_path: /var/k8s-data/gha-cache
+velero_pv_path: /var/k8s-data/velero

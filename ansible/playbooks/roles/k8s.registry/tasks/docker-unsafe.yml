@@ -1,0 +1,44 @@
+---
+- name: Check if daemon.json exists
+  stat:
+    path: /etc/docker/daemon.json
+  register: daemon_json_stat
+
+- name: Read existing daemon.json if it exists
+  when: daemon_json_stat.stat.exists
+  slurp:
+    src: /etc/docker/daemon.json
+  register: daemon_json
+
+- name: Set existing configuration to empty if daemon.json does not exist
+  when: not daemon_json_stat.stat.exists
+  set_fact:
+    current_daemon_config: {}
+
+- name: Load existing daemon.json content if it exists
+  when: daemon_json_stat.stat.exists
+  set_fact:
+    current_daemon_config: "{{ daemon_json['content'] | b64decode | from_json }}"
+
+- name: Define new configuration
+  set_fact:
+    new_daemon_config:
+      insecure-registries:
+        - registry.kube-system:5000
+
+- name: Combine new configuration with existing configuration
+  set_fact:
+    updated_daemon_config: "{{ current_daemon_config | combine(new_daemon_config, recursive=True) }}"
+
+- name: Write updated daemon.json back to file
+  copy:
+    content: "{{ updated_daemon_config | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Restart Docker
+  service:
+    name: docker
+    state: restarted

@@ -3,9 +3,9 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: 'templates/solvers-secrets/cloudflare.yml.j2'
-      - path: 'templates/c-issuers/letsencrypt/production.yml.j2'
-      - path: 'templates/c-issuers/letsencrypt/staging.yml.j2'
-      - path: 'templates/c-issuers/zerossl/secret.yml.j2'
-      - path: 'templates/c-issuers/zerossl/production.yml.j2'
-      - path: 'templates/c-issuers/self-signed.yml.j2'
+      - path: templates/solvers-secrets/cloudflare.yml.j2
+      - path: templates/c-issuers/letsencrypt/production.yml.j2
+      - path: templates/c-issuers/letsencrypt/staging.yml.j2
+      - path: templates/c-issuers/zerossl/secret.yml.j2
+      - path: templates/c-issuers/zerossl/production.yml.j2
+      - path: templates/c-issuers/self-signed.yml.j2
