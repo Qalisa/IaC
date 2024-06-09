@@ -1,4 +1,8 @@
 ---
+# allows to "sudo systemctl restart containerd" if needed
+- name: Increase inotify user limit
+  ansible.builtin.command: "sudo sysctl -w fs.inotify.max_user_instances=256"
+
 - name: Install etcd (kubespray requisite)
   ansible.builtin.apt:
     name: etcd

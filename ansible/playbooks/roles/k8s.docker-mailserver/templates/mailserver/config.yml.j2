@@ -12,14 +12,14 @@ data:
     FAIL2BAN_BLOCKTYPE: drop
     UPDATE_CHECK_INTERVAL: 10d
     POSTFIX_INET_PROTOCOLS: ipv4
-    ENABLE_CLAMAV: '1'
-    ENABLE_POSTGREY: '0' # enabling POSTGREY does some anoying delay :(
+    ENABLE_CLAMAV: '0' # anti-virus, can consume a lot of ram / cpu, slowing down email handling
+    ENABLE_POSTGREY: '0' # greylisting, enabling POSTGREY does some anoying delay :(
     ENABLE_FAIL2BAN: '1'
     AMAVIS_LOGLEVEL: '-1'
     # SPOOF_PROTECTION: '1'
     MOVE_SPAM_TO_JUNK: '1'
     ENABLE_UPDATE_CHECK: '1'
-    ENABLE_SPAMASSASSIN: '1'
+    ENABLE_SPAMASSASSIN: '0' # well, is this needed ? slowing down email handling
     SUPERVISOR_LOGLEVEL: warn
     SPAMASSASSIN_SPAM_TO_INBOX: '1'
     #

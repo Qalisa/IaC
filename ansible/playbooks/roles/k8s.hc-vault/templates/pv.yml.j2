@@ -4,6 +4,7 @@ metadata:
   name: hc-vault-{{ item }}
   labels:
     type: local
+    for: "{{ item }}"
 spec:
   storageClassName: "{{ local_storage_class_name }}"
   capacity:

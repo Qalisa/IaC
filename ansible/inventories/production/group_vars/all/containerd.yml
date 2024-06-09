@@ -30,6 +30,9 @@
 
 # containerd_debug_level: "info"
 
+# 65535 is the default, but bitnami/rabbitmq and alot of other apps requires higher default values
+containerd_base_runtime_spec_rlimit_nofile: 65536
+
 # containerd_metrics_address: ""
 
 # containerd_metrics_grpc_histogram: false

@@ -102,17 +102,13 @@
               path = "/vault/data"
             }
 
-      service:
-        enabled: true
-
-      # This configures the Vault Statefulset to create a PVC for audit logs.
-      # See https://www.vaultproject.io/docs/audit/index.html to know more
-      auditStorage:
-        enabled: false
-      dataStorage:
-        enabled: true
-        # well, do not work ?! (https://developer.hashicorp.com/vault/docs/platform/k8s/helm/configuration#storageclass)
-        storageClass: "{{ local_storage_class_name }}"
+        service:
+          enabled: true
+        auditStorage:
+          enabled: false
+        dataStorage:
+          enabled: true
+          storageClass: "{{ local_storage_class_name }}"
       # Vault UI
       ui:
         enabled: true

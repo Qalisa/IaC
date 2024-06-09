@@ -45,4 +45,13 @@ portainer_admin_password: "{{ vault_portainer_admin_password }}"
 # need to allow secrets and variables updates on organization level
 ansible_github_var_secrets_pat: "{{ vault_ansible_github_var_secrets_pat }}"
 
+#
 zerossl_eab_hmac_key: "{{ vault_zerossl_eab_hmac_key }}"
+
+#
+sentry_github_clientId: "{{ vault_sentry_github_clientId }}"
+sentry_github_clientSecret: "{{ vault_sentry_github_clientSecret }}"
+sentry_github_privateKey: "{{ vault_sentry_github_privateKey }}"
+sentry_github_webhookSecret: "{{ vault_sentry_github_webhookSecret }}"
+
+sentry_usermail_password: "{{ vault_sentry_usermail_password }}"

@@ -1,5 +1,5 @@
 ---
-### NOT AVAILABLE / BUGGED, git clone prefered
+# ### NOT AVAILABLE / BUGGED, git clone prefered
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: sentry
@@ -21,6 +21,27 @@
     cmd: helm dependency build
     chdir: "{{ chart_path }}"
 
+- name: Install github secrets
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/github-app-secrets.yml.j2
+
+##
+
+- name: postgres update
+  register: postgres_pwd
+  shell: kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
+  ignore_errors: true
+
+- name: kafka update
+  register: kafka_cluster_id
+  shell: kubectl get secret -n sentry sentry-kafka-kraft-cluster-id -o jsonpath="{.data.kraft-cluster-id}" | base64 -d
+  ignore_errors: true
+
+###
+
 #
 - name: Install Sentry w/ Helm
   kubernetes.core.helm:
@@ -29,9 +50,79 @@
     release_namespace: sentry
     create_namespace: true
     values:
+      hooks:
+        # Allow more in order for deploy process to succeed
+        activeDeadlineSeconds: 10000
+
+      user:
+        create: true
+        email: "{{ sentry_usermail }}"
+        password: "{{ sentry_usermail_password }}"
+
+      mail:
+        backend: smtp
+        useTls: true
+        username: "{{ donotreply_username }}"
+        password: "{{ donotreply_password }}"
+        port: 587
+        host: "docker-mailserver-docker-mailserver"
+        from: "{{ donotreply_email }}"
+
+      sourcemaps:
+        enabled: true
+
+      redis:
+        architecture: standalone
+        replica:
+          replicaCount: 1 # only master deployed
+
+      kafka:
+        kraft:
+          clusterId: "{{ kafka_cluster_id.stdout | default('') }}"
+        controller:
+          replicaCount: 1
+          controllerOnly: false
+        zookeeper:
+          replicaCount: 1
+
+      rabbitmq:
+        replicaCount: 1
+
+      zookeeper:
+        replicaCount: 1
+
+      clickhouse:
+        clickhouse:
+          replicas: "1"
+        tabix:
+          replicas: "1"
+
+      volumePermissions:
+        enabled: true
+
+      global:
+        postgresql:
+          auth:
+            postgresPassword: "{{ postgres_pwd.stdout | default('') }}"
+
+      nginx:
+        enabled: false
+
+      symbolicator:
+        enabled: true
+
       sentry:
         worker:
           replicas: 1
+        # Allow more resources in order for deploy process to succeed
+        # resources:
+        #   limits:
+        #     cpu: 512m
+        #     memory: 4096Mi
+        #   requests:
+        #     cpu: 256m
+        #     memory: 256Mi
+
       ingress:
         enabled: true
         ingressClassName: "{{ ingress_nginx_class }}"
@@ -39,13 +130,20 @@
           # If you are using nginx ingress controller, please use at least those 2 annotations
           nginx.ingress.kubernetes.io/use-regex: "true"
         hostname: sentry.{{ root_domain }}
+
       service:
         type: LoadBalancer
-      github: {}
+
+      github: #   Reference -> https://docs.sentry.io/product/integrations/source-code-mgmt/github/
+        appId: "{{ sentry_github_appId }}"
+        appName: "{{ sentry_github_appName }}"
+        existingSecret: "github-app-secrets"
+
       filestore:
         # Set to one of filesystem, gcs or s3 as supported by Sentry.
         backend: filesystem
         filesystem:
           persistence:
             enabled: true
+            # will not be used for auxiliary services (RabbitMQ, Clickhouse, Kafka...), so kinda useless
             storageClass: local-path

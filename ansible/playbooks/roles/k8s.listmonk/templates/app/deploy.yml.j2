@@ -32,12 +32,20 @@ spec:
           volumeMounts:
             - name: static
               mountPath: "{{ listmonk_static_dir }}"
+        - name: database-ready
+          image: foobic/pg_isready
+          env:
+            - name: HOST 
+              value: db.listmonk
+            - name: RETRIES
+              value: "50"
+          command: ["/scripts/pg_isready.sh"]
       containers:
         - name: listmonk
           image: listmonk/listmonk:latest
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh","-c"]
-          args: ["./listmonk --install --yes --idempotent || true && ./listmonk --static-dir={{ listmonk_static_dir }}"]
+          args: ["./listmonk --install --yes --idempotent && ./listmonk --static-dir={{ listmonk_static_dir }}"]
           volumeMounts:
             - name: uploads
               mountPath: "{{ listmonk_uploads_pv_path }}"

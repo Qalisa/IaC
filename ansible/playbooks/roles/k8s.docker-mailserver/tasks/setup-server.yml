@@ -137,12 +137,13 @@
     template:
       - path: 'templates/mailserver/certificate.yml.j2'
 
+# might be extensively long depending on provider
 - name: Wait for the associated certificate's secret to be generated
   ansible.builtin.command: kubectl get secret docker-mailserver-certs -n docker-mailserver
   register: secret_status
   until: secret_status.rc == 0
   retries: 20
-  delay: 5
+  delay: 20
 
 - name: Then, Install Docker Mailserver
   kubernetes.core.k8s:

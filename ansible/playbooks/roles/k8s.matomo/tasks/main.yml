@@ -23,14 +23,22 @@
       - path: 'templates/db/pv.yml.j2'
       - path: 'templates/db/pvc.yml.j2'
 
+- name: postgres update
+  register: postgres_pwd
+  shell: kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
+  ignore_errors: true
+
 - name: Install Matomo Stack w/ Helm
   kubernetes.core.helm:
     name: matomo
     chart_ref: oci://registry-1.docker.io/bitnamicharts/matomo
-    # chart_version: 7.2.0 # 7.3.0 is bugged ?
     release_namespace: "{{ matomo_namespace }}"
     create_namespace: false
     values:
+      global:
+        postgresql:
+          auth:
+            postgresPassword: "{{ postgres_pwd.stdout | default('') }}"
       volumePermissions:
         enabled: true
       podLabels:
@@ -44,6 +52,8 @@
         primary:
           persistence:
             existingClaim: db
+      # externalDatabase:
+      #   host: "matomo-mariadb.matomo"
       matomoUsername: "{{ matomo_username }}"
       matomoPassword: "{{ matomo_password }}"
       matomoEmail: "{{ postmaster_email }}"
@@ -62,7 +72,7 @@
       #
       service:
         type:	LoadBalancer
-        externalTrafficPolicy: Local 
+        externalTrafficPolicy: Local
       ingress:
         enabled: true
         ingressClassName:	"{{ ingress_nginx_class }}"
@@ -78,9 +88,9 @@
   register: pods_ready
   changed_when: pods_ready.rc != 0
 
-- name: Pause for 5 secs
-  ansible.builtin.pause:
-    seconds: 5
+- name: Wait until the config file exist
+  ansible.builtin.wait_for:
+    path: "{{ matomo_pv_app_path }}/config/config.ini.php"
 
 - name: Edit ini
   community.general.ini_file:
