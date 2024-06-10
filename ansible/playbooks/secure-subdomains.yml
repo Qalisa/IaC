@@ -1,0 +1,6 @@
+---
+- name: Secure
+  hosts: all
+  become: true
+  roles:
+    - role: k8s.cloudflare-vpn

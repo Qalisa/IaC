@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "🚀 Run prod ansible",
+            "label": "🚀 Install whole site !",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -27,7 +27,17 @@
             "problemMatcher": []
         },
         {
-            "label": "Install Ansible requirements",
+            "label": "🔐 Secure Subdomains through Cloudflare Access",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "ansible/playbooks/secure-subdomains.yml",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "⛏ Install Ansible requirements",
             "type": "shell",
             "command": "ansible-galaxy install -r requirements.yml",
             "options": {

@@ -7,5 +7,6 @@ subdomains_to_secure=[
     "prometheus",
     "admin-ldap",
     "minio-console",
-    "minio"
+    "minio",
+    "registry"
 ]
