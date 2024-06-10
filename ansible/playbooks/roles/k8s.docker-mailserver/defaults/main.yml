@@ -12,3 +12,6 @@ email_users_ldap_group_name: "Email Users"
 
 # might disable this behavior if using self-signed / staging certificates
 roundcube_check_mailserver_certs: true
+
+#
+mail_default_user_group: 5000

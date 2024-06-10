@@ -1,4 +1,4 @@
-- name: Install Services w/in Kubernetes
+- name: Unseal Vault
   hosts: all
   become: true
   roles:

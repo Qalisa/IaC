@@ -12,6 +12,8 @@ terraform_project_path: "{{ playbook_dir ~ '/../../terraform' }}"
 #
 master_node_name: node1
 
+cloudflare_zero_trust_team_name: nwlabs
+
 # https://crt.sh/?q=nightworkers-labs.io
 root_domain: nightworkers-labs.io
 
@@ -91,6 +93,9 @@ sentry_github_appId: "914217"
 sentry_github_appName: "nw-s-sentry"
 
 sentry_usermail: "{{ postmaster_email }}"
+
+#
+twingate_network: nightworkerslabs
 
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer

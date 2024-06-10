@@ -17,5 +17,8 @@
       - libldap2-dev
       - libsasl2-dev
       - libssl-dev
+      - jq
     state: present # latest
     update_cache: true
+
+

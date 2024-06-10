@@ -1,0 +1,9 @@
+subdomains_to_secure=[
+    "webmin",
+    "portainer",
+    "k8s-dashboard",
+    "vault",
+    "graphana",
+    "prometheus",
+    "admin-ldap"
+]

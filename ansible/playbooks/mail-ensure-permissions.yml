@@ -1,0 +1,5 @@
+- name: Ensure mail accounts correct folder permissions
+  hosts: all
+  become: true
+  roles:
+    - role: k8s.docker-mailserver

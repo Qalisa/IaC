@@ -21,7 +21,7 @@
       - posixGroup
       - top
     attributes:
-      gidnumber: 5000
+      gidnumber: "{{ mail_default_user_group }}"
 
 #
 - name: Create default accounts
@@ -36,7 +36,7 @@
       - posixAccount
       - top
     attributes:
-      gidnumber: 5000
+      gidnumber: "{{ mail_default_user_group }}"
       homedirectory: /home/users/{{ item.username }}
       mail:
         - "{{ item.username }}"

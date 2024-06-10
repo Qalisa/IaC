@@ -13,3 +13,6 @@
 
 - name: Setup roundcube services
   ansible.builtin.import_tasks: setup-roundcube.yml
+
+- name: Ensure Email accounts folder correct permissions
+  ansible.builtin.import_tasks: users-acc-ensure-permissions.yml

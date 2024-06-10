@@ -26,7 +26,7 @@
 
 - name: Add secrets to Github org
   community.general.terraform:
-    project_path: "{{ terraform_project_path }}"
+    project_path: "{{ terraform_project_path }}/gha-expose-secrets"
     state: present
     force_init: true
     complex_vars: true

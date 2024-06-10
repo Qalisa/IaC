@@ -1,1 +1,9 @@
 ---
+- name: Install minIO tenant w/ Helm
+  kubernetes.core.helm:
+    name: tenant
+    chart_ref: minio-operator/tenant
+    release_namespace: minio-tenant
+    create_namespace: true
+    values:
+      

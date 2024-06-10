@@ -39,6 +39,17 @@
             "problemMatcher": []
         },
         {
+            "label": "✅ Ensure Mail Accounts Folder Permissions",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "ansible/playbooks/mail-ensure-permissions.yml",
+                "--tags", "mail-acc-ensure-permissions"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "🔄 Upgrade cluster (kubespray)",
             "type": "shell",
             "dependsOn": "Upgrade kubespray collection",

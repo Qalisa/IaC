@@ -6,7 +6,11 @@
 
 # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
 # https://community.letsencrypt.org/t/acme-v2-production-environment-wildcards/55578
-cloudflare_dns_api_token: "{{ vault_cloudflare_dns_api_token }}"
+# also requires Zero Trust Access Edit rights
+# - Access : App & Policies
+# - Access: Organizations, Identity Providers & Groups
+cloudflare_api_token: "{{ vault_cloudflare_api_token }}"
+cloudflare_account_id: "{{ vault_cloudflare_account_id }}"
 
 # password for postmaster@{{ root_domain }}
 postmaster_password: "{{ vault_postmaster_password }}"
@@ -47,6 +51,10 @@ ansible_github_var_secrets_pat: "{{ vault_ansible_github_var_secrets_pat }}"
 
 #
 zerossl_eab_hmac_key: "{{ vault_zerossl_eab_hmac_key }}"
+
+#
+twingate_accessToken: "{{ vault_twingate_accessToken }}"
+twingate_refreshToken: "{{ vault_twingate_refreshToken }}"
 
 #
 sentry_github_clientId: "{{ vault_sentry_github_clientId }}"

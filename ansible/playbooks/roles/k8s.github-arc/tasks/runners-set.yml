@@ -1,7 +1,7 @@
 ---
 - name: Log into private registry and force re-authorization
   community.docker.docker_login:
-    registry_url: registry.kube-system:5000
+    registry_url: registry.kube-system
     username: "{{ registry_username }}"
     password: "{{ registry_password }}"
     reauthorize: true

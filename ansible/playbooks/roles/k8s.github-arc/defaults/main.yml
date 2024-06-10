@@ -5,4 +5,4 @@ github_arc_systems_ns: arc-systems
 github_arc_runners_ns: arc-runners
 github_arc_cache_url: http://gha-cache.{{ github_arc_systems_ns }}:3000
 lar_docker_image_name: local-actions-runner
-lar_repository_url: registry.kube-system:5000/{{ lar_docker_image_name }}
+lar_repository_url: registry.kube-system/{{ lar_docker_image_name }}

@@ -1,0 +1,24 @@
+---
+- name: Get users by id
+  tags: [mail-acc-ensure-permissions]
+  register: users
+  vars:
+    dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
+    email_users_ldap_group_name: "Email Users"
+  community.general.ldap_search:
+    server_uri: ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}/
+    bind_dn: cn=admin,{{ dc_query_string }}
+    bind_pw: "{{ openldap_pwd }}"
+    #
+    dn: "cn={{ email_users_ldap_group_name }},{{ dc_query_string }}"
+    scope: "onelevel"
+    attrs:
+      - uidNumber
+      - homeDirectory
+
+- name: reaply legitimate permissions
+  tags: [mail-acc-ensure-permissions]
+  ignore_errors: true
+  ansible.builtin.command: |
+    chown -R {{ item.uidNumber }}:{{ mail_default_user_group }} {{ docker_mailserver_pv_path }}/data/{{ item.homeDirectory | split('/') | last }}
+  loop: "{{ users.results }}"

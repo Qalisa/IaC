@@ -29,7 +29,7 @@
       global:
         name: registry # prefix applied to all manfests objects names
       ui:
-        dockerRegistryUrl: http://registry.kube-system:5000
+        dockerRegistryUrl: http://registry.kube-system
         deleteImages: true
         proxy: true
         service:

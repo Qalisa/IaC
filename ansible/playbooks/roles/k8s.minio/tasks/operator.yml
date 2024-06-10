@@ -9,16 +9,27 @@
     name: operator
     chart_ref: minio-operator/operator
     release_namespace: minio-operator
+    create_namespace: true
     values:
       operator:
         replicaCount: 1
       console:
-      ingress:
-        enabled: true
-        ingressClassName: "{{ ingress_nginx_class }}"
-        host: minio-console.{{ root_domain }}
-        annotations:
-          # when using Cloudflare's proxied DNS record
-          nginx.ingress.kubernetes.io/ssl-redirect: "false"
-          cert-manager.io/cluster-issuer: "selfsigned"
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+        ingress:
+          enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
+          host: minio-console.{{ root_domain }}
+          annotations:
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "selfsigned"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+- name: Get Token
+  register: minio_token
+  ansible.builtin.shell:
+    kubectl get secret/console-sa-secret -n minio-operator -o json | jq -r ".data.token" | base64 -d
+
+- name: Save Token
+  ansible.builtin.copy:
+    content: "{{ minio_token.stdout }}"
+    dest: "{{ generated_creds_dir }}/minio-console-token.txt"
