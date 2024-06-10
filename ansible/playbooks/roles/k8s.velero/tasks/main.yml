@@ -47,8 +47,9 @@
             config:
               region: "{{ minio_tenant_backup_storage_bucket_region }}"
               s3ForcePathStyle: "true"
-              s3Url: "{{ minio_tenant_s3_url_unsafe }}"
-              publicUrl: "{{ minio_tenant_s3_url_unsafe }}"
+              insecureSkipTLSVerify: true
+              s3Url: "{{ minio_tenant_s3_url }}"
+              publicUrl: "{{ minio_tenant_s3_url }}"
 
         # Parameters for the VolumeSnapshotLocation(s). Configure multiple by adding other element(s) to the volumeSnapshotLocation slice.
         # See https://velero.io/docs/v1.6/api-types/volumesnapshotlocation/
@@ -61,5 +62,6 @@
             config:
               region: "{{ minio_tenant_backup_storage_bucket_region }}"
               s3ForcePathStyle: "true"
-              s3Url: "{{ minio_tenant_s3_url_unsafe }}"
-              publicUrl: "{{ minio_tenant_s3_url_unsafe }}"
+              insecureSkipTLSVerify: true
+              s3Url: "{{ minio_tenant_s3_url }}"
+              publicUrl: "{{ minio_tenant_s3_url }}"

@@ -100,7 +100,6 @@ minio_access_key_id: "{{ minio_tenant_username}}"
 minio_tenant_backup_storage_bucket_name: default-backups # https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
 minio_tenant_backup_storage_bucket_region: minio
 minio_tenant_s3_url: https://minio.minio-tenant:443
-minio_tenant_s3_url_unsafe: http://myminio-hl.minio-tenant:9000
 
 # where should the persistent volume created for X service, store its data on node
 portainer_pv_path: /var/k8s-data/portainer
