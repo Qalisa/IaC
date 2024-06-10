@@ -37,5 +37,5 @@
     # - role: k8s.hc-vault # OPTIONAL, allow secure storage of private keys
     # # - role: k8s.sentry # OPTIONAL (high resources usage !)
     # - role: k8s.argo-cd
-    # - role: k8s.minio # Storage Object service for storing backups and snapshots
-    - role: k8s.velero #
+    - role: k8s.minio # Storage Object service for storing backups and snapshots
+    # - role: k8s.velero #

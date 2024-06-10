@@ -6,5 +6,6 @@ subdomains_to_secure=[
     "graphana",
     "prometheus",
     "admin-ldap",
-    "minio-console"
+    "minio-console",
+    "minio"
 ]

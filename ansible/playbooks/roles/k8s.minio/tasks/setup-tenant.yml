@@ -13,6 +13,16 @@
     release_namespace: minio-tenant
     create_namespace: false
     values:
+      ingress:
+        console:
+          enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
+          annotations:
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "selfsigned"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          host: minio-console.{{ root_domain }}
       secrets: # override to empty, replaced by "tenant.configSecret"
       tenant:
         ###
@@ -60,3 +70,5 @@
               runAsUser: 1000
               runAsGroup: 1000
               runAsNonRoot: true
+
+- 

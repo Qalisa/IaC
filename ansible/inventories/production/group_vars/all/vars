@@ -52,9 +52,9 @@ ansible_github_var_secrets_pat: "{{ vault_ansible_github_var_secrets_pat }}"
 #
 zerossl_eab_hmac_key: "{{ vault_zerossl_eab_hmac_key }}"
 
-#
-twingate_accessToken: "{{ vault_twingate_accessToken }}"
-twingate_refreshToken: "{{ vault_twingate_refreshToken }}"
+# minimum 8 chars
+minio_tenant_password: "{{ vault_minio_tenant_password }}"
+minio_secret_access_key: "{{ minio_tenant_password }}"
 
 #
 sentry_github_clientId: "{{ vault_sentry_github_clientId }}"

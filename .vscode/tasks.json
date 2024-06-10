@@ -27,7 +27,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Upgrade kubespray collection",
+            "label": "Install Ansible requirements",
             "type": "shell",
             "command": "ansible-galaxy install -r requirements.yml",
             "options": {

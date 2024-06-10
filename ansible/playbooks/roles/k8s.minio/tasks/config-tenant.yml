@@ -1,0 +1,16 @@
+---
+- name: Run Pip w/ requisites
+  ansible.builtin.pip:
+    name:
+      - botocore
+      - boto3
+
+- name: Create default bucket
+  amazon.aws.s3_bucket:
+    access_key: "{{ minio_access_key_id }}"
+    secret_key: "{{ minio_secret_access_key }}"
+    #
+    name: "{{ minio_tenant_backup_storage_bucket_name }}"
+    endpoint_url: "{{ minio_tenant_s3_url }}" # HTTPS REQUIRED !
+    validate_certs: false # ignore self signed certificates
+    region: "{{ minio_tenant_backup_storage_bucket_region }}"

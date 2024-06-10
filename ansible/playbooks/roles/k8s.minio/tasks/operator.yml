@@ -17,7 +17,7 @@
         ingress:
           enabled: true
           ingressClassName: "{{ ingress_nginx_class }}"
-          host: minio-console.{{ root_domain }}
+          host: minio.{{ root_domain }}
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
