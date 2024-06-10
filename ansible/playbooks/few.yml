@@ -1,0 +1,6 @@
+---
+- name: Debug
+  hosts: all
+  become: true
+  roles:
+    - role: k8s.sentry

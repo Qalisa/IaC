@@ -5,21 +5,21 @@
     name: sentry
     repo_url: https://sentry-kubernetes.github.io/charts
 
-- name: Set facts
-  ansible.builtin.set_fact:
-    tmp_path: /tmp/sentry_k8s
-- name: Set facts
-  ansible.builtin.set_fact:
-    chart_path: "{{ tmp_path }}/sentry"
-- name: Git clone
-  ansible.builtin.git:
-    repo: https://github.com/sentry-kubernetes/charts
-    dest: "{{ tmp_path }}"
-    version: sentry-v23.3.0
-- name: helm build
-  ansible.builtin.command:
-    cmd: helm dependency build
-    chdir: "{{ chart_path }}"
+# - name: Set facts
+#   ansible.builtin.set_fact:
+#     tmp_path: /tmp/sentry_k8s
+# - name: Set facts
+#   ansible.builtin.set_fact:
+#     chart_path: "{{ tmp_path }}/sentry"
+# - name: Git clone
+#   ansible.builtin.git:
+#     repo: https://github.com/sentry-kubernetes/charts
+#     dest: "{{ tmp_path }}"
+#     version: sentry-v23.3.0
+# - name: helm build
+#   ansible.builtin.command:
+#     cmd: helm dependency build
+#     chdir: "{{ chart_path }}"
 
 - name: Install github secrets
   kubernetes.core.k8s:
@@ -46,7 +46,7 @@
 - name: Install Sentry w/ Helm
   kubernetes.core.helm:
     name: sentry
-    chart_ref: "{{ chart_path }}" # sentry/sentry
+    chart_ref: sentry/sentry # "{{ chart_path }}"
     release_namespace: sentry
     create_namespace: true
     values:
@@ -115,13 +115,13 @@
         worker:
           replicas: 1
         # Allow more resources in order for deploy process to succeed
-        # resources:
-        #   limits:
-        #     cpu: 512m
-        #     memory: 4096Mi
-        #   requests:
-        #     cpu: 256m
-        #     memory: 256Mi
+        resources:
+          limits:
+            cpu: 512m
+            memory: 4096Mi
+          requests:
+            cpu: 256m
+            memory: 256Mi
 
       ingress:
         enabled: true

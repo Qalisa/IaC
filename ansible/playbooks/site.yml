@@ -35,7 +35,7 @@
     - role: k8s.github-arc # OPTIONAL, local runners
     - role: k8s.matomo # OPTIONAL
     - role: k8s.hc-vault # OPTIONAL, allow secure storage of private keys
-    # - role: k8s.sentry # OPTIONAL (high resources usage !)
+    # - role: k8s.sentry # OPTIONAL (careful, high resources usage !)
     - role: k8s.argo-cd
     - role: k8s.minio # Storage Object service for storing backups and snapshots
     - role: k8s.velero #
