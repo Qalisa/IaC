@@ -18,8 +18,7 @@
       - path: templates/pv.yml.j2
       - path: templates/injector/root-ca-issuer.yml.j2
       - path: templates/injector/certificate.yml.j2
-  loop:
-    - data-vault-0
+
 
 - name: Install Velero w/ Helm
   kubernetes.core.helm:

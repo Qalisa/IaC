@@ -14,22 +14,6 @@
 # - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
 #   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
 
-- name: Apply Cloudflare Zero Trust VPN access
-  hosts: all
-  become: true
-  tasks:
-    - name: Apply Cloudflare Zero Trust VPN access
-      community.general.terraform:
-        project_path: "{{ terraform_project_path }}/cloudflare-access"
-        state: present
-        force_init: true
-        complex_vars: true
-        variables:
-          cloudflare_api_token: "{{ cloudflare_api_token }}"
-          cloudflare_account_id: "{{ cloudflare_account_id }}"
-          whitelisted_mail_domain: "{{ root_domain }}"
-          cloudflare_zero_trust_team_name: "{{ cloudflare_zero_trust_team_name }}"
-
 # ensure services roles are installed and configured AFTER kubernetes is set
 - name: Install Services w/in Kubernetes
   hosts: all
@@ -38,6 +22,7 @@
     # - role: diodonfrost.terraform # Install Terraform CLI
     # - role: more.kubespray # Finish kubespray configuration
     # - role: more.docker # Install docker for building images
+    # - role: k8s.cloudflare-vpn # OPTIONAL
     # - role: k8s.registry # Finish registry configuration (installed along kubespray)
     # - role: k8s.cert-manager # Finish cert-manager configuration (installed along kubespray)
     # - role: k8s.dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
@@ -52,5 +37,5 @@
     # - role: k8s.hc-vault # OPTIONAL, allow secure storage of private keys
     # # - role: k8s.sentry # OPTIONAL (high resources usage !)
     # - role: k8s.argo-cd
-    - role: k8s.minio # Storage Object service for storing backups and snapshots
-    # - role: k8s.velero #
+    # - role: k8s.minio # Storage Object service for storing backups and snapshots
+    - role: k8s.velero #

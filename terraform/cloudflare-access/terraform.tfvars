@@ -5,5 +5,6 @@ subdomains_to_secure=[
     "vault",
     "graphana",
     "prometheus",
-    "admin-ldap"
+    "admin-ldap",
+    "minio-console"
 ]
