@@ -1,7 +1,8 @@
 ---
 - name: Install passlib
   ansible.builtin.pip:
-    name: passlib
+    name:
+      - passlib
 
 - name: Install required system packages
   ansible.builtin.apt:
@@ -20,5 +21,3 @@
       - jq
     state: present # latest
     update_cache: true
-
-
