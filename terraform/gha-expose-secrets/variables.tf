@@ -29,3 +29,10 @@ variable "secrets" {
   type = map(string)
   default = {}
 }
+
+variable "variables" {
+  description = "Map of variables to set for each repository"
+  type = map(string)
+  default = {}
+}
+

@@ -37,6 +37,8 @@
       secrets:
         registry_username: "{{ registry_username }}"
         registry_password: "{{ registry_password }}"
+      variables:
+        private_repository: "{{ registry_host }}"
 
 #
 # Add auth to Docker Repository

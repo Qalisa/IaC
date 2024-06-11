@@ -11,7 +11,8 @@
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/few.yml"
+                "ansible/playbooks/few.yml",
+                "--tags", "runner-set"
             ],
             "problemMatcher": []
         },
@@ -25,6 +26,22 @@
                 "--become --become-user=root",
                 "ansible/playbooks/site.yml"
             ],
+            "problemMatcher": []
+        },
+        {
+            "label": "👮‍♀️ Enforce namespace deletion",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--become --become-user=root",
+                "ansible/playbooks/namespace-deletion.yml",
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
             "problemMatcher": []
         },
         {

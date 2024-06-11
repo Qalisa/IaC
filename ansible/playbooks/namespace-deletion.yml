@@ -1,0 +1,39 @@
+- name: Enforce k8s namespace deletion
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    ns: arc-runners
+  tasks:
+    - name: Delete namespace finalizers
+      ansible.builtin.shell: |
+        export NS={{ ns }} && \
+        kubectl get namespace "$NS" -o json | \
+        tr -d "\n" | \
+        sed 's/"finalizers": \[[^]]*\]/"finalizers": []/' | \
+        kubectl replace --raw /api/v1/namespaces/$NS/finalize -f -
+      args:
+        executable: /bin/bash
+      register: delete_namespace_finalizers
+      ignore_errors: yes
+
+    - name: Delete namespace
+      ansible.builtin.shell: |
+        kubectl delete namespace {{ ns }}
+      when: delete_namespace_finalizers.rc == 0
+      register: delete_namespace
+      ignore_errors: yes
+
+    - name: Ensure namespace is deleted
+      ansible.builtin.command: |
+        kubectl get namespace {{ ns }}
+      register: check_namespace
+      ignore_errors: yes
+      retries: 5
+      delay: 10
+      until: check_namespace.rc != 0
+
+    - name: Report namespace deletion status
+      ansible.builtin.debug:
+        msg: "Namespace {{ ns }} deleted successfully."
+      when: check_namespace.rc != 0

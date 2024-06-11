@@ -1,5 +1,10 @@
 ---
+#
+#
+#
+
 - name: Log into private registry and force re-authorization
+  tags: [runner-set]
   community.docker.docker_login:
     registry_url: "{{ registry_host }}"
     username: "{{ registry_username }}"
@@ -8,6 +13,7 @@
     validate_certs: false
 
 - name: Build Custom runner image and push it
+  tags: [runner-set]
   community.docker.docker_image:
     state: present
     name: "{{ lar_docker_image_name }}"
@@ -18,7 +24,12 @@
     repository: "{{ lar_repository_url }}"
     push: true
 
+#
+#
+#
+
 - name: Define dockerconfigjson
+  tags: [runner-set]
   ansible.builtin.set_fact:
     dockerconfigjson: >
       {
@@ -34,6 +45,7 @@
 
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
 - name: Setup namespace + GH App + Local Cache secrets
+  tags: [runner-set]
   kubernetes.core.k8s:
     state: present
     template:
@@ -42,6 +54,7 @@
       - path: templates/runner-set/private-repository-secret.yml.j2
 
 - name: Install action runners set
+  tags: [runner-set]
   kubernetes.core.helm:
     name: arc-runner-set
     chart_ref: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
@@ -58,11 +71,33 @@
       maxRunners: 5
       ## minRunners is the min number of idle runners. The target number of runners created will be
       ## calculated as a sum of minRunners and the number of jobs assigned to the scale set.
-      minRunners: 1
+      minRunners: 0
+      ## Container mode is an object that provides out-of-box configuration
+      ## for dind and kubernetes mode. Template will be modified as documented under the
+      ## template object.
+      ##
+      ## If any customization is required for dind or kubernetes mode, containerMode should remain
+      ## empty, and configuration should be applied to the template.
+      containerMode:
+        type: "dind"  ## type can be set to dind or kubernetes
+        ## the following is required when containerMode.type=kubernetes
+        # kubernetesModeWorkVolumeClaim:
+        #   accessModes: ["ReadWriteOnce"]
+        #   # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md to provide dynamic provision volume with storageClassName: openebs-hostpath
+        #   storageClassName: "dynamic-blob-storage"
+        #   resources:
+        #     requests:
+        #       storage: 1Gi
+        # kubernetesModeServiceAccount:
+        #   annotations:
       template:
         spec:
           imagePullSecrets:
             - name: regcred
+          # containers:
+          #   - name: runner
+          #     image: ghcr.io/actions/actions-runner:latest
+          #     command: ["/home/runner/run.sh"]
           # containers:
           #   - name: runner
           #     image: "{{ lar_repository_url }}"
