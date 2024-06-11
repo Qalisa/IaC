@@ -2,5 +2,5 @@
 - name: Install controller
   ansible.builtin.import_tasks: controller.yml
 
-- name: Install runners-set
-  ansible.builtin.import_tasks: runners-set.yml
+- name: Install runner-set
+  ansible.builtin.import_tasks: runner-set.yml

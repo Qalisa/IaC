@@ -59,6 +59,7 @@ listmonk_static_dir_repo_url: "https://github.com/NightworkersLabs/listmonk-stat
 
 #
 registry_username: admin
+registry_host: registry.kube-system:5000 # explicit port is important for some reason
 
 #
 matomo_username: admin

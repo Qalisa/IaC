@@ -30,7 +30,7 @@
   ansible.builtin.set_fact:
     new_daemon_config:
       insecure-registries:
-        - registry.kube-system
+        - "{{ registry_host }}"
 
 - name: Combine new configuration with existing configuration
   ansible.builtin.set_fact:

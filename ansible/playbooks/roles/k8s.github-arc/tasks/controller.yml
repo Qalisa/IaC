@@ -26,5 +26,5 @@
       - path: templates/local-cache-runner/secret.yml
       - path: templates/local-cache-runner/deploy.yml
       - path: templates/local-cache-runner/service.yml
-      - path: templates/runners-set/ns.yml.j2
-      - path: templates/runners-set/gha-cache-access.yml.j2
+      - path: templates/runner-set/ns.yml.j2
+      - path: templates/runner-set/gha-cache-access.yml.j2

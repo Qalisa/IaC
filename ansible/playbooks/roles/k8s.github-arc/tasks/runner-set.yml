@@ -1,0 +1,72 @@
+---
+- name: Log into private registry and force re-authorization
+  community.docker.docker_login:
+    registry_url: "{{ registry_host }}"
+    username: "{{ registry_username }}"
+    password: "{{ registry_password }}"
+    reauthorize: true
+    validate_certs: false
+
+- name: Build Custom runner image and push it
+  community.docker.docker_image:
+    state: present
+    name: "{{ lar_docker_image_name }}"
+    tag: latest
+    build:
+      path: "{{ role_path }}/files/local-runner-image"
+    source: build
+    repository: "{{ lar_repository_url }}"
+    push: true
+
+- name: Define dockerconfigjson
+  ansible.builtin.set_fact:
+    dockerconfigjson: >
+      {
+        "auths": {
+          "{{ registry_host }}": {
+            "username": "{{ registry_username }}",
+            "password": "{{ registry_password }}",
+            "email": "{{ postmaster_email }}",
+            "auth": "{{ (registry_username + ':' + registry_password) | b64encode }}"
+          }
+        }
+      }
+
+# https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
+- name: Setup namespace + GH App + Local Cache secrets
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/runner-set/ns.yml.j2
+      - path: templates/runner-set/gh-app-secrets.yml.j2
+      - path: templates/runner-set/private-repository-secret.yml.j2
+
+- name: Install action runners set
+  kubernetes.core.helm:
+    name: arc-runner-set
+    chart_ref: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+    release_namespace: "{{ github_arc_runners_ns }}"
+    create_namespace: false
+    # https://github.com/actions/actions-runner-controller/blob/master/charts/gha-runner-scale-set/values.yaml
+    values:
+      githubConfigUrl: "{{ github_org_url }}"
+      githubConfigSecret: gh-app
+      controllerServiceAccount:
+        namespace: arc-systems
+        name: arc-gha-rs-controller
+      ## maxRunners is the max number of runners the autoscaling runner set will scale up to.
+      maxRunners: 5
+      ## minRunners is the min number of idle runners. The target number of runners created will be
+      ## calculated as a sum of minRunners and the number of jobs assigned to the scale set.
+      minRunners: 1
+      template:
+        spec:
+          imagePullSecrets:
+            - name: regcred
+          # containers:
+          #   - name: runner
+          #     image: "{{ lar_repository_url }}"
+          #     command: ["/home/runner/run.sh"]
+          #     envFrom:
+          #       - secretRef:
+          #         name: gha-cache-access

@@ -19,7 +19,7 @@
   kubernetes.core.helm_repository:
     name: joxit
     repo_url: https://helm.joxit.dev
-    
+
 - name: Install docker registry UI w/ Helm
   kubernetes.core.helm:
     name: docker-registry-ui
@@ -29,7 +29,7 @@
       global:
         name: registry # prefix applied to all manfests objects names
       ui:
-        dockerRegistryUrl: http://registry.kube-system
+        dockerRegistryUrl: http://{{ registry_host }}
         deleteImages: true
         proxy: true
         service:
