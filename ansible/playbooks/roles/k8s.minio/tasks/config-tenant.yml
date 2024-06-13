@@ -5,11 +5,10 @@
       - botocore
       - boto3
 
-
 - name: Wait for pod to become Ready
   ansible.builtin.command: |
     kubectl wait
-    pod/myminio-pool-0-0
+    pods -l app=minio
     --namespace=minio-tenant
     --for=condition=Ready
     --timeout=120s

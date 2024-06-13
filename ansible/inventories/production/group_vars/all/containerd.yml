@@ -52,7 +52,7 @@
 #     password: pass
 
 # Registries defined within containerd.
-containerd_use_config_path: true
+containerd_use_config_path: false
 containerd_registries_mirrors:
   - prefix: docker.io
     mirrors:

@@ -58,7 +58,7 @@
           # initContainer:
           containers:
             - name: runner
-              image: "{{ lar_repository_url }}"
+              image: "{{ lar_repository_url }}:latest"
               command: ["/bin/sh", "-c"]
               args: ["/home/runner/run.sh"]
               env:
