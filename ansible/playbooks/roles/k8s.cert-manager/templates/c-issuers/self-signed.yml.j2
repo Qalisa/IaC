@@ -1,32 +1,35 @@
+# A dummy issuer that can generate certificates
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: selfsigned-issuer
+  name: zero-selfsigned
 spec:
   selfSigned: {}
 ---
+# Our Org CA certificate
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: selfsigned-ca
+  name: "{{ org_ca_name }}-ca"
   namespace: cert-manager
 spec:
   isCA: true
-  commonName: selfsigned-ca
+  commonName: "{{ org_ca_name }}-ca"
   secretName: root-secret
   privateKey:
     algorithm: ECDSA
     size: 256
   issuerRef:
-    name: selfsigned-issuer
+    name: zero-selfsigned
     kind: ClusterIssuer
     group: cert-manager.io
 ---
-# use this issuer in Ingresses
+# This issuer will generate certificates based on our previously generated Org identity
+# We can use this issuer in Ingress, Certficate...
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: selfsigned
+  name: "{{ org_ca_name }}"
 spec:
   ca:
     secretName: root-secret

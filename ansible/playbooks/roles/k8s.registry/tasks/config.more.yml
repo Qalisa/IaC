@@ -50,7 +50,7 @@
 # might be extensively long depending on provider
 - name: Wait for the associated certificate's secret to be generated
   tags: [config-more]
-  ansible.builtin.command: kubectl get secret registry-server-tls -n kube-system
+  ansible.builtin.command: kubectl get secret {{ registry_cert_secret_name }} -n kube-system
   register: secret_status
   until: secret_status.rc == 0
   retries: 20
@@ -115,7 +115,7 @@
             name: registry-config
           - name: certs
             secret:
-              secretName: registry-server-tls
+              secretName: "{{ registry_cert_secret_name }}"
 
 - name: Patch replica set
   tags: [config-more]

@@ -18,7 +18,6 @@
     template:
       - path: templates/ns.yml.j2
       - path: templates/pv.yml.j2
-      - path: templates/injector/root-ca-issuer.yml.j2
       - path: templates/injector/certificate.yml.j2
   loop:
     - data-vault-0
@@ -73,7 +72,7 @@
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "selfsigned"
+            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           hosts:
             - host: vault.{{ root_domain }}

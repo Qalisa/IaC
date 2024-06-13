@@ -13,7 +13,7 @@
       secretTargets:
         enabled: true
         authorizedSecrets:
-          - trust-manager-ca
+          - "{{ org_ca_cert_secret_name }}"
 
 - name: Update namespaces with trust enabled for CA
   kubernetes.core.k8s:

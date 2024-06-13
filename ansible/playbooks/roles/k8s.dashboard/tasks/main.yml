@@ -28,7 +28,7 @@
             nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "selfsigned"
+            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
           useDefaultAnnotations: false
           hosts:
             - "{{ dashboard_public_hostname }}"

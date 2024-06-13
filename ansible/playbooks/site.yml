@@ -21,7 +21,6 @@
   roles:
     - role: diodonfrost.terraform # Install Terraform CLI
     - role: more.kubespray # Finish kubespray configuration
-    - role: more.docker # Install docker for building images
     - role: k8s.cloudflare-vpn # OPTIONAL
     - role: k8s.registry # Finish registry configuration (installed along kubespray)
     - role: k8s.cert-manager # Finish cert-manager configuration (installed along kubespray)

@@ -1,14 +1,14 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: registry-server-cert
+  name: "{{ registry_cert_secret_name }}"
   namespace: kube-system
 spec:
-  secretName: registry-server-tls
+  secretName: "{{ registry_cert_secret_name }}"
   duration: 24h
   renewBefore: 12h
   issuerRef:
-    name: selfsigned-issuer
+    name: "{{ org_ca_name }}"
     kind: ClusterIssuer
   commonName: "{{ registry_host }}"
   dnsNames:
