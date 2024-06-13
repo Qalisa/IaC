@@ -3,5 +3,4 @@
   hosts: all
   become: true
   roles:
-    - role: k8s.cert-manager
     - role: k8s.registry

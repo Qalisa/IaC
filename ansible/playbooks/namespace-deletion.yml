@@ -2,8 +2,6 @@
   hosts: all
   become: true
   gather_facts: false
-  vars:
-    ns: arc-runners
   tasks:
     - name: Delete namespace finalizers
       ansible.builtin.shell: |

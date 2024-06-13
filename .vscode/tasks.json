@@ -2,6 +2,14 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "nsToDelete",
+            "description": "Please input the namespace to delete:",
+            "default": "",
+            "type": "promptString"
+        },
+    ],
     "tasks": [
         {
             "label": "🐛 Install few...",
@@ -35,6 +43,7 @@
                 "-i ansible/inventories/production/hosts",
                 "--become --become-user=root",
                 "ansible/playbooks/namespace-deletion.yml",
+                "--extra-vars=", "ns=${input:nsToDelete}"
             ],
             "options": {
                 "statusbar": {
@@ -111,8 +120,7 @@
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/upgrade-cluster.yml",
-                "--tags", "containerd"
+                "ansible/playbooks/upgrade-cluster.yml"
             ],
             "options": {
                 "statusbar": {

@@ -2,7 +2,7 @@
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week for letsencrypt ! (https://letsencrypt.org/docs/rate-limits/)
 default_cluster_issuer: zerossl-prod # letsencrypt-prod
-trust_managed_namespaces: [kube-system]
+trust_managed_namespaces: [arc-runners]
 org_ca_name: selfsigned
 org_ca_cert_secret_name: "trust-manager.{{ org_ca_name }}"
 

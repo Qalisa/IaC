@@ -6,7 +6,7 @@ spec:
   sources:
     - useDefaultCAs: false
     - secret:
-        name: root-secret
+        name: "ca-secret.{{ org_ca_name }}"
         key: ca.crt
   target:
     secret:

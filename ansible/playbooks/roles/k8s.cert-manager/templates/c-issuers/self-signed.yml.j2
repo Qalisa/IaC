@@ -15,7 +15,7 @@ metadata:
 spec:
   isCA: true
   commonName: "{{ org_ca_name }}-ca"
-  secretName: root-secret
+  secretName: "ca-secret.{{ org_ca_name }}"
   privateKey:
     algorithm: ECDSA
     size: 256
@@ -32,4 +32,4 @@ metadata:
   name: "{{ org_ca_name }}"
 spec:
   ca:
-    secretName: root-secret
+    secretName: "ca-secret.{{ org_ca_name }}"
