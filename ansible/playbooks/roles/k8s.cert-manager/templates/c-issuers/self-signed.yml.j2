@@ -14,7 +14,7 @@ metadata:
   namespace: cert-manager
 spec:
   isCA: true
-  commonName: "{{ org_ca_name }}-ca"
+  commonName: "{{ org_ca_name }}'s org Root CA"
   secretName: "ca-secret.{{ org_ca_name }}"
   privateKey:
     algorithm: ECDSA

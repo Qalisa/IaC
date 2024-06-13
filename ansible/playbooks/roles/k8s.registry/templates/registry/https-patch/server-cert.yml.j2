@@ -10,6 +10,6 @@ spec:
   issuerRef:
     name: "{{ org_ca_name }}"
     kind: ClusterIssuer
-  commonName: "{{ registry_host }}"
+  commonName: "{{ org_ca_name }}'s org private image registry"
   dnsNames:
     - "{{ registry_host }}"

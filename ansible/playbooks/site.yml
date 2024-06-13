@@ -4,7 +4,9 @@
   become: true
   roles:
     - base.common
+    - base.docker # Install docker cli + buildkit
     - base.kubespray
+    - diodonfrost.terraform # Install Terraform CLI
 
 # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
 - name: Reset any Kubespray cluster installed
@@ -19,8 +21,7 @@
   hosts: all
   become: true
   roles:
-    - role: diodonfrost.terraform # Install Terraform CLI
-    - role: more.kubespray # Finish kubespray configuration
+    - role: extra.kubespray # Finish kubespray configuration
     - role: k8s.cloudflare-vpn # OPTIONAL
     - role: k8s.registry # Finish registry configuration (installed along kubespray)
     - role: k8s.cert-manager # Finish cert-manager configuration (installed along kubespray)
