@@ -25,7 +25,7 @@
     name: docker
 
 # needed ?
-- name: Restart docker 
+- name: Restart docker
   ansible.builtin.systemd_service:
     state: restarted
     name: docker

@@ -4,7 +4,7 @@ metadata:
   name: "{{ org_ca_cert_secret_name }}"
 spec:
   sources:
-    - useDefaultCAs: false
+    - useDefaultCAs: true
     - secret:
         name: "ca-secret.{{ org_ca_name }}"
         key: ca.crt

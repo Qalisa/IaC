@@ -55,7 +55,6 @@
         type: dind
       template:
         spec:
-          # initContainer:
           containers:
             - name: runner
               image: "{{ lar_repository_url }}:latest"
@@ -69,10 +68,17 @@
               #   - secretRef:
               #     name: gha-cache-access
               volumeMounts:
+                - name: crt
+                  mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls
+                  subPath: ca.crt
                 - name: config
-                  mountPath: /etc/buildkit/buildkitd.toml
+                  mountPath: /etc/buildkit/buildkitd.toml # also required
                   subPath: buildkitd.toml
+          securityContext:
           volumes:
+            - name: crt
+              secret:
+                secretName: "{{ org_ca_cert_secret_name }}"
             - name: config
               configMap:
                 name: config
