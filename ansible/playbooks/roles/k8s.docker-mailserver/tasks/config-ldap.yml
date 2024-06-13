@@ -7,7 +7,11 @@
   register: pods_ready
   changed_when: pods_ready.rc != 0
   ansible.builtin.command: |
-    kubectl wait --namespace=openldap-stack --for=condition=Ready pod/openldap-0 --timeout=120s
+    kubectl wait
+    pod/openldap-0
+    --namespace=openldap-stack
+    --for=condition=Ready
+    --timeout=120s
 
 #
 - name: Ensure User group matching Docker usergroup exists to allow auto-creation of LDAP user mail directories

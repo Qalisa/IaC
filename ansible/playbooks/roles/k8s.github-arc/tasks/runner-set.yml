@@ -3,15 +3,6 @@
 #
 #
 
-- name: Log into private registry and force re-authorization
-  tags: [runner-set]
-  community.docker.docker_login:
-    registry_url: "{{ registry_host }}"
-    username: "{{ registry_username }}"
-    password: "{{ registry_password }}"
-    reauthorize: true
-    validate_certs: false
-
 - name: Build Custom runner image and push it
   tags: [runner-set]
   community.docker.docker_image:
@@ -28,21 +19,6 @@
 #
 #
 
-- name: Define dockerconfigjson
-  tags: [runner-set]
-  ansible.builtin.set_fact:
-    dockerconfigjson: >
-      {
-        "auths": {
-          "{{ registry_host }}": {
-            "username": "{{ registry_username }}",
-            "password": "{{ registry_password }}",
-            "email": "{{ postmaster_email }}",
-            "auth": "{{ (registry_username + ':' + registry_password) | b64encode }}"
-          }
-        }
-      }
-
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
 - name: Setup namespace + GH App + Local Cache secrets
   tags: [runner-set]
@@ -51,10 +27,10 @@
     template:
       - path: templates/runner-set/ns.yml.j2
       - path: templates/runner-set/gh-app-secrets.yml.j2
-      - path: templates/runner-set/private-repository-secret.yml.j2
+      - path: templates/runner-set/config.yml.j2
 
 - name: Get ACTION CACHE URL
-  tags: [runner-set]
+  tags: [runner-set, helm]
   register: gha_cache_url
   ansible.builtin.shell: |
     kubectl get secret gha-cache-access -n {{ github_arc_runners_ns }} -o jsonpath={".data.ACTIONS_CACHE_URL"} | base64 -d
@@ -73,40 +49,18 @@
       controllerServiceAccount:
         namespace: arc-systems
         name: arc-gha-rs-controller
-      ## maxRunners is the max number of runners the autoscaling runner set will scale up to.
       maxRunners: 5
-      ## minRunners is the min number of idle runners. The target number of runners created will be
-      ## calculated as a sum of minRunners and the number of jobs assigned to the scale set.
       minRunners: 1
-      ## Container mode is an object that provides out-of-box configuration
-      ## for dind and kubernetes mode. Template will be modified as documented under the
-      ## template object.
-      ##
-      ## If any customization is required for dind or kubernetes mode, containerMode should remain
-      ## empty, and configuration should be applied to the template.
-      # containerMode:
-        # type: "dind"  ## type can be set to dind or kubernetes
-        ## the following is required when containerMode.type=kubernetes
-        # kubernetesModeWorkVolumeClaim:
-        #   accessModes: ["ReadWriteOnce"]
-        #   # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md
-        #   # to provide dynamic provision volume with storageClassName: openebs-hostpath
-        #   storageClassName: "dynamic-blob-storage"
-        #   resources:
-        #     requests:
-        #       storage: 1Gi
-        # kubernetesModeServiceAccount:
-        #   annotations:
       containerMode:
         type: dind
       template:
         spec:
-          imagePullSecrets:
-            - name: regcred
+          # initContainer:
           containers:
             - name: runner
               image: "{{ lar_repository_url }}"
-              command: ["/home/runner/run.sh"]
+              command: ["/bin/sh", "-c"]
+              args: ["/home/runner/run.sh"]
               env:
                 # using cleaner "envFrom[0].secretRef" prevents runners from spawning !
                 - name: ACTIONS_CACHE_URL
@@ -114,3 +68,11 @@
               # envFrom:
               #   - secretRef:
               #     name: gha-cache-access
+              volumeMounts:
+                - name: config
+                  mountPath: /etc/buildkit/buildkitd.toml
+                  subPath: buildkitd.toml
+          volumes:
+            - name: config
+              configMap:
+                name: config

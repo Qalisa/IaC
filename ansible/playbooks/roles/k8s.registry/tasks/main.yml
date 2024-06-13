@@ -1,6 +1,6 @@
 ---
-- name: Add exception accessing unsafe HTTP private registry
-  ansible.builtin.import_tasks: docker-unsafe.yml
+- name: Add exception accessing unsafe HTTPS private registry
+  ansible.builtin.import_tasks: allow-unsafe-registry.yml
 
 - name: Finish configuring private registry (PersistentVolumes + password)
   ansible.builtin.import_tasks: config.more.yml

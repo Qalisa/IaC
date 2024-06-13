@@ -7,7 +7,12 @@
 
 
 - name: Wait for pod to become Ready
-  ansible.builtin.command: "kubectl wait pod/myminio-pool-0-0 --namespace=minio-tenant --for=condition=Ready --timeout=120s"
+  ansible.builtin.command: |
+    kubectl wait
+    pod/myminio-pool-0-0
+    --namespace=minio-tenant
+    --for=condition=Ready
+    --timeout=120s
   register: pods_ready
   changed_when: pods_ready.rc != 0
 

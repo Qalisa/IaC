@@ -84,7 +84,12 @@
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 
 - name: Wait for pod to become ready
-  ansible.builtin.command: "kubectl wait --namespace=matomo --for=condition=Ready pod -l app=matomo --timeout=120s"
+  ansible.builtin.command: |
+    kubectl wait
+    pod -l app=matomo 
+    --namespace=matomo
+    --for=condition=Ready
+    --timeout=120s
   register: pods_ready
   changed_when: pods_ready.rc != 0
 

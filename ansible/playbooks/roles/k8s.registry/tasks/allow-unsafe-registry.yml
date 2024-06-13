@@ -31,6 +31,9 @@
     new_daemon_config:
       insecure-registries:
         - "{{ registry_host }}"
+      # tlscacert: "/path/to/ca.crt"
+      # tlscert: "/path/to/client.crt"
+      # tlskey: "/path/to/client.key"
 
 - name: Combine new configuration with existing configuration
   ansible.builtin.set_fact:

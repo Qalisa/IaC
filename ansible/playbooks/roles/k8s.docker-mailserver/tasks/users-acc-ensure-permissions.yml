@@ -16,7 +16,7 @@
       - uidNumber
       - homeDirectory
 
-- name: reaply legitimate permissions
+- name: Reaply legitimate permissions
   tags: [mail-acc-ensure-permissions]
   ignore_errors: true
   ansible.builtin.command: |

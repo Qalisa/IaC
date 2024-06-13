@@ -12,7 +12,7 @@
 #   kubernetes.core.k8s:
 #     state: present
 #     template:
-#       - path: templates/registry-ui-basic-auth-secret.yml.j2
+#       - path: templates/registry-ui/basic-auth-secret.yml.j2
 
 # add helm
 - name: Add stable chart repo
@@ -29,14 +29,16 @@
       global:
         name: registry # prefix applied to all manfests objects names
       ui:
-        dockerRegistryUrl: http://{{ registry_host }}
+        registrySecured: false # do not use Basic Authentication
+        dockerRegistryUrl: https://{{ registry_host }}
         deleteImages: true
+        singleRegistry: true
         proxy: true
         service:
           type: LoadBalancer
         ingress:
           enabled: true
-          host:	registry.{{ root_domain }}
+          host:	"registry.{{ root_domain }}"
           ingressClassName: "{{ ingress_nginx_class }}"
           annotations:
             # when using Cloudflare's proxied DNS record

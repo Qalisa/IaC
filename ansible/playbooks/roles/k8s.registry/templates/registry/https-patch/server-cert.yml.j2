@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: registry-server-cert
+  namespace: kube-system
+spec:
+  secretName: registry-server-tls
+  duration: 24h
+  renewBefore: 12h
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+  commonName: "{{ registry_host }}"
+  dnsNames:
+    - "{{ registry_host }}"

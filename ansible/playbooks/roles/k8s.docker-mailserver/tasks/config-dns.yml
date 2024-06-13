@@ -17,9 +17,9 @@
 - name: Wait for docker-mailserver pod to become ready
   ansible.builtin.command: |
     kubectl wait
+    pod -l app=docker-mailserver
     --namespace=docker-mailserver
     --for=condition=Ready
-    pod -l app=docker-mailserver
     --timeout=240s
   register: pods_ready
   changed_when: pods_ready.rc != 0

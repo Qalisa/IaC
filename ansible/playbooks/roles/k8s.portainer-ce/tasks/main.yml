@@ -51,7 +51,12 @@
               - path: /
 
 - name: Wait for pod to become ready
-  ansible.builtin.command: "kubectl wait --namespace=portainer --for=condition=Ready pod -l app.kubernetes.io/name=portainer --timeout=120s"
+  ansible.builtin.command: |
+    kubectl wait
+    pod -l app.kubernetes.io/name=portainer
+    --namespace=portainer
+    --for=condition=Ready
+    --timeout=120s
   register: pods_ready
   changed_when: pods_ready.rc != 0
 

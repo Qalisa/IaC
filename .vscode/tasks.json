@@ -11,7 +11,7 @@
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/few.yml",
+                "ansible/playbooks/few.yml"
             ],
             "problemMatcher": []
         },

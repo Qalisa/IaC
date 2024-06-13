@@ -2,6 +2,7 @@
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week for letsencrypt ! (https://letsencrypt.org/docs/rate-limits/)
 default_cluster_issuer: zerossl-prod # letsencrypt-prod
+trust_managed_namespaces: [kube-system]
 
 # default storage class
 local_storage_class_name: local-storage
@@ -58,8 +59,7 @@ listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
 listmonk_static_dir_repo_url: "https://github.com/NightworkersLabs/listmonk-static"
 
 #
-registry_username: admin
-registry_host: registry.kube-system:5000 # explicit port is important for some reason
+registry_host: registry.kube-system
 registry_default_push_user: nwlabs
 
 #

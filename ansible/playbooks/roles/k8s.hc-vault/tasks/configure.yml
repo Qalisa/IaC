@@ -124,6 +124,11 @@
   when: admin_user_exists
 
 - name: Wait for pod to become Ready
-  ansible.builtin.command: "kubectl wait pod/{{ hc_vault_pod_name }} --namespace=vault --for=condition=Ready --timeout=3s"
+  ansible.builtin.command: |
+    kubectl wait
+    pod/{{ hc_vault_pod_name }}
+    --namespace=vault
+    --for=condition=Ready
+    --timeout=3s
   register: pods_ready
   changed_when: pods_ready.rc != 0

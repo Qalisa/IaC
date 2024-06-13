@@ -38,9 +38,6 @@ openldap_pwd: "{{ vault_openldap_pwd }}"
 listmonk_admin_password: "{{ vault_listmonk_admin_password }}"
 
 #
-registry_password: "{{ vault_registry_password }}"
-
-#
 matomo_password: "{{ vault_matomo_password }}"
 
 # 12 characters min
