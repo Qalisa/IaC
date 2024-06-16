@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-image-updater-config
+  namespace: argocd
+data:
+  registries.conf: |
+    registries:
+    - name: Docker Hub
+      prefix: docker.io
+      api_url: https://registry-1.docker.io
+      defaultns: library
+    - name: Org Private Registry
+      api_url: https://{{ registry_host }}
+      prefix: {{ registry_host }}
+      insecure: yes
+      default: true
