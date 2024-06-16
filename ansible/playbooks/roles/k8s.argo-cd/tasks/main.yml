@@ -7,3 +7,6 @@
 
 - name: Connect Github Org
   ansible.builtin.import_tasks: configure-repos.yml
+
+- name: Add Image Updater
+  ansible.builtin.import_tasks: image-updater.yml

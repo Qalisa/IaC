@@ -11,7 +11,7 @@
     pods -l app=minio
     --namespace=minio-tenant
     --for=condition=Ready
-    --timeout=120s
+    --timeout=240s
   register: pods_ready
   changed_when: pods_ready.rc != 0
 

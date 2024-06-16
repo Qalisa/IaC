@@ -19,8 +19,7 @@
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/few.yml",
-                "--tags", "runner-set"
+                "ansible/playbooks/few.yml"
             ],
             "problemMatcher": []
         },
@@ -122,7 +121,7 @@
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
                 "ansible/playbooks/upgrade-cluster.yml",
-                "--tags", "containerd"
+                "--tags", "argo-cd"
             ],
             "options": {
                 "statusbar": {

@@ -2,3 +2,4 @@
 registry_storage_class_name: local-storage-registry
 htpasswd_local_path: "{{ registry_pv_path }}/htpasswd"
 registry_cert_secret_name: registry-server-tls
+registry_default_push_user: "{{ github_org | lower }}" # must always be lowercase

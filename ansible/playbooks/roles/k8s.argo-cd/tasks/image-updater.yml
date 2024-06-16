@@ -1,0 +1,6 @@
+- name: Install Image Updater
+  tags: [image-updater]
+  command: |
+    kubectl apply
+    -n argocd
+    -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml

@@ -33,8 +33,7 @@ ingress_nginx_class: nginx
 
 github_org: NightworkersLabs
 github_org_url: https://github.com/{{ github_org }}
-argocd_app_of_apps_repository_url: https://github.com/{{ github_org }}/argocd-repository
-argocd_apps_namespace: nw-labs
+argocd_app_of_apps_repository_url: "{{ github_org_url }}/argocd-repository"
 
 # ARC Github App
 arc_github_app_installation_id: 50966965
@@ -55,14 +54,13 @@ openldap_stack_ldap_server_hostname: openldap
 #
 listmonk_admin_username: admin
 listmonk_site_name: Nightworkers Labs
-listmonk_logo_url: https://nightworkers-labs.io/logo.png
-listmonk_favicon_url: https://nightworkers-labs.io/logo.png
+listmonk_logo_url: https://{{ root_domain }}/logo.png
+listmonk_favicon_url: https://{{ root_domain }}/logo.png
 listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
-listmonk_static_dir_repo_url: "https://github.com/NightworkersLabs/listmonk-static"
+listmonk_static_dir_repo_url: "{{ github_org_url }}/listmonk-static"
 
 #
 registry_host: registry.kube-system
-registry_default_push_user: nwlabs
 
 #
 matomo_username: admin
