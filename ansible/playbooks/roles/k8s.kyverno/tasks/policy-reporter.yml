@@ -1,0 +1,31 @@
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: kyverno-policy-reporter
+    repo_url: https://kyverno.github.io/policy-reporter
+
+- name: Install policy reporter w/ Helm
+  kubernetes.core.helm:
+    name: policy-reporter
+    chart_ref: kyverno-policy-reporter/policy-reporter
+    release_namespace: kyverno-policy-reporter
+    create_namespace: true
+    wait: true
+    values:
+      kyvernoPlugin:
+        enabled: true
+      ui:
+        plugins:
+          kyverno: true
+        enabled: true
+        ingress:
+          enabled: true
+          className: "{{  ingress_nginx_class }}"
+          annotations:
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          hosts:
+            - host: policy-reporter.{{ root_domain }}
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific

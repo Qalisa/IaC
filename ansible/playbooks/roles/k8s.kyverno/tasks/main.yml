@@ -1,0 +1,8 @@
+- name: Install Kyverno
+  ansible.builtin.import_tasks: kyverno.yml
+
+- name: Install Policies
+  ansible.builtin.import_tasks: policies.yml
+
+- name: Install Policy Reporter + UI
+  ansible.builtin.import_tasks: policy-reporter.yml

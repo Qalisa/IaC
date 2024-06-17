@@ -8,5 +8,6 @@ subdomains_to_secure=[
     "admin-ldap",
     "minio-console",
     "minio",
-    "registry"
+    "registry",
+    "policy-reporter"
 ]

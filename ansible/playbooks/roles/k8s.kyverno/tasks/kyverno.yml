@@ -1,0 +1,12 @@
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: kyverno
+    repo_url: https://kyverno.github.io/kyverno/
+
+- name: Install kyverno w/ Helm
+  kubernetes.core.helm:
+    name: trust-manager
+    chart_ref: kyverno/kyverno
+    release_namespace: kyverno
+    create_namespace: true
+    wait: true
