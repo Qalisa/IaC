@@ -10,3 +10,7 @@
     release_namespace: kyverno
     create_namespace: true
     wait: true
+    values:
+      features:
+        registryClient:
+          allowInsecure: true
