@@ -40,11 +40,11 @@ spec:
         - name: version
           imageRegistry: 
             reference: "{{ element.image }}"
-            jmesPath: "configData.config.Labels['org.opencontainers.image.version'] || ''"
+            jmesPath: configData.config.Labels."org.opencontainers.image.version" || ''
         - name: revision
           imageRegistry: 
             reference: "{{ element.image }}"
-            jmesPath: "configData.config.Labels['org.opencontainers.image.revision'] || ''"
+            jmesPath: configData.config.Labels."org.opencontainers.image.revision" || ''
         preconditions:
           all:
           - key: "{{version}}"

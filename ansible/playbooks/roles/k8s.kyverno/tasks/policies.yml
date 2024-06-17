@@ -1,4 +1,5 @@
 - name: Install policies
+  tags: [policies]
   kubernetes.core.k8s:
     state: present
     src: src/cp-inject-label.yml

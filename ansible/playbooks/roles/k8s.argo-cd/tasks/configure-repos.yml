@@ -93,6 +93,7 @@
 #
 
 - name: Install App of apps repository to ArgoCD
+  tags: [apps, argocd]
   kubernetes.core.k8s:
     state: present
     template:
