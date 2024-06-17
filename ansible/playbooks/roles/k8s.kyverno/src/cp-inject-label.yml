@@ -57,10 +57,10 @@ spec:
           - op: add
             path: "/spec/containers/{{elementIndex}}/env/-"
             value:
-              name: NEXT_PUBLIC_IMAGE_TAG
+              name: IMAGE_TAG
               value: "{{version}}"
           - op: add
             path: "/spec/containers/{{elementIndex}}/env/-"
             value:
-              name: NEXT_PUBLIC_IMAGE_COMMIT
+              name: IMAGE_COMMIT
               value: "{{revision}}"
