@@ -68,6 +68,7 @@
         content: "{{ syncer_token.json.token }}"
         dest: "{{ argocd_syncer_token_path }}"
     - name: Add secrets to Github org
+      tags: [terraform]
       community.general.terraform:
         project_path: "{{ terraform_project_path }}/gha-expose-secrets"
         state: present

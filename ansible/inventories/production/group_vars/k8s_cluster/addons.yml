@@ -204,10 +204,10 @@ metallb_config:
         - 10.5.0.0/16
       auto_assign: true
       avoid_buggy_ips: true
-    # pool1:
-    #   ip_range:
-    #     - 10.6.0.0/16
-    #   auto_assign: true
+    secondary:
+      ip_range:
+        - 10.6.0.0/16
+      auto_assign: false
     # pool2:
     #   ip_range:
     #     - 10.10.0.0/16

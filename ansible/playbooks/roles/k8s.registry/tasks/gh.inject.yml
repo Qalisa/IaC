@@ -1,5 +1,5 @@
 - name: Add variables to Github org
-  tags: [config-more]
+  tags: [config-more, terraform]
   community.general.terraform:
     project_path: "{{ terraform_project_path }}/gha-expose-secrets"
     state: present

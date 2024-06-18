@@ -42,7 +42,7 @@
     'redirect_ssl': 1
     'redirect_host': '{{ webmin_public_hostname }}'
     # TODO
-    'bind': '{{ private_network_ip }}' # node1 ClusterIP
+    'bind': '{{ webmin_ip_bind }}' # node1 ClusterIP
   register: webmin_miniserv_conf
   notify:
     - Restart webmin daemon

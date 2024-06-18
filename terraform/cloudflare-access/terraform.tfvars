@@ -9,5 +9,6 @@ subdomains_to_secure=[
     "minio-console",
     "minio",
     "registry",
-    "policy-reporter"
+    "policy-reporter",
+    "skooner"
 ]

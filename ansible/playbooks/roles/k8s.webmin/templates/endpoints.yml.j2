@@ -2,15 +2,13 @@
 # https://www.kristhecodingunicorn.com/post/kubernetes-service-to-proxy-to-external-services/
 #
 
-### WE CANNOT USE EndpointSlice, bugs with Nginx Ingress Controller :'(
-
-{# apiVersion: discovery.k8s.io/v1
+apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice
 metadata:
   name: webmin
-  namespace: default
+  namespace: webmin
   labels:
-    kubernetes.io/service-name: webmin-svc
+    kubernetes.io/service-name: webmin
 addressType: IPv4
 ports:
   - name: app
@@ -18,20 +16,9 @@ ports:
     port: 10000
 endpoints:
   - addresses:
-      - "{{ private_network_ip }}"
+      - "{{ webmin_ip_bind }}"
     conditions:
       ready: true
     # hostname: pod-1
     nodeName: {{ master_node_name }}
-    # zone: us-west2-a
---- #}
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: webmin # Must be equal to Service name for automatic mapping
-  namespace: webmin
-subsets:
-- addresses:
-  - ip: {{ private_network_ip }} # IP address of your external service that you would like to proxy requests to
-  ports:
-  - port: 10000
+    # zone: us-west2-as

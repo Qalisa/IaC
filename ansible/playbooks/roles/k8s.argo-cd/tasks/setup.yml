@@ -1,5 +1,3 @@
-#jinja2:variable_start_string:'[%' , variable_end_string:'%]'
-
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: argo

@@ -5,16 +5,6 @@
       - botocore
       - boto3
 
-- name: Wait for pod to become Ready
-  ansible.builtin.command: |
-    kubectl wait
-    pods -l app=minio
-    --namespace=minio-tenant
-    --for=condition=Ready
-    --timeout=240s
-  register: pods_ready
-  changed_when: pods_ready.rc != 0
-
 - name: Create default bucket
   amazon.aws.s3_bucket:
     access_key: "{{ minio_access_key_id }}"

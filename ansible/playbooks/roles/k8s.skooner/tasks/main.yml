@@ -1,0 +1,51 @@
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: christianhuth
+    repo_url: https://christianhuth.github.io/helm-charts
+
+- name: Install Skooner w/ Helm
+  kubernetes.core.helm:
+    name: skooner
+    chart_ref: christianhuth/skooner
+    release_namespace: skooner
+    create_namespace: true
+    wait: true
+    values:
+      clusterRoleBinding:
+        clusterRole: "cluster-admin"
+      ingress:
+        enabled: true
+        className: "{{ ingress_nginx_class }}"
+        annotations:
+          # when using Cloudflare's proxied DNS record
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+        hosts:
+          - host: skooner.{{ root_domain }}
+            paths:
+              - path:	"/"
+                pathType:	ImplementationSpecific
+
+#
+- name: Create token
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/token.yml.j2
+
+#
+- name: Save Token
+  block:
+    - name: Get auth token
+      ansible.builtin.shell: |
+        kubectl get secret skooner-sa -n skooner -o jsonpath={".data.token"} | base64 -d
+      register: skooner_token
+    - name: Make sure destination dir exists
+      ansible.builtin.file:
+        path: "{{ generated_creds_dir }}"
+        state: directory
+    - name: Save
+      ansible.builtin.copy:
+        content: "{{ skooner_token.stdout }}"
+        dest: "{{ generated_creds_dir }}/skooner.txt"

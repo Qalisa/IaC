@@ -1,4 +1,5 @@
 - name: Apply Cloudflare Zero Trust VPN access
+  tags: [terraform]
   community.general.terraform:
     project_path: "{{ terraform_project_path }}/cloudflare-access"
     state: present

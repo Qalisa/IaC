@@ -3,4 +3,4 @@
   hosts: all
   become: true
   roles:
-    - role: k8s.minio # Storage Object service for storing backups and snapshots
+    - role: k8s.webmin
