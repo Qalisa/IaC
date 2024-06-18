@@ -1,0 +1,14 @@
+- name: Add variables to Github org
+  tags: [config-more]
+  community.general.terraform:
+    project_path: "{{ terraform_project_path }}/gha-expose-secrets"
+    state: present
+    force_init: true
+    complex_vars: true
+    variables:
+      github_organization: "{{ github_org }}"
+      github_token: "{{ ansible_github_var_secrets_pat }}"
+      #
+      variables:
+        private_repository_socket: "{{ registry_host }}"
+        private_repository_full: "{{ registry_host }}/{{ registry_default_push_user }}"

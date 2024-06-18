@@ -240,7 +240,7 @@ metallb_config:
 #             - pool2
 calico_advertise_service_loadbalancer_ips: "{{ metallb_config.address_pools.primary.ip_range }}"
 
-argocd_enabled: true
+argocd_enabled: false
 # argocd_version: v2.8.4
 # argocd_namespace: argocd
 # Default password:

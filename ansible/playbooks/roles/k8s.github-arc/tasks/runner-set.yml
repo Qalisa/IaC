@@ -1,8 +1,4 @@
 ---
-#
-#
-#
-
 - name: Build Custom runner image and push it
   tags: [runner-set]
   community.docker.docker_image:

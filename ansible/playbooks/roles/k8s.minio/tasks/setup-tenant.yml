@@ -12,6 +12,7 @@
     chart_ref: minio-operator/tenant
     release_namespace: minio-tenant
     create_namespace: false
+    wait: true
     values:
       ingress:
         console:
@@ -70,5 +71,3 @@
               runAsUser: 1000
               runAsGroup: 1000
               runAsNonRoot: true
-
-- 

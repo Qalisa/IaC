@@ -1,12 +1,18 @@
 ---
-- name: End ArgoCD setup
-  ansible.builtin.import_tasks: setup-more.yml
+- name: ArgoCD setup
+  ansible.builtin.import_tasks: setup.yml
 
-- name: Install Metrics
-  ansible.builtin.import_tasks: configure-metrics.yml
+- name: Handle credentials + Connect Github Org
+  ansible.builtin.import_tasks: creds.yml
 
-- name: Connect Github Org
-  ansible.builtin.import_tasks: configure-repos.yml
+#
+#
 
-- name: Add Image Updater
+- name: Install Image Updater
   ansible.builtin.import_tasks: image-updater.yml
+
+#
+#
+
+- name: Add default apps
+  ansible.builtin.import_tasks: default-apps.yml

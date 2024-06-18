@@ -1,0 +1,7 @@
+---
+- name: Install App of apps repository to ArgoCD
+  tags: [apps, argocd]
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/apps/app-of-apps.yml.j2

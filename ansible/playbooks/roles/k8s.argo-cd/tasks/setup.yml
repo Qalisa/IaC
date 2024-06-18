@@ -1,0 +1,96 @@
+#jinja2:variable_start_string:'[%' , variable_end_string:'%]'
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: argo
+    repo_url: https://argoproj.github.io/argo-helm
+
+- name: define CM params
+  ansible.builtin.set_fact:
+    cm:
+      # Argo CD's externally facing base URL (optional). Required when configuring SSO
+      url: "{{ argocd_host_url }}"
+      # Enables application status badge feature
+      statusbadge.enabled: true
+    ### ACCOUNTS connection methods, only allow API key for Github Syncer
+    cm_more: |
+      {
+        "accounts.{{ argocd_github_syncer_acc_name }}": "apiKey"
+      }
+
+- name: define CM params
+  ansible.builtin.set_fact:
+    cm:
+      # Argo CD's externally facing base URL (optional). Required when configuring SSO
+      url: "{{ argocd_host_url }}"
+      # Enables application status badge feature
+      statusbadge.enabled: true
+    ### ACCOUNTS connection methods, only allow API key for Github Syncer
+    cm_more: |
+      {
+        "accounts.{{ argocd_github_syncer_acc_name }}": "apiKey"
+      }
+
+- name: define RBAC params
+  ansible.builtin.set_fact:
+    rbac:
+      policy.default: 'role:readonly'
+      policy.csv: |
+        p, role:syncer, applications, sync, */*, allow
+
+        g, {{ argocd_github_syncer_acc_name }}, role:syncer
+
+
+- name: define PARAMS params
+  ansible.builtin.set_fact:
+    params:
+      server.insecure: true
+      # Enable self-service notifications config. Used in conjunction with apps-in-any-namespace. (default "false")
+      notificationscontroller.selfservice.enabled: false
+
+- name: Install ArgoCD w/ Helm
+  kubernetes.core.helm:
+    name: argocd
+    chart_ref: argo/argo-cd
+    release_namespace: argocd
+    create_namespace: true
+    wait: true
+    values:
+      global:
+        domain: "{{ argocd_host }}"
+      notifications:
+        argocdUrl: "{{ argocd_host_url }}"
+        secret:
+          items:
+            github-privateKey: |
+              {{ argocd_github_app_priv_key }}
+        notifiers:
+          service.github: |
+            appID: "{{ argocd_github_app_app_id }}"
+            installationID: "{{ argocd_github_app_installation_id }}"
+            privateKey: $github-privateKey
+        templates: "{{ lookup('ansible.builtin.file', 'templates/github-notifications/all.yaml.gotmpl') | from_yaml }}"
+      configs:
+        params: "{{ params }}"
+        rbac: "{{ rbac }}"
+        cm: "{{ cm | ansible.builtin.combine(cm_more) }}"
+      certificate:
+        enabled: false
+      server:
+        replicas: 1
+        ingress:
+          enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
+          annotations:
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          tls: false
+      repoServer:
+        replicas: 1
+      applicationSet:
+        replicas: 1
+      controller:
+        replicas: 1

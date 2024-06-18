@@ -1,6 +1,12 @@
 ---
+- name: Allow registry for docker
+  ansible.builtin.import_tasks: allowed-unsafe.yml
+
 - name: Finish configuring private registry (PersistentVolumes + password)
   ansible.builtin.import_tasks: config.more.yml
 
 - name: Deploy registry UI
   ansible.builtin.import_tasks: ui.yml
+
+- name: Inject registry infos into Github org's repositories
+  ansible.builtin.import_tasks: gh.inject.yml

@@ -1,0 +1,19 @@
+- name: Create path
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+
+- name: Add unsafe repo
+  vars:
+    content:
+      insecure-registries:
+        - "{{ registry_host }}"
+  ansible.builtin.copy:
+    dest: /etc/docker/daemon.json
+    content: "{{ content | to_nice_json }}"
+
+- name: Restart docker
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: docker
