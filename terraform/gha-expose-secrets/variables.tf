@@ -30,6 +30,14 @@ variable "secrets" {
   default = {}
 }
 
+variable "config" {
+  type = object({
+    repository_socket = string 
+    repository_user = string
+    cache_path = string
+  })
+}
+
 variable "variables" {
   description = "Map of variables to set for each repository"
   type = map(string)

@@ -23,6 +23,26 @@ data "github_actions_public_key" "repo" {
   repository = each.key
 }
 
+#
+resource "github_actions_variable" "PRIVATE_REPOSITORY_IMAGE" {
+  for_each         = var.orchestrated_repositories
+  variable_name    = "PRIVATE_REPOSITORY_IMAGE"
+  value            = "${var.config.repository_socket}/${var.config.repository_user}/${each.key}"
+  repository       = each.key
+}
+
+#
+resource "github_actions_variable" "LOCAL_CACHE_PATH" {
+  for_each         = var.orchestrated_repositories
+  variable_name    = "LOCAL_CACHE_PATH"
+  value            = "/${var.config.cache_path}/${var.config.repository_user}/${each.key}"
+  repository       = each.key
+}
+
+##
+##
+##
+
 locals {
   flattened_secrets = flatten([
     for nm, secret in var.secrets : [
@@ -55,7 +75,7 @@ resource "github_actions_secret" "secrets" {
   repository        = each.value.repository
 }
 
-resource "github_actions_variable" "example_variable" {
+resource "github_actions_variable" "variables" {
   for_each = {
     for obj in local.flattened_variables :
     "${obj.variable_name}.${obj.repository}" => obj

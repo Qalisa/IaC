@@ -15,6 +15,14 @@
 #
 #
 
+- name: Make sure destination dir exists
+  ansible.builtin.file:
+    path: "{{ buildkit_cache_pv_path }}"
+    state: directory
+    owner: 1001
+    group: 1001
+
+
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
 - name: Setup namespace + GH App + Local Cache secrets
   tags: [runner-set]
@@ -23,7 +31,7 @@
     template:
       - path: templates/runner-set/ns.yml.j2
       - path: templates/runner-set/gh-app-secrets.yml.j2
-      - path: templates/runner-set/config.yml.j2
+      - path: templates/runner-set/pv.yml.j2
 
 - name: Get ACTION CACHE URL
   tags: [runner-set, helm]
@@ -48,15 +56,22 @@
       maxRunners: 5
       minRunners: 1
       containerMode:
-        type: dind
+        type: kubernetes
       template:
         spec:
           containers:
             - name: runner
               image: "{{ lar_repository_url }}:latest"
-              command: ["/bin/sh", "-c"]
-              args: ["/home/runner/run.sh"]
+              command: ["/home/runner/run.sh"]
               env:
+                - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+                  value: /home/runner/k8s/index.js
+                - name: ACTIONS_RUNNER_POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+                  value: "false"
                 # using cleaner "envFrom[0].secretRef" prevents runners from spawning !
                 - name: ACTIONS_CACHE_URL
                   value: "{{ gha_cache_url.stdout }}"
@@ -67,14 +82,23 @@
                 - name: crt
                   mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls
                   subPath: ca.crt
-                - name: config
-                  mountPath: /etc/buildkit/buildkitd.toml # also required
-                  subPath: buildkitd.toml
-          securityContext:
+                - name: work
+                  mountPath: /home/runner/_work
+                - name: cache
+                  mountPath: "{{ buildkit_local_mount_path }}"
           volumes:
+            - name: cache
+              persistentVolumeClaim:
+                claimName: buildkit-cache
             - name: crt
               secret:
                 secretName: "{{ org_ca_cert_secret_name }}"
-            - name: config
-              configMap:
-                name: config
+            - name: work
+              ephemeral:
+                volumeClaimTemplate:
+                  spec:
+                    accessModes: ["ReadWriteOnce"]
+                    storageClassName: "local-path"
+                    resources:
+                      requests:
+                        storage: 1Gi

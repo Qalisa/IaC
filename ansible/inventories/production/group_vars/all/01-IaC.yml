@@ -1,3 +1,6 @@
+#
+# WHERE GLOBAL-ISH IAC infos regarding services are stored 
+#
 ---
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week for letsencrypt ! (https://letsencrypt.org/docs/rate-limits/)
@@ -15,11 +18,6 @@ terraform_project_path: "{{ playbook_dir ~ '/../../terraform' }}"
 #
 master_node_name: node1
 
-cloudflare_zero_trust_team_name: nwlabs
-
-# https://crt.sh/?q=nightworkers-labs.io
-root_domain: nightworkers-labs.io
-
 # which emails is to be said that will register the certificates
 postmaster_username: postmaster
 postmaster_email: "{{ postmaster_username }}@{{ root_domain }}"
@@ -31,17 +29,8 @@ docker_mailserver_host: "{{ mx_hostname }}.{{ root_domain }}"
 # should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
 ingress_nginx_class: nginx
 
-github_org: NightworkersLabs
 github_org_url: https://github.com/{{ github_org }}
 argocd_app_of_apps_repository_url: "{{ github_org_url }}/argocd-repository"
-
-# ARC Github App
-arc_github_app_installation_id: 50966965
-arc_github_app_app_id: 902509
-
-# ArgoCD Github App
-argocd_github_app_installation_id: 50968159
-argocd_github_app_app_id: 902538
 
 #
 argocd_github_syncer_acc_name: github-syncer
@@ -53,7 +42,6 @@ openldap_stack_ldap_server_hostname: openldap
 
 #
 listmonk_admin_username: admin
-listmonk_site_name: Nightworkers Labs
 listmonk_logo_url: https://{{ root_domain }}/logo.png
 listmonk_favicon_url: https://{{ root_domain }}/logo.png
 listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
@@ -66,35 +54,11 @@ registry_host: registry.kube-system
 matomo_username: admin
 
 #
-zerossl_eab_kid: GkwRD2xlOs5VViczStfvlQ
-
-## SENTRY ###
-# SETTINGS FOR Github App (loosely based on https://docs.sentry.io/organization/integrations/source-code-mgmt/github/)
-# Github App Name: <Whatever unique>
-# Homepage URL: https://sentry.{{ root_domain }}
-# Callback URL: https://sentry.{{ root_domain }}/auth/sso/
-# Request user authorization (OAuth) during installation: CHECKED
-# Webhook URL: https://sentry.{{ root_domain }}/extensions/github/webhook/
-# Webhook Secret: 'openssl rand -base64 500 | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1'
-# Event Subscriptions:
-# - Pull request
-# - Push
-# Permissions:
-#   AccountPermissions:
-#     - Email addresses: RO
-#   OrganizationPermissions:
-#     - Members: RO
-#   RepositoryPermissions:
-#     - Administration: RO
-#     - Contents: RO
-#     - Issues: RW
-#     - Metadata: RO
-#     - Pull Requests: RW
-#     - Webhooks: RW
-sentry_github_appId: "914217"
-sentry_github_appName: "nw-s-sentry"
-
 sentry_usermail: "{{ postmaster_email }}"
+
+#
+buildkit_remote_socket: buildkit-buildkit-service.arc-buildkit:1234
+buildkit_local_mount_path: /cache
 
 # minimum 3 chars
 minio_tenant_username: admin
@@ -115,3 +79,4 @@ listmonk_uploads_pv_path: /var/k8s-data/listmonk/uploads
 matomo_pv_db_path: /var/k8s-data/matomo/db
 matomo_pv_app_path: /var/k8s-data/matomo/app
 github_arc_cache_pv_path: /var/k8s-data/gha-cache
+buildkit_cache_pv_path: /var/k8s-data/buildkit-cache

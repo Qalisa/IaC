@@ -9,6 +9,10 @@
       github_organization: "{{ github_org }}"
       github_token: "{{ ansible_github_var_secrets_pat }}"
       #
+      config:
+        repository_socket: "{{ registry_host }}"
+        repository_user: "{{ registry_default_push_user }}"
+        cache_path: "{{ buildkit_local_mount_path }}"
+      #
       variables:
-        private_repository_socket: "{{ registry_host }}"
-        private_repository_full: "{{ registry_host }}/{{ registry_default_push_user }}"
+        buildkit_remote_socket: "{{ buildkit_remote_socket }}"

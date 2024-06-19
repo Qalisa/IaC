@@ -2,5 +2,8 @@
 - name: Install controller
   ansible.builtin.import_tasks: controller.yml
 
+- name: Install buildkit daemons
+  ansible.builtin.import_tasks: buildkit-daemon.yml
+
 - name: Install runner-set
   ansible.builtin.import_tasks: runner-set.yml
