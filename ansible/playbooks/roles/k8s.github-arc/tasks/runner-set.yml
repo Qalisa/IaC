@@ -33,12 +33,6 @@
       - path: templates/runner-set/gh-app-secrets.yml.j2
       - path: templates/runner-set/pv.yml.j2
 
-- name: Get ACTION CACHE URL
-  tags: [runner-set, helm]
-  register: gha_cache_url
-  ansible.builtin.shell: |
-    kubectl get secret gha-cache-access -n {{ github_arc_runners_ns }} -o jsonpath={".data.ACTIONS_CACHE_URL"} | base64 -d
-
 - name: Install action runners set
   tags: [runner-set, helm]
   kubernetes.core.helm:
@@ -72,12 +66,10 @@
                       fieldPath: metadata.name
                 - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
                   value: "false"
-                # using cleaner "envFrom[0].secretRef" prevents runners from spawning !
                 - name: ACTIONS_CACHE_URL
-                  value: "{{ gha_cache_url.stdout }}"
-              # envFrom:
-              #   - secretRef:
-              #     name: gha-cache-access
+                  secretKeyRef:
+                    name: gha-cache-access
+                    key: ACTIONS_CACHE_URL
               volumeMounts:
                 - name: crt
                   mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls
