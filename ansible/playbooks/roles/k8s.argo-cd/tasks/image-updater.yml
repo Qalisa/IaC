@@ -1,13 +1,35 @@
-- name: Apply configuration
-  tags: [image-updater]
-  kubernetes.core.k8s:
-    state: present
-    template:
-      - path: templates/image-uploader/config.yml.j2
-
-- name: Install Image Updater
-  tags: [image-updater]
-  command: |
-    kubectl apply
-    -n argocd
-    -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/master/manifests/install.yaml
+- name: Install ArgoCD Image Updater w/ Helm
+  tags: [helm, image-updater]
+  kubernetes.core.helm:
+    name: argocd
+    chart_ref: argo/argocd-image-updater
+    release_namespace: argocd
+    create_namespace: false
+    wait: true
+    values:
+      config:
+        # -- API kind that is used to manage Argo CD applications (`kubernetes` or `argocd`)
+        applicationsAPIKind: "kubernetes"
+        # Described in detail here https://argocd-image-updater.readthedocs.io/en/stable/install/reference/#flags
+        # Note: this is only relevant if config.applicationsAPIKind == 'argocd'
+        argocd:
+          # -- Use the gRPC-web protocol to connect to the Argo CD API
+          grpcWeb: false
+          # -- Connect to the Argo CD API server at server address
+          serverAddress: "http://argocd-server.argocd"
+          # -- If specified, the certificate of the Argo CD API server is not verified.
+          insecure: true
+          # -- If specified, use an unencrypted HTTP connection to the Argo CD API instead of TLS.
+          plaintext: true
+          # -- If specified, the secret with Argo CD API key will be created.
+          token: ""
+        registries:
+          - name: Docker Hub
+            prefix: docker.io
+            api_url: https://registry-1.docker.io
+            defaultns: library
+          - name: Org Private Registry
+            api_url: https://{{ registry_host }}
+            prefix: "{{ registry_host }}"
+            insecure: true
+            default: true
