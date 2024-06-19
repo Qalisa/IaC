@@ -2,4 +2,7 @@
   hosts: all
   become: true
   roles:
+    - role: k8s.minio # Storage Object service for storing backups and snapshots
+    - role: k8s.velero #
+    - role: k8s.kyverno # policies enforcement and metadata injection
     - role: k8s.argo-cd
