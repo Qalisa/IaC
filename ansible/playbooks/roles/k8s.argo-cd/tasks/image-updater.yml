@@ -1,5 +1,5 @@
 - name: Install ArgoCD Image Updater w/ Helm
-  tags: [helm, image-updater]
+  tags: [image-updater]
   kubernetes.core.helm:
     name: argocd-image-updater
     chart_ref: argo/argocd-image-updater
@@ -7,6 +7,9 @@
     create_namespace: false
     wait: false
     values:
+      extraArgs:
+        - --interval
+        - 30s
       config:
         registries:
           - name: Docker Hub
@@ -18,3 +21,47 @@
             prefix: "{{ registry_host }}"
             insecure: true
             default: true
+
+#
+#
+#
+
+- name: Add stable chart repo
+  tags: [image-updater]
+  kubernetes.core.helm_repository:
+    name: shini4i
+    repo_url: https://shini4i.github.io/charts/
+
+
+- name: Install ArgoCD Watcher w/ Helm
+  tags: [image-updater]
+  kubernetes.core.helm:
+    name: argo-watcher
+    chart_ref: shini4i/argo-watcher
+    release_namespace: argocd
+    create_namespace: true
+    wait: true
+    values:
+      argo:
+        url: http://argocd-server.argocd
+        # although using admin user is not a problem, we recommend creating a separate user for Argo Watcher
+        # policy.csv example:
+        # p, role:watcher, applications, get, */*, allow
+        # p, role:watcher, applications, sync, */*, allow
+        # g, watcher, role:watcher
+        # secret with ARGO_TOKEN key and optional ARGO_WATCHER_DEPLOY_TOKEN (should match ARGO_WATCHER_DEPLOY_TOKEN on client side)
+        secretName: "argo-watcher"
+      ingress:
+        enabled: true
+        ingressClassName: "{{ ingress_nginx_class }}"
+        annotations:
+          # when using Cloudflare's proxied DNS record
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+          nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+        hosts:
+          - host: argo-watcher.{{ root_domain }}
+            paths:
+              - path: /
+                pathType: ImplementationSpecific

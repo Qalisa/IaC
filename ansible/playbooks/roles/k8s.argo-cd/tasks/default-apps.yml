@@ -4,4 +4,4 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: templates/apps/app-of-apps.yml.j2
+      - path: templates/app-of-apps.yml.j2

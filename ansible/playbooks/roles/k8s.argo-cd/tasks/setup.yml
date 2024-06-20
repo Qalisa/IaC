@@ -38,7 +38,6 @@
 
         g, {{ argocd_github_syncer_acc_name }}, role:syncer
 
-
 - name: define PARAMS params
   ansible.builtin.set_fact:
     params:

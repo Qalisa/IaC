@@ -1,6 +1,6 @@
 ---
 - name: Build Custom runner image and push it
-  tags: [runner-set]
+  tags: [runner-set, custom-image]
   community.docker.docker_image:
     state: present
     name: "{{ lar_docker_image_name }}"
@@ -10,6 +10,8 @@
     source: build
     repository: "{{ lar_repository_url }}"
     push: true
+    force_source: true
+    force_tag: true
 
 #
 #
@@ -58,6 +60,7 @@
               image: "{{ lar_repository_url }}:latest"
               command: ["/home/runner/run.sh"]
               env:
+                # DEFAULT
                 - name: ACTIONS_RUNNER_CONTAINER_HOOKS
                   value: /home/runner/k8s/index.js
                 - name: ACTIONS_RUNNER_POD_NAME
@@ -66,10 +69,18 @@
                       fieldPath: metadata.name
                 - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
                   value: "false"
+                # CACHE
                 - name: ACTIONS_CACHE_URL
                   secretKeyRef:
                     name: gha-cache-access
                     key: ACTIONS_CACHE_URL
+                # argo-watcher
+                - name: COMMIT_AUTHOR
+                  value: robot@{{ root_domain }}
+                - name: PROJECT_NAME
+                  value: default
+                - name: ARGO_WATCHER_URL
+                  value: http://argo-watcher.argocd
               volumeMounts:
                 - name: crt
                   mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls
