@@ -24,6 +24,14 @@
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            #
+            ingress-dashboard/title: Kyverno Policy Reporter
+            ingress-dashboard/description: Dashboard exposing Kyverno's activity
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+            #
+            cloudflare-acccess/must-secure: "true"
           hosts:
             - host: policy-reporter.{{ root_domain }}
               paths:

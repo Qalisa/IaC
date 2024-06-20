@@ -40,15 +40,23 @@
           type: LoadBalancer
         ingress:
           enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
+          ## Ingress Host
+          hosts:
+            - admin-ldap.{{ root_domain }}
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-          ingressClassName: "{{ ingress_nginx_class }}"
-          ## Ingress Host
-          hosts:
-            - admin-ldap.{{ root_domain }}
+            #
+            ingress-dashboard/title: OpenLDAP
+            ingress-dashboard/description: Manage peoples directory of {{ root_domain }} organization (mails)
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+            #
+            cloudflare-acccess/must-secure: "true"
         env:
           PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: "never"
       ltb-passwd:
@@ -57,11 +65,19 @@
           type: LoadBalancer
         ingress:
           enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
+          hosts:
+            - pwd-ldap.{{ root_domain }}
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-          ingressClassName: "{{ ingress_nginx_class }}"
-          hosts:
-            - pwd-ldap.{{ root_domain }}
+            #
+            ingress-dashboard/title: Mail Password changer
+            ingress-dashboard/description: Allows to update your mail account password
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+            #
+            cloudflare-acccess/must-secure: "false"

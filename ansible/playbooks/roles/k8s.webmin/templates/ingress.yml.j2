@@ -8,6 +8,14 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    #
+    ingress-dashboard/title: Webmin
+    ingress-dashboard/description: Complete administrator dashboard for Linux machines
+    ingress-dashboard/logo-url: /favicon.ico
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+    #
+    cloudflare-acccess/must-secure: "true"
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
   rules:

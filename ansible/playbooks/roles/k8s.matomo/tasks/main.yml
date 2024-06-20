@@ -80,6 +80,14 @@
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            #
+            ingress-dashboard/title: Matomo
+            ingress-dashboard/description: Tracks stats on our organization public websites
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+            #
+            cloudflare-acccess/must-secure: "false"
 
 - name: Wait for pod to become ready
   ansible.builtin.command: |

@@ -125,11 +125,19 @@
 
       ingress:
         enabled: true
+        hostname: sentry.{{ root_domain }}
         ingressClassName: "{{ ingress_nginx_class }}"
         annotations:
           # If you are using nginx ingress controller, please use at least those 2 annotations
           nginx.ingress.kubernetes.io/use-regex: "true"
-        hostname: sentry.{{ root_domain }}
+          #
+          ingress-dashboard/title: Sentry
+          ingress-dashboard/description: Tracks bugs and log of deployed apps
+          ingress-dashboard/logo-url: /favicon.ico
+          ingress-dashboard/assume-tls: "true"
+          ingress-dashboard/hide: "false"
+          #
+          cloudflare-acccess/must-secure: "false"
 
       service:
         type: LoadBalancer

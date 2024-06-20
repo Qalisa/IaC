@@ -73,6 +73,14 @@
           cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
           nginx.ingress.kubernetes.io/ssl-passthrough: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          #
+          ingress-dashboard/title: ArgoCD Watcher
+          ingress-dashboard/description: Tracks continuous delivery of generated Docker Images of CI into cluster
+          ingress-dashboard/logo-url: /favicon.ico
+          ingress-dashboard/assume-tls: "true"
+          ingress-dashboard/hide: "false"
+          #
+          cloudflare-acccess/must-secure: "false"
         hosts:
           - host: argo-watcher.{{ root_domain }}
             paths:

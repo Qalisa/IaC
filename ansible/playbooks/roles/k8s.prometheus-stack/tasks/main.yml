@@ -22,6 +22,14 @@
             # Will be handled by Cloudflare proxy
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            #
+            ingress-dashboard/title: Graphana
+            ingress-dashboard/description: Hub for custom dashboards and visualization
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "true"
+            #
+            cloudflare-acccess/must-secure: "true"
           hosts:
             - graphana.{{ root_domain }}
       prometheus:
@@ -34,5 +42,13 @@
             # Will be handled by Cloudflare proxy
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            #
+            ingress-dashboard/title: Prometheus
+            ingress-dashboard/description: Tracks logs of k8s cluster resources
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+            #
+            cloudflare-acccess/must-secure: "true"
           hosts:
             - prometheus.{{ root_domain }}

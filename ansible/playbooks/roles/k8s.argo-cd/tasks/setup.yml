@@ -75,6 +75,14 @@
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/ssl-passthrough: "true"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            #
+            ingress-dashboard/title: ArgoCD
+            ingress-dashboard/description: Automatize k8s app deployment through GitOps
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+            #
+            cloudflare-acccess/must-secure: "false"
           tls: false
       repoServer:
         replicas: 1

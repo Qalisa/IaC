@@ -45,6 +45,14 @@
           nginx.ingress.kubernetes.io/ssl-redirect: "false"
           cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          #
+          ingress-dashboard/title: Portainer
+          ingress-dashboard/description: Alternative cluster management dashboard for Docker, Swarm of k8s
+          ingress-dashboard/logo-url: /favicon.ico
+          ingress-dashboard/assume-tls: "true"
+          ingress-dashboard/hide: "false"
+          #
+          cloudflare-acccess/must-secure: "true"
         hosts:
           - host: "{{ portainer_host }}"
             paths:

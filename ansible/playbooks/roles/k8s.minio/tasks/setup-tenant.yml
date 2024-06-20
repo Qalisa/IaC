@@ -18,12 +18,20 @@
         console:
           enabled: true
           ingressClassName: "{{ ingress_nginx_class }}"
+          host: minio-console.{{ root_domain }}
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-          host: minio-console.{{ root_domain }}
+            #
+            ingress-dashboard/title: MinIO Tenant
+            ingress-dashboard/description: Object store for DB and backups
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+            #
+            cloudflare-acccess/must-secure: "true"
       secrets: # override to empty, replaced by "tenant.configSecret"
       tenant:
         ###

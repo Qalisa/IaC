@@ -40,3 +40,5 @@
     - role: k8s.velero #
     - role: k8s.kyverno # policies enforcement and metadata injection
     - role: k8s.argo-cd
+    # - role: k8s.skooner # alternative dashboard for k8s
+    - role: k8s.ingress-dashboard

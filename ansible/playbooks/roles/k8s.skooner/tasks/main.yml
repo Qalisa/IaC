@@ -21,6 +21,14 @@
           nginx.ingress.kubernetes.io/ssl-redirect: "false"
           cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          #
+          ingress-dashboard/title: Skooner
+          ingress-dashboard/description: Alternative cluster dashboard with live metrics
+          ingress-dashboard/logo-url: /favicon.ico
+          ingress-dashboard/assume-tls: "true"
+          ingress-dashboard/hide: "false"
+          #
+          cloudflare-acccess/must-secure: "true"
         hosts:
           - host: skooner.{{ root_domain }}
             paths:

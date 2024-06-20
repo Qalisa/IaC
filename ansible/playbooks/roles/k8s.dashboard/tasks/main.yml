@@ -29,6 +29,14 @@
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            #
+            ingress-dashboard/title: Kubernetes Dashboard
+            ingress-dashboard/description: Official dashboard to manage a k8s cluster
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+            #
+            cloudflare-acccess/must-secure: "true"
           useDefaultAnnotations: false
           hosts:
             - "{{ dashboard_public_hostname }}"

@@ -1,0 +1,14 @@
+- name: Retrieve file
+  ansible.builtin.get_url:
+    url: https://github.com/reddec/ingress-dashboard/releases/latest/download/ingress-dashboard.yaml
+    dest: /tmp/ingress-dashboard.yaml
+
+- name: Create deployment
+  kubernetes.core.k8s:
+    src: /tmp/ingress-dashboard.yaml
+
+- name: Install Ingress
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ingress.yml.j2
