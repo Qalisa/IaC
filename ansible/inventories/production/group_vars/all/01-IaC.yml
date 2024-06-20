@@ -33,8 +33,10 @@ github_org_url: https://github.com/{{ github_org }}
 argocd_app_of_apps_repository_url: "{{ github_org_url }}/argocd-repository"
 
 #
-argocd_github_syncer_acc_name: github-syncer
-argocd_syncer_token_path: "{{ generated_creds_dir }}/argocd-syncer-token.txt"
+argocd_account_for_github_syncer: github-syncer
+argocd_account_for_argo_watcher: watcher
+
+
 
 # OpenLDAP
 openldap_stack_namespace: openldap-stack

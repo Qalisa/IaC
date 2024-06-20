@@ -13,20 +13,8 @@
     ### ACCOUNTS connection methods, only allow API key for Github Syncer
     cm_more: |
       {
-        "accounts.{{ argocd_github_syncer_acc_name }}": "apiKey"
-      }
-
-- name: define CM params
-  ansible.builtin.set_fact:
-    cm:
-      # Argo CD's externally facing base URL (optional). Required when configuring SSO
-      url: "{{ argocd_host_url }}"
-      # Enables application status badge feature
-      statusbadge.enabled: true
-    ### ACCOUNTS connection methods, only allow API key for Github Syncer
-    cm_more: |
-      {
-        "accounts.{{ argocd_github_syncer_acc_name }}": "apiKey"
+        "accounts.{{ argocd_account_for_github_syncer }}": "apiKey",
+        "accounts.{{ argocd_account_for_argo_watcher }}": "apiKey",
       }
 
 - name: define RBAC params
@@ -35,8 +23,11 @@
       policy.default: 'role:readonly'
       policy.csv: |
         p, role:syncer, applications, sync, */*, allow
+        p, role:watcher, applications, get, */*, allow
+        p, role:watcher, applications, sync, */*, allow
 
-        g, {{ argocd_github_syncer_acc_name }}, role:syncer
+        g, {{ argocd_account_for_argo_watcher }}, role:watcher
+        g, {{ argocd_account_for_github_syncer }}, role:syncer
 
 - name: define PARAMS params
   ansible.builtin.set_fact:

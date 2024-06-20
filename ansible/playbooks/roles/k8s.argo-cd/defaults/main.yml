@@ -1,5 +1,5 @@
 ---
-argocd_admin_pwd_path: "{{ generated_creds_dir }}/argocd-init-admin-pwd.txt"
+argocd_admin_pwd_path: "{{ generated_creds_dir }}/argocd-password.admin.txt"
 argocd_cluster_api_url: http://argocd-server.argocd/api/v1
 argocd_app_of_apps_name: app-of-apps
 argocd_host: argocd.{{ root_domain }}

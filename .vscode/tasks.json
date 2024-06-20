@@ -20,7 +20,7 @@
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
                 "ansible/playbooks/few.yml",
-                // "-t", "custom-image",
+                // "-t", "creds",
                 "--skip-tags", "terraform"
             ],
             "problemMatcher": []

@@ -48,4 +48,4 @@
     - name: Save
       ansible.builtin.copy:
         content: "{{ skooner_token.stdout }}"
-        dest: "{{ generated_creds_dir }}/skooner.txt"
+        dest: "{{ generated_creds_dir }}/skooner-token.serviceaccount.txt"

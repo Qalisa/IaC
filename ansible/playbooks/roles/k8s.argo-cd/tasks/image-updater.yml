@@ -26,6 +26,19 @@
 #
 #
 
+- name: Read keys as raw bytes
+  ansible.builtin.slurp:
+    src: "{{ generated_creds_dir }}/argocd-token.{{ argocd_account_for_argo_watcher }}.txt"
+  register: admin_token
+- name: Define admin token
+  ansible.builtin.set_fact:
+    ARGO_TOKEN: "{{ admin_token.content | b64decode }}"
+- name: Save Secret
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/watcher/secret.yml.j2
+
 - name: Add stable chart repo
   tags: [image-updater]
   kubernetes.core.helm_repository:

@@ -5,6 +5,9 @@
 - name: Handle credentials + Connect Github Org
   ansible.builtin.import_tasks: creds.yml
 
+- name: Add secrets to GH
+  ansible.builtin.import_tasks: creds.gh.yml
+
 #
 #
 

@@ -1,9 +1,6 @@
 ---
-##
-##
-##
-
-- name: Save password
+- name: Extract "admin" user's password
+  tags: [creds]
   block:
     - name: Search for pod exact name
       kubernetes.core.k8s_info:
@@ -21,74 +18,52 @@
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
-    - name: Save
+    - name: Save password
       ansible.builtin.copy:
         content: "{{ argocd_init_admin_pwd.stdout_lines[0] }}"
         dest: "{{ argocd_admin_pwd_path }}"
 
-##
-## Interract with API, register repo and creds
-##
-- name: Read keys as raw bytes
-  ansible.builtin.slurp:
-    src: "{{ argocd_admin_pwd_path }}"
-  register: admin_pwd
-- name: Get ArgoCD authentication token
-  ansible.builtin.uri:
-    url: "{{ argocd_cluster_api_url }}/session"
-    validate_certs: false
-    method: POST
-    body_format: json
-    body:
-      username: "admin"
-      password: "{{ admin_pwd.content | b64decode }}"
-  register: argocd_auth_response
-
-##
-- name: Create auth token for Github Syncer and bind it to repositories on Github Org
+#
+- name: Login as "admin" user
+  tags: [creds]
   block:
-    - name: Generate new token
-      register: syncer_token
+    - name: Read keys as raw bytes
+      ansible.builtin.slurp:
+        src: "{{ argocd_admin_pwd_path }}"
+      register: admin_pwd
+    - name: Get ArgoCD authentication token
       ansible.builtin.uri:
-        url: "{{ argocd_cluster_api_url }}/account/{{ argocd_github_syncer_acc_name }}/token"
+        url: "{{ argocd_cluster_api_url }}/session"
         validate_certs: false
         method: POST
-        headers:
-          Authorization: "Bearer {{ argocd_auth_response.json.token }}"
-          Content-Type: "application/json"
         body_format: json
         body:
-          expiresIn: 0 # never expires
-    - name: Make sure destination dir exists
-      ansible.builtin.file:
-        path: "{{ generated_creds_dir }}"
-        state: directory
-    - name: Save
-      ansible.builtin.copy:
-        content: "{{ syncer_token.json.token }}"
-        dest: "{{ argocd_syncer_token_path }}"
-    - name: Add secrets to Github org
-      tags: [terraform]
-      community.general.terraform:
-        project_path: "{{ terraform_project_path }}/gha-expose-secrets"
-        state: present
-        force_init: true
-        complex_vars: true
-        variables:
-          github_organization: "{{ github_org }}"
-          github_token: "{{ ansible_github_var_secrets_pat }}"
-          #
-          secrets:
-            argocd_syncer_token: "{{ lookup('ansible.builtin.file', argocd_syncer_token_path) }}"
+          username: "admin"
+          password: "{{ admin_pwd.content | b64decode }}"
+      register: argocd_auth_response
+    - name: Define "admin" session token
+      ansible.builtin.set_fact:
+        admin_bearer: "{{ argocd_auth_response.json.token }}"
+
+##
+- name: Generate tokens into files
+  tags: [creds]
+  ansible.builtin.include_tasks: _helper.generate-token.yml
+  vars:
+    bearer: "{{ admin_bearer }}"
+  loop:
+    - username: "{{ argocd_account_for_github_syncer }}"
+    - username: "{{ argocd_account_for_argo_watcher }}"
 
 #
 - name: Add Github repository creds to ArgoCD
+  tags: [creds]
   ansible.builtin.uri:
     url: "{{ argocd_cluster_api_url }}/repocreds"
     validate_certs: false
     method: POST
     headers:
-      Authorization: "Bearer {{ argocd_auth_response.json.token }}"
+      Authorization: "Bearer {{ admin_bearer }}"
       Content-Type: "application/json"
     body_format: json
     body:

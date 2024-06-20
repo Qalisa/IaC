@@ -55,4 +55,4 @@
     - name: Save
       ansible.builtin.copy:
         content: "{{ dashboard_token.stdout }}"
-        dest: "{{ generated_creds_dir }}/k8s-dashboard.txt"
+        dest: "{{ generated_creds_dir }}/dashboard-token.serviceaccount.txt"
