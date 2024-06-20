@@ -119,3 +119,11 @@
     kubectl delete
     pod {{ pod_name_search.resources[0].metadata.name }}
     -n kube-system
+
+- name: delete default ingress if exists
+  kubernetes.core.k8s:
+    state: absent
+    api_version: v1
+    kind: Ingress
+    namespace: kube-system
+    name: registry
