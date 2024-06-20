@@ -39,6 +39,15 @@ resource "github_actions_variable" "LOCAL_CACHE_PATH" {
   repository       = each.key
 }
 
+resource "github_actions_variable" "ARGO_APP_NAME" {
+  for_each         = var.orchestrated_repositories
+  variable_name    = "LOCAL_CACHE_PATH"
+  value            = "${each.key}"
+  repository       = each.key
+}
+
+
+
 ##
 ##
 ##
