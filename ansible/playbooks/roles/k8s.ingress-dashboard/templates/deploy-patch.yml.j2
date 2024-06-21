@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+  namespace: ingress-dashboard
+spec:
+  template:
+    spec:
+      containers:
+      - name: dashboard
+        env:
+        - name: STATIC_SOURCE
+          value: /static
+        volumeMounts:
+        - name: config-volume
+          mountPath: /static
+      volumes:
+        - name: config-volume
+          configMap:
+            name: static

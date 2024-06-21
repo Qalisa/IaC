@@ -1,5 +1,11 @@
-- name: Add variables to Github org
-  tags: [config-more, terraform]
+---
+- name: Get Token Path
+  tags: [terraform]
+  ansible.builtin.set_fact:
+    argocd_syncer_token_path: "{{ generated_creds_dir }}/argocd-token.{{ argocd_account_for_github_syncer }}.txt"
+
+- name: Add secrets to Github org
+  tags: [terraform]
   community.general.terraform:
     project_path: "{{ terraform_project_path }}/github-actions-repository-configure"
     state: present
@@ -16,3 +22,6 @@
       #
       variables:
         buildkit_remote_socket: "{{ buildkit_remote_socket }}"
+      #
+      secrets:
+        argocd_syncer_token: "{{ lookup('ansible.builtin.file', argocd_syncer_token_path) }}"

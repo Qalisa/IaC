@@ -9,15 +9,11 @@ variable "github_token" {
   sensitive   = true
 }
 
-#
-#
-#
-
-variable "orchestrated_repositories" {
-  description = "GitHub org's repositories that will have secrets setup"
-  type     = set(string)
-  default  = []
-  nullable = false
+variable "github_topic" {
+  description = "GitHub topic to search"
+  type        = string
+  sensitive   = true
+  default = "decorated"
 }
 
 #

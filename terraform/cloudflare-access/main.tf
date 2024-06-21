@@ -14,6 +14,35 @@ provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
 
+provider "kubernetes" {
+
+}
+
+data "kubernetes_namespaces" "all" {}
+
+data "kubernetes_ingresses" "all" {
+  for_each = data.kubernetes_namespaces.all.namespaces
+  metadata {
+    namespace = each.value.metadata[0].name
+  }
+}
+
+locals {
+  secure_ingresses = flatten([
+    for ns_key, ns_value in data.kubernetes_ingresses.all : [
+      for ingress in ns_value.items : ingress
+      if contains(keys(ingress.metadata.annotations), "cloudflare-access/must-secure") && ingress.metadata.annotations["cloudflare-access/must-secure"] == "true"
+    ]
+  ])
+  
+  subdomains_to_secure = flatten([
+    for ingress in local.secure_ingresses : [
+      for rule in ingress.spec[0].rules : rule.host
+    ]
+  ])
+}
+
+
 resource "cloudflare_access_group" "org_members_group" {
   account_id = var.cloudflare_account_id
   name = "Org members"
@@ -74,7 +103,7 @@ resource "cloudflare_access_policy" "allow_all_org_members" {
 }
 
 resource "cloudflare_access_application" "apps" {
-  for_each                  = toset(var.subdomains_to_secure)
+  for_each                  = toset(local.subdomains_to_secure)
   account_id                = var.cloudflare_account_id
   name                      = each.key
   domain                    = join(".", [each.key, var.whitelisted_mail_domain])

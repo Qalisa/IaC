@@ -13,19 +13,34 @@ provider "github" {
     token = var.github_token # token must have admin read rights + secrets write
 }
 
+# https://stackoverflow.com/a/63332378/3021058
+data "external" "repos_with_topic" {
+  program = ["python3", "${path.module}/fetch_repos.py"]
+  
+  environment = {
+    GITHUB_TOKEN = var.github_token
+    GITHUB_OWNER = var.github_organization
+    GITHUB_TOPIC = var.github_topic
+  }
+}
+
+locals {
+  orchestrated_repositories = data.external.repos_with_topic.result.repositories
+}
+
 #
 #
 #
 
 ## REQUIRED
-data "github_actions_public_key" "repo" {
-  for_each = var.orchestrated_repositories
+data "github_actions_public_key" "repos" {
+  for_each = local.orchestrated_repositories
   repository = each.key
 }
 
 #
 resource "github_actions_variable" "PRIVATE_REPOSITORY_IMAGE" {
-  for_each         = var.orchestrated_repositories
+  for_each         = local.orchestrated_repositories
   variable_name    = "PRIVATE_REPOSITORY_IMAGE"
   value            = "${var.config.repository_socket}/${var.config.repository_user}/${each.key}"
   repository       = each.key
@@ -33,14 +48,14 @@ resource "github_actions_variable" "PRIVATE_REPOSITORY_IMAGE" {
 
 #
 resource "github_actions_variable" "LOCAL_CACHE_PATH" {
-  for_each         = var.orchestrated_repositories
+  for_each         = local.orchestrated_repositories
   variable_name    = "LOCAL_CACHE_PATH"
   value            = "/${var.config.cache_path}/${var.config.repository_user}/${each.key}"
   repository       = each.key
 }
 
 resource "github_actions_variable" "ARGO_APP_NAME" {
-  for_each         = var.orchestrated_repositories
+  for_each         = local.orchestrated_repositories
   variable_name    = "LOCAL_CACHE_PATH"
   value            = "${each.key}"
   repository       = each.key
@@ -55,7 +70,7 @@ resource "github_actions_variable" "ARGO_APP_NAME" {
 locals {
   flattened_secrets = flatten([
     for nm, secret in var.secrets : [
-      for repo in var.orchestrated_repositories : {
+      for repo in local.orchestrated_repositories : {
         secret_name = nm
         plaintext_value = secret
         repository = repo
@@ -65,7 +80,7 @@ locals {
 
   flattened_variables = flatten([
     for nm, variable in var.variables : [
-      for repo in var.orchestrated_repositories : {
+      for repo in local.orchestrated_repositories : {
         variable_name = nm
         value = variable
         repository = repo

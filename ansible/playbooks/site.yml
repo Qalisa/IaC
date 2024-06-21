@@ -24,7 +24,7 @@
     - role: base.docker # Install docker cli + buildkit, for some reason we need to do it after kubespray
     - role: k8s.cert-manager # Finish cert-manager configuration (installed along kubespray)
     - role: k8s.registry # Finish registry configuration (installed along kubespray)
-    - role: k8s.cloudflare-vpn # OPTIONAL
+    - role: apply.terraform #
     - role: k8s.dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
     - role: k8s.prometheus-stack # OPTIONAL
     - role: k8s.webmin # OPTIONAL

@@ -51,6 +51,7 @@ listmonk_static_dir_repo_url: "{{ github_org_url }}/listmonk-static"
 
 #
 registry_host: registry.kube-system
+registry_default_push_user: "{{ github_org | lower }}" # must always be lowercase
 
 #
 matomo_username: admin
