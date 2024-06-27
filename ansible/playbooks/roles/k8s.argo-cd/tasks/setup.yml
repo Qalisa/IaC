@@ -82,7 +82,7 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #
-            cloudflare-acccess/must-secure: "false"
+            cloudflare-access/must-secure: "false"
           tls: false
       repoServer:
         replicas: 1

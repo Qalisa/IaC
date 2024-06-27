@@ -56,7 +56,7 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #
-            cloudflare-acccess/must-secure: "true"
+            cloudflare-access/must-secure: "true"
         env:
           PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: "never"
       ltb-passwd:
@@ -80,4 +80,4 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #
-            cloudflare-acccess/must-secure: "false"
+            cloudflare-access/must-secure: "false"

@@ -87,7 +87,7 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #
-            cloudflare-acccess/must-secure: "false"
+            cloudflare-access/must-secure: "false"
 
 - name: Wait for pod to become ready
   ansible.builtin.command: |

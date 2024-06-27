@@ -4,7 +4,7 @@
   ansible.builtin.set_fact:
     argocd_syncer_token_path: "{{ generated_creds_dir }}/argocd-token.{{ argocd_account_for_github_syncer }}.txt"
 
-- name: Add secrets to Github org
+- name: Add secrets and variables to specific Github organization repositories through their topic
   tags: [terraform]
   community.general.terraform:
     project_path: "{{ terraform_project_path }}/github-actions-repository-configure"

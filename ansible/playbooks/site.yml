@@ -28,7 +28,7 @@
     - role: k8s.dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
     - role: k8s.prometheus-stack # OPTIONAL
     - role: k8s.webmin # OPTIONAL
-    - role: k8s.portainer-ce # OPTIONAL
+    # - role: k8s.portainer-ce # OPTIONAL
     - role: k8s.openldap
     - role: k8s.docker-mailserver
     - role: k8s.listmonk # OPTIONAL

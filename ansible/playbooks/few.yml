@@ -2,4 +2,4 @@
   hosts: all
   become: true
   roles:
-    - role: k8s.ingress-dashboard
+    - role: apply.terraform

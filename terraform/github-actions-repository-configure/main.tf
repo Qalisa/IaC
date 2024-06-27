@@ -13,19 +13,15 @@ provider "github" {
     token = var.github_token # token must have admin read rights + secrets write
 }
 
-# https://stackoverflow.com/a/63332378/3021058
-data "external" "repos_with_topic" {
-  program = ["python3", "${path.module}/fetch_repos.py"]
-  
-  environment = {
-    GITHUB_TOKEN = var.github_token
-    GITHUB_OWNER = var.github_organization
-    GITHUB_TOPIC = var.github_topic
-  }
+
+# Récupération des dépôts de l'organisation
+data "github_repositories" "org_repos" {
+  query = "org:${var.github_organization} topic:${var.github_topic}"
 }
 
-locals {
-  orchestrated_repositories = data.external.repos_with_topic.result.repositories
+data "github_repository" "orchestrated_repositories" {
+  for_each = toset(data.github_repositories.org_repos.names)
+  name     = each.key
 }
 
 #
@@ -34,13 +30,13 @@ locals {
 
 ## REQUIRED
 data "github_actions_public_key" "repos" {
-  for_each = local.orchestrated_repositories
+  for_each = data.github_repository.orchestrated_repositories
   repository = each.key
 }
 
 #
 resource "github_actions_variable" "PRIVATE_REPOSITORY_IMAGE" {
-  for_each         = local.orchestrated_repositories
+  for_each         = data.github_repository.orchestrated_repositories
   variable_name    = "PRIVATE_REPOSITORY_IMAGE"
   value            = "${var.config.repository_socket}/${var.config.repository_user}/${each.key}"
   repository       = each.key
@@ -48,15 +44,15 @@ resource "github_actions_variable" "PRIVATE_REPOSITORY_IMAGE" {
 
 #
 resource "github_actions_variable" "LOCAL_CACHE_PATH" {
-  for_each         = local.orchestrated_repositories
+  for_each         = data.github_repository.orchestrated_repositories
   variable_name    = "LOCAL_CACHE_PATH"
-  value            = "/${var.config.cache_path}/${var.config.repository_user}/${each.key}"
+  value            = "${var.config.cache_path}/${var.config.repository_user}/${each.key}"
   repository       = each.key
 }
 
 resource "github_actions_variable" "ARGO_APP_NAME" {
-  for_each         = local.orchestrated_repositories
-  variable_name    = "LOCAL_CACHE_PATH"
+  for_each         = data.github_repository.orchestrated_repositories
+  variable_name    = "ARGO_APP_NAME"
   value            = "${each.key}"
   repository       = each.key
 }
@@ -70,20 +66,20 @@ resource "github_actions_variable" "ARGO_APP_NAME" {
 locals {
   flattened_secrets = flatten([
     for nm, secret in var.secrets : [
-      for repo in local.orchestrated_repositories : {
+      for repo in data.github_repository.orchestrated_repositories : {
         secret_name = nm
         plaintext_value = secret
-        repository = repo
+        repository = repo.name
       }
     ]
   ])
 
   flattened_variables = flatten([
     for nm, variable in var.variables : [
-      for repo in local.orchestrated_repositories : {
+      for repo in data.github_repository.orchestrated_repositories : {
         variable_name = nm
         value = variable
-        repository = repo
+        repository = repo.name
       }
     ]
   ])

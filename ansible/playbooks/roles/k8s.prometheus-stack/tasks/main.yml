@@ -29,7 +29,7 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "true"
             #
-            cloudflare-acccess/must-secure: "true"
+            cloudflare-access/must-secure: "true"
           hosts:
             - graphana.{{ root_domain }}
       prometheus:
@@ -49,6 +49,6 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #
-            cloudflare-acccess/must-secure: "true"
+            cloudflare-access/must-secure: "true"
           hosts:
             - prometheus.{{ root_domain }}

@@ -31,7 +31,7 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #
-            cloudflare-acccess/must-secure: "true"
+            cloudflare-access/must-secure: "true"
       secrets: # override to empty, replaced by "tenant.configSecret"
       tenant:
         ###

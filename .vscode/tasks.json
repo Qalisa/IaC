@@ -21,7 +21,7 @@
                 "--become --become-user=root",
                 "ansible/playbooks/few.yml",
                 // "-t", "creds",
-                "--skip-tags", "terraform"
+                // "--skip-tags", "terraform"
             ],
             "problemMatcher": []
         },

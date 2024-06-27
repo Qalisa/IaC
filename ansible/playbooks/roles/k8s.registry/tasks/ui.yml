@@ -52,7 +52,7 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #
-            cloudflare-acccess/must-secure: "true"
+            cloudflare-access/must-secure: "true"
             ###
             # # type of authentication
             # nginx.ingress.kubernetes.io/auth-type: basic
