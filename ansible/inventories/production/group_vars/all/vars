@@ -1,6 +1,6 @@
 ---
 # https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html#keep-vaulted-variables-safely-visible
-# requires a brother encrypted file named "vault"
+# requires an encrypted file named "vault"
 # "ansible-vault encrypt ansible/inventories/production/group_vars/all/vault"
 # "ansible-vault decrypt ansible/inventories/production/group_vars/all/vault"
 

@@ -89,9 +89,49 @@
         {
             "label": "⛏ Install Ansible requirements",
             "type": "shell",
-            "command": "ansible-galaxy install -r requirements.yml",
+            "command": "ansible-galaxy collection install -r ansible/requirements.yml",
             "options": {
-                "cwd": "${workspaceFolder}/ansible",
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Install Ansible dev-tools",
+            "type": "shell",
+            "windows": {
+                "command": "" // TODO
+            },
+            "linux": {
+                "command": "pip3 install ansible-dev-tools"
+            },
+            "osx": {
+                "command": "brew install ansible-lint"
+            },
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "⛏🔄 Upgrade Ansible requirements",
+            "type": "shell",
+            "command": "ansible-galaxy collection install -U -r ansible/requirements.yml",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Install kubespray requirements",
+            "type": "shell",
+            "command": "pip install -U -r requirements.txt",
+            "options": {
                 "statusbar": {
                     "hide": true
                 }
@@ -117,13 +157,29 @@
         {
             "label": "🔄 Upgrade cluster (kubespray)",
             "type": "shell",
-            "dependsOn": "Upgrade kubespray collection",
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
                 "ansible/playbooks/upgrade-cluster.yml"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🗑 Delete k8s cluster (kubespray)",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/reset.yml"
             ],
             "options": {
                 "statusbar": {
