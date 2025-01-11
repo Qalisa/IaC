@@ -16,10 +16,3 @@ node1
 
 [kube_node]
 node1
-
-[calico_rr]
-
-[k8s_cluster:children]
-kube_node
-kube_control_plane
-calico_rr

@@ -29,9 +29,9 @@ Make sure you are locally logged on `git` w/ a registered account using :
 
 ### Startup
 - `git clone {this repo}`
-- Launch VSCode Task `⛏ Install Ansible requirements`
-- Launch VSCode Task `Install Ansible dev-tools`
-- Launch VSCode Task `Install kubespray requirements`
+- Launch VSCode Task `1. Install kubespray requirements`
+- Launch VSCode Task `2. Install Ansible dev-tools`
+- Launch VSCode Task `3a. ⛏ Install Ansible requirements`
 - Define `./ansible/inventories/group_vars/all/vault` passwords and tokens as defined in `./ansible/inventories/group_vars/all/vars`
 - Encrypt `./ansible/inventories/group_vars/all/vault` using `ansible-vault encrypt ansible/inventories/production/group_vars/all/vault`
 - Fill `./ansible-vault-pw` file with previously set encrypting password

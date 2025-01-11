@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-mail-ports
+  namespace: docker-mailserver
+spec:
+  podSelector:
+    matchLabels:
+      app: docker-mailserver
+  policyTypes:
+  - Ingress
+  ingress:
+  # Allow POP3
+  - ports:
+    - protocol: TCP
+      port: 110
+  # Allow IMAP
+  - ports:
+    - protocol: TCP
+      port: 143
+  # Allow SMTP
+  - ports:
+    - protocol: TCP
+      port: 25
+  # Allow SMTPS (secure SMTP)
+  - ports:
+    - protocol: TCP
+      port: 465
+  # Allow Submission (SMTP over TLS)
+  - ports:
+    - protocol: TCP
+      port: 587

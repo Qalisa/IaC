@@ -155,3 +155,4 @@
       - path: templates/mailserver/ldap-secret.yml.j2
       - path: templates/mailserver/service.yml.j2
       - path: templates/mailserver/deploy.yml.j2
+      - path: templates/mailserver/network-policy.yml.j2

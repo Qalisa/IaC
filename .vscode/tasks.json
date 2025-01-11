@@ -87,58 +87,6 @@
             "problemMatcher": []
         },
         {
-            "label": "⛏ Install Ansible requirements",
-            "type": "shell",
-            "command": "ansible-galaxy collection install -r ansible/requirements.yml",
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Install Ansible dev-tools",
-            "type": "shell",
-            "windows": {
-                "command": "" // TODO
-            },
-            "linux": {
-                "command": "pip3 install ansible-dev-tools"
-            },
-            "osx": {
-                "command": "brew install ansible-lint"
-            },
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "⛏🔄 Upgrade Ansible requirements",
-            "type": "shell",
-            "command": "ansible-galaxy collection install -U -r ansible/requirements.yml",
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Install kubespray requirements",
-            "type": "shell",
-            "command": "pip install -U -r requirements.txt",
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "✅ Ensure Mail Accounts Folder Permissions",
             "type": "shell",
             "command": [
@@ -181,6 +129,82 @@
                 "--become --become-user=root",
                 "ansible/playbooks/reset.yml"
             ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        ///
+        ///
+        ///
+        {
+            "label": "0. Install pipX",
+            "type": "shell",
+            "hide": true,
+            "linux": {
+                "command": "sudo apt-get -qq -y install pipx > /dev/null && pipx ensurepath"
+            },
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "1. Install kubespray requirements",
+            "type": "shell",
+            "dependsOn": "0. Install pipX",
+            "command": "grep -vE '^\\s*(#|$)' requirements.txt | xargs -n 1 pipx install --include-deps",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "2. Install Ansible dev-tools",
+            "type": "shell",
+            "command": "pipx install ansible-dev-tools",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "3pre. ⛏ Install Ansible requirements (distlib + cryptography)",
+            "type": "shell",
+            "command": "pipx inject ansible distlib cryptography",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "hide": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "3a. ⛏ Install Ansible requirements",
+            "type": "shell",
+            "dependsOn": "3pre. ⛏ Install Ansible requirements (distlib)",
+            "command": "ansible-galaxy collection install -r ansible/requirements.yml",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "3b. ⛏🔄 Upgrade Ansible requirements",
+            "type": "shell",
+            "dependsOn": "3pre. ⛏ Install Ansible requirements (distlib)",
+            "command": "ansible-galaxy collection install -U -r ansible/requirements.yml",
             "options": {
                 "statusbar": {
                     "hide": true
