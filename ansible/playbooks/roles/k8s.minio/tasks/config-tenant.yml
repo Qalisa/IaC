@@ -1,5 +1,5 @@
 ---
-- name: Run PipX w/ requisites 
+- name: Run PipX w/ requisites
   community.general.pipx:
     state: inject
     name: ansible

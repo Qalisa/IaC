@@ -1,3 +1,4 @@
+---
 - name: Install Kyverno
   ansible.builtin.import_tasks: kyverno.yml
 

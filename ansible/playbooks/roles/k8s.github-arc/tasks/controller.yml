@@ -14,7 +14,7 @@
   ansible.builtin.file:
     path: "{{ github_arc_cache_pv_path }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Install local cache server + access method to it for runners set
   kubernetes.core.k8s:

@@ -1,3 +1,4 @@
+---
 - name: Unseal Vault
   hosts: all
   become: true

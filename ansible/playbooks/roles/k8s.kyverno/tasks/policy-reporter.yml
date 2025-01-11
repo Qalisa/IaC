@@ -1,3 +1,4 @@
+---
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: kyverno-policy-reporter

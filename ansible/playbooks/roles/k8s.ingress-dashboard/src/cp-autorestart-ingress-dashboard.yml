@@ -1,3 +1,4 @@
+---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -11,25 +12,25 @@ metadata:
     policies.kyverno.io/minversion: 1.7.0
     kyverno.io/kubernetes-version: "1.23"
     policies.kyverno.io/description: >-
-      Restart Deployment On Ingress Change    
+      Restart Deployment On Ingress Change
 spec:
   mutateExistingOnPolicyUpdate: false
   rules:
-  - name: update-ingress
-    match:
-      any:
-      - resources:
-          kinds:
-          - Ingress
-    mutate:
-      targets:
-        - apiVersion: apps/v1
-          kind: Deployment
-          name: dashboard
-          namespace: ingress-dashboard
-      patchStrategicMerge:
-        spec:
-          template:
-            metadata:
-              annotations:
-                ops.corp.com/triggerrestart: "{{request.object.metadata.resourceVersion}}"
+    - name: update-ingress
+      match:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+      mutate:
+        targets:
+          - apiVersion: apps/v1
+            kind: Deployment
+            name: dashboard
+            namespace: ingress-dashboard
+        patchStrategicMerge:
+          spec:
+            template:
+              metadata:
+                annotations:
+                  ops.corp.com/triggerrestart: "{{request.object.metadata.resourceVersion}}"

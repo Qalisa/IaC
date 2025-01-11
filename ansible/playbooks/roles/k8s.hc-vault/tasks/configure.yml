@@ -25,7 +25,6 @@
 # Generate and save keys
 #
 
-
 - name: Generate sealing keys
   block:
     - name: Produce JSON file
@@ -48,12 +47,12 @@
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
-        mode: '0775'
+        mode: "0775"
     - name: Save
       ansible.builtin.copy:
         content: "{{ unseal_keys }}"
         dest: "{{ unseal_keys_path }}"
-        mode: '0775'
+        mode: "0775"
 
 - name: Load unseal keys if on local
   ignore_errors: true
@@ -111,10 +110,7 @@
 
 - name: Load facts
   ansible.builtin.set_fact:
-    admin_user_exists: "{{ ((admin_exists_raw is not skipped)
-          and (admin_exists_raw.rc != 2)
-          and ((admin_exists_raw.stdout | from_json | length) == 0)
-        | bool) }}"
+    admin_user_exists: "{{ ((admin_exists_raw is not skipped) and (admin_exists_raw.rc != 2) and ((admin_exists_raw.stdout | from_json | length) == 0) | bool) }}"
   when: admin_exists_raw is defined
 
 - name: Activate admin user

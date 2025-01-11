@@ -1,3 +1,4 @@
+---
 - name: Install ArgoCD Image Updater w/ Helm
   tags: [image-updater]
   kubernetes.core.helm:
@@ -44,7 +45,6 @@
   kubernetes.core.helm_repository:
     name: shini4i
     repo_url: https://shini4i.github.io/charts/
-
 
 - name: Install ArgoCD Watcher w/ Helm
   tags: [image-updater]

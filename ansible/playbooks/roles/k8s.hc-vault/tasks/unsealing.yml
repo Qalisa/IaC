@@ -1,3 +1,4 @@
+---
 - name: Read keys as raw bytes
   register: local_unseal_keys_raw
   tags: [never, unseal]

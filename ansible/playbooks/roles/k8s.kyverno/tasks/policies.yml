@@ -1,3 +1,4 @@
+---
 - name: Install policies
   tags: [policies]
   kubernetes.core.k8s:

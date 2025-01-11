@@ -11,7 +11,7 @@
 
 - name: Add OLD Webmin repository
   ansible.builtin.apt_repository:
-    repo: 'deb https://download.webmin.com/download/repository sarge contrib'
+    repo: "deb https://download.webmin.com/download/repository sarge contrib"
     state: present
     filename: webmin
     update_cache: true
@@ -39,10 +39,10 @@
     regexp: "^#? *{{ item.key | regex_escape() }}="
     line: "{{ item.key }}={{ item.value }}"
   with_dict:
-    'redirect_ssl': 1
-    'redirect_host': '{{ webmin_public_hostname }}'
+    "redirect_ssl": 1
+    "redirect_host": "{{ webmin_public_hostname }}"
     # TODO
-    'bind': '{{ webmin_ip_bind }}' # node1 ClusterIP
+    "bind": "{{ webmin_ip_bind }}" # node1 ClusterIP
   register: webmin_miniserv_conf
   notify:
     - Restart webmin daemon
@@ -54,7 +54,7 @@
     regexp: "^#? *{{ item.key | regex_escape() }}="
     line: "{{ item.key }}={{ item.value }}"
   with_dict:
-    'referers': '{{ webmin_public_hostname }}'
+    "referers": "{{ webmin_public_hostname }}"
   register: webmin_config
   notify:
     - Restart webmin daemon

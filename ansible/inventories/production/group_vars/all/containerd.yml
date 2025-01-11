@@ -51,15 +51,15 @@
 containerd_registries_mirrors: # @amphaal for Qalisa's IaC
   - prefix: docker.io
     mirrors:
-    - host: https://registry-1.docker.io
-      capabilities: ["pull", "resolve"]
-      skip_verify: false
+      - host: https://registry-1.docker.io
+        capabilities: ["pull", "resolve"]
+        skip_verify: false
   - prefix: "{{ registry_host }}"
     server: "https://{{ registry_host }}"
     mirrors:
-    - host: "https://{{ registry_host }}"
-      capabilities: ["pull", "resolve", "push"]
-      skip_verify: true
+      - host: "https://{{ registry_host }}"
+        capabilities: ["pull", "resolve", "push"]
+        skip_verify: true
 
 # containerd_max_container_log_line_size: 16384
 

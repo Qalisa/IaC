@@ -1,3 +1,4 @@
+---
 - name: Apply Cloudflare Zero Trust VPN access
   tags: [terraform]
   community.general.terraform:

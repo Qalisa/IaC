@@ -1,3 +1,4 @@
+---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -19,48 +20,48 @@ metadata:
       in the Pod.
 spec:
   rules:
-  - name: add-env-version-and-revision
-    match:
-      any:
-      - resources:
-          kinds:
-          - Pod
-          selector:
-            matchLabels:
-              kyverno.io/inject-image-labels-as-env: "true"
-    preconditions:
-      all:
-      - key: "{{request.operation || 'BACKGROUND'}}"
-        operator: NotEquals
-        value: DELETE
-    mutate:
-      foreach:
-      - list: "request.object.spec.containers"
-        context: 
-        - name: version
-          imageRegistry: 
-            reference: "{{ element.image }}"
-            jmesPath: configData.config.Labels."org.opencontainers.image.version" || ''
-        - name: revision
-          imageRegistry: 
-            reference: "{{ element.image }}"
-            jmesPath: configData.config.Labels."org.opencontainers.image.revision" || ''
-        preconditions:
-          all:
-          - key: "{{version}}"
+    - name: add-env-version-and-revision
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              selector:
+                matchLabels:
+                  kyverno.io/inject-image-labels-as-env: "true"
+      preconditions:
+        all:
+          - key: "{{request.operation || 'BACKGROUND'}}"
             operator: NotEquals
-            value: ""
-          - key: "{{revision}}"
-            operator: NotEquals
-            value: ""
-        patchesJson6902: |-
-          - op: add
-            path: "/spec/containers/{{elementIndex}}/env/-"
-            value:
-              name: IMAGE_TAG
-              value: "{{version}}"
-          - op: add
-            path: "/spec/containers/{{elementIndex}}/env/-"
-            value:
-              name: IMAGE_COMMIT
-              value: "{{revision}}"
+            value: DELETE
+      mutate:
+        foreach:
+          - list: "request.object.spec.containers"
+            context:
+              - name: version
+                imageRegistry:
+                  reference: "{{ element.image }}"
+                  jmesPath: configData.config.Labels."org.opencontainers.image.version" || ''
+              - name: revision
+                imageRegistry:
+                  reference: "{{ element.image }}"
+                  jmesPath: configData.config.Labels."org.opencontainers.image.revision" || ''
+            preconditions:
+              all:
+                - key: "{{version}}"
+                  operator: NotEquals
+                  value: ""
+                - key: "{{revision}}"
+                  operator: NotEquals
+                  value: ""
+            patchesJson6902: |-
+              - op: add
+                path: "/spec/containers/{{elementIndex}}/env/-"
+                value:
+                  name: IMAGE_TAG
+                  value: "{{version}}"
+              - op: add
+                path: "/spec/containers/{{elementIndex}}/env/-"
+                value:
+                  name: IMAGE_COMMIT
+                  value: "{{revision}}"

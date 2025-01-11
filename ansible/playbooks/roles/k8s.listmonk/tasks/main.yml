@@ -3,11 +3,10 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
   loop:
     - "{{ listmonk_db_pv_path }}"
     - "{{ listmonk_uploads_pv_path }}"
-
 
 - name: Install listmonk
   kubernetes.core.k8s:
@@ -72,7 +71,7 @@
       upload.provider: filesystem
       upload.filesystem.upload_path: uploads
       upload.filesystem.upload_uri: /uploads
-      upload.extensions: ['.*', '.png']
+      upload.extensions: [".*", ".png"]
       # privacy
       privacy.unsubscribe_header: true
       privacy.allow_blocklist: true

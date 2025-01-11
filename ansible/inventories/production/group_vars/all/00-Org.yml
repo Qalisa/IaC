@@ -46,5 +46,5 @@ zerossl_eab_kid: GkwRD2xlOs5VViczStfvlQ
 #     - Metadata: RO
 #     - Pull Requests: RW
 #     - Webhooks: RW
-sentry_github_appId: "914217"
-sentry_github_appName: "nw-s-sentry"
+sentry_github_appid: "914217"
+sentry_github_appname: "nw-s-sentry"

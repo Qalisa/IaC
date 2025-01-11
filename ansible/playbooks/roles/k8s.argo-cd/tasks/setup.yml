@@ -1,3 +1,4 @@
+---
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: argo
@@ -20,7 +21,7 @@
 - name: Define RBAC params
   ansible.builtin.set_fact:
     rbac:
-      policy.default: 'role:readonly'
+      policy.default: "role:readonly"
       policy.csv: |
         p, role:syncer, applications, sync, */*, allow
         p, role:watcher, applications, get, */*, allow

@@ -1,3 +1,4 @@
+---
 - name: Generate Token
   tags: [creds]
   block:
@@ -5,7 +6,7 @@
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
-        mode: '0775'
+        mode: "0775"
     - name: Generate new token
       register: token
       ansible.builtin.uri:
@@ -22,4 +23,4 @@
       ansible.builtin.copy:
         content: "{{ token.json.token }}"
         dest: "{{ generated_creds_dir }}/argocd-token.{{ item.username }}.txt"
-        mode: '0775'
+        mode: "0775"

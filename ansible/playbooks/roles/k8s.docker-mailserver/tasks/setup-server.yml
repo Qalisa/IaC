@@ -9,7 +9,7 @@
   ansible.builtin.file:
     path: "{{ path_to_config_folder }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 ##
 ## Create required postmaster account (Only for "ACCOUNT_PROVISIONER: FILE")
@@ -123,7 +123,7 @@
   ansible.builtin.template:
     src: "templates/mailserver/{{ item }}.j2"
     dest: "{{ path_to_config_folder }}/{{ item }}"
-    mode: '0755'
+    mode: "0755"
   loop:
     - fail2ban-jail.cf
 

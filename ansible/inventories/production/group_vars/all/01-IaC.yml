@@ -1,5 +1,5 @@
 #
-# WHERE GLOBAL-ISH IAC infos regarding services are stored 
+# WHERE GLOBAL-ISH IAC infos regarding services are stored
 #
 ---
 # refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
@@ -36,8 +36,6 @@ argocd_app_of_apps_repository_url: "{{ github_org_url }}/argocd-repository"
 argocd_account_for_github_syncer: github-syncer
 argocd_account_for_argo_watcher: watcher
 
-
-
 # OpenLDAP
 openldap_stack_namespace: openldap-stack
 openldap_stack_ldap_server_hostname: openldap
@@ -65,7 +63,7 @@ buildkit_local_mount_path: /cache
 
 # minimum 3 chars
 minio_tenant_username: admin
-minio_access_key_id: "{{ minio_tenant_username}}"
+minio_access_key_id: "{{ minio_tenant_username }}"
 minio_tenant_backup_storage_bucket_name: default-backups # https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
 minio_tenant_backup_storage_bucket_region: minio
 minio_tenant_s3_url: https://minio.minio-tenant:443

@@ -72,21 +72,6 @@
             "problemMatcher": []
         },
         {
-            "label": "🔐 Secure Subdomains through Cloudflare Access",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "ansible/playbooks/secure-subdomains.yml",
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "✅ Ensure Mail Accounts Folder Permissions",
             "type": "shell",
             "command": [
@@ -136,6 +121,11 @@
             },
             "problemMatcher": []
         },
+        {
+            "label": "Lint whole project",
+            "type": "shell",
+            "command": "ansible-lint"
+        }
         ///
         ///
         ///
@@ -145,6 +135,12 @@
             "hide": true,
             "linux": {
                 "command": "sudo apt-get -qq -y install pipx > /dev/null && pipx ensurepath"
+            },
+            "osx": {
+                "command": "brew install pipx && pipx ensurepath"
+            },
+            "windows": {
+                // TODO:
             },
             "options": {
                 "statusbar": {
@@ -157,7 +153,7 @@
             "label": "⛏1. Install Ansible & tools",
             "type": "shell",
             "dependsOn": "⛏0. Install pipX",
-            "command": "pipx install --include-deps ansible ansible-dev-tools",
+            "command": "pipx install --include-deps ansible-dev-tools",
             "options": {
                 "statusbar": {
                     "hide": true
@@ -168,7 +164,7 @@
         {
             "label": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
             "type": "shell",
-            "command": "pipx inject ansible distlib",
+            "command": "pipx inject ansible-dev-tools distlib",
             "options": {
                 "statusbar": {
                     "hide": true

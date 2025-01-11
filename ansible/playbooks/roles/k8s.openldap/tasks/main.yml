@@ -8,7 +8,7 @@
   ansible.builtin.file:
     path: "{{ openldap_pv_path }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Create Persistent Volume
   kubernetes.core.k8s:

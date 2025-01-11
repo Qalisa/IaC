@@ -147,8 +147,8 @@
         type: LoadBalancer
 
       github: #   Reference -> https://docs.sentry.io/product/integrations/source-code-mgmt/github/
-        appId: "{{ sentry_github_appId }}"
-        appName: "{{ sentry_github_appName }}"
+        appId: "{{ sentry_github_appid }}"
+        appName: "{{ sentry_github_appname }}"
         existingSecret: "github-app-secrets"
 
       filestore:

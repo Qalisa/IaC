@@ -62,9 +62,9 @@
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
-        mode: '0775'
+        mode: "0775"
     - name: Save
       ansible.builtin.copy:
         content: "{{ dashboard_token.stdout }}"
         dest: "{{ generated_creds_dir }}/dashboard-token.serviceaccount.txt"
-        mode: '0775'
+        mode: "0775"

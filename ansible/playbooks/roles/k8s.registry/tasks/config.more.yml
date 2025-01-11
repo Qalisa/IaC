@@ -4,7 +4,7 @@
   ansible.builtin.file:
     path: "{{ registry_pv_path }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Prepare registry storage + certs for HTTPS
   tags: [config-more]
@@ -53,7 +53,7 @@
         path: /spec/template/spec/containers/0/env
         value:
           - name: REGISTRY_STORAGE_DELETE_ENABLED
-            value: 'true'
+            value: "true"
           - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
             value: /var/lib/registry
       - op: replace

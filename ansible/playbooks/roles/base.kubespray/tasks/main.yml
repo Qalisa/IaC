@@ -3,7 +3,7 @@
 - name: Increase inotify user limit
   ansible.posix.sysctl:
     name: fs.inotify.max_user_instances
-    value: '256'
+    value: "256"
     sysctl_set: true
 
 #

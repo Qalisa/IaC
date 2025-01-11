@@ -18,12 +18,12 @@
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
-        mode: '0775'
+        mode: "0775"
     - name: Save password
       ansible.builtin.copy:
         content: "{{ argocd_init_admin_pwd.stdout_lines[0] }}"
         dest: "{{ argocd_admin_pwd_path }}"
-        mode: '0775'
+        mode: "0775"
 
 #
 - name: Login as "admin" user

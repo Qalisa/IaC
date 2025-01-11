@@ -1,3 +1,4 @@
+---
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: christianhuth
@@ -54,9 +55,9 @@
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
-        mode: '0775'
+        mode: "0775"
     - name: Save
       ansible.builtin.copy:
         content: "{{ skooner_token.stdout }}"
         dest: "{{ generated_creds_dir }}/skooner-token.serviceaccount.txt"
-        mode: '0775'
+        mode: "0775"

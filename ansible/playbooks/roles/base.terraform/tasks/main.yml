@@ -1,6 +1,6 @@
+---
 - name: Install Terraform
   community.general.snap:
     classic: true
     name:
       - terraform
-
