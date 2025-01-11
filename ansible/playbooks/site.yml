@@ -3,9 +3,9 @@
 #   hosts: all
 #   become: true
 #   roles:
-#     - role: base.common
-#     - role: base.kubespray
-#     - role: base.terraform
+#     - role: base__common
+#     - role: base__kubespray
+#     - role: base__terraform
 
 # # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
 # # - name: Reset any Kubespray cluster installed
@@ -20,25 +20,25 @@
   hosts: all
   become: true
   roles:
-    # - role: extra.kubespray # Finish kubespray configuration
-    # - role: base.docker # Install docker cli + buildkit, for some reason we need to do it after kubespray
-    # - role: k8s.cert-manager # Finish cert-manager configuration (installed along kubespray)
-    # - role: k8s.registry # Finish registry configuration (installed along kubespray)
-    # - role: apply.terraform #
-    # - role: k8s.dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
-    ## - role: k8s.prometheus-stack # OPTIONAL
-    ## - role: k8s.webmin # OPTIONAL
-    ## - role: k8s.portainer-ce # OPTIONAL
-    - role: k8s.openldap
-    # - role: k8s.docker-mailserver
-    ## - role: k8s.listmonk # OPTIONAL
-    ## - role: k8s.github-arc #OPTIONAL, local runners
-    ## - role: k8s.matomo # OPTIONAL
-    ## - role: k8s.hc-vault # OPTIONAL, allow secure storage of private keys
-    ## - role: k8s.sentry # OPTIONAL (careful, high resources usage !)
-    ## - role: k8s.minio # Storage Object service for storing backups and snapshots
-    ## - role: k8s.velero #
-    # - role: k8s.kyverno # policies enforcement and metadata injection
-    # - role: k8s.argo-cd
-    ## - role: k8s.skooner # alternative dashboard for k8s
-    # - role: k8s.ingress-dashboard # list all services
+    # - role: extra__kubespray # Finish kubespray configuration
+    # - role: base__docker # Install docker cli + buildkit, for some reason we need to do it after kubespray
+    # - role: k8s__cert_manager # Finish cert-manager configuration (installed along kubespray)
+    # - role: k8s__registry # Finish registry configuration (installed along kubespray)
+    # - role: apply__terraform #
+    # - role: k8s__dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
+    ## - role: k8s__prometheus_stack # OPTIONAL
+    ## - role: k8s__webmin # OPTIONAL
+    ## - role: k8s__portainer_ce # OPTIONAL
+    - role: k8s__openldap
+    # - role: k8s__docker_mailserver
+    ## - role: k8s__listmonk # OPTIONAL
+    ## - role: k8s__github_arc #OPTIONAL, local runners
+    ## - role: k8s__matomo # OPTIONAL
+    ## - role: k8s__hc_vault # OPTIONAL, allow secure storage of private keys
+    ## - role: k8s__sentry # OPTIONAL (careful, high resources usage !)
+    ## - role: k8s__minio # Storage Object service for storing backups and snapshots
+    ## - role: k8s__velero #
+    # - role: k8s__kyverno # policies enforcement and metadata injection
+    # - role: k8s__argo_cd
+    ## - role: k8s__skooner # alternative dashboard for k8s
+    # - role: k8s__ingress_dashboard # list all services

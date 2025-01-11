@@ -1,0 +1,50 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: docker-mailserver-autoconfig
+  namespace: docker-mailserver
+  annotations:
+    # when using Cloudflare's proxied DNS record
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "{{ default_cluster_issuer }}" # some picky mail clients requires the cert authority to be the same as the mail server's certficate
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    #
+    ingress-dashboard/title: E-mail autoconfig
+    ingress-dashboard/description: Allows automatic configuration of {{ root_domain }} mails on most email clients
+    ingress-dashboard/logo-url: /favicon.ico
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+    #
+    cloudflare-access/must-secure: "false"
+spec:
+  ingressClassName: "{{ ingress_nginx_class }}"
+  tls:
+    # one certificate per domain name (ZeroSSL free plan)
+    - secretName: docker-mailserver-autoconfig-certs
+      hosts: 
+        - {{ k8s__docker_mailserver_autoconfig_fqdn }}
+    # one certificate per domain name (ZeroSSL free plan)
+    - secretName: docker-mailserver-autodiscover-certs
+      hosts:
+        - {{ k8s__docker_mailserver_autodiscover_fqdn }}
+  rules:
+  - host: {{ k8s__docker_mailserver_autoconfig_fqdn }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: docker-mailserver-autoconfig
+            port:
+              name: manifest-app
+  - host: {{ k8s__docker_mailserver_autodiscover_fqdn }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: docker-mailserver-autoconfig
+            port:
+              name: manifest-app

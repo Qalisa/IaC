@@ -1,0 +1,159 @@
+---
+- name: Create namespace
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ns.yml.j2
+
+- name: Create Persistent Volume dir path
+  ansible.builtin.file:
+    path: "{{ k8s__docker_mailserver_path_to_config_folder }}"
+    state: directory
+    mode: "0755"
+
+##
+## Create required postmaster account (Only for "ACCOUNT_PROVISIONER: FILE")
+##
+
+# - name: Generate password hash for postmaster
+#   ansible.builtin.command: |
+#     kubectl run -n docker-mailserver -it --rm --restart=Never \
+#     --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
+#     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ postmaster_password }}'
+#   register: postmaster_pw_hash
+#   changed_when: postmaster_pw_hash.rc != 0
+
+# - name: Put in dict
+#   ansible.builtin.set_fact:
+#     default_accounts_dict: >
+#       {
+#         "{{ postmaster_email }}": "{{ postmaster_pw_hash.stdout_lines[0] }}",
+#       }
+
+# # https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy
+# # it does not erase other accounts :)
+# - name: Create persistent volume local path path ALONG initial account definition
+#   ansible.builtin.lineinfile:
+#     path: "{{ k8s__docker_mailserver_path_to_config_folder }}/postfix-accounts.cf"
+#     regexp: "^#? *{{ item.key | regex_escape() }}|"
+#     line: "{{ item.key }}|{{ item.value }}"
+#     create: true
+#     mode: '0755'
+#   with_dict: "{{ default_accounts_dict }}"
+
+##
+## Patch With PROXY Protocol
+##
+
+# - name: Add startup configuration for Proxy
+#   ansible.builtin.template:
+#     src: "templates/mailserver/proxy/config/{{ item }}.j2"
+#     dest: "{{ k8s__docker_mailserver_path_to_config_folder }}/{{ item }}"
+#     mode: '0755'
+#   loop:
+#     - dovecot.cf
+#     - user-patches.sh
+
+# - name: Create service to bypass PROXY protocol for in-cluster access
+#   kubernetes.core.k8s:
+#     state: present
+#     template:
+#       - path: templates/mailserver/proxy/service.proxy.yml.j2
+
+##
+## Patch Nginx Ingress Controller (Requires PROXY protocol enabled ? https://kubernetes.github.io/ingress-nginx/user-guide/miscellaneous/#source-ip-address)
+##
+
+# - name: Override additionnal TCP Services handled by NGinx Ingress Controller
+#   kubernetes.core.k8s:
+#     state: present
+#     template:
+#       - path: templates/mailserver/proxy/ingress-tcp.yml.j2
+
+# - name: Restart ingress-nginx daemonset to ack new configuration
+#   ansible.builtin.command: kubectl rollout restart daemonset ingress-nginx-controller -n ingress-nginx
+#   register: inc_reset
+#   changed_when: inc_reset.rc != 0
+
+# - name: Patch existing NGinx Ingress Controller Service's exposed ports
+#   kubernetes.core.k8s:
+#     state: patched
+#     kind: Service
+#     name: ingress-nginx
+#     namespace: ingress-nginx
+#     definition:
+#       spec:
+#         ports:
+#           # original
+#           - name: http
+#             port: 80
+#             targetPort: 80
+#             protocol: TCP
+#           - name: https
+#             port: 443
+#             targetPort: 443
+#             protocol: TCP
+#           # added
+#           - name: smtp
+#             port: 25
+#             targetPort: 25
+#             protocol: TCP
+#           - name: submissions
+#             port: 465
+#             targetPort: 465
+#             protocol: TCP
+#           - name: submission
+#             port: 587
+#             targetPort: 587
+#             protocol: TCP
+#           - name: imap
+#             port: 143
+#             targetPort: 143
+#             protocol: TCP
+#           - name: imaps
+#             port: 993
+#             targetPort: 993
+#             protocol: TCP
+
+#
+##
+#
+
+- name: Add whitelisted IPs for inner cluster access
+  ansible.builtin.template:
+    src: "templates/mailserver/{{ item }}.j2"
+    dest: "{{ k8s__docker_mailserver_path_to_config_folder }}/{{ item }}"
+    mode: "0755"
+  loop:
+    - fail2ban-jail.cf
+
+- name: Get my public IP from ipify.org
+  community.general.ipify_facts:
+
+## REQUIRED TO BE INSTALLED FIRST, since generated secret by this certificate is done async
+- name: Install Certificate first
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/mailserver/certificate.yml.j2
+
+# might be extensively long depending on provider
+- name: Wait for the associated certificate's secret to be generated
+  ansible.builtin.command: kubectl get secret docker-mailserver-certs -n docker-mailserver
+  register: secret_status
+  changed_when: secret_status.rc != 0
+  until: secret_status.rc == 0
+  retries: 20
+  delay: 20
+
+- name: Then, Install Docker Mailserver
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/mailserver/postfix-reject-config.yml.j2
+      - path: templates/mailserver/pv.yml.j2
+      - path: templates/mailserver/config.yml.j2
+      - path: templates/mailserver/ldap-secret.yml.j2
+      - path: templates/mailserver/service.yml.j2
+      - path: templates/mailserver/deploy.yml.j2
+      - path: templates/mailserver/network-policy.yml.j2

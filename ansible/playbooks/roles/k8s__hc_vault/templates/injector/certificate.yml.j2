@@ -1,0 +1,18 @@
+vapiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: injector-certificate
+  namespace: "{{ k8s__hc_vault_namespace }}"
+spec:
+  secretName: injector-tls
+  duration: 24h
+  renewBefore: 144m  # roughly 10% of 24h
+  dnsNames:
+  - vault-agent-injector-svc
+  - vault-agent-injector-svc.vault
+  - vault-agent-injector-svc.vault.svc
+  issuerRef:
+    name: "{{ org_ca_name }}"
+    kind: ClusterIssuer
+    group: cert-manager.io
+  commonName: Agent Inject Cert

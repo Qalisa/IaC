@@ -15,20 +15,23 @@
       args:
         executable: /bin/bash
       register: delete_namespace_finalizers
-      ignore_errors: true
+      changed_when: delete_namespace_finalizers.rc != 0
+      failed_when: false # replacement for ignore_errors
 
     - name: Delete namespace
       ansible.builtin.shell: |
         kubectl delete namespace {{ ns }}
       when: delete_namespace_finalizers.rc == 0
       register: delete_namespace
-      ignore_errors: true
+      changed_when: delete_namespace.rc != 0
+      failed_when: false # replacement for ignore_errors
 
     - name: Ensure namespace is deleted
       ansible.builtin.command: |
         kubectl get namespace {{ ns }}
       register: check_namespace
-      ignore_errors: true
+      changed_when: check_namespace.rc != 0
+      failed_when: false # replacement for ignore_errors
       retries: 5
       delay: 10
       until: check_namespace.rc != 0

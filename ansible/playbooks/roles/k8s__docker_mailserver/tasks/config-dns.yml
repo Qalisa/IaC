@@ -1,0 +1,118 @@
+---
+##
+## DKIM
+##
+
+- name: Pause for 5 secs (to wait to docker-mailserver pod to be invoked)
+  ansible.builtin.pause:
+    seconds: 5
+
+- name: Search for docker-mailserver pod exact name
+  kubernetes.core.k8s_info:
+    kind: Pod
+    label_selectors:
+      - app = docker-mailserver
+  register: docker_mailserver_pod_search
+
+- name: Wait for docker-mailserver pod to become ready
+  ansible.builtin.command: |
+    kubectl wait
+    pod -l app=docker-mailserver
+    --namespace=docker-mailserver
+    --for=condition=Ready
+    --timeout=240s
+  register: pods_ready
+  changed_when: pods_ready.rc != 0
+
+- name: Generate DKIM from pod
+  kubernetes.core.k8s_exec:
+    namespace: docker-mailserver
+    pod: "{{ docker_mailserver_pod_search.resources[0].metadata.name }}"
+    command: setup config dkim
+  register: dkim_generation_cmd
+  notify:
+    - DKIM - Reboot mailserver
+
+- name: Extract DKIM TXT (1/2)
+  ansible.builtin.set_fact:
+    dkim_raw: "{{ lookup('ansible.builtin.file', '{{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys/{{ root_domain }}/{{ mx_hostname }}.txt') }}"
+
+- name: Extract DKIM TXT (2/2)
+  ansible.builtin.set_fact:
+    dkim_txt: "{{ dkim_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}"
+
+- name: Add DKIM record on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ root_domain }}"
+    record: "{{ mx_hostname }}._domainkey"
+    type: TXT
+    value: "{{ dkim_txt }}"
+    api_token: "{{ cloudflare_api_token }}"
+    solo: true
+
+##
+## DMARC, SPF, MX, SRV, CNAME
+##
+
+- name: Add DMARC record on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ root_domain }}"
+    record: _dmarc
+    type: TXT
+    value: "v=DMARC1; p=quarantine; ruf=mailto:{{ postmaster_email }}; sp=none; fo=1; ri=86400"
+    api_token: "{{ cloudflare_api_token }}"
+    solo: true
+
+- name: Add MX record on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ root_domain }}"
+    record: "@"
+    type: MX
+    priority: 10
+    value: "{{ docker_mailserver_host }}"
+    api_token: "{{ cloudflare_api_token }}"
+    solo: true
+  failed_when: false # replacement for ignore_errors
+
+- name: Add SPF + mailconf records on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ root_domain }}"
+    record: "@"
+    type: TXT
+    value: "{{ item }}"
+    api_token: "{{ cloudflare_api_token }}"
+  loop:
+    - "v=spf1 mx ~all"
+    - "mailconf=https://{{ k8s__docker_mailserver_autoconfig_fqdn }}/mail/config-v1.1.xml"
+
+- name: Add CNAME records on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ root_domain }}"
+    type: CNAME
+    value: "{{ docker_mailserver_host }}"
+    record: "{{ item }}"
+    api_token: "{{ cloudflare_api_token }}"
+    solo: true
+  loop:
+    - smtp
+    - imap
+    - autodiscover
+
+- name: Create an SRV records [service]._tcp
+  community.general.cloudflare_dns:
+    api_token: "{{ cloudflare_api_token }}"
+    domain: "{{ root_domain }}"
+    type: SRV
+    proto: tcp
+    priority: 0
+    weight: 0
+    service: "{{ item.service }}"
+    port: "{{ item.port }}"
+    value: "{{ item.value }}"
+  failed_when: false # replacement for ignore_errors
+  loop:
+    - { service: "autodiscover", port: 443, value: "autodiscover.{{ root_domain }}" }
+    - { service: "imap", port: 143, value: "{{ docker_mailserver_host }}" }
+    - { service: "imaps", port: 993, value: "{{ docker_mailserver_host }}" }
+    - { service: "submission", port: 587, value: "{{ docker_mailserver_host }}" }
+    - { service: "submissions", port: 465, value: "{{ docker_mailserver_host }}" }

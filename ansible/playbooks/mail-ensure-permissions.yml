@@ -3,4 +3,4 @@
   hosts: all
   become: true
   roles:
-    - role: k8s.docker-mailserver
+    - role: k8s__docker_mailserver
