@@ -32,7 +32,7 @@
   register: admin_token
 - name: Define admin token
   ansible.builtin.set_fact:
-    ARGO_TOKEN: "{{ admin_token.content | b64decode }}"
+    argo_token: "{{ admin_token.content | b64decode }}"
 - name: Save Secret
   kubernetes.core.k8s:
     state: present

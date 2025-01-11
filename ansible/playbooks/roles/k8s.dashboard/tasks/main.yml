@@ -54,13 +54,17 @@
   block:
     - name: Get auth token
       ansible.builtin.shell: |
+        set -o pipefail
         kubectl get secret admin-user -n kubernetes-dashboard -o jsonpath={".data.token"} | base64 -d
       register: dashboard_token
+      changed_when: dashboard_token.rc != 0 # <- Uses the return code to define when the task has changed.
     - name: Make sure destination dir exists
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
+        mode: '0775'
     - name: Save
       ansible.builtin.copy:
         content: "{{ dashboard_token.stdout }}"
         dest: "{{ generated_creds_dir }}/dashboard-token.serviceaccount.txt"
+        mode: '0775'

@@ -12,6 +12,7 @@
   ansible.builtin.copy:
     dest: /etc/docker/daemon.json
     content: "{{ content | to_nice_json }}"
+    mode: '0775'
 
 - name: Restart docker
   ansible.builtin.systemd_service:

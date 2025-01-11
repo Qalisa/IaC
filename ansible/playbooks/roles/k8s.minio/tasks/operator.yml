@@ -34,10 +34,12 @@
 
 - name: Get Token
   register: minio_token
-  ansible.builtin.shell:
+  ansible.builtin.shell: |
+    set -o pipefail
     kubectl get secret/console-sa-secret -n minio-operator -o json | jq -r ".data.token" | base64 -d
 
 - name: Save Token
   ansible.builtin.copy:
     content: "{{ minio_token.stdout }}"
     dest: "{{ generated_creds_dir }}/minio-console-token.txt"
+    mode: '0775'

@@ -32,12 +32,16 @@
 
 - name: Postgres update
   register: postgres_pwd
-  ansible.builtin.shell: kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
+  ansible.builtin.shell: |
+    set -o pipefail
+    kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
   ignore_errors: true
 
 - name: Kafka update
   register: kafka_cluster_id
-  ansible.builtin.shell: kubectl get secret -n sentry sentry-kafka-kraft-cluster-id -o jsonpath="{.data.kraft-cluster-id}" | base64 -d
+  ansible.builtin.shell: |
+    set -o pipefail
+    kubectl get secret -n sentry sentry-kafka-kraft-cluster-id -o jsonpath="{.data.kraft-cluster-id}" | base64 -d
   ignore_errors: true
 
 ###
@@ -153,5 +157,5 @@
         filesystem:
           persistence:
             enabled: true
-            # will not be used for auxiliary services (RabbitMQ, Clickhouse, Kafka...), so kinda useless
+            # will not be used for auxiliary services (RabbitMQ, Clickhouse, Kafka...), so kinda useless
             storageClass: local-path

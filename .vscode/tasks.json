@@ -140,7 +140,7 @@
         ///
         ///
         {
-            "label": "0. Install pipX",
+            "label": "⛏0. Install pipX",
             "type": "shell",
             "hide": true,
             "linux": {
@@ -154,10 +154,10 @@
             "problemMatcher": []
         },
         {
-            "label": "1. Install kubespray requirements",
+            "label": "⛏1. Install Ansible & tools",
             "type": "shell",
-            "dependsOn": "0. Install pipX",
-            "command": "grep -vE '^\\s*(#|$)' requirements.txt | xargs -n 1 pipx install --include-deps",
+            "dependsOn": "⛏0. Install pipX",
+            "command": "pipx install --include-deps ansible ansible-dev-tools",
             "options": {
                 "statusbar": {
                     "hide": true
@@ -166,20 +166,9 @@
             "problemMatcher": []
         },
         {
-            "label": "2. Install Ansible dev-tools",
+            "label": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
             "type": "shell",
-            "command": "pipx install ansible-dev-tools",
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "3pre. ⛏ Install Ansible requirements (distlib + cryptography)",
-            "type": "shell",
-            "command": "pipx inject ansible distlib cryptography",
+            "command": "pipx inject ansible distlib",
             "options": {
                 "statusbar": {
                     "hide": true
@@ -189,9 +178,9 @@
             "problemMatcher": []
         },
         {
-            "label": "3a. ⛏ Install Ansible requirements",
+            "label": "⛏2a. Install IaC requirements",
             "type": "shell",
-            "dependsOn": "3pre. ⛏ Install Ansible requirements (distlib)",
+            "dependsOn": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
             "command": "ansible-galaxy collection install -r ansible/requirements.yml",
             "options": {
                 "statusbar": {
@@ -201,9 +190,9 @@
             "problemMatcher": []
         },
         {
-            "label": "3b. ⛏🔄 Upgrade Ansible requirements",
+            "label": "⛏2b. Upgrade IaC requirements",
             "type": "shell",
-            "dependsOn": "3pre. ⛏ Install Ansible requirements (distlib)",
+            "dependsOn": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
             "command": "ansible-galaxy collection install -U -r ansible/requirements.yml",
             "options": {
                 "statusbar": {

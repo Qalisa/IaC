@@ -1,7 +1,10 @@
 ---
 - name: Install LDAP for Python
-  ansible.builtin.pip:
-    name: python-ldap
+  community.general.pipx:
+    state: inject
+    name: ansible
+    inject_packages:
+      - python-ldap
 
 - name: Wait for OpenLDAP pod to become ready
   register: pods_ready

@@ -1,18 +1,27 @@
 ---
 # allows to "sudo systemctl restart containerd" if needed
 - name: Increase inotify user limit
-  ansible.builtin.command: "sudo sysctl -w fs.inotify.max_user_instances=256"
+  ansible.posix.sysctl:
+    name: fs.inotify.max_user_instances
+    value: '256'
+    sysctl_set: true
 
-- name: Install etcd (kubespray requisite)
+#
+- name: Update apt and install kubernetes python wrapper
   ansible.builtin.apt:
-    name: etcd
+    pkg:
+      - python3-kubernetes
     state: present # latest
     update_cache: true
 
-- name: Run Pip w/ requisites (kubespray)
-  ansible.builtin.pip:
-    name:
+- name: Run PipX w/ requisites (kubespray)
+  community.general.pipx:
+    state: inject
+    name: ansible
+    inject_packages:
       - jinja2
-      - netaddr
       - jsonschema
-      - kubernetes
+      # from https://github.com/kubernetes-sigs/kubespray/blob/master/requirements.txt
+      - cryptography
+      - jmespath
+      - netaddr

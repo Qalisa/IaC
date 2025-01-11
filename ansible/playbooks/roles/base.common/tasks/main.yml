@@ -1,7 +1,9 @@
 ---
 - name: Install passlib
-  ansible.builtin.pip:
-    name:
+  community.general.pipx:
+    state: inject
+    name: ansible
+    inject_packages:
       - passlib
 
 - name: Install required system packages
@@ -11,8 +13,8 @@
       - ca-certificates
       - curl
       - software-properties-common
-      - python3-pip
       - virtualenv
+      - python3-pip
       - python3-setuptools
       - python3-dev
       - libldap2-dev

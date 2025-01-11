@@ -22,6 +22,7 @@
     chart_ref: helm-openldap/openldap-stack-ha
     release_namespace: "{{ openldap_stack_namespace }}"
     create_namespace: true
+    wait: true
     values:
       replicaCount: 1
       global:
@@ -36,8 +37,10 @@
         size: "8Gi"
       phpldapadmin:
         enabled: true
-        service:
-          type: LoadBalancer
+        # service:
+        #   type: LoadBalancer
+        env:
+          PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: "never"
         ingress:
           enabled: true
           ingressClassName: "{{ ingress_nginx_class }}"
@@ -57,12 +60,10 @@
             ingress-dashboard/hide: "false"
             #
             cloudflare-access/must-secure: "true"
-        env:
-          PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: "never"
       ltb-passwd:
         enabled: true
-        service:
-          type: LoadBalancer
+        # service:
+        #   type: LoadBalancer
         ingress:
           enabled: true
           ingressClassName: "{{ ingress_nginx_class }}"

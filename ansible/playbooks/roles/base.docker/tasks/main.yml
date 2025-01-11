@@ -21,8 +21,11 @@
     update_cache: true
 
 - name: Install Docker Module for Python
-  ansible.builtin.pip:
-    name: docker
+  community.general.pipx:
+    state: inject
+    name: ansible
+    inject_packages:
+      - docker
 
 # needed ?
 - name: Restart docker

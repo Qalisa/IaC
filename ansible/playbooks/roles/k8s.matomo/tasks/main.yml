@@ -23,9 +23,11 @@
       - path: templates/db/pv.yml.j2
       - path: templates/db/pvc.yml.j2
 
-- name: mariadb update
+- name: MariaDB Update
   register: mariadb_pwd
-  ansible.builtin.shell: kubectl get secret -n matomo matomo-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 -d
+  ansible.builtin.shell: |
+    set -o pipefail
+    kubectl get secret -n matomo matomo-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 -d
   ignore_errors: true
 
 - name: Install Matomo Stack w/ Helm
@@ -69,7 +71,7 @@
 
       #
       service:
-        type:	LoadBalancer
+        type: LoadBalancer
         externalTrafficPolicy: Local
       ingress:
         enabled: true

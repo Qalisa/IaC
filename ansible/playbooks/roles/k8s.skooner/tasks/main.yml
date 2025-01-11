@@ -32,8 +32,8 @@
         hosts:
           - host: skooner.{{ root_domain }}
             paths:
-              - path:	"/"
-                pathType:	ImplementationSpecific
+              - path: "/"
+                pathType: ImplementationSpecific
 
 #
 - name: Create token
@@ -47,13 +47,16 @@
   block:
     - name: Get auth token
       ansible.builtin.shell: |
+        set -o pipefail
         kubectl get secret skooner-sa -n skooner -o jsonpath={".data.token"} | base64 -d
       register: skooner_token
     - name: Make sure destination dir exists
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
+        mode: '0775'
     - name: Save
       ansible.builtin.copy:
         content: "{{ skooner_token.stdout }}"
         dest: "{{ generated_creds_dir }}/skooner-token.serviceaccount.txt"
+        mode: '0775'

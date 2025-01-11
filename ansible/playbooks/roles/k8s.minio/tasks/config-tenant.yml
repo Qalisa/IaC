@@ -1,16 +1,15 @@
 ---
-- name: Run Pip w/ requisites
-  ansible.builtin.pip:
-    name:
+- name: Run PipX w/ requisites 
+  community.general.pipx:
+    state: inject
+    name: ansible
+    inject_packages:
       - botocore
       - boto3
 
 - name: Wait for the pod to be running state
-  ansible.builtin.shell: >
-    kubectl get
-    pod myminio-pool-0-0
-    -n minio-tenant
-    -o jsonpath='{.status.phase}'
+  ansible.builtin.shell: |
+    kubectl get pod myminio-pool-0-0 -n minio-tenant -o jsonpath='{.status.phase}'
   register: pod_status
   until: pod_status.stdout == "Running"
   retries: 10

@@ -1,44 +1,44 @@
 ---
-- name: Install Docker + KubeSpray requisites
-  hosts: all
-  become: true
-  roles:
-    - role: base.common
-    - role: base.kubespray
-    - role: diodonfrost.terraform # Install Terraform CLI
+# - name: Install pre-requisites
+#   hosts: all
+#   become: true
+#   roles:
+#     - role: base.common
+#     - role: base.kubespray
+#     - role: base.terraform
 
-# runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
-- name: Reset any Kubespray cluster installed
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+# # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
+# # - name: Reset any Kubespray cluster installed
+# #  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
 
-# runs the kubespray's "cluster.yml" playbook - Installs Kubespray configuration
-- name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+# # runs the kubespray's "cluster.yml" playbook - Installs Kubespray configuration
+# - name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
+#   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
 
 # ensure services roles are installed and configured AFTER kubernetes is set
 - name: Install Services w/in Kubernetes
   hosts: all
   become: true
   roles:
-    - role: extra.kubespray # Finish kubespray configuration
-    - role: base.docker # Install docker cli + buildkit, for some reason we need to do it after kubespray
-    - role: k8s.cert-manager # Finish cert-manager configuration (installed along kubespray)
-    - role: k8s.registry # Finish registry configuration (installed along kubespray)
-    - role: apply.terraform #
-    - role: k8s.dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
-    # - role: k8s.prometheus-stack # OPTIONAL
-    # - role: k8s.webmin # OPTIONAL
-    # - role: k8s.portainer-ce # OPTIONAL
+    # - role: extra.kubespray # Finish kubespray configuration
+    # - role: base.docker # Install docker cli + buildkit, for some reason we need to do it after kubespray
+    # - role: k8s.cert-manager # Finish cert-manager configuration (installed along kubespray)
+    # - role: k8s.registry # Finish registry configuration (installed along kubespray)
+    # - role: apply.terraform #
+    # - role: k8s.dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
+    ## - role: k8s.prometheus-stack # OPTIONAL
+    ## - role: k8s.webmin # OPTIONAL
+    ## - role: k8s.portainer-ce # OPTIONAL
     - role: k8s.openldap
-    - role: k8s.docker-mailserver
-    # - role: k8s.listmonk # OPTIONAL
-    # - role: k8s.github-arc #OPTIONAL, local runners
-    # - role: k8s.matomo # OPTIONAL
-    # - role: k8s.hc-vault # OPTIONAL, allow secure storage of private keys
-    # - role: k8s.sentry # OPTIONAL (careful, high resources usage !)
-    # - role: k8s.minio # Storage Object service for storing backups and snapshots
-    # - role: k8s.velero #
-    - role: k8s.kyverno # policies enforcement and metadata injection
-    - role: k8s.argo-cd
-    # - role: k8s.skooner # alternative dashboard for k8s
-    - role: k8s.ingress-dashboard # list all services
+    # - role: k8s.docker-mailserver
+    ## - role: k8s.listmonk # OPTIONAL
+    ## - role: k8s.github-arc #OPTIONAL, local runners
+    ## - role: k8s.matomo # OPTIONAL
+    ## - role: k8s.hc-vault # OPTIONAL, allow secure storage of private keys
+    ## - role: k8s.sentry # OPTIONAL (careful, high resources usage !)
+    ## - role: k8s.minio # Storage Object service for storing backups and snapshots
+    ## - role: k8s.velero #
+    # - role: k8s.kyverno # policies enforcement and metadata injection
+    # - role: k8s.argo-cd
+    ## - role: k8s.skooner # alternative dashboard for k8s
+    # - role: k8s.ingress-dashboard # list all services

@@ -1,9 +1,8 @@
 ---
 # Since pod wont be ready if it is not initialized
 - name: Wait for the pod to be running state
-  ansible.builtin.shell: >
-    kubectl get pod {{ hc_vault_pod_name }} -n vault
-    -o jsonpath='{.status.phase}'
+  ansible.builtin.shell: |
+    kubectl get pod {{ hc_vault_pod_name }} -n vault -o jsonpath='{.status.phase}'
   register: pod_status
   until: pod_status.stdout == "Running"
   retries: 10
@@ -49,10 +48,12 @@
       ansible.builtin.file:
         path: "{{ generated_creds_dir }}"
         state: directory
+        mode: '0775'
     - name: Save
       ansible.builtin.copy:
         content: "{{ unseal_keys }}"
         dest: "{{ unseal_keys_path }}"
+        mode: '0775'
 
 - name: Load unseal keys if on local
   ignore_errors: true
