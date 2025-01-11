@@ -37,11 +37,14 @@
 ##
 ##
 
-- name: Setup replica set patch payload
+# Allows 443 binding
+- name: Patch replica set
   tags: [config-more]
-  ansible.builtin.set_fact:
-    # Allows 443 binding
-    registry_pod_env_replace:
+  kubernetes.core.k8s_json_patch:
+    kind: ReplicaSet
+    namespace: kube-system
+    name: registry
+    patch:
       - op: add
         path: /spec/template/spec/containers/0/securityContext
         value:
@@ -98,14 +101,6 @@
             secret:
               secretName: "{{ k8s__registry_cert_secret_name }}"
 
-- name: Patch replica set
-  tags: [config-more]
-  ansible.builtin.command: |
-    kubectl patch
-    rs registry
-    -n kube-system
-    --type='json' -p='{{ registry_pod_env_replace | to_json }}'
-
 - name: Search for pod exact name
   tags: [config-more]
   kubernetes.core.k8s_info:
@@ -116,10 +111,12 @@
 
 - name: Regenerate Registry Pod from replica set
   tags: [config-more]
-  ansible.builtin.command: |
-    kubectl delete
-    pod {{ pod_name_search.resources[0].metadata.name }}
-    -n kube-system
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Pod
+    namespace: kube-system
+    name: "{{ pod_name_search.resources[0].metadata.name }}"
+    state: absent
 
 - name: Delete default ingress if exists
   kubernetes.core.k8s:

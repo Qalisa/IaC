@@ -75,6 +75,14 @@
 - name: Load facts
   ansible.builtin.set_fact:
     portainer_pod_args_replace:
+
+#
+- name: Patch with admin password
+  kubernetes.core.k8s_json_patch:
+    kind: Deployment
+    namespace: portainer
+    name: portainer
+    patch:
       - op: replace
         path: /spec/template/spec/volumes
         value:
@@ -90,8 +98,3 @@
         path: /spec/template/spec/containers/0/args
         value:
           - --admin-password-file='/run/secrets/portainer-pass'
-
-#
-- name: Patch with admin password
-  ansible.builtin.command: |
-    kubectl patch deployment portainer -n portainer --type='json' -p='{{ portainer_pod_args_replace | to_json }}'

@@ -16,11 +16,13 @@
       - uidNumber
       - homeDirectory
 
-- name: Reaply legitimate permissions
+- name: Re-apply legitimate permissions
   tags: [mail-acc-ensure-permissions]
   failed_when: false # replacement for ignore_errors
-  ansible.builtin.command: |
-    chown -R {{ item.uidNumber }}:{{
-      k8s__docker_mailserver_mail_default_user_group
-    }} {{ docker_mailserver_pv_path }}/data/{{ item.homeDirectory | split('/') | last }}
   loop: "{{ users.results }}"
+  ansible.builtin.file:
+    path: "{{ docker_mailserver_pv_path }}/data/{{ item.homeDirectory | split('/') | last }}"
+    owner: "{{ item.uidNumber }}"
+    group: "{{ k8s__docker_mailserver_mail_default_user_group }}"
+    recurse: true
+    state: directory
