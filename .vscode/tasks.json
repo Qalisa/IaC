@@ -12,7 +12,7 @@
     ],
     "tasks": [
         {
-            "label": "👮‍♀️ Enforce namespace deletion",
+            "label": "👮‍♀️ k8s: Enforce namespace deletion",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -29,7 +29,7 @@
             "problemMatcher": []
         },
         {
-            "label": "🔓 Unseal HC Vault",
+            "label": "🔓 Hachicorp Vault: Unseal",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -45,7 +45,7 @@
             "problemMatcher": []
         },
         {
-            "label": "✅ Ensure Mail Accounts Folder Permissions",
+            "label": "✅ mailserver: Ensure Mail Accounts Folder Permissions",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -64,7 +64,7 @@
         //
         //
         {
-            "label": "🐛 Install few...",
+            "label": "🐛 Install: few...",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -78,7 +78,7 @@
             "problemMatcher": []
         },
         {
-            "label": "🚀 Install whole site !",
+            "label": "🚀 Install: whole site !",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -91,7 +91,23 @@
             "problemMatcher": []
         },
         {
-            "label": "🔒 Update Ansible's encrypted vault",
+            "label": "🔓 Ansible Vault: Decrypt",
+            "type": "shell",
+            "command": [
+                "ansible-vault",
+                "decrypt",
+                "ansible/inventories/production/group_vars/all/vault",
+                "--vault-password-file .ansible-vault-pw"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🔒 Ansible Vault: Encrypt",
             "type": "shell",
             "command": [
                 "ansible-vault",
@@ -99,13 +115,18 @@
                 "ansible/inventories/production/group_vars/all/vault",
                 "--vault-password-file .ansible-vault-pw"
             ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
             "problemMatcher": []
         },
         //
         //
         //
         {
-            "label": "🔄 Upgrade cluster (kubespray)",
+            "label": "🔄 kubespray: Upgrade cluster",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -122,7 +143,7 @@
             "problemMatcher": []
         },
         {
-            "label": "🗑 Delete k8s cluster (kubespray)",
+            "label": "🗑 kubespray: Delete cluster",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -139,7 +160,7 @@
             "problemMatcher": []
         },
         {
-            "label": "🧶 Lint whole project",
+            "label": "🧶 Lint: whole project",
             "type": "shell",
             "command": "ansible-lint"
         },

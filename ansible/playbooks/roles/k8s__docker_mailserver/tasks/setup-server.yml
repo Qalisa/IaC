@@ -19,7 +19,7 @@
 #   ansible.builtin.command: |
 #     kubectl run -n docker-mailserver -it --rm --restart=Never \
 #     --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
-#     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ postmaster_password }}'
+#     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ orguser_postmaster_password }}'
 #   register: postmaster_pw_hash
 #   changed_when: postmaster_pw_hash.rc != 0
 

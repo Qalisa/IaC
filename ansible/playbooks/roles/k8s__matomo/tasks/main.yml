@@ -65,7 +65,7 @@
       smtpHost: docker-mailserver.docker-mailserver
       smtpPort: 587
       smtpUser: "{{ donotreply_username }}"
-      smtpPassword: "{{ donotreply_password }}"
+      smtpPassword: "{{ orguser_donotreply_password }}"
       smtpProtocol: tls
       noreplyName: "Do Not Reply"
       noreplyAddress: "{{ donotreply_email }}"

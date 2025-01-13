@@ -8,7 +8,7 @@
   ansible.builtin.set_fact:
     cm:
       # Argo CD's externally facing base URL (optional). Required when configuring SSO
-      url: "{{ k8s__argo_cd_host_url }}"
+      url: "{{ k8s__argo_cd__external_hostname_url }}"
       # Enables application status badge feature
       statusbadge.enabled: true
     ### ACCOUNTS connection methods, only allow API key for Github Syncer
@@ -46,9 +46,9 @@
     wait: true
     values:
       global:
-        domain: "{{ k8s__argo_cd_host }}"
+        domain: "{{ k8s__argo_cd__external_hostname }}"
       notifications:
-        argocdUrl: "{{ k8s__argo_cd_host_url }}"
+        argocdUrl: "{{ k8s__argo_cd__external_hostname_url }}"
         secret:
           items:
             github-privateKey: |
@@ -76,6 +76,9 @@
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/ssl-passthrough: "true"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__argo_cd__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
             #
             ingress-dashboard/title: ArgoCD
             ingress-dashboard/description: Automatize k8s app deployment through GitOps

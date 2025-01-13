@@ -69,7 +69,7 @@
         backend: smtp
         useTls: true
         username: "{{ donotreply_username }}"
-        password: "{{ donotreply_password }}"
+        password: "{{ orguser_donotreply_password }}"
         port: 587
         host: "docker-mailserver-docker-mailserver"
         from: "{{ donotreply_email }}"

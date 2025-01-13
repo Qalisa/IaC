@@ -39,7 +39,7 @@
             cloudflare-access/must-secure: "true"
           useDefaultAnnotations: false
           hosts:
-            - "{{ k8s__dashboard_public_hostname }}"
+            - "{{ k8s__dashboard__external_hostname }}"
           tls:
             enabled: false
 

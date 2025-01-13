@@ -23,6 +23,7 @@
     - role: extra__kubespray # Finish kubespray configuration
     - role: base__docker # Install docker cli + buildkit, for some reason we need to do it after kubespray
     - role: k8s__cert_manager # Finish cert-manager configuration (installed along kubespray)
+    - role: k8s__external_dns # bind ingresses to DNS rules on Cloudflare
     - role: k8s__registry # Finish registry configuration (installed along kubespray)
     - role: apply__terraform #
     - role: k8s__dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)

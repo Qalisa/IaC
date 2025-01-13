@@ -74,6 +74,9 @@
           nginx.ingress.kubernetes.io/ssl-passthrough: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           #
+          external-dns.alpha.kubernetes.io/hostname: argo-watcher.{{ root_domain }}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+          #
           ingress-dashboard/title: ArgoCD Watcher
           ingress-dashboard/description: Tracks continuous delivery of generated Docker Images of CI into cluster
           ingress-dashboard/logo-url: /favicon.ico

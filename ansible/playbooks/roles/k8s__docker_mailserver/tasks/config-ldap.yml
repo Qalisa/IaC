@@ -58,11 +58,11 @@
       userpassword: "{CRYPT}{{ item.password | password_hash('md5') }}"
   loop:
     - username: "{{ postmaster_username }}"
-      password: "{{ postmaster_password }}"
+      password: "{{ orguser_postmaster_password }}"
       email: "{{ postmaster_email }}"
       uidn: 1000
     - username: "{{ donotreply_username }}"
-      password: "{{ donotreply_password }}"
+      password: "{{ orguser_donotreply_password }}"
       email: "{{ donotreply_email }}"
       uidn: 10000
   loop_control:

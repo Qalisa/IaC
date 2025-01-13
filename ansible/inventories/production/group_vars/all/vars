@@ -4,17 +4,20 @@
 # "ansible-vault encrypt ansible/inventories/production/group_vars/all/vault"
 # "ansible-vault decrypt ansible/inventories/production/group_vars/all/vault"
 
+# @see below:
 # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
 # https://community.letsencrypt.org/t/acme-v2-production-environment-wildcards/55578
-# also requires Zero Trust Access Edit rights
+# https://kubernetes-sigs.github.io/external-dns/v0.12.1/tutorials/cloudflare/
+# ... also requires Zero Trust Access Edit rights
 # - Access : App & Policies
 # - Access: Organizations, Identity Providers & Groups
-cloudflare_api_token: "{{ vault_cloudflare_api_token }}"
 cloudflare_account_id: "{{ vault_cloudflare_account_id }}"
+cloudflare_account_email: "{{ vault_cloudflare_account_email }}"
+cloudflare_api_token: "{{ vault_cloudflare_api_token }}"
 
 # password for postmaster@{{ root_domain }}
-postmaster_password: "{{ vault_postmaster_password }}"
-donotreply_password: "{{ vault_donotreply_password }}"
+orguser_postmaster_password: "{{ vault_orguser_postmaster_password }}"
+orguser_donotreply_password: "{{ vault_orguser_donotreply_password }}"
 
 # password for "admin" user on Hashicorp Vault
 hc_vault_admin_password: "{{ vault_hc_vault_admin_password }}"

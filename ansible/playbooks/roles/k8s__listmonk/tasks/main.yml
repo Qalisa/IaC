@@ -109,5 +109,5 @@
           idle_timeout: 15s
           wait_timeout: 5s
           username: "{{ donotreply_username }}"
-          password: "{{ donotreply_password }}"
+          password: "{{ orguser_donotreply_password }}"
           email_headers: []

@@ -1,0 +1,10 @@
+---
+- name: Install External DNS for cloudflare
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/sa.yml.j2
+      - path: templates/cr.yml.j2
+      - path: templates/crb.yml.j2
+      - path: templates/secret.yml.j2
+      - path: templates/deploy.yml.j2

@@ -34,8 +34,8 @@ Make sure you are locally logged on `git` w/ a registered account using :
 - Launch VSCode Task `3a. ⛏ Install Ansible requirements`
 - Create a `./.ansible-vault-pw` file, containing a password to secure all the secrets related to this stack within ansible vault technology
 - Define `./ansible/inventories/group_vars/all/vault` passwords and tokens as defined in `./ansible/inventories/group_vars/all/vars`
-- Encrypt `./ansible/inventories/group_vars/all/vault` using VSCode Task `🔒 Update Ansible's encrypted vault`
-- Launch VSCode Task `🚀 Install whole site !`
+- (Optional) Encrypt `./ansible/inventories/group_vars/all/vault` using VSCode Task `🔒 Ansible Vault: Encrypt`
+- Launch VSCode Task `🚀 Install: whole site !`
   - Optional: You might want to opt-out of certain services by commenting roles within `./ansible/playbooks/site.yml`
 
 ### How to upgrade from latest kubespray
