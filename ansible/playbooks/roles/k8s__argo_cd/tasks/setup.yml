@@ -79,7 +79,7 @@
             #
             ingress-dashboard/title: ArgoCD
             ingress-dashboard/description: Automatize k8s app deployment through GitOps
-            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/logo-url: /assets/favicon/favicon-32x32.png
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #

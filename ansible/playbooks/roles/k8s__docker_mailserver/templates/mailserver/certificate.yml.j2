@@ -14,5 +14,5 @@ spec:
   dnsNames:
     - {{ docker_mailserver_host }}
   issuerRef:
-    name: "{{ default_cluster_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
+    name: "{{ unproxied_default_cluster_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
     kind: ClusterIssuer

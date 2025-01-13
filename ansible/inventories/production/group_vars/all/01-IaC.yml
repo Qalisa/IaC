@@ -2,11 +2,12 @@
 # WHERE GLOBAL-ISH IAC infos regarding services are stored
 #
 ---
-# refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
+# SMTP / IMAP servers hard-requires + autoconfig soft-requires unproxied (NO CLOUDFLARE !) certificates
+# @info refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week for letsencrypt ! (https://letsencrypt.org/docs/rate-limits/)
-default_cluster_issuer: zerossl-prod # letsencrypt-prod
+unproxied_default_cluster_issuer: letsencrypt-prod # zerossl-prod
 trust_managed_namespaces: [arc-runners]
-org_ca_name: selfsigned
+org_ca_name: selfsigned 
 org_ca_cert_secret_name: "trust-manager.{{ org_ca_name }}"
 
 # default storage class

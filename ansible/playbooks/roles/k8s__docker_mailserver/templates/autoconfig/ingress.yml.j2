@@ -6,7 +6,7 @@ metadata:
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "{{ default_cluster_issuer }}" # some picky mail clients requires the cert authority to be the same as the mail server's certficate
+    cert-manager.io/cluster-issuer: "{{ unproxied_default_cluster_issuer }}" # some picky mail clients requires the cert authority to be the same as the mail server's certficate
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     #
     ingress-dashboard/title: E-mail autoconfig

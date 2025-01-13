@@ -32,7 +32,7 @@
             #
             ingress-dashboard/title: Kubernetes Dashboard
             ingress-dashboard/description: Official dashboard to manage a k8s cluster
-            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/logo-url: /assets/images/kubernetes-logo.png
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
             #

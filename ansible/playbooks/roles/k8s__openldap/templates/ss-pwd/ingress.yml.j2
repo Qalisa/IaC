@@ -6,12 +6,12 @@ metadata:
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "{{ default_cluster_issuer }}" # some picky mail clients requires the cert authority to be the same as the mail server's certficate
+    cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     #
     ingress-dashboard/title: LDAP Password reset
     ingress-dashboard/description: Allows LDAP users to manager their passwords
-    ingress-dashboard/logo-url: /favicon.ico
+    ingress-dashboard/logo-url: /images/favicon.ico
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "false"
     #

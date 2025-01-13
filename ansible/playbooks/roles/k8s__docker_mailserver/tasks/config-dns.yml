@@ -46,7 +46,7 @@
     zone: "{{ root_domain }}"
     record: "{{ mx_hostname }}._domainkey"
     type: TXT
-    value: "{{ dkim_txt }}"
+    value: "\"{{ dkim_txt }}\""
     api_token: "{{ cloudflare_api_token }}"
     solo: true
 
@@ -59,7 +59,7 @@
     zone: "{{ root_domain }}"
     record: _dmarc
     type: TXT
-    value: "v=DMARC1; p=quarantine; ruf=mailto:{{ postmaster_email }}; sp=none; fo=1; ri=86400"
+    value: "\"v=DMARC1; p=quarantine; ruf=mailto:{{ postmaster_email }}; sp=none; fo=1; ri=86400\""
     api_token: "{{ cloudflare_api_token }}"
     solo: true
 
@@ -79,7 +79,7 @@
     zone: "{{ root_domain }}"
     record: "@"
     type: TXT
-    value: "{{ item }}"
+    value: "\"{{ item }}\""
     api_token: "{{ cloudflare_api_token }}"
   loop:
     - "v=spf1 mx ~all"
