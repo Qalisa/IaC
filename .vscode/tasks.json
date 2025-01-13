@@ -91,6 +91,20 @@
             "problemMatcher": []
         },
         {
+            "label": "🔒 Update Ansible's encrypted vault",
+            "type": "shell",
+            "command": [
+                "ansible-vault",
+                "encrypt",
+                "ansible/inventories/production/group_vars/all/vault",
+                "--vault-password-file .ansible-vault-pw"
+            ],
+            "problemMatcher": []
+        },
+        //
+        //
+        //
+        {
             "label": "🔄 Upgrade cluster (kubespray)",
             "type": "shell",
             "command": [
@@ -125,7 +139,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Lint whole project",
+            "label": "🧶 Lint whole project",
             "type": "shell",
             "command": "ansible-lint"
         },

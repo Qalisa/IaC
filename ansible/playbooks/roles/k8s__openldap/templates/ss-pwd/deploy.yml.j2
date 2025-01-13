@@ -20,11 +20,16 @@ spec:
             - name: app
               containerPort: 80
               protocol: TCP
+          volumeMounts:
+            - name: app-config
+              mountPath: /var/www/conf/config.inc.local.php
+              subPath: config.inc.local.php
+              readOnly: true
       restartPolicy: Always
-       volumes:
+      volumes:
         - name: app-config
           secret:
             secretName: self-service-password
             items:
             - key: ssp.conf.php
-              path: /var/www/conf/config.inc.local.php
+              path: config.inc.local.php

@@ -3,7 +3,7 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: templates/lam/secret.yml.j2
-      - path: templates/lam/service.yml.j2
-      - path: templates/lam/ingress.yml.j2
-      - path: templates/lam/deploy.yml.j2
+      - path: templates/ss-pwd/secret.yml.j2
+      - path: templates/ss-pwd/service.yml.j2
+      - path: templates/ss-pwd/ingress.yml.j2
+      - path: templates/ss-pwd/deploy.yml.j2
