@@ -3,14 +3,14 @@
   tags: [mail-acc-ensure-permissions]
   register: users
   vars:
-    k8s__docker_mailserver_dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
+    openldap_stack__dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
     k8s__docker_mailserver_email_users_ldap_group_name: "Email Users"
   community.general.ldap_search:
-    server_uri: ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}/
-    bind_dn: cn=admin,{{ k8s__docker_mailserver_dc_query_string }}
-    bind_pw: "{{ openldap_pwd }}"
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
+    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
     #
-    dn: "cn={{ k8s__docker_mailserver_email_users_ldap_group_name }},{{ k8s__docker_mailserver_dc_query_string }}"
+    dn: "cn={{ k8s__docker_mailserver_email_users_ldap_group_name }},{{ openldap_stack__dc_query_string }}"
     scope: "onelevel"
     attrs:
       - uidNumber

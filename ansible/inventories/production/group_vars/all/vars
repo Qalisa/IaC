@@ -32,7 +32,9 @@ argocd_github_app_priv_key: "{{ vault_argocd_github_app_priv_key }}"
 grafana_admin_pwd: "{{ vault_grafana_admin_pwd }}"
 
 #
-openldap_pwd: "{{ vault_openldap_pwd }}"
+openldap_stack__ldap_admin_pwd: "{{ vault_openldap_stack__ldap_admin_pwd }}"
+openldap_stack__lam_password: "{{ vault_openldap_stack__lam_password }}"
+openldap_stack__ssp_keyphrase: "{{ vault_openldap_stack__ssp_keyphrase }}"
 
 #
 listmonk_admin_password: "{{ vault_listmonk_admin_password }}"

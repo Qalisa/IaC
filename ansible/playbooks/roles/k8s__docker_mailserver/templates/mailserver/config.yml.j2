@@ -29,10 +29,10 @@ data:
 
     # >>> Postfix LDAP Integration
     ACCOUNT_PROVISIONER: LDAP
-    LDAP_SERVER_HOST: "ldap://{{ openldap_stack_ldap_server_hostname }}.{{ openldap_stack_namespace }}"
-    LDAP_BIND_DN: cn=admin,{{ k8s__docker_mailserver_dc_query_string }}
+    LDAP_SERVER_HOST: "{{ openldap_stack__ldap_uri }}"
+    LDAP_BIND_DN: "{{ openldap_stack__ldap_admin_cn }}"
     # LDAP_BIND_PW: mypassword defined as separate secret manifest !!
-    LDAP_SEARCH_BASE: {{ k8s__docker_mailserver_dc_query_string }}
+    LDAP_SEARCH_BASE: {{ openldap_stack__dc_query_string }}
     LDAP_QUERY_FILTER_DOMAIN: (|(mail=*@%s)(mailAlias=*@%s)(mailGroupMember=*@%s))
     LDAP_QUERY_FILTER_USER: (&(objectClass=inetOrgPerson)(mail=%s))
     LDAP_QUERY_FILTER_ALIAS: (&(objectClass=inetOrgPerson)(mailAlias=%s))

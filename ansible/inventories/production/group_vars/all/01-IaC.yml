@@ -37,8 +37,12 @@ argocd_account_for_github_syncer: github-syncer
 argocd_account_for_argo_watcher: watcher
 
 # OpenLDAP
-openldap_stack_namespace: openldap-stack
-openldap_stack_ldap_server_hostname: openldap
+openldap_stack__namespace: openldap-stack
+openldap_stack__ldap_server_hostname: openldap
+openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}/
+openldap_stack__dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
+openldap_stack__ldap_admin_user: admin
+openldap_stack__ldap_admin_cn: cn={{ openldap_stack__ldap_admin_user }},{{ openldap_stack__dc_query_string }}
 
 #
 listmonk_admin_username: admin

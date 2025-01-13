@@ -12,33 +12,6 @@
     ],
     "tasks": [
         {
-            "label": "🐛 Install few...",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/few.yml",
-                // "-t", "creds",
-                // "--skip-tags", "terraform"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "🚀 Install whole site !",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.yml",
-                // "--skip-tags", "terraform"
-            ],
-            "problemMatcher": []
-        },
-        {
             "label": "👮‍♀️ Enforce namespace deletion",
             "type": "shell",
             "command": [
@@ -87,6 +60,36 @@
             },
             "problemMatcher": []
         },
+        //
+        //
+        //
+        {
+            "label": "🐛 Install few...",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/few.yml",
+                // "-t", "creds",
+                // "--skip-tags", "terraform"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "🚀 Install whole site !",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/site.yml",
+                // "--skip-tags", "terraform"
+            ],
+            "problemMatcher": []
+        },
         {
             "label": "🔄 Upgrade cluster (kubespray)",
             "type": "shell",
@@ -125,7 +128,7 @@
             "label": "Lint whole project",
             "type": "shell",
             "command": "ansible-lint"
-        }
+        },
         ///
         ///
         ///

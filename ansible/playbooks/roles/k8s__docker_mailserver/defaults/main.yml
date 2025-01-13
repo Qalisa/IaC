@@ -5,8 +5,6 @@ k8s__docker_mailserver_path_to_config_folder: "{{ docker_mailserver_pv_path }}/{
 k8s__docker_mailserver_autoconfig_fqdn: "autoconfig.{{ root_domain }}"
 k8s__docker_mailserver_autodiscover_fqdn: "autodiscover.{{ root_domain }}"
 
-k8s__docker_mailserver_dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
-
 # Email users (possibly POSTFIX + DOVECOT, eg sending AND receiving email)
 k8s__docker_mailserver_email_users_ldap_group_name: "Email Users"
 

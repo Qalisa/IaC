@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: self-service-password
+  namespace: openldap-stack
+spec:
+  selector:
+    matchLabels:
+      app: self-service-password
+  template:
+    metadata:
+      labels:
+        app: self-service-password
+    spec:
+      containers:
+        - name: self-service-password
+          image: ltbproject/self-service-password
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: app
+              containerPort: 80
+              protocol: TCP
+      restartPolicy: Always
+       volumes:
+        - name: app-config
+          secret:
+            secretName: self-service-password
+            items:
+            - key: ssp.conf.php
+              path: /var/www/conf/config.inc.local.php
