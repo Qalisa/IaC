@@ -4,7 +4,8 @@
     state: present
     template:
       - path: templates/ns.yml.j2
-      - path: templates/autoconfig/config.yml.j2
-      - path: templates/autoconfig/service.yml.j2
-      - path: templates/autoconfig/deploy.yml.j2
-      - path: templates/autoconfig/ingress.yml.j2
+      - path: templates/discover-autoconfig/config.yml.j2
+      - path: templates/discover-autoconfig/service.yml.j2
+      - path: templates/discover-autoconfig/deploy.yml.j2
+      - path: templates/discover-autoconfig/ingress.autodiscover.yml.j2
+      - path: templates/discover-autoconfig/ingress.autoconfig.yml.j2

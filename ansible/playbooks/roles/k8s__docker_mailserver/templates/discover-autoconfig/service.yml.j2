@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: docker-mailserver-autoconfig
+  name: docker-mailserver-discover-autoconfig
   namespace: docker-mailserver
   labels:
-    app: docker-mailserver-autoconfig
+    app: docker-mailserver-discover-autoconfig
 spec:
   type: LoadBalancer # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
   selector:
-    app: docker-mailserver-autoconfig
+    app: docker-mailserver-discover-autoconfig
   ports:
     # smtp
     - name: manifest-app

@@ -83,7 +83,7 @@
     api_token: "{{ cloudflare_api_token }}"
   loop:
     - "v=spf1 mx ~all"
-    - "mailconf=https://{{ k8s__docker_mailserver_autoconfig_fqdn }}/mail/config-v1.1.xml"
+    - "mailconf=https://{{ k8s__docker_mailserver__external_hostname__autoconfig }}/mail/config-v1.1.xml"
 
 - name: Add CNAME records on DNS
   community.general.cloudflare_dns:
@@ -111,7 +111,7 @@
     value: "{{ item.value }}"
   failed_when: false # replacement for ignore_errors
   loop:
-    - { service: "autodiscover", port: 443, value: "autodiscover.{{ root_domain }}" }
+    - { service: "autodiscover", port: 443, value: "{{ k8s__docker_mailserver__external_hostname__autodiscover }}" }
     - { service: "imap", port: 143, value: "{{ docker_mailserver_host }}" }
     - { service: "imaps", port: 993, value: "{{ docker_mailserver_host }}" }
     - { service: "submission", port: 587, value: "{{ docker_mailserver_host }}" }

@@ -3,6 +3,7 @@
   kubernetes.core.k8s:
     state: present
     template:
+      - path: templates/ns.yml.j2
       - path: templates/sa.yml.j2
       - path: templates/cr.yml.j2
       - path: templates/crb.yml.j2
