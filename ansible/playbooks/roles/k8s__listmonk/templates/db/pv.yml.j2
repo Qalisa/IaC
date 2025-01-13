@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 10Gi 
   local:
-    path: {{ listmonk_db_pv_path }}
+    path: {{ pv_path__listmonk__db }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

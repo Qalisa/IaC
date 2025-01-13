@@ -10,7 +10,7 @@ spec:
   capacity:
     storage: 8Gi 
   local:
-    path: {{ matomo_pv_app_path }}
+    path: {{ pv_path__matomo__app }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

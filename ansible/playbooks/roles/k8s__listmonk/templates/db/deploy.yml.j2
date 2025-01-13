@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: data
-              mountPath: "{{ listmonk_db_pv_path }}"
+              mountPath: "{{ pv_path__listmonk__db }}"
               readOnly: false
           ports:
             - name: db

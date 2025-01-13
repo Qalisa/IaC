@@ -1,7 +1,7 @@
 ---
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ portainer_pv_path }}"
+    path: "{{ pv_path__portainer }}"
     state: directory
     mode: "0755"
 

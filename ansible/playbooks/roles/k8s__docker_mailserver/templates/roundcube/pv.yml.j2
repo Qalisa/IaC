@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 5Gi 
   local:
-    path: {{ roundcube_pv_path }}
+    path: {{ pv_path__roundcube }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

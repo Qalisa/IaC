@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 30Gi 
   local:
-    path: {{ buildkit_cache_pv_path }}
+    path: {{ pv_path__buildkit__cache }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteMany

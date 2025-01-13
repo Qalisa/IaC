@@ -19,7 +19,7 @@ spec:
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: cache-files
-              mountPath: "{{ github_arc_cache_pv_path }}"
+              mountPath: "{{ pv_path__github_arc__cache }}"
               readOnly: false
           ports:
             - name: api

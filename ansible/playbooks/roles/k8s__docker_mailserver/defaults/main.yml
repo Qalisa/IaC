@@ -1,6 +1,6 @@
 ---
 k8s__docker_mailserver_config_folder_name: tmp-docker-mailserver
-k8s__docker_mailserver_path_to_config_folder: "{{ docker_mailserver_pv_path }}/{{ k8s__docker_mailserver_config_folder_name }}"
+k8s__docker_mailserver_path_to_config_folder: "{{ pv_path__docker_mailserver }}/{{ k8s__docker_mailserver_config_folder_name }}"
 
 k8s__docker_mailserver_autoconfig_fqdn: "autoconfig.{{ root_domain }}"
 k8s__docker_mailserver_autodiscover_fqdn: "autodiscover.{{ root_domain }}"

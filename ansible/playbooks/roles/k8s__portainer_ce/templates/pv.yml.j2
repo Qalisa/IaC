@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 10Gi 
   local:
-    path: {{ portainer_pv_path }}
+    path: {{ pv_path__portainer }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

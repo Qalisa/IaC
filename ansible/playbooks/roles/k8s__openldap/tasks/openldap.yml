@@ -6,7 +6,7 @@
 
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ openldap_pv_path }}"
+    path: "{{ pv_path__openldap }}"
     state: directory
     mode: "0755"
 

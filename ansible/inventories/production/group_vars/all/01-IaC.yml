@@ -73,15 +73,15 @@ minio_tenant_backup_storage_bucket_region: minio
 minio_tenant_s3_url: https://minio.minio-tenant:443
 
 # where should the persistent volume created for X service, store its data on node
-portainer_pv_path: /var/k8s-data/portainer
-docker_mailserver_pv_path: /var/k8s-data/mailserver
-hc_vault_pv_path: /var/k8s-data/hc-vault
-roundcube_pv_path: /var/k8s-data/roundcube
-registry_pv_path: /var/k8s-data/registry
-openldap_pv_path: /var/k8s-data/openldap
-listmonk_db_pv_path: /var/k8s-data/listmonk/db
-listmonk_uploads_pv_path: /var/k8s-data/listmonk/uploads
-matomo_pv_db_path: /var/k8s-data/matomo/db
-matomo_pv_app_path: /var/k8s-data/matomo/app
-github_arc_cache_pv_path: /var/k8s-data/gha-cache
-buildkit_cache_pv_path: /var/k8s-data/buildkit-cache
+pv_path__portainer: /var/k8s-data/portainer
+pv_path__docker_mailserver: /var/k8s-data/mailserver
+pv_path__hc_vault: /var/k8s-data/hc-vault
+pv_path__roundcube: /var/k8s-data/roundcube
+pv_path__registry: /var/k8s-data/registry
+pv_path__openldap: /var/k8s-data/openldap
+pv_path__listmonk__db: /var/k8s-data/listmonk/db
+pv_path__listmonk__uploads: /var/k8s-data/listmonk/uploads
+pv_path__matomo__db: /var/k8s-data/matomo/db
+pv_path__matomo__app: /var/k8s-data/matomo/app
+pv_path__github_arc__cache: /var/k8s-data/gha-cache
+pv_path__buildkit__cache: /var/k8s-data/buildkit-cache

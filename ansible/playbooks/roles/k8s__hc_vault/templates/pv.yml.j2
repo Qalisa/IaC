@@ -10,7 +10,7 @@ spec:
   capacity:
     storage: 10Gi 
   local:
-    path: "{{ hc_vault_pv_path }}/{{ item }}"
+    path: "{{ pv_path__hc_vault }}/{{ item }}"
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

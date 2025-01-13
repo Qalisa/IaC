@@ -12,6 +12,7 @@ spec:
       labels:
         app: lam
     spec:
+      restartPolicy: Always
       containers:
         - name: lam
           image: ghcr.io/ldapaccountmanager/lam
@@ -25,4 +26,3 @@ spec:
                 name: lam
             - secretRef:
                 name: lam
-      restartPolicy: Always

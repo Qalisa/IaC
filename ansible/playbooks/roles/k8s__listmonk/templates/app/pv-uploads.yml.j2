@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 3Gi 
   local:
-    path: {{ listmonk_uploads_pv_path }}
+    path: {{ pv_path__listmonk__uploads }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

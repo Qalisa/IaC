@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: "{{ k8s__github_arc_local_cache_size }}" 
   local:
-    path: {{ github_arc_cache_pv_path }}
+    path: {{ pv_path__github_arc__cache }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

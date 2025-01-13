@@ -5,8 +5,8 @@
     state: directory
     mode: "0755"
   loop:
-    - "{{ listmonk_db_pv_path }}"
-    - "{{ listmonk_uploads_pv_path }}"
+    - "{{ pv_path__listmonk__db }}"
+    - "{{ pv_path__listmonk__uploads }}"
 
 - name: Install listmonk
   kubernetes.core.k8s:

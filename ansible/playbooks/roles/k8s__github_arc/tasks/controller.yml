@@ -12,7 +12,7 @@
 
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ github_arc_cache_pv_path }}"
+    path: "{{ pv_path__github_arc__cache }}"
     state: directory
     mode: "0755"
 

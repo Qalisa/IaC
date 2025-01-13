@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 40Gi 
   local:
-    path: {{ registry_pv_path }}
+    path: {{ pv_path__registry }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

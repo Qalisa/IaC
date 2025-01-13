@@ -7,10 +7,10 @@
     state: directory
     mode: '0755'
   loop:
-    - path: "{{ matomo_pv_db_path }}"
+    - path: "{{ pv_path__matomo__db }}"
       # owner: 1001
       # group: 1001
-    - path: "{{ matomo_pv_app_path }}"
+    - path: "{{ pv_path__matomo__app }}"
       # owner: 1001
       # group: 0
 
@@ -104,11 +104,11 @@
 
 - name: Wait until the config file exist
   ansible.builtin.wait_for:
-    path: "{{ matomo_pv_app_path }}/config/config.ini.php"
+    path: "{{ pv_path__matomo__app }}/config/config.ini.php"
 
 - name: Edit ini
   community.general.ini_file:
-    path: "{{ matomo_pv_app_path }}/config/config.ini.php"
+    path: "{{ pv_path__matomo__app }}/config/config.ini.php"
     section: General
     no_extra_spaces: true
     option: assume_secure_protocol

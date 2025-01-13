@@ -2,7 +2,7 @@
 - name: Create Persistent Volume dir path
   tags: [config-more]
   ansible.builtin.file:
-    path: "{{ registry_pv_path }}"
+    path: "{{ pv_path__registry }}"
     state: directory
     mode: "0755"
 

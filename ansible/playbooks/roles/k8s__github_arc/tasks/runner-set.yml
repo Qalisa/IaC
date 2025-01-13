@@ -19,7 +19,7 @@
 
 - name: Make sure destination dir exists
   ansible.builtin.file:
-    path: "{{ buildkit_cache_pv_path }}"
+    path: "{{ pv_path__buildkit__cache }}"
     state: directory
     owner: 1001
     group: 1001

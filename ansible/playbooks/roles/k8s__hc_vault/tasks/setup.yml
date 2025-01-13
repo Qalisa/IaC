@@ -6,7 +6,7 @@
 
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ hc_vault_pv_path }}/{{ item }}"
+    path: "{{ pv_path__hc_vault }}/{{ item }}"
     state: directory
     mode: "0755"
   loop:

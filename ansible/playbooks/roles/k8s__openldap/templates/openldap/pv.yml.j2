@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 8Gi 
   local:
-    path: "{{ openldap_pv_path }}"
+    path: "{{ pv_path__openldap }}"
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

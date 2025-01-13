@@ -1,7 +1,7 @@
 ---
 - name: Roundcube Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ roundcube_pv_path }}"
+    path: "{{ pv_path__roundcube }}"
     state: directory
     mode: '0755'
 

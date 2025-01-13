@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 25Gi 
   local:
-    path: {{ docker_mailserver_pv_path }}
+    path: {{ pv_path__docker_mailserver }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
