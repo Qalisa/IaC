@@ -1,10 +1,18 @@
 ---
-- name: Install LDAP for Python
+- name: Install LDAP for Python (1/2)
+  ansible.builtin.apt:
+    pkg:
+      - python3-ldap
+    state: present # latest
+    update_cache: true
+
+- name: Install LDAP for Python (2/2)
   community.general.pipx:
     state: inject
-    name: ansible
+    name: ansible-dev-tools # name as used in pipx install (that installed ansible bin)
     inject_packages:
       - python-ldap
+      - passlib
 
 - name: Wait for OpenLDAP pod to become ready
   register: pods_ready
@@ -19,12 +27,12 @@
     bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
     bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
     #
-    dn: cn={{ k8s__docker_mailserver_email_users_ldap_group_name }},{{ openldap_stack__dc_query_string }}
+    dn: cn={{ k8s__docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}
     objectClass:
-      - posixGroup
       - top
+      - posixGroup
     attributes:
-      gidnumber: "{{ k8s__docker_mailserver_mail_default_user_group }}"
+      gidnumber: "{{ k8s__docker_mailserver__users_group_id }}"
 
 #
 - name: Create default accounts
@@ -33,16 +41,16 @@
     bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
     bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
     #
-    dn: cn={{ item.username }},cn={{ k8s__docker_mailserver_email_users_ldap_group_name }},{{ openldap_stack__dc_query_string }}
+    dn: cn={{ item.username }},cn={{ k8s__docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}
     objectClass:
-      - inetOrgPerson
-      - posixAccount
       - top
+      - posixAccount
+      - inetOrgPerson
     attributes:
-      gidnumber: "{{ k8s__docker_mailserver_mail_default_user_group }}"
+      gidnumber: "{{ k8s__docker_mailserver__users_group_id }}"
       homedirectory: /home/users/{{ item.username }}
       mail:
-        - "{{ item.username }}"
+        # - "{{ item.username }}"
         - "{{ item.email }}"
       sn: "{{ item.username }}"
       uid: "{{ item.username }}"
@@ -57,3 +65,5 @@
       password: "{{ donotreply_password }}"
       email: "{{ donotreply_email }}"
       uidn: 10000
+  loop_control:
+    label: "{{ item.email }}"

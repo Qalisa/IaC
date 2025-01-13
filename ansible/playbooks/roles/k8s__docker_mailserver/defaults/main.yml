@@ -6,10 +6,8 @@ k8s__docker_mailserver_autoconfig_fqdn: "autoconfig.{{ root_domain }}"
 k8s__docker_mailserver_autodiscover_fqdn: "autodiscover.{{ root_domain }}"
 
 # Email users (possibly POSTFIX + DOVECOT, eg sending AND receiving email)
-k8s__docker_mailserver_email_users_ldap_group_name: "Email Users"
+k8s__docker_mailserver__users_group_id: 5000
+k8s__docker_mailserver__users_group_name: "Email Users"
 
 # might disable this behavior if using self-signed / staging certificates
 k8s__docker_mailserver_roundcube_check_mailserver_certs: true
-
-#
-k8s__docker_mailserver_mail_default_user_group: 5000

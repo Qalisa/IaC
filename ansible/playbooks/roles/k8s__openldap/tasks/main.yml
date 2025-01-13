@@ -1,8 +1,8 @@
-# - name: Install OpenLDAP
-#   ansible.builtin.import_tasks: openldap.yml
+- name: Install OpenLDAP
+  ansible.builtin.import_tasks: openldap.yml
 
 - name: Install LDAP Accounts Manager
   ansible.builtin.import_tasks: lam.yml
 
-# - name: Install self-service-password
-#   ansible.builtin.import_tasks: ss-pwd.yml
+- name: Install self-service-password
+  ansible.builtin.import_tasks: ss-pwd.yml

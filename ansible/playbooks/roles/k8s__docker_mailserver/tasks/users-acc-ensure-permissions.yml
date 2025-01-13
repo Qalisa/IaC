@@ -2,15 +2,12 @@
 - name: Get users by id
   tags: [mail-acc-ensure-permissions]
   register: users
-  vars:
-    openldap_stack__dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
-    k8s__docker_mailserver_email_users_ldap_group_name: "Email Users"
   community.general.ldap_search:
     server_uri: "{{ openldap_stack__ldap_uri }}"
     bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
     bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
     #
-    dn: "cn={{ k8s__docker_mailserver_email_users_ldap_group_name }},{{ openldap_stack__dc_query_string }}"
+    dn: "cn={{ k8s__docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}"
     scope: "onelevel"
     attrs:
       - uidNumber
@@ -23,6 +20,6 @@
   ansible.builtin.file:
     path: "{{ pv_path__docker_mailserver }}/data/{{ item.homeDirectory | split('/') | last }}"
     owner: "{{ item.uidNumber }}"
-    group: "{{ k8s__docker_mailserver_mail_default_user_group }}"
+    group: "{{ k8s__docker_mailserver__users_group_id }}"
     recurse: true
     state: directory
