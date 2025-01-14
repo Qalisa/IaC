@@ -1,0 +1,22 @@
+- name: Prerequisites
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/secret.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: zelic-io
+    repo_url: https://zelic-io.github.io/charts
+
+
+- name: Install CF Zero Trust Operator
+  kubernetes.core.helm:
+    name: cloudflare-zero-trust-operator
+    chart_ref: zelic-io/cloudflare-zero-trust-operator
+    release_namespace: zero-trust-system
+    create_namespace: false
+    wait: false
+    values:
+      secretRef: cloudflare-creds
