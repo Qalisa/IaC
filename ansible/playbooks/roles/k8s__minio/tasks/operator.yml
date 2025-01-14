@@ -17,12 +17,15 @@
         ingress:
           enabled: true
           ingressClassName: "{{ ingress_nginx_class }}"
-          host: minio.{{ root_domain }}
+          host: "{{ k8s__minio__external_hostname }}"
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__minio__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
             #
             ingress-dashboard/title: Minio Operator
             ingress-dashboard/description: Manage MinIO tenants of our organization

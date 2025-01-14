@@ -1,0 +1,2 @@
+---
+k8s__sentry__external_hostname: sentry.{{ root_domain }}

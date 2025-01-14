@@ -23,6 +23,9 @@
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
             ingress-dashboard/title: Graphana
             ingress-dashboard/description: Hub for custom dashboards and visualization
             ingress-dashboard/logo-url: /favicon.ico
@@ -31,7 +34,7 @@
             #
             cloudflare-access/must-secure: "true"
           hosts:
-            - graphana.{{ root_domain }}
+            - "{{ k8s__prometheus_stack__external_hostname__graphana }}"
       prometheus:
         service:
           type: LoadBalancer
@@ -43,6 +46,9 @@
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
             ingress-dashboard/title: Prometheus
             ingress-dashboard/description: Tracks logs of k8s cluster resources
             ingress-dashboard/logo-url: /favicon.ico
@@ -51,4 +57,4 @@
             #
             cloudflare-access/must-secure: "true"
           hosts:
-            - prometheus.{{ root_domain }}
+            - "{{ k8s__prometheus_stack__external_hostname }}"

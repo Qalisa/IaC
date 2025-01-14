@@ -26,6 +26,9 @@
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__kyverno__external_hostname__preporter }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
             ingress-dashboard/title: Kyverno Policy Reporter
             ingress-dashboard/description: Dashboard exposing Kyverno's activity
             ingress-dashboard/logo-url: /favicon.ico
@@ -34,7 +37,7 @@
             #
             cloudflare-access/must-secure: "true"
           hosts:
-            - host: policy-reporter.{{ root_domain }}
+            - host: "{{ k8s__kyverno__external_hostname__preporter }}"
               paths:
                 - path: /
                   pathType: ImplementationSpecific

@@ -1,2 +1,3 @@
 ---
 k8s__matomo_namespace: matomo
+k8s__matomo__external_hostname: matomo.{{ root_domain }}

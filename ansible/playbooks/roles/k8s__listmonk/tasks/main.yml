@@ -53,7 +53,7 @@
     body:
       # app
       app.lang: fr
-      app.root_url: https://{{ k8s__listmonk_domain }}
+      app.root_url: https://{{ k8s__listmonk__external_hostname }}
       app.site_name: "{{ listmonk_site_name }}"
       app.logo_url: "{{ listmonk_logo_url }}"
       app.favicon_url: "{{ listmonk_favicon_url }}"

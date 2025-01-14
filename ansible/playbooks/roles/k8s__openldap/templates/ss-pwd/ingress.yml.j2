@@ -9,6 +9,9 @@ metadata:
     cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     #
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__openldap__external_hostname__ssp }}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    #
     ingress-dashboard/title: LDAP Password reset
     ingress-dashboard/description: Allows LDAP users to manager their passwords
     ingress-dashboard/logo-url: /images/favicon.ico
@@ -19,7 +22,7 @@ metadata:
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
   rules:
-  - host: pwd-ldap.{{ root_domain }}
+  - host: "{{ k8s__openldap__external_hostname__ssp }}"
     http:
       paths:
       - path: /

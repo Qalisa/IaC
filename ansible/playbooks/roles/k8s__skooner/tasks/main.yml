@@ -23,6 +23,9 @@
           cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           #
+          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__skooner__external_hostname }}"
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+          #
           ingress-dashboard/title: Skooner
           ingress-dashboard/description: Alternative cluster dashboard with live metrics
           ingress-dashboard/logo-url: /favicon.ico
@@ -31,7 +34,7 @@
           #
           cloudflare-access/must-secure: "true"
         hosts:
-          - host: skooner.{{ root_domain }}
+          - host: "{{ k8s__skooner__external_hostname }}"
             paths:
               - path: "/"
                 pathType: ImplementationSpecific

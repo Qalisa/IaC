@@ -9,6 +9,9 @@ metadata:
     cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     #
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__webmin__external_hostname }}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    #
     ingress-dashboard/title: Webmin
     ingress-dashboard/description: Complete administrator dashboard for Linux machines
     ingress-dashboard/logo-url: /favicon.ico
@@ -19,7 +22,7 @@ metadata:
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
   rules:
-  - host: {{ k8s__webmin_public_hostname }}
+  - host: "{{ k8s__webmin__external_hostname }}"
     http:
       paths:
       - path: /

@@ -75,6 +75,9 @@
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
             #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__hc_vault__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
             ingress-dashboard/title: Hashicorp Vault
             ingress-dashboard/description: Allow a robust and secure way to share secrets and private keys bewteen services
             ingress-dashboard/logo-url: /favicon.ico
@@ -83,7 +86,7 @@
             #
             cloudflare-access/must-secure: "true"
           hosts:
-            - host: vault.{{ root_domain }}
+            - host: "{{ k8s__hc_vault__external_hostname }}"
 
         # extraVolumes is a list of extra volumes to mount. These will be exposed
         # to Vault in the path `/vault/userconfig/<name>/`.

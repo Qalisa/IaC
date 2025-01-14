@@ -9,6 +9,9 @@ metadata:
     cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     #
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__openldap__external_hostname__lam }}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    #
     ingress-dashboard/title: LDAP Accounts Manager
     ingress-dashboard/description: Allows to manage LDAP users and configuration
     ingress-dashboard/logo-url: /lam/graphics/favicon.ico
@@ -19,7 +22,7 @@ metadata:
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
   rules:
-  - host: admin-ldap.{{ root_domain }}
+  - host: "{{ k8s__openldap__external_hostname__lam }}"
     http:
       paths:
       - path: /

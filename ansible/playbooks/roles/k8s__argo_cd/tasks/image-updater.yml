@@ -74,7 +74,7 @@
           nginx.ingress.kubernetes.io/ssl-passthrough: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           #
-          external-dns.alpha.kubernetes.io/hostname: argo-watcher.{{ root_domain }}
+          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__argo_cd__external_hostname__watcher }}"
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
           #
           ingress-dashboard/title: ArgoCD Watcher
@@ -85,7 +85,7 @@
           #
           cloudflare-access/must-secure: "false"
         hosts:
-          - host: argo-watcher.{{ root_domain }}
+          - host: "{{ k8s__argo_cd__external_hostname__watcher }}"
             paths:
               - path: /
                 pathType: ImplementationSpecific

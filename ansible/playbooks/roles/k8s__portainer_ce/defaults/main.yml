@@ -1,0 +1,2 @@
+---
+k8s__portainer_ce__external_hostname: portainer.{{ root_domain }}

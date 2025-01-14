@@ -40,7 +40,7 @@
     line: "{{ item.key }}={{ item.value }}"
   with_dict:
     "redirect_ssl": 1
-    "redirect_host": "{{ k8s__webmin_public_hostname }}"
+    "redirect_host": "{{ k8s__webmin__external_hostname }}"
     # TODO
     "bind": "{{ webmin_ip_bind }}" # node1 ClusterIP
   register: webmin_miniserv_conf
@@ -54,7 +54,7 @@
     regexp: "^#? *{{ item.key | regex_escape() }}="
     line: "{{ item.key }}={{ item.value }}"
   with_dict:
-    "referers": "{{ k8s__webmin_public_hostname }}"
+    "referers": "{{ k8s__webmin__external_hostname }}"
   register: webmin_config
   notify:
     - Restart webmin daemon

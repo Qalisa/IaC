@@ -30,6 +30,9 @@
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
             cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
             #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__dashboard__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
             ingress-dashboard/title: Kubernetes Dashboard
             ingress-dashboard/description: Official dashboard to manage a k8s cluster
             ingress-dashboard/logo-url: /assets/images/kubernetes-logo.png
