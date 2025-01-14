@@ -82,8 +82,6 @@
           ingress-dashboard/logo-url: /favicon.ico
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
-          #
-          cloudflare-access/must-secure: "false"
         hosts:
           - host: "{{ k8s__argo_cd__external_hostname__watcher }}"
             paths:

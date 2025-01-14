@@ -6,6 +6,12 @@
       - path: templates/tenant/ns.yml.j2
       - path: templates/tenant/secret.yml.j2
 
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/tenant/caa.yml.j2
+
 - name: Install minIO tenant w/ Helm
   kubernetes.core.helm:
     name: tenant
@@ -33,8 +39,6 @@
             ingress-dashboard/logo-url: /favicon.ico
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
-            #
-            cloudflare-access/must-secure: "true"
       secrets: # override to empty, replaced by "tenant.configSecret"
       tenant:
         ###

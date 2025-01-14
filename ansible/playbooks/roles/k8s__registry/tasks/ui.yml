@@ -20,6 +20,12 @@
     name: joxit
     repo_url: https://helm.joxit.dev
 
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/registry-ui/caa.yml.j2
+
 - name: Install docker registry UI w/ Helm
   kubernetes.core.helm:
     name: docker-registry-ui
@@ -54,8 +60,6 @@
             ingress-dashboard/logo-url: /favicon.ico
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
-            #
-            cloudflare-access/must-secure: "true"
             ###
             # # type of authentication
             # nginx.ingress.kubernetes.io/auth-type: basic

@@ -85,8 +85,6 @@
             ingress-dashboard/logo-url: /assets/favicon/favicon-32x32.png
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
-            #
-            cloudflare-access/must-secure: "false"
           tls: false
       repoServer:
         replicas: 1

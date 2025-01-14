@@ -23,6 +23,12 @@
     update_cache: true
     install-recommends: true
 
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/caa.yml.j2
+
 - name: Install Webmin as K8s Ingress + Service
   kubernetes.core.k8s:
     state: present

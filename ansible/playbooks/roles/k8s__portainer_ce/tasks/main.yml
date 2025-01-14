@@ -18,6 +18,12 @@
     name: portainer
     repo_url: https://portainer.github.io/k8s/
 
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/caa.yml.j2
+
 - name: Install Portainer CE w/ Helm
   kubernetes.core.helm:
     name: portainer
@@ -52,8 +58,6 @@
           ingress-dashboard/logo-url: /favicon.ico
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
-          #
-          cloudflare-access/must-secure: "true"
         hosts:
           - host: "{{ k8s__portainer_ce__external_hostname }}"
             paths:

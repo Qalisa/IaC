@@ -12,8 +12,6 @@ metadata:
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__ingress_dashboard__external_hostname }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
-    #
-    cloudflare-access/must-secure: "true"
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
   rules:

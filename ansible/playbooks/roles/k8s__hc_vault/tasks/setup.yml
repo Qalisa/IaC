@@ -22,6 +22,12 @@
   loop:
     - data-vault-0
 
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/caa.yml.j2
+
 - name: Install Hashicorp Vault w/ Helm
   kubernetes.core.helm:
     name: vault
@@ -83,8 +89,6 @@
             ingress-dashboard/logo-url: /favicon.ico
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
-            #
-            cloudflare-access/must-secure: "true"
           hosts:
             - host: "{{ k8s__hc_vault__external_hostname }}"
 

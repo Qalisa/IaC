@@ -17,8 +17,6 @@ metadata:
     ingress-dashboard/logo-url: /favicon.ico
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "true" # hide, let autoconfig.<root_domain> book entry be upfront
-    #
-    cloudflare-access/must-secure: "false"
 spec:
   ingressClassName: "{{ ingress_nginx_class }}"
   tls:

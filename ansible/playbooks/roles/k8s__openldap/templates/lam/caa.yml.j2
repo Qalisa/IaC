@@ -1,0 +1,18 @@
+apiVersion: cloudflare.zelic.io/v1alpha1
+kind: CloudflareAccessApplication
+metadata:
+  name: "{{ k8s__openldap__external_hostname__lam }}"
+  annotations:
+    # (optional) default: "false"
+    #   ensures that the resource isn't removed from cloudflare if the CR is deleted
+    cloudflare.zelic.io/prevent-destroy: "true"
+spec:
+  name: "{{ k8s__openldap__external_hostname__lam }}"
+  domain: "{{ k8s__openldap__external_hostname__lam }}"
+  autoRedirectToIdentity: true
+  policies: 
+    - name: Allow my rules
+      decision: allow
+      include:
+        - accessGroups:
+          - value: "accessgroup-root-domain"

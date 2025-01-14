@@ -20,3 +20,9 @@
     wait: false
     values:
       secretRef: cloudflare-creds
+
+- name: Install CloudflareAccessGroup
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/cag.yml.j2
