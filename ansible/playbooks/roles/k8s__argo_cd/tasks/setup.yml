@@ -63,6 +63,9 @@
         params: "{{ params }}"
         rbac: "{{ rbac }}"
         cm: "{{ cm | ansible.builtin.combine(cm_more) }}"
+        secret:
+          # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
+          githubSecret: "{{ argocd_github_webhook_secret }}"
       certificate:
         enabled: false
       server:

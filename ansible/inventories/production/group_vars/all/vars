@@ -35,6 +35,9 @@ arc_github_app_priv_key: "{{ vault_arc_github_app_priv_key }}"
 # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
 argocd_github_app_priv_key: "{{ vault_argocd_github_app_priv_key }}"
 
+# https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
+argocd_github_webhook_secret: "{{ vault_argocd_github_webhook_secret }}"
+
 #
 grafana_admin_pwd: "{{ vault_grafana_admin_pwd }}"
 

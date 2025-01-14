@@ -2,8 +2,6 @@
 # WHERE ALL ORG SPECIFIC NON-SENSIBLE INFOS LIES
 #
 ---
-cloudflare_zero_trust_team_name: nwlabs
-
 # https://crt.sh/?q=nightworkers-labs.io
 root_domain: nightworkers-labs.io
 
