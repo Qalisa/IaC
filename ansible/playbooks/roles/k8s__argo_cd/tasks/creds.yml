@@ -71,6 +71,6 @@
     body:
       type: "git"
       url: "{{ iac__github_org_url }}"
-      githubAppID: "{{ argocd__github_app__app_id }}"
+      githubAppID: "{{ argocd__github_app__app_id | int }}" # requires int
       githubAppInstallationID: "{{ argocd__github_app__installation_id }}"
       githubAppPrivateKey: "{{ argocd__github_app__priv_key }}"
