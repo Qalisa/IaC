@@ -32,7 +32,7 @@
 
 - name: Postgres update
   register: postgres_pwd
-  ansible.builtin.shell: |
+  ansible.builtin.command: |
     set -o pipefail
     kubectl get secret -n sentry sentry-sentry-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d
   failed_when: false # replacement for ignore_errors
@@ -40,7 +40,7 @@
 
 - name: Kafka update
   register: kafka_cluster_id
-  ansible.builtin.shell: |
+  ansible.builtin.command: |
     set -o pipefail
     kubectl get secret -n sentry sentry-kafka-kraft-cluster-id -o jsonpath="{.data.kraft-cluster-id}" | base64 -d
   failed_when: false # replacement for ignore_errors

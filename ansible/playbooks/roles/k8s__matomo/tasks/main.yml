@@ -25,7 +25,7 @@
 
 - name: MariaDB Update
   register: mariadb_pwd
-  ansible.builtin.shell: |
+  ansible.builtin.command: |
     set -o pipefail
     kubectl get secret -n matomo matomo-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 -d
   failed_when: false # replacement for ignore_errors

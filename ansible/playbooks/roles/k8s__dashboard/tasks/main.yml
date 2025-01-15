@@ -60,7 +60,7 @@
 - name: Save Token
   block:
     - name: Get auth token
-      ansible.builtin.shell: |
+      ansible.builtin.command: |
         set -o pipefail
         kubectl get secret admin-user -n kubernetes-dashboard -o jsonpath={".data.token"} | base64 -d
       register: dashboard_token

@@ -5,7 +5,7 @@
   gather_facts: false
   tasks:
     - name: Delete namespace finalizers
-      ansible.builtin.shell: |
+      ansible.builtin.command: |
         set -o pipefail
         export NS={{ ns }} && \
         kubectl get namespace "$NS" -o json | \
@@ -19,7 +19,7 @@
       failed_when: false # replacement for ignore_errors
 
     - name: Delete namespace
-      ansible.builtin.shell: |
+      ansible.builtin.command: |
         kubectl delete namespace {{ ns }}
       when: delete_namespace_finalizers.rc == 0
       register: delete_namespace

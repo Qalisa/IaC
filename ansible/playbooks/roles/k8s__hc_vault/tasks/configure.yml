@@ -1,7 +1,7 @@
 ---
 # Since pod wont be ready if it is not initialized
 - name: Wait for the pod to be running state
-  ansible.builtin.shell: |
+  ansible.builtin.command: |
     kubectl get pod {{ k8s__hc_vault_pod_name }} -n vault -o jsonpath='{.status.phase}'
   register: pod_status
   changed_when: pod_status.rc != 0

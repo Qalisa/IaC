@@ -8,7 +8,7 @@
       - boto3
 
 - name: Wait for the pod to be running state
-  ansible.builtin.shell: |
+  ansible.builtin.command: |
     kubectl get pod myminio-pool-0-0 -n minio-tenant -o jsonpath='{.status.phase}'
   register: pod_status
   until: pod_status.stdout == "Running"

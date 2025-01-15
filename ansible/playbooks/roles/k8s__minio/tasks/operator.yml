@@ -41,7 +41,7 @@
 
 - name: Get Token
   register: minio_token
-  ansible.builtin.shell: |
+  ansible.builtin.command: |
     set -o pipefail
     kubectl get secret/console-sa-secret -n minio-operator -o json | jq -r ".data.token" | base64 -d
   changed_when: minio_token.rc != 0
