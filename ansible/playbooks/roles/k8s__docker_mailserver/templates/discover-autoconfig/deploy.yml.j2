@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-mailserver-discover-autoconfig
+  namespace: docker-mailserver
+spec:
+  selector:
+    matchLabels:
+      app: docker-mailserver-discover-autoconfig
+  template:
+    metadata:
+      labels:
+        app: docker-mailserver-discover-autoconfig
+    spec:
+      containers:
+        - name: docker-mailserver-discover-autoconfig
+          image: monogramm/autodiscover-email-settings:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: manifest-app
+              containerPort: 8000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: docker-mailserver-discover-autoconfig
+      restartPolicy: Always

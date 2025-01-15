@@ -123,7 +123,7 @@ ingress_publish_status_address: ""
 # ingress_nginx_configmap_udp_services:
 #   53: "kube-system/coredns:53"
 ingress_nginx_extra_args:
-  - --default-backend-service= #disable default backend
+  - --default-backend-service= # disable default backend
 # - --default-ssl-certificate=default/letsencrypt-secret-prod
 # ingress_nginx_termination_grace_period_seconds: 300
 # ingress_nginx_class: nginx

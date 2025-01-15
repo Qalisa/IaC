@@ -1,2 +1,0 @@
----
-dashboard_public_hostname: k8s-dashboard.{{ root_domain }}

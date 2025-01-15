@@ -1,0 +1,26 @@
+---
+- name: Generate Token
+  tags: [creds]
+  block:
+    - name: Make sure destination dir exists
+      ansible.builtin.file:
+        path: "{{ generated_creds_dir }}"
+        state: directory
+        mode: "0775"
+    - name: Generate new token
+      register: token
+      ansible.builtin.uri:
+        url: "{{ k8s__argo_cd_cluster_api_url }}/account/{{ item.username }}/token"
+        validate_certs: false
+        method: POST
+        headers:
+          Authorization: "Bearer {{ bearer }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          expiresIn: 0 # never expires
+    - name: Save
+      ansible.builtin.copy:
+        content: "{{ token.json.token }}"
+        dest: "{{ generated_creds_dir }}/argocd-token.{{ item.username }}.txt"
+        mode: "0775"

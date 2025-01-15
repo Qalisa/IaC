@@ -1,0 +1,16 @@
+---
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/lam/caa.yml.j2
+
+- name: Install LDAP Accounts Manager
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/lam/config.yml.j2
+      - path: templates/lam/secret.yml.j2
+      - path: templates/lam/service.yml.j2
+      - path: templates/lam/ingress.yml.j2
+      - path: templates/lam/deploy.yml.j2

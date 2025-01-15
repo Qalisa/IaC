@@ -1,4 +1,0 @@
----
-listmonk_domain: listmonk.{{ root_domain }}
-listmonk_api_url_part: "http://app.listmonk:9000/api"
-listmonk_static_dir: /listmonk/static

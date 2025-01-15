@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: listmonk-db
+  labels:
+    type: local
+spec:
+  storageClassName: "{{ local_storage_class_name }}"
+  capacity:
+    storage: 10Gi 
+  local:
+    path: {{ pv_path__listmonk__db }}
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadWriteOnce #
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+              - {{ master_node_name }}

@@ -1,4 +1,0 @@
----
-registry_storage_class_name: local-storage-registry
-htpasswd_local_path: "{{ registry_pv_path }}/htpasswd"
-registry_cert_secret_name: registry-server-tls

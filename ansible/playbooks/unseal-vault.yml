@@ -1,5 +1,6 @@
+---
 - name: Unseal Vault
   hosts: all
   become: true
   roles:
-    - role: k8s.hc-vault
+    - role: k8s__hc_vault

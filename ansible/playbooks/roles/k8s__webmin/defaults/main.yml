@@ -1,0 +1,2 @@
+---
+k8s__webmin__external_hostname: "webmin.{{ root_domain }}"

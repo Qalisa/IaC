@@ -1,0 +1,7 @@
+---
+k8s__argo_cd_admin_pwd_path: "{{ generated_creds_dir }}/argocd-password.admin.txt"
+k8s__argo_cd_cluster_api_url: http://argocd-server.argocd/api/v1
+k8s__argo_cd_app_of_apps_name: app-of-apps
+k8s__argo_cd__external_hostname: argocd.{{ root_domain }}
+k8s__argo_cd__external_hostname__watcher: argo-watcher.{{ root_domain }}
+k8s__argo_cd__external_hostname_url: https://{{ k8s__argo_cd__external_hostname }}

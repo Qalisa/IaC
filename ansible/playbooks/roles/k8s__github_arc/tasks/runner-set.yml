@@ -1,0 +1,107 @@
+---
+- name: Build Custom runner image and push it
+  tags: [runner-set, custom-image]
+  community.docker.docker_image:
+    state: present
+    name: "{{ k8s__github_arc_lar_docker_image_name }}"
+    tag: latest
+    build:
+      path: "{{ role_path }}/files/local-runner-image"
+    source: build
+    repository: "{{ k8s__github_arc_lar_repository_url }}"
+    push: true
+    force_source: true
+    force_tag: true
+
+#
+#
+#
+
+- name: Make sure destination dir exists
+  ansible.builtin.file:
+    path: "{{ pv_path__buildkit__cache }}"
+    state: directory
+    owner: 1001
+    group: 1001
+    mode: "0775"
+
+# https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
+- name: Setup namespace + GH App + Local Cache secrets
+  tags: [runner-set]
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/runner-set/ns.yml.j2
+      - path: templates/runner-set/gh-app-secrets.yml.j2
+      - path: templates/runner-set/pv.yml.j2
+
+- name: Install action runners set
+  tags: [runner-set, helm]
+  kubernetes.core.helm:
+    name: arc-runner-set
+    chart_ref: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+    release_namespace: "{{ k8s__github_arc_runners_ns }}"
+    create_namespace: false
+    # https://github.com/actions/actions-runner-controller/blob/master/charts/gha-runner-scale-set/values.yaml
+    values:
+      githubConfigUrl: "{{ github_org_url }}"
+      githubConfigSecret: gh-app
+      controllerServiceAccount:
+        namespace: arc-systems
+        name: arc-gha-rs-controller
+      maxRunners: 5
+      minRunners: 1
+      containerMode:
+        type: kubernetes
+      template:
+        spec:
+          containers:
+            - name: runner
+              image: "{{ k8s__github_arc_lar_repository_url }}:latest"
+              command: ["/home/runner/run.sh"]
+              env:
+                # DEFAULT
+                - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+                  value: /home/runner/k8s/index.js
+                - name: ACTIONS_RUNNER_POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+                  value: "false"
+                # CACHE
+                - name: ACTIONS_CACHE_URL
+                  secretKeyRef:
+                    name: gha-cache-access
+                    key: ACTIONS_CACHE_URL
+                # argo-watcher
+                - name: COMMIT_AUTHOR
+                  value: robot@{{ root_domain }}
+                - name: PROJECT_NAME
+                  value: default
+                - name: ARGO_WATCHER_URL
+                  value: http://argo-watcher.argocd
+              volumeMounts:
+                - name: crt
+                  mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls
+                  subPath: ca.crt
+                - name: work
+                  mountPath: /home/runner/_work
+                - name: cache
+                  mountPath: "{{ buildkit_local_mount_path }}"
+          volumes:
+            - name: cache
+              persistentVolumeClaim:
+                claimName: buildkit-cache
+            - name: crt
+              secret:
+                secretName: "{{ org_ca_cert_secret_name }}"
+            - name: work
+              ephemeral:
+                volumeClaimTemplate:
+                  spec:
+                    accessModes: ["ReadWriteOnce"]
+                    storageClassName: "local-path"
+                    resources:
+                      requests:
+                        storage: 1Gi

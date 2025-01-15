@@ -1,0 +1,4 @@
+---
+# runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
+- name: Reset
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset

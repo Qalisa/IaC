@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: roundcube
+  namespace: docker-mailserver
+  annotations:
+    # when using Cloudflare's proxied DNS record
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+      #
+    ingress-dashboard/title: Roundcube
+    ingress-dashboard/description: Embedded UI to access {{ root_domain }} emails
+    ingress-dashboard/logo-url: /favicon.ico
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+spec:
+  ingressClassName: "{{ ingress_nginx_class }}"
+  rules:
+  - host: "web{{ docker_mailserver_host }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: roundcube
+            port:
+              name: app

@@ -1,0 +1,47 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: kyverno-policy-reporter
+    repo_url: https://kyverno.github.io/policy-reporter
+
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/caa.yml.j2
+
+- name: Install policy reporter w/ Helm
+  kubernetes.core.helm:
+    name: policy-reporter
+    chart_ref: kyverno-policy-reporter/policy-reporter
+    release_namespace: kyverno-policy-reporter
+    create_namespace: true
+    wait: true
+    values:
+      kyvernoPlugin:
+        enabled: true
+      ui:
+        plugins:
+          kyverno: true
+        enabled: true
+        ingress:
+          enabled: true
+          className: "{{  ingress_nginx_class }}"
+          annotations:
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            # when using Cloudflare's proxied DNS record
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__kyverno__external_hostname__preporter }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
+            ingress-dashboard/title: Kyverno Policy Reporter
+            ingress-dashboard/description: Dashboard exposing Kyverno's activity
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+          hosts:
+            - host: "{{ k8s__kyverno__external_hostname__preporter }}"
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific

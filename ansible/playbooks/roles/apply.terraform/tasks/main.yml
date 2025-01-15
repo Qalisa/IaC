@@ -1,7 +1,0 @@
-- name: Add secrets and variables to specific Github organization repositories through their topic
-  tags: [terraform]
-  ansible.builtin.import_tasks: github-actions-repository-configure.yml
-
-- name: Secure oganization hosts
-  tags: [terraform]
-  ansible.builtin.import_tasks: cloudflare-access.yml

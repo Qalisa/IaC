@@ -12,34 +12,7 @@
     ],
     "tasks": [
         {
-            "label": "🐛 Install few...",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/few.yml",
-                // "-t", "creds",
-                // "--skip-tags", "terraform"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "🚀 Install whole site !",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.yml",
-                // "--skip-tags", "terraform"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "👮‍♀️ Enforce namespace deletion",
+            "label": "👮‍♀️ k8s: Enforce namespace deletion",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -56,7 +29,7 @@
             "problemMatcher": []
         },
         {
-            "label": "🔓 Unseal HC Vault",
+            "label": "🔓 Hachicorp Vault: Unseal",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -72,34 +45,7 @@
             "problemMatcher": []
         },
         {
-            "label": "🔐 Secure Subdomains through Cloudflare Access",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "ansible/playbooks/secure-subdomains.yml",
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "⛏ Install Ansible requirements",
-            "type": "shell",
-            "command": "ansible-galaxy install -r requirements.yml",
-            "options": {
-                "cwd": "${workspaceFolder}/ansible",
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "✅ Ensure Mail Accounts Folder Permissions",
+            "label": "✅ mailserver: Ensure Mail Accounts Folder Permissions",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -114,10 +60,59 @@
             },
             "problemMatcher": []
         },
+        //
+        //
+        //
         {
-            "label": "🔄 Upgrade cluster (kubespray)",
+            "label": "🚀 Install: whole site !",
             "type": "shell",
-            "dependsOn": "Upgrade kubespray collection",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/site.yml"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "🔓 Ansible Vault: Decrypt",
+            "type": "shell",
+            "command": [
+                "ansible-vault",
+                "decrypt",
+                "ansible/inventories/production/group_vars/all/vault",
+                "--vault-password-file .ansible-vault-pw"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🔒 Ansible Vault: Encrypt",
+            "type": "shell",
+            "command": [
+                "ansible-vault",
+                "encrypt",
+                "ansible/inventories/production/group_vars/all/vault",
+                "--vault-password-file .ansible-vault-pw"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        //
+        //
+        //
+        {
+            "label": "🔄 kubespray: Upgrade cluster",
+            "type": "shell",
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts",
@@ -125,6 +120,100 @@
                 "--become --become-user=root",
                 "ansible/playbooks/upgrade-cluster.yml"
             ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🗑 kubespray: Delete cluster",
+            "type": "shell",
+            // or: kubeadm reset
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/reset.yml"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🧶 Lint: whole project",
+            "type": "shell",
+            "command": "ansible-lint"
+        },
+        ///
+        ///
+        ///
+        {
+            "label": "⛏0. Install pipX",
+            "type": "shell",
+            "hide": true,
+            "linux": {
+                "command": "sudo apt-get -qq -y install pipx > /dev/null && pipx ensurepath"
+            },
+            "osx": {
+                "command": "brew install pipx && pipx ensurepath"
+            },
+            "windows": {
+                // TODO:
+            },
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "⛏1. Install Ansible & tools",
+            "type": "shell",
+            "dependsOn": "⛏0. Install pipX",
+            "command": "pipx install --include-deps ansible-dev-tools",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
+            "type": "shell",
+            "command": "pipx inject ansible-dev-tools distlib",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "hide": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "⛏2a. Install IaC requirements",
+            "type": "shell",
+            "dependsOn": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
+            "command": "ansible-galaxy collection install -r ansible/requirements.yml",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "⛏2b. Upgrade IaC requirements",
+            "type": "shell",
+            "dependsOn": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
+            "command": "ansible-galaxy collection install -U -r ansible/requirements.yml",
             "options": {
                 "statusbar": {
                     "hide": true

@@ -1,0 +1,134 @@
+---
+# Since pod wont be ready if it is not initialized
+- name: Wait for the pod to be running state
+  ansible.builtin.shell: |
+    kubectl get pod {{ k8s__hc_vault_pod_name }} -n vault -o jsonpath='{.status.phase}'
+  register: pod_status
+  changed_when: pod_status.rc != 0
+  until: pod_status.stdout == "Running"
+  retries: 10
+  delay: 10
+
+# RC:
+# 0 - unsealed
+# 1 - error
+# 2 - sealed
+- name: Get Vault status
+  kubernetes.core.k8s_exec:
+    namespace: "{{ k8s__hc_vault_namespace }}"
+    pod: "{{ k8s__hc_vault_pod_name }}"
+    command: vault status -format=json
+  register: vault_status
+  no_log: true
+  failed_when: vault_status.rc == 1
+
+#
+# Generate and save keys
+#
+
+- name: Generate sealing keys
+  block:
+    - name: Produce JSON file
+      register: unseal_keys_raw
+      when: not (vault_status.stdout | from_json).initialized
+      kubernetes.core.k8s_exec:
+        namespace: "{{ k8s__hc_vault_namespace }}"
+        pod: "{{ k8s__hc_vault_pod_name }}"
+        command: vault operator init --namespace='vault' -format=json -key-shares=1 -key-threshold=1
+    - name: Load facts
+      when: unseal_keys_raw is not skipped
+      ansible.builtin.set_fact:
+        unseal_keys: "{{ (unseal_keys_raw.stdout | from_json) }}"
+
+#
+- name: Save sealing keys locally
+  when: unseal_keys is defined
+  block:
+    - name: Make sure destination dir exists
+      ansible.builtin.file:
+        path: "{{ generated_creds_dir }}"
+        state: directory
+        mode: "0775"
+    - name: Save
+      ansible.builtin.copy:
+        content: "{{ unseal_keys }}"
+        dest: "{{ k8s__hc_vault_unseal_keys_path }}"
+        mode: "0775"
+
+- name: Load unseal keys if on local
+  when: unseal_keys is not defined
+  block:
+    - name: Read keys as raw bytes
+      register: local_unseal_keys_raw
+      failed_when: false # replacement for ignore_errors
+      ansible.builtin.slurp:
+        src: "{{ k8s__hc_vault_unseal_keys_path }}"
+    - name: Load facts
+      when: local_unseal_keys_raw is not failed
+      failed_when: false # replacement for ignore_errors
+      ansible.builtin.set_fact:
+        unseal_keys: "{{ local_unseal_keys_raw.content | b64decode }}"
+#
+#
+#
+
+- name: Unseal
+  kubernetes.core.k8s_exec:
+    namespace: "{{ k8s__hc_vault_namespace }}"
+    pod: "{{ k8s__hc_vault_pod_name }}"
+    command: vault operator unseal {{ item }}
+  loop: "{{ unseal_keys.unseal_keys_hex }}"
+  register: unsealings
+  when: unseal_keys is defined
+
+- name: List all user methods
+  kubernetes.core.k8s_exec:
+    namespace: "{{ k8s__hc_vault_namespace }}"
+    pod: "{{ k8s__hc_vault_pod_name }}"
+    command: "{{ item }}"
+  loop:
+    - vault login {{ unseal_keys.root_token }}
+    - vault auth list -format=json
+  register: user_methods
+  no_log: true
+  when: (unseal_keys is not skipped) and unsealings.results[0].rc == 0
+
+- name: Activate userpass method
+  kubernetes.core.k8s_exec:
+    namespace: "{{ k8s__hc_vault_namespace }}"
+    pod: "{{ k8s__hc_vault_pod_name }}"
+    command: vault auth enable userpass
+  when: (user_methods is not skipped) and ('userpass/' not in (user_methods.results[1].stdout | from_json))
+
+# err 2 indicates no users
+- name: Check Already has admin user
+  kubernetes.core.k8s_exec:
+    namespace: "{{ k8s__hc_vault_namespace }}"
+    pod: "{{ k8s__hc_vault_pod_name }}"
+    command: "vault list -format=json auth/userpass/users"
+  register: admin_exists_raw
+  when: user_methods is not skipped
+  failed_when: admin_exists_raw.rc == 1
+
+- name: Load facts
+  ansible.builtin.set_fact:
+    admin_user_exists: |
+      {{ ((admin_exists_raw is not skipped) and (admin_exists_raw.rc != 2) and ((admin_exists_raw.stdout | from_json | length) == 0) | bool) }}
+  when: admin_exists_raw is defined
+
+- name: Activate admin user
+  kubernetes.core.k8s_exec:
+    namespace: "{{ k8s__hc_vault_namespace }}"
+    pod: "{{ k8s__hc_vault_pod_name }}"
+    command: vault write auth/userpass/users/admin password={{ hc_vault_admin_password }} policies=admins
+  when: admin_user_exists
+
+- name: Wait for pod to become Ready
+  ansible.builtin.command: |
+    kubectl wait
+    pod/{{ k8s__hc_vault_pod_name }}
+    --namespace=vault
+    --for=condition=Ready
+    --timeout=3s
+  register: pods_ready
+  changed_when: pods_ready.rc != 0

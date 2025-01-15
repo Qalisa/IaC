@@ -1,0 +1,63 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: prometheus-community
+    repo_url: https://prometheus-community.github.io/helm-charts
+
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/caa.yml.j2
+      - path: templates/caa.graphana.yml.j2
+
+- name: Install Prometheus Stack w/ Helm
+  kubernetes.core.helm:
+    name: prometheus-stack
+    chart_ref: prometheus-community/kube-prometheus-stack
+    release_namespace: prometheus-stack
+    create_namespace: true
+    values:
+      grafana:
+        adminPassword: "{{ grafana_admin_pwd }}"
+        service:
+          type: LoadBalancer
+        ingress:
+          enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
+          annotations:
+            # Will be handled by Cloudflare proxy
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
+            ingress-dashboard/title: Graphana
+            ingress-dashboard/description: Hub for custom dashboards and visualization
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "true"
+          hosts:
+            - "{{ k8s__prometheus_stack__external_hostname__graphana }}"
+      prometheus:
+        service:
+          type: LoadBalancer
+        ingress:
+          enabled: true
+          ingressClassName: "{{ ingress_nginx_class }}"
+          annotations:
+            # Will be handled by Cloudflare proxy
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
+            ingress-dashboard/title: Prometheus
+            ingress-dashboard/description: Tracks logs of k8s cluster resources
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+          hosts:
+            - "{{ k8s__prometheus_stack__external_hostname }}"

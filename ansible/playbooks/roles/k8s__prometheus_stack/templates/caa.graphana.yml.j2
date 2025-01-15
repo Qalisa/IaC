@@ -1,0 +1,18 @@
+apiVersion: cloudflare.zelic.io/v1alpha1
+kind: CloudflareAccessApplication
+metadata:
+  name: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
+  annotations:
+    # (optional) default: "false"
+    #   ensures that the resource isn't removed from cloudflare if the CR is deleted
+    cloudflare.zelic.io/prevent-destroy: "true"
+spec:
+  name: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
+  domain: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
+  autoRedirectToIdentity: true
+  policies: 
+    - name: Allow my rules
+      decision: allow
+      include:
+        - accessGroups:
+          - value: "accessgroup-root-domain"

@@ -1,7 +1,0 @@
----
-#
-hc_vault_namespace: vault
-hc_vault_pod_name: vault-0
-
-#
-unseal_keys_path: "{{ generated_creds_dir }}/hc-vault-seal-keys.json"

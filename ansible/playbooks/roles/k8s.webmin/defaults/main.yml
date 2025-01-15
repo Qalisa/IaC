@@ -1,2 +1,0 @@
----
-webmin_public_hostname: "webmin.{{ root_domain }}"

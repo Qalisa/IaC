@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lam
+  namespace: openldap-stack
+  annotations:
+    # when using Cloudflare's proxied DNS record
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    #
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__openldap__external_hostname__lam }}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    #
+    ingress-dashboard/title: LDAP Accounts Manager
+    ingress-dashboard/description: Allows to manage LDAP users and configuration
+    ingress-dashboard/logo-url: /lam/graphics/favicon.ico
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+spec:
+  ingressClassName: "{{ ingress_nginx_class }}"
+  rules:
+  - host: "{{ k8s__openldap__external_hostname__lam }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: lam
+            port:
+              name: app

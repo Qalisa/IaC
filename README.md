@@ -1,16 +1,7 @@
-# IaC Scripts for Nightworkers Labs
-Automatize infrastructure installation.
-
+# IaC (Infrastructure as Code)
+Automatize the installation of an opinionated infrastructure for your organization.
+Losely based on kubespray repo default params (https://github.com/kubernetes-sigs/kubespray)
 Ansible directory layout follows best practices (https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#directory-layout).
-
-## Pre-requisites (on Ubuntu Server)
-https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu
-
-- Install Ansible (as Control Node)
-  - `sudo apt update`
-  - `sudo apt install -y software-properties-common`
-  - `sudo add-apt-repository --yes --update ppa:ansible/ansible`
-  - `sudo apt install -y ansible`
 
 ## How-To use (on server)
 ### Recommanded
@@ -37,17 +28,16 @@ Make sure you are locally logged on `git` w/ a registered account using :
   - having your local Github SSH keys agent-forwarded through `ms-vscode-remote.remote-ssh` as this documentation recommands, and obviously configured on your own GitHub account.
 
 ### Startup
-- Define `./ansible/inventories/group_vars/all/vault` passwords and tokens as defined in `./ansible/inventories/group_vars/all/vars`
-- Encrypt `./ansible/inventories/group_vars/all/vault` using `ansible-vault encrypt ansible/inventories/production/group_vars/all/vault`
-- Fill `./ansible-vault-pw` file with previously set encrypting password
 - `git clone {this repo}`
-- `ansible-galaxy install -r ansible/requirements.yml`
-- Launch VSCode Task `Run prod ansible`
+- Launch VSCode Task `1. Install kubespray requirements`
+- Launch VSCode Task `2. Install Ansible dev-tools`
+- Launch VSCode Task `3a. ⛏ Install Ansible requirements`
+- Create a `./.ansible-vault-pw` file, containing a password to secure all the secrets related to this stack within ansible vault technology
+- Define `./ansible/inventories/group_vars/all/vault` passwords and tokens as defined in `./ansible/inventories/group_vars/all/vars`
+- (Optional) Encrypt `./ansible/inventories/group_vars/all/vault` using VSCode Task `🔒 Ansible Vault: Encrypt`
+- Launch VSCode Task `🚀 Install: whole site !`
+  - Optional: You might want to opt-out of certain services by commenting roles within `./ansible/playbooks/site.yml`
 
-## Pre-requisites (on dev machine)
-### On MacOS (Local Dev)
-- `brew install ansible-lint`
-### On Windows (Local Dev)
-- #TODO
-### On Linux - Ubuntu / Debian - (Remote Dev / SSH)
-- `pip3 install ansible-dev-tools`
+### How to upgrade from latest kubespray
+- Launch VSCode Task `⛏🔄 Upgrade Ansible requirements`
+- Compare `./requirements.txt`, `./ansible/inventories/production*` with kubespray's repo (https://github.com/kubernetes-sigs/kubespray/tree/master/inventory/sample/group_vars) and merge accordingly

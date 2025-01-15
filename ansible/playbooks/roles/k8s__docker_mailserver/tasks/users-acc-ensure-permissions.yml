@@ -1,0 +1,25 @@
+---
+- name: Get users by id
+  tags: [mail-acc-ensure-permissions]
+  register: users
+  community.general.ldap_search:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
+    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    #
+    dn: "cn={{ k8s__docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}"
+    scope: "onelevel"
+    attrs:
+      - uidNumber
+      - homeDirectory
+
+- name: Re-apply legitimate permissions
+  tags: [mail-acc-ensure-permissions]
+  failed_when: false # replacement for ignore_errors
+  loop: "{{ users.results }}"
+  ansible.builtin.file:
+    path: "{{ pv_path__docker_mailserver }}/data/{{ item.homeDirectory | split('/') | last }}"
+    owner: "{{ item.uidNumber }}"
+    group: "{{ k8s__docker_mailserver__users_group_id }}"
+    recurse: true
+    state: directory

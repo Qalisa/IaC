@@ -21,7 +21,7 @@ kube_token_dir: "{{ kube_config_dir }}/tokens"
 kube_api_anonymous_auth: true
 
 ## Change this to use another Kubernetes version, e.g. a current beta release
-kube_version: v1.29.4
+kube_version: v1.31.4
 
 # Where the binaries will be downloaded.
 # Note: ensure that you've enough disk space (about 1G)
@@ -46,7 +46,6 @@ credentials_dir: "{{ inventory_dir }}/credentials"
 # kube_oidc_auth: false
 # kube_token_auth: false
 
-
 ## Variables for OpenID Connect Configuration https://kubernetes.io/docs/admin/authentication/
 ## To use OpenID you have to deploy additional an OpenID Provider (e.g Dex, Keycloak, ...)
 
@@ -64,7 +63,7 @@ credentials_dir: "{{ inventory_dir }}/credentials"
 # kube_webhook_token_auth_url: https://...
 # kube_webhook_token_auth_url_skip_tls_verify: false
 
-## For webhook authorization, authorization_modes must include Webhook
+## For webhook authorization, authorization_modes must include Webhook or kube_apiserver_authorization_config_authorizers must configure a type: Webhook
 # kube_webhook_authorization: false
 # kube_webhook_authorization_url: https://...
 # kube_webhook_authorization_url_skip_tls_verify: false
@@ -122,7 +121,7 @@ kube_network_node_prefix_ipv6: 120
 
 # The port the API Server will be listening on.
 kube_apiserver_ip: "{{ kube_service_addresses | ansible.utils.ipaddr('net') | ansible.utils.ipaddr(1) | ansible.utils.ipaddr('address') }}"
-kube_apiserver_port: 6443  # (https)
+kube_apiserver_port: 6443 # (https)
 
 # Kube-proxy proxyMode configuration.
 # Can be ipvs, iptables
@@ -130,8 +129,7 @@ kube_proxy_mode: ipvs
 
 # configure arp_ignore and arp_announce to avoid answering ARP queries from kube-ipvs0 interface
 # must be set to true for MetalLB, kube-vip(ARP enabled) to work
-# https://github.com/kubernetes-sigs/kubespray/blob/master/docs/metallb.md#prerequisites
-kube_proxy_strict_arp: true
+kube_proxy_strict_arp: true # @amphaal for Qalisa's IaC => https://github.com/kubernetes-sigs/kubespray/blob/master/docs/metallb.md#prerequisites
 
 # A string slice of values which specify the addresses to use for NodePorts.
 # Values may be valid IP blocks (e.g. 1.2.3.0/24, 1.2.3.4/32).
@@ -145,11 +143,7 @@ kube_proxy_nodeport_addresses: >-
   {%- endif -%}
 
 # If non-empty, will use this string as identification instead of the actual hostname
-# kube_override_hostname: >-
-#   {%- if cloud_provider is defined and cloud_provider in ['aws'] -%}
-#   {%- else -%}
-#   {{ inventory_hostname }}
-#   {%- endif -%}
+# kube_override_hostname: {{ inventory_hostname }}
 
 ## Encrypting Secret Data at Rest
 kube_encrypt_secret_data: false
@@ -267,7 +261,7 @@ default_kubelet_config_dir: "{{ kube_config_dir }}/dynamic_kubelet_dir"
 # kubelet_runtime_cgroups_cgroupfs: "/system.slice/{{ container_manager }}.service"
 # kubelet_kubelet_cgroups_cgroupfs: "/system.slice/kubelet.service"
 
-# Optionally reserve this space for kube daemons.
+# Whether to run kubelet and container-engine daemons in a dedicated cgroup.
 # kube_reserved: false
 ## Uncomment to override default values
 ## The following two items need to be set when kube_reserved is true
@@ -277,7 +271,7 @@ default_kubelet_config_dir: "{{ kube_config_dir }}/dynamic_kubelet_dir"
 # kube_cpu_reserved: 100m
 # kube_ephemeral_storage_reserved: 2Gi
 # kube_pid_reserved: "1000"
-# Reservation for master hosts
+# Reservation for control plane hosts
 # kube_master_memory_reserved: 512Mi
 # kube_master_cpu_reserved: 200m
 # kube_master_ephemeral_storage_reserved: 2Gi
@@ -371,11 +365,25 @@ auto_renew_certificates: false
 # First Monday of each month
 # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
 
-# kubeadm patches path
-kubeadm_patches:
-  enabled: false
-  source_dir: "{{ inventory_dir }}/patches"
-  dest_dir: "{{ kube_config_dir }}/patches"
+kubeadm_patches_dir: "{{ kube_config_dir }}/patches"
+kubeadm_patches: []
+# See https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/control-plane-flags/#patches
+# Correspondance with this link
+# patchtype = type
+# target = target
+# suffix -> managed automatically
+# extension -> always "yaml"
+# kubeadm_patches:
+# - target: kube-apiserver|kube-controller-manager|kube-scheduler|etcd|kubeletconfiguration
+#   type: strategic(default)|json|merge
+#   patch:
+#    metadata:
+#      annotations:
+#        example.com/test: "true"
+#      labels:
+#        example.com/prod_level: "{{ prod_level }}"
+# - ...
+# Patches are applied in the order they are specified.
 
 # Set to true to remove the role binding to anonymous users created by kubeadm
 remove_anonymous_access: false

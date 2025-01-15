@@ -1,0 +1,35 @@
+---
+- name: Add Docker GPG apt Key
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  ansible.builtin.apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+- name: Update apt and install docker
+  ansible.builtin.apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present # latest
+    update_cache: true
+
+- name: Install Docker Module for Python
+  community.general.pipx:
+    state: inject
+    name: ansible-dev-tools # name as used in pipx install (that installed ansible bin)
+    inject_packages:
+      - docker
+
+# needed ?
+- name: Restart docker
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: docker

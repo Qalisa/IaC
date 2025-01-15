@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gha-cache-access
+  namespace: "{{ k8s__github_arc_runners_ns }}"
+stringData:
+  ACTIONS_CACHE_URL: "{{ k8s__github_arc_cache_url }}/{{ github_arc_access_token }}/"

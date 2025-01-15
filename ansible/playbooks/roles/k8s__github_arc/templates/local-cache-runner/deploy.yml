@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gha-cache
+  namespace: "{{ k8s__github_arc_systems_ns }}"
+spec:
+  selector:
+    matchLabels:
+      app: gha-cache
+  template:
+    metadata:
+      labels:
+        app: gha-cache
+    spec:
+      containers:
+        - name: gha-cache
+          image: ghcr.io/falcondev-oss/github-actions-cache-server:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: cache-files
+              mountPath: "{{ pv_path__github_arc__cache }}"
+              readOnly: false
+          ports:
+            - name: api
+              containerPort: 3000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: gha-cache
+            - secretRef:
+                name: gha-cache-token
+      restartPolicy: Always
+      volumes:
+        - name: cache-files
+          persistentVolumeClaim:
+            claimName: gha-cache

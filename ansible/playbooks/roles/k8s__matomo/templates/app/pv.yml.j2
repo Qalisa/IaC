@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: matomo-app
+  labels:
+    type: local
+    name: matomo-app
+spec:
+  storageClassName: "{{ local_storage_class_name }}"
+  capacity:
+    storage: 8Gi 
+  local:
+    path: {{ pv_path__matomo__app }}
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadWriteOnce #
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+              - {{ master_node_name }}

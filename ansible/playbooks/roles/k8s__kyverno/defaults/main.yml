@@ -1,0 +1,2 @@
+---
+k8s__kyverno__external_hostname__preporter: policy-reporter.{{ root_domain }}

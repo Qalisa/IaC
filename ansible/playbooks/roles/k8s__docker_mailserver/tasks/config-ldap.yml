@@ -1,0 +1,69 @@
+---
+- name: Install LDAP for Python (1/2)
+  ansible.builtin.apt:
+    pkg:
+      - python3-ldap
+    state: present # latest
+    update_cache: true
+
+- name: Install LDAP for Python (2/2)
+  community.general.pipx:
+    state: inject
+    name: ansible-dev-tools # name as used in pipx install (that installed ansible bin)
+    inject_packages:
+      - python-ldap
+      - passlib
+
+- name: Wait for OpenLDAP pod to become ready
+  register: pods_ready
+  changed_when: pods_ready.rc != 0
+  ansible.builtin.command: |
+    kubectl wait pod/openldap-0 --namespace=openldap-stack --for=condition=Ready --timeout=240s
+
+#
+- name: Ensure User group matching Docker usergroup exists to allow auto-creation of LDAP user mail directories
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
+    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    #
+    dn: cn={{ k8s__docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}
+    objectClass:
+      - top
+      - posixGroup
+    attributes:
+      gidnumber: "{{ k8s__docker_mailserver__users_group_id }}"
+
+#
+- name: Create default accounts
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
+    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    #
+    dn: cn={{ item.username }},cn={{ k8s__docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}
+    objectClass:
+      - top
+      - posixAccount
+      - inetOrgPerson
+    attributes:
+      gidnumber: "{{ k8s__docker_mailserver__users_group_id }}"
+      homedirectory: /home/users/{{ item.username }}
+      mail:
+        # - "{{ item.username }}"
+        - "{{ item.email }}"
+      sn: "{{ item.username }}"
+      uid: "{{ item.username }}"
+      uidnumber: "{{ item.uidn }}"
+      userpassword: "{CRYPT}{{ item.password | password_hash('md5') }}"
+  loop:
+    - username: "{{ postmaster_username }}"
+      password: "{{ orguser_postmaster_password }}"
+      email: "{{ postmaster_email }}"
+      uidn: 1000
+    - username: "{{ donotreply_username }}"
+      password: "{{ orguser_donotreply_password }}"
+      email: "{{ donotreply_email }}"
+      uidn: 10000
+  loop_control:
+    label: "{{ item.email }}"

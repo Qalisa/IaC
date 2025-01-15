@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lam
+  namespace: openldap-stack
+spec:
+  selector:
+    matchLabels:
+      app: lam
+  template:
+    metadata:
+      labels:
+        app: lam
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: lam
+          image: ghcr.io/ldapaccountmanager/lam
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: app
+              containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: lam
+            - secretRef:
+                name: lam

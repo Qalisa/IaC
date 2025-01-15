@@ -1,19 +1,19 @@
 #
-# WHERE GLOBAL-ISH IAC infos regarding services are stored 
+# WHERE GLOBAL-ISH IAC infos regarding services are stored
 #
 ---
-# refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
+# SMTP / IMAP servers hard-requires + autoconfig soft-requires unproxied (NO CLOUDFLARE !) certificates
+# @info refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week for letsencrypt ! (https://letsencrypt.org/docs/rate-limits/)
-default_cluster_issuer: zerossl-prod # letsencrypt-prod
+unproxied_default_cluster_issuer: letsencrypt-prod # zerossl-prod
 trust_managed_namespaces: [arc-runners]
-org_ca_name: selfsigned
+org_ca_name: selfsigned 
 org_ca_cert_secret_name: "trust-manager.{{ org_ca_name }}"
 
 # default storage class
 local_storage_class_name: local-storage
 
 generated_creds_dir: "{{ playbook_dir ~ '/../../creds' }}"
-terraform_project_path: "{{ playbook_dir ~ '/../../terraform' }}"
 
 #
 master_node_name: node1
@@ -36,18 +36,20 @@ argocd_app_of_apps_repository_url: "{{ github_org_url }}/argocd-repository"
 argocd_account_for_github_syncer: github-syncer
 argocd_account_for_argo_watcher: watcher
 
-
-
 # OpenLDAP
-openldap_stack_namespace: openldap-stack
-openldap_stack_ldap_server_hostname: openldap
+openldap_stack__namespace: openldap-stack
+openldap_stack__ldap_server_hostname: openldap
+openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}/
+openldap_stack__dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
+openldap_stack__ldap_admin_user: admin
+openldap_stack__ldap_admin_cn: cn={{ openldap_stack__ldap_admin_user }},{{ openldap_stack__dc_query_string }}
 
 #
 listmonk_admin_username: admin
 listmonk_logo_url: https://{{ root_domain }}/logo.png
 listmonk_favicon_url: https://{{ root_domain }}/logo.png
 listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
-listmonk_static_dir_repo_url: "{{ github_org_url }}/listmonk-static"
+k8s__listmonk_static_dir_repo_url: "{{ github_org_url }}/listmonk-static"
 
 #
 registry_host: registry.kube-system
@@ -65,21 +67,21 @@ buildkit_local_mount_path: /cache
 
 # minimum 3 chars
 minio_tenant_username: admin
-minio_access_key_id: "{{ minio_tenant_username}}"
+minio_access_key_id: "{{ minio_tenant_username }}"
 minio_tenant_backup_storage_bucket_name: default-backups # https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
 minio_tenant_backup_storage_bucket_region: minio
 minio_tenant_s3_url: https://minio.minio-tenant:443
 
 # where should the persistent volume created for X service, store its data on node
-portainer_pv_path: /var/k8s-data/portainer
-docker_mailserver_pv_path: /var/k8s-data/mailserver
-hc_vault_pv_path: /var/k8s-data/hc-vault
-roundcube_pv_path: /var/k8s-data/roundcube
-registry_pv_path: /var/k8s-data/registry
-openldap_pv_path: /var/k8s-data/openldap
-listmonk_db_pv_path: /var/k8s-data/listmonk/db
-listmonk_uploads_pv_path: /var/k8s-data/listmonk/uploads
-matomo_pv_db_path: /var/k8s-data/matomo/db
-matomo_pv_app_path: /var/k8s-data/matomo/app
-github_arc_cache_pv_path: /var/k8s-data/gha-cache
-buildkit_cache_pv_path: /var/k8s-data/buildkit-cache
+pv_path__portainer: /var/k8s-data/portainer
+pv_path__docker_mailserver: /var/k8s-data/mailserver
+pv_path__hc_vault: /var/k8s-data/hc-vault
+pv_path__roundcube: /var/k8s-data/roundcube
+pv_path__registry: /var/k8s-data/registry
+pv_path__openldap: /var/k8s-data/openldap
+pv_path__listmonk__db: /var/k8s-data/listmonk/db
+pv_path__listmonk__uploads: /var/k8s-data/listmonk/uploads
+pv_path__matomo__db: /var/k8s-data/matomo/db
+pv_path__matomo__app: /var/k8s-data/matomo/app
+pv_path__github_arc__cache: /var/k8s-data/gha-cache
+pv_path__buildkit__cache: /var/k8s-data/buildkit-cache

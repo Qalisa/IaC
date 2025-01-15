@@ -4,3 +4,8 @@
 # match list, first match determines the file kind.
 kinds:
   - playbook: "ansible/*.yml"
+exclude_paths:
+  - "ansible/inventories/**/group_vars/all/containerd.yml"
+  - "ansible/inventories/**/group_vars/all/all.yml"
+  - "ansible/inventories/**/group_vars/k8s_cluster/*.yml"
+  - "ansible/inventories/**/group_vars/etcd.yml"

@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webmin
+  namespace: webmin
+  annotations:
+    # when using Cloudflare's proxied DNS record
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    #
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__webmin__external_hostname }}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    #
+    ingress-dashboard/title: Webmin
+    ingress-dashboard/description: Complete administrator dashboard for Linux machines
+    ingress-dashboard/logo-url: /favicon.ico
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+spec:
+  ingressClassName: "{{ ingress_nginx_class }}"
+  rules:
+  - host: "{{ k8s__webmin__external_hostname }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: webmin
+            port:
+              number: 443
