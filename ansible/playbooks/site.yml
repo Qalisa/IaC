@@ -5,7 +5,6 @@
   roles:
     - role: base__common
     - role: base__kubespray
-    - role: base__terraform
 
 # # runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
 # # - name: Reset any Kubespray cluster installed
@@ -26,7 +25,6 @@
     - role: k8s__external_dns # bind ingresses to DNS rules on Cloudflare
     - role: k8s__cf_zto # allow autoconfig of CF zero trust on services
     - role: k8s__registry # Finish registry configuration (installed along kubespray)
-    - role: apply__terraform #
     - role: k8s__dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
     ## - role: k8s__prometheus_stack # OPTIONAL
     ## - role: k8s__webmin # OPTIONAL

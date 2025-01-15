@@ -14,7 +14,6 @@ org_ca_cert_secret_name: "trust-manager.{{ org_ca_name }}"
 local_storage_class_name: local-storage
 
 generated_creds_dir: "{{ playbook_dir ~ '/../../creds' }}"
-terraform_project_path: "{{ playbook_dir ~ '/../../terraform' }}"
 
 #
 master_node_name: node1

@@ -1,5 +1,5 @@
-# IaC Scripts for Nightworkers Labs
-Automatize infrastructure installation.
+# IaC (Infrastructure as Code)
+Automatize the installation of an opinionated infrastructure for your organization.
 Losely based on kubespray repo default params (https://github.com/kubernetes-sigs/kubespray)
 Ansible directory layout follows best practices (https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#directory-layout).
 

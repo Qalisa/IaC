@@ -11,12 +11,12 @@ listmonk_site_name: "{{ u_vault_listmonk_site_name }}"
 github_org: "{{ u_vault_github_org }}"
 
 # ARC Github App
-arc_github_app_installation_id: {{ u_vault_arc_github_app_installation_id }}
-arc_github_app_app_id: {{ u_vault_arc_github_app_app_id }}
+arc_github_app_installation_id: "{{ u_vault_arc_github_app_installation_id }}"
+arc_github_app_app_id: "{{ u_vault_arc_github_app_app_id }}"
 
 # ArgoCD Github App
-argocd_github_app_installation_id: {{ u_vault_argocd_github_app_installation_id }}
-argocd_github_app_app_id: {{ u_vault_argocd_github_app_app_id }}
+argocd_github_app_installation_id: "{{ u_vault_argocd_github_app_installation_id }}"
+argocd_github_app_app_id: "{{ u_vault_argocd_github_app_app_id }}"
 
 ## SENTRY ###
 # SETTINGS FOR Github App (loosely based on https://docs.sentry.io/organization/integrations/source-code-mgmt/github/)
