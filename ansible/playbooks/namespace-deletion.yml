@@ -5,7 +5,8 @@
   gather_facts: false
   tasks:
     - name: Delete namespace finalizers
-      ansible.builtin.command: |
+      # use "ansible.builtin.shell" for pipeable commands
+      ansible.builtin.shell: |
         set -o pipefail
         export NS={{ ns }} && \
         kubectl get namespace "$NS" -o json | \
