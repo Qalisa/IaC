@@ -2,10 +2,11 @@ apiVersion: cloudflare.zelic.io/v1alpha1
 kind: CloudflareAccessApplication
 metadata:
   name: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
+  namespace: prometheus-stack
   annotations:
     # (optional) default: "false"
     #   ensures that the resource isn't removed from cloudflare if the CR is deleted
-    cloudflare.zelic.io/prevent-destroy: "true"
+    cloudflare.zelic.io/prevent-destroy: "false"
 spec:
   name: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
   domain: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
