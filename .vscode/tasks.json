@@ -177,7 +177,10 @@
             "label": "⛏1. Install Ansible & tools",
             "type": "shell",
             "dependsOn": "⛏0. Install pipX",
-            "command": "pipx install --include-deps ansible && pipx install --include-deps ansible-dev-tools",
+            "command": [
+                "pipx install --include-deps ansible-core==2.16.4", "&&",
+                "pipx install ansible-lint"
+            ],
             "options": {
                 "statusbar": {
                     "hide": true
@@ -188,7 +191,7 @@
         {
             "label": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
             "type": "shell",
-            "command": "pipx inject ansible distlib",
+            "command": "pipx inject ansible-core distlib",
             "options": {
                 "statusbar": {
                     "hide": true
