@@ -50,7 +50,7 @@ iac__master_node_name: node1
 iac__ingress_nginx_class: nginx
 
 #
-cert_manager__org_ca__name: selfsigned 
+cert_manager__org_ca__name: selfsigned
 cert_manager__org_ca__cert_secret_name: "trust-manager.{{ cert_manager__org_ca__name }}"
 cert_manager__trust_managed_namespaces: [arc-runners]
 

@@ -35,11 +35,15 @@
 
 - name: Extract DKIM TXT (1/2)
   ansible.builtin.set_fact:
-    dkim_raw: "{{ lookup('ansible.builtin.file', '{{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys/{{ iac__root_domain }}/{{ docker_mailserver__third_level_domain }}.txt') }}"
+    dkim_raw: |
+      {{ lookup('ansible.builtin.file',
+        '{{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys/{{ iac__root_domain }}/{{ docker_mailserver__third_level_domain }}.txt'
+        ) }}
 
 - name: Extract DKIM TXT (2/2)
   ansible.builtin.set_fact:
-    dkim_txt: "{{ dkim_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}"
+    dkim_txt: | 
+      {{ dkim_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}
 
 - name: Add DKIM record on DNS
   community.general.cloudflare_dns:

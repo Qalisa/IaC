@@ -2,3 +2,4 @@ ansible/inventories/**/credentials
 ansible/inventories/**/vault
 .ansible-vault-pw
 creds
+.ansible
