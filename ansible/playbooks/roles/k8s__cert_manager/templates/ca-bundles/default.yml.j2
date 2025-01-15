@@ -1,12 +1,12 @@
 apiVersion: trust.cert-manager.io/v1alpha1
 kind: Bundle
 metadata:
-  name: "{{ org_ca_cert_secret_name }}"
+  name: "{{ cert_manager__org_ca__cert_secret_name }}"
 spec:
   sources:
     - useDefaultCAs: true
     - secret:
-        name: "ca-secret.{{ org_ca_name }}"
+        name: "ca-secret.{{ cert_manager__org_ca__name }}"
         key: ca.crt
   target:
     secret:

@@ -6,19 +6,19 @@ metadata:
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "{{ unproxied_default_cluster_issuer }}" # some picky mail clients requires the cert authority to be the same as the mail server's certficate
+    cert-manager.io/cluster-issuer: "{{ iac__unproxied_certificate_issuer }}" # some picky mail clients requires the cert authority to be the same as the mail server's certficate
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__docker_mailserver__external_hostname__autodiscover }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
     #
     ingress-dashboard/title: E-mail autodiscover
-    ingress-dashboard/description: Allows automatic configuration of {{ root_domain }} mails on most email clients
+    ingress-dashboard/description: Allows automatic configuration of {{ iac__root_domain }} mails on most email clients
     ingress-dashboard/logo-url: /favicon.ico
     ingress-dashboard/assume-tls: "true"
-    ingress-dashboard/hide: "true" # hide, let autoconfig.<root_domain> book entry be upfront
+    ingress-dashboard/hide: "true" # hide, let autoconfig.<iac__root_domain> book entry be upfront
 spec:
-  ingressClassName: "{{ ingress_nginx_class }}"
+  ingressClassName: "{{ iac__ingress_nginx_class }}"
   tls:
     - secretName: docker-mailserver-autodiscover-certs
       hosts:

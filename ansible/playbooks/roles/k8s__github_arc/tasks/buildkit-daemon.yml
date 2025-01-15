@@ -16,6 +16,6 @@
       buildkitdToml: |
         insecure-entitlements = [ "network.host", "security.insecure" ]
 
-        [registry."{{ registry_host }}"]
+        [registry."{{ registry__hostname }}"]
         http = false
         insecure = true

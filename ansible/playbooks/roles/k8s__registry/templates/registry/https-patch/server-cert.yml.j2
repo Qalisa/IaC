@@ -8,8 +8,8 @@ spec:
   duration: 24h
   renewBefore: 12h
   issuerRef:
-    name: "{{ org_ca_name }}"
+    name: "{{ cert_manager__org_ca__name }}"
     kind: ClusterIssuer
-  commonName: "{{ org_ca_name }}'s org private image registry"
+  commonName: "{{ cert_manager__org_ca__name }}'s org private image registry"
   dnsNames:
-    - "{{ registry_host }}"
+    - "{{ registry__hostname }}"

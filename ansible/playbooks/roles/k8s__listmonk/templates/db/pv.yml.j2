@@ -5,11 +5,11 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: "{{ local_storage_class_name }}"
+  storageClassName: "{{ iac__local_storage__class_name }}"
   capacity:
     storage: 10Gi 
   local:
-    path: {{ pv_path__listmonk__db }}
+    path: {{ iac__pv_path__listmonk__db }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -20,4 +20,4 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ master_node_name }}
+              - {{ iac__master_node_name }}

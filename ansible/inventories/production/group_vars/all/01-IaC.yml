@@ -1,87 +1,115 @@
 #
-# WHERE GLOBAL-ISH IAC infos regarding services are stored
+# WHERE GLOBAL-ISH, default IAC infos regarding services are stored
 #
 ---
+#######################
+### MIGHT CUSTOMIZE ###
+#######################
+
+# where should ALL the persistent volumes of IaC be installed
+iac__pv_path_root: /var/k8s-data
+
 # SMTP / IMAP servers hard-requires + autoconfig soft-requires unproxied (NO CLOUDFLARE !) certificates
 # @info refers to any of "roles/k8.cert-manager/templates/issuer-*.yml.j2" metadata.name which will issue certificates
 # CAREFUL ! In production, 50 requested certificates per week for letsencrypt ! (https://letsencrypt.org/docs/rate-limits/)
-unproxied_default_cluster_issuer: letsencrypt-prod # zerossl-prod
-trust_managed_namespaces: [arc-runners]
-org_ca_name: selfsigned 
-org_ca_cert_secret_name: "trust-manager.{{ org_ca_name }}"
+iac__unproxied_certificate_issuer: letsencrypt-prod # zerossl-prod
+
+# catch all, smtp / imap TLD on the root_domain
+docker_mailserver__third_level_domain: mail
+
+#
+iac__postmaster_username: postmaster
+iac__donotreply_username: donotreply
+
+#
+sentry__usermail: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
+
+# minimum 3 chars
+minio__tenant__username: admin
+
+#
+matomo__admin_username: admin
+
+#
+argocd__app_of_apps__repo_name: argocd-repository # github repo name under organization, containing app of apps argocd manifest
+
+#
+listmonk__static_dir__repo_name: listmonk-static # github repo name under organization, containing listmonk static dir
+listmonk__admin_username: admin
+listmonk__logo_url: https://{{ iac__root_domain }}/logo.png
+listmonk__favicon_url: https://{{ iac__root_domain }}/logo.png
+
+############################
+### SHOULD NOT CUSTOMIZE ###
+############################
+
+# MUST be the same as in "ansible/inventories/production/hosts"
+iac__master_node_name: node1
+
+# MUST be the same as "group_vars/k8s_cluster/addons".iac__ingress_nginx_class
+iac__ingress_nginx_class: nginx
+
+#
+cert_manager__org_ca__name: selfsigned 
+cert_manager__org_ca__cert_secret_name: "trust-manager.{{ cert_manager__org_ca__name }}"
+cert_manager__trust_managed_namespaces: [arc-runners]
+
+
+# where generated passwords and other tokens are to be stored while generating services
+iac__generated_creds_dir: "{{ playbook_dir ~ '/../../creds' }}"
+
+#
+iac__github_org_url: https://github.com/{{ iac__github_org }}
 
 # default storage class
-local_storage_class_name: local-storage
+iac__local_storage__class_name: local-storage
 
-generated_creds_dir: "{{ playbook_dir ~ '/../../creds' }}"
-
-#
-master_node_name: node1
-
-# which emails is to be said that will register the certificates
-postmaster_username: postmaster
-postmaster_email: "{{ postmaster_username }}@{{ root_domain }}"
-donotreply_username: donotreply
-donotreply_email: "{{ donotreply_username }}@{{ root_domain }}"
-mx_hostname: mail
-docker_mailserver_host: "{{ mx_hostname }}.{{ root_domain }}"
-
-# should be the same as "group_vars/k8s_cluster/addons".ingress_nginx_class
-ingress_nginx_class: nginx
-
-github_org_url: https://github.com/{{ github_org }}
-argocd_app_of_apps_repository_url: "{{ github_org_url }}/argocd-repository"
+# where should the persistent volume created for X service, store its data on node
+iac__pv_path__portainer: "{{ iac__pv_path_root }}/portainer"
+iac__pv_path__docker_mailserver: "{{ iac__pv_path_root }}/mailserver"
+iac__pv_path__hc_vault: "{{ iac__pv_path_root }}/hc-vault"
+iac__pv_path__roundcube: "{{ iac__pv_path_root }}/roundcube"
+iac__pv_path__registry: "{{ iac__pv_path_root }}/registry"
+iac__pv_path__openldap: "{{ iac__pv_path_root }}/openldap"
+iac__pv_path__listmonk__db: "{{ iac__pv_path_root }}/listmonk/db"
+iac__pv_path__listmonk__uploads: "{{ iac__pv_path_root }}/listmonk/uploads"
+iac__pv_path__matomo__db: "{{ iac__pv_path_root }}/matomo/db"
+iac__pv_path__matomo__app: "{{ iac__pv_path_root }}/matomo/app"
+iac__pv_path__github_arc__cache: "{{ iac__pv_path_root }}/gha-cache"
+iac__pv_path__buildkit__cache: "{{ iac__pv_path_root }}/buildkit-cache"
 
 #
-argocd_account_for_github_syncer: github-syncer
-argocd_account_for_argo_watcher: watcher
+github_arc__buildkit__remote_socket: buildkit-buildkit-service.arc-buildkit:1234
+github_arc__buildkit__local_mount_path: /cache
 
-# OpenLDAP
+#
+minio__access_key_id: "{{ minio__tenant__username }}"
+minio__tenant__s3_url: https://minio.minio-tenant:443
+minio__tenant__backup_storage__bucket_name: default-backups # https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
+minio__tenant__backup_storage__bucket_region: minio
+
+#
+listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
+
+#
+registry__hostname: registry.kube-system
+registry__default_push_user: "{{ iac__github_org | lower }}" # must always be lowercase
+
+#
 openldap_stack__namespace: openldap-stack
 openldap_stack__ldap_server_hostname: openldap
 openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}/
-openldap_stack__dc_query_string: "{{ root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
+openldap_stack__dc_query_string: "{{ iac__root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
 openldap_stack__ldap_admin_user: admin
 openldap_stack__ldap_admin_cn: cn={{ openldap_stack__ldap_admin_user }},{{ openldap_stack__dc_query_string }}
 
 #
-listmonk_admin_username: admin
-listmonk_logo_url: https://{{ root_domain }}/logo.png
-listmonk_favicon_url: https://{{ root_domain }}/logo.png
-listmonk_from_email: "{{ listmonk_site_name }} <{{ postmaster_email }}>"
-k8s__listmonk_static_dir_repo_url: "{{ github_org_url }}/listmonk-static"
+argocd__account_for__github_syncer: github-syncer
+argocd__account_for__argo_watcher: watcher
 
 #
-registry_host: registry.kube-system
-registry_default_push_user: "{{ github_org | lower }}" # must always be lowercase
+docker_mailserver__external_hostname: "{{ docker_mailserver__third_level_domain }}.{{ iac__root_domain }}"
 
 #
-matomo_username: admin
-
-#
-sentry_usermail: "{{ postmaster_email }}"
-
-#
-buildkit_remote_socket: buildkit-buildkit-service.arc-buildkit:1234
-buildkit_local_mount_path: /cache
-
-# minimum 3 chars
-minio_tenant_username: admin
-minio_access_key_id: "{{ minio_tenant_username }}"
-minio_tenant_backup_storage_bucket_name: default-backups # https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
-minio_tenant_backup_storage_bucket_region: minio
-minio_tenant_s3_url: https://minio.minio-tenant:443
-
-# where should the persistent volume created for X service, store its data on node
-pv_path__portainer: /var/k8s-data/portainer
-pv_path__docker_mailserver: /var/k8s-data/mailserver
-pv_path__hc_vault: /var/k8s-data/hc-vault
-pv_path__roundcube: /var/k8s-data/roundcube
-pv_path__registry: /var/k8s-data/registry
-pv_path__openldap: /var/k8s-data/openldap
-pv_path__listmonk__db: /var/k8s-data/listmonk/db
-pv_path__listmonk__uploads: /var/k8s-data/listmonk/uploads
-pv_path__matomo__db: /var/k8s-data/matomo/db
-pv_path__matomo__app: /var/k8s-data/matomo/app
-pv_path__github_arc__cache: /var/k8s-data/gha-cache
-pv_path__buildkit__cache: /var/k8s-data/buildkit-cache
+iac__postmaster_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
+iac__donotreply_email: "{{ iac__donotreply_username }}@{{ iac__root_domain }}"

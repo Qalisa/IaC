@@ -2,7 +2,7 @@
 - name: Get Token Path
   tags: [terraform]
   ansible.builtin.set_fact:
-    argocd_syncer_token_path: "{{ generated_creds_dir }}/argocd-token.{{ argocd_account_for_github_syncer }}.txt"
+    argocd_syncer_token_path: "{{ iac__generated_creds_dir }}/argocd-token.{{ argocd__account_for__github_syncer }}.txt"
 
 - name: Add secrets and variables to specific Github organization repositories through their topic
   tags: [terraform]
@@ -12,16 +12,16 @@
     force_init: true
     complex_vars: true
     variables:
-      github_organization: "{{ github_org }}"
+      iac__github_organization: "{{ iac__github_org }}"
       github_token: "{{ ansible_github_var_secrets_pat }}"
       #
       config:
-        repository_socket: "{{ registry_host }}"
-        repository_user: "{{ registry_default_push_user }}"
-        cache_path: "{{ buildkit_local_mount_path }}"
+        repository_socket: "{{ registry__hostname }}"
+        repository_user: "{{ registry__default_push_user }}"
+        cache_path: "{{ github_arc__buildkit__local_mount_path }}"
       #
       variables:
-        buildkit_remote_socket: "{{ buildkit_remote_socket }}"
+        github_arc__buildkit__remote_socket: "{{ github_arc__buildkit__remote_socket }}"
       #
       secrets:
         argocd_syncer_token: "{{ lookup('ansible.builtin.file', argocd_syncer_token_path) }}"

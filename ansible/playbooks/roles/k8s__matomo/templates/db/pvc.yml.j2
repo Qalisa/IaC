@@ -4,7 +4,7 @@ metadata:
   name: db
   namespace: "{{ k8s__matomo_namespace }}"
 spec:
-  storageClassName: {{ local_storage_class_name }}
+  storageClassName: {{ iac__local_storage__class_name }}
   accessModes:
     - ReadWriteOnce
   resources:

@@ -46,7 +46,7 @@
   block:
     - name: Make sure destination dir exists
       ansible.builtin.file:
-        path: "{{ generated_creds_dir }}"
+        path: "{{ iac__generated_creds_dir }}"
         state: directory
         mode: "0775"
     - name: Save
@@ -120,7 +120,7 @@
   kubernetes.core.k8s_exec:
     namespace: "{{ k8s__hc_vault_namespace }}"
     pod: "{{ k8s__hc_vault_pod_name }}"
-    command: vault write auth/userpass/users/admin password={{ hc_vault_admin_password }} policies=admins
+    command: vault write auth/userpass/users/admin password={{ hc_vault__admin_password }} policies=admins
   when: admin_user_exists
 
 - name: Wait for pod to become Ready

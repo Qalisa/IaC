@@ -10,12 +10,12 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "{{ org_ca_name }}-ca"
+  name: "{{ cert_manager__org_ca__name }}-ca"
   namespace: cert-manager
 spec:
   isCA: true
-  commonName: "{{ org_ca_name }}'s org Root CA"
-  secretName: "ca-secret.{{ org_ca_name }}"
+  commonName: "{{ cert_manager__org_ca__name }}'s org Root CA"
+  secretName: "ca-secret.{{ cert_manager__org_ca__name }}"
   privateKey:
     algorithm: ECDSA
     size: 256
@@ -29,7 +29,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: "{{ org_ca_name }}"
+  name: "{{ cert_manager__org_ca__name }}"
 spec:
   ca:
-    secretName: "ca-secret.{{ org_ca_name }}"
+    secretName: "ca-secret.{{ cert_manager__org_ca__name }}"

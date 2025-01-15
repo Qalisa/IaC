@@ -1,7 +1,7 @@
 ---
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ pv_path__portainer }}"
+    path: "{{ iac__pv_path__portainer }}"
     state: directory
     mode: "0755"
 
@@ -32,9 +32,9 @@
     create_namespace: false
     values:
       nodeSelector:
-        kubernetes.io/hostname: "{{ master_node_name }}"
+        kubernetes.io/hostname: "{{ iac__master_node_name }}"
       persistence:
-        storageClass: "{{ local_storage_class_name }}"
+        storageClass: "{{ iac__local_storage__class_name }}"
       service:
         type: LoadBalancer # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
       tls:
@@ -42,12 +42,12 @@
         # existingSecret: "portainer-ce-certs"
       ingress:
         enabled: true
-        ingressClassName: "{{ ingress_nginx_class }}"
+        ingressClassName: "{{ iac__ingress_nginx_class }}"
         annotations:
-          kubernetes.io/ingress.class: "{{ ingress_nginx_class }}"
+          kubernetes.io/ingress.class: "{{ iac__ingress_nginx_class }}"
           # when using Cloudflare's proxied DNS record
           nginx.ingress.kubernetes.io/ssl-redirect: "false"
-          cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+          cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
           #
           external-dns.alpha.kubernetes.io/hostname: "{{ k8s__portainer_ce__external_hostname }}"

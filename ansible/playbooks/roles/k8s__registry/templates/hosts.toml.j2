@@ -1,4 +1,4 @@
-server = "https://{{ registry_host }}"
-[host."https://{{ registry_host }}"]
+server = "https://{{ registry__hostname }}"
+[host."https://{{ registry__hostname }}"]
   capabilities = ["pull", "resolve", "push"]
   skip_verify = true

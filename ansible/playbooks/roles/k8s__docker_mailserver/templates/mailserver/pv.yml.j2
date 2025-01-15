@@ -5,11 +5,11 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: "{{ local_storage_class_name }}"
+  storageClassName: "{{ iac__local_storage__class_name }}"
   capacity:
     storage: 25Gi 
   local:
-    path: {{ pv_path__docker_mailserver }}
+    path: {{ iac__pv_path__docker_mailserver }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -20,7 +20,7 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ master_node_name }}
+              - {{ iac__master_node_name }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -28,7 +28,7 @@ metadata:
   name: docker-mailserver
   namespace: docker-mailserver
 spec:
-  storageClassName: {{ local_storage_class_name }}
+  storageClassName: {{ iac__local_storage__class_name }}
   accessModes:
     - ReadWriteOnce
   resources:

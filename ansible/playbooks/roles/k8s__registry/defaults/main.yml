@@ -1,6 +1,6 @@
 ---
 k8s__registry_storage_class_name: local-storage-registry
-k8s__registry_htpasswd_local_path: "{{ pv_path__registry }}/htpasswd"
+k8s__registry_htpasswd_local_path: "{{ iac__pv_path__registry }}/htpasswd"
 k8s__registry_cert_secret_name: registry-server-tls
 
-k8s__registry__external_hostname__ui: registry.{{ root_domain }}
+k8s__registry__external_hostname__ui: registry.{{ iac__root_domain }}

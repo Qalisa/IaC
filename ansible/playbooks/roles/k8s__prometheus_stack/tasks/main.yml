@@ -19,16 +19,16 @@
     create_namespace: true
     values:
       grafana:
-        adminPassword: "{{ grafana_admin_pwd }}"
+        adminPassword: "{{ prometheus_stack__grafana_admin_pwd }}"
         service:
           type: LoadBalancer
         ingress:
           enabled: true
-          ingressClassName: "{{ ingress_nginx_class }}"
+          ingressClassName: "{{ iac__ingress_nginx_class }}"
           annotations:
             # Will be handled by Cloudflare proxy
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -45,11 +45,11 @@
           type: LoadBalancer
         ingress:
           enabled: true
-          ingressClassName: "{{ ingress_nginx_class }}"
+          ingressClassName: "{{ iac__ingress_nginx_class }}"
           annotations:
             # Will be handled by Cloudflare proxy
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"

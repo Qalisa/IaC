@@ -12,7 +12,7 @@ spec:
   - vault-agent-injector-svc.vault
   - vault-agent-injector-svc.vault.svc
   issuerRef:
-    name: "{{ org_ca_name }}"
+    name: "{{ cert_manager__org_ca__name }}"
     kind: ClusterIssuer
     group: cert-manager.io
   commonName: Agent Inject Cert

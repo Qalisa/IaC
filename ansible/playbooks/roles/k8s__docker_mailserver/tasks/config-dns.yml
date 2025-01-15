@@ -35,7 +35,7 @@
 
 - name: Extract DKIM TXT (1/2)
   ansible.builtin.set_fact:
-    dkim_raw: "{{ lookup('ansible.builtin.file', '{{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys/{{ root_domain }}/{{ mx_hostname }}.txt') }}"
+    dkim_raw: "{{ lookup('ansible.builtin.file', '{{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys/{{ iac__root_domain }}/{{ docker_mailserver__third_level_domain }}.txt') }}"
 
 - name: Extract DKIM TXT (2/2)
   ansible.builtin.set_fact:
@@ -43,11 +43,11 @@
 
 - name: Add DKIM record on DNS
   community.general.cloudflare_dns:
-    zone: "{{ root_domain }}"
-    record: "{{ mx_hostname }}._domainkey"
+    zone: "{{ iac__root_domain }}"
+    record: "{{ docker_mailserver__third_level_domain }}._domainkey"
     type: TXT
     value: "\"{{ dkim_txt }}\""
-    api_token: "{{ cloudflare_api_token }}"
+    api_token: "{{ iac__cloudflare__api_token }}"
     solo: true
 
 ##
@@ -56,42 +56,42 @@
 
 - name: Add DMARC record on DNS
   community.general.cloudflare_dns:
-    zone: "{{ root_domain }}"
+    zone: "{{ iac__root_domain }}"
     record: _dmarc
     type: TXT
-    value: "\"v=DMARC1; p=quarantine; ruf=mailto:{{ postmaster_email }}; sp=none; fo=1; ri=86400\""
-    api_token: "{{ cloudflare_api_token }}"
+    value: "\"v=DMARC1; p=quarantine; ruf=mailto:{{ iac__postmaster_email }}; sp=none; fo=1; ri=86400\""
+    api_token: "{{ iac__cloudflare__api_token }}"
     solo: true
 
 - name: Add MX record on DNS
   community.general.cloudflare_dns:
-    zone: "{{ root_domain }}"
+    zone: "{{ iac__root_domain }}"
     record: "@"
     type: MX
     priority: 10
-    value: "{{ docker_mailserver_host }}"
-    api_token: "{{ cloudflare_api_token }}"
+    value: "{{ docker_mailserver__external_hostname }}"
+    api_token: "{{ iac__cloudflare__api_token }}"
     solo: true
   failed_when: false # replacement for ignore_errors
 
 - name: Add SPF + mailconf records on DNS
   community.general.cloudflare_dns:
-    zone: "{{ root_domain }}"
+    zone: "{{ iac__root_domain }}"
     record: "@"
     type: TXT
     value: "\"{{ item }}\""
-    api_token: "{{ cloudflare_api_token }}"
+    api_token: "{{ iac__cloudflare__api_token }}"
   loop:
     - "v=spf1 mx ~all"
     - "mailconf=https://{{ k8s__docker_mailserver__external_hostname__autoconfig }}/mail/config-v1.1.xml"
 
 - name: Add CNAME records on DNS
   community.general.cloudflare_dns:
-    zone: "{{ root_domain }}"
+    zone: "{{ iac__root_domain }}"
     type: CNAME
-    value: "{{ docker_mailserver_host }}"
+    value: "{{ docker_mailserver__external_hostname }}"
     record: "{{ item }}"
-    api_token: "{{ cloudflare_api_token }}"
+    api_token: "{{ iac__cloudflare__api_token }}"
     solo: true
   loop:
     - smtp
@@ -100,8 +100,8 @@
 
 - name: Create an SRV records [service]._tcp
   community.general.cloudflare_dns:
-    api_token: "{{ cloudflare_api_token }}"
-    domain: "{{ root_domain }}"
+    api_token: "{{ iac__cloudflare__api_token }}"
+    domain: "{{ iac__root_domain }}"
     type: SRV
     proto: tcp
     priority: 0
@@ -112,7 +112,7 @@
   failed_when: false # replacement for ignore_errors
   loop:
     - { service: "autodiscover", port: 443, value: "{{ k8s__docker_mailserver__external_hostname__autodiscover }}" }
-    - { service: "imap", port: 143, value: "{{ docker_mailserver_host }}" }
-    - { service: "imaps", port: 993, value: "{{ docker_mailserver_host }}" }
-    - { service: "submission", port: 587, value: "{{ docker_mailserver_host }}" }
-    - { service: "submissions", port: 465, value: "{{ docker_mailserver_host }}" }
+    - { service: "imap", port: 143, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "imaps", port: 993, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "submission", port: 587, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "submissions", port: 465, value: "{{ docker_mailserver__external_hostname }}" }

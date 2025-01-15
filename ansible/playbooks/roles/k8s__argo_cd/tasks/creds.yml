@@ -16,7 +16,7 @@
       register: argocd_init_admin_pwd
     - name: Make sure destination dir exists
       ansible.builtin.file:
-        path: "{{ generated_creds_dir }}"
+        path: "{{ iac__generated_creds_dir }}"
         state: directory
         mode: "0775"
     - name: Save password
@@ -54,8 +54,8 @@
   vars:
     bearer: "{{ admin_bearer }}"
   loop:
-    - username: "{{ argocd_account_for_github_syncer }}"
-    - username: "{{ argocd_account_for_argo_watcher }}"
+    - username: "{{ argocd__account_for__github_syncer }}"
+    - username: "{{ argocd__account_for__argo_watcher }}"
 
 #
 - name: Add Github repository creds to ArgoCD
@@ -70,7 +70,7 @@
     body_format: json
     body:
       type: "git"
-      url: "{{ github_org_url }}"
-      githubAppID: "{{ argocd_github_app_app_id }}"
-      githubAppInstallationID: "{{ argocd_github_app_installation_id }}"
-      githubAppPrivateKey: "{{ argocd_github_app_priv_key }}"
+      url: "{{ iac__github_org_url }}"
+      githubAppID: "{{ argocd__github_app__app_id }}"
+      githubAppInstallationID: "{{ argocd__github_app__installation_id }}"
+      githubAppPrivateKey: "{{ argocd__github_app__priv_key }}"

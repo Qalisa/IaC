@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ k8s__argo_cd_app_of_apps_name }}
+  name: {{ k8s__argo_cd__app_of_apps__name }}
   namespace: argocd
   annotations:
     notifications.argoproj.io/subscribe.on-sync-running.github: ""
@@ -17,7 +17,7 @@ spec:
   project: default
   source:
     path: apps
-    repoURL: {{ argocd_app_of_apps_repository_url }}
+    repoURL: "{{ iac__github_org_url }}/{{ argocd__app_of_apps__repo_name }}"
     targetRevision: HEAD
   syncPolicy:
     automated: {}

@@ -3,28 +3,34 @@
 ### NON - SECRETS ###
 #####################
 
-# if using ZeroSSL
-zerossl_eab_kid: "{{ u_vault_zerossl_eab_kid }}"
+###
+### DEFINED - Org identity related
+### 
 
-root_domain: "{{ u_vault_root_domain }}" # https://crt.sh/?q={{ root_domain }}
-listmonk_site_name: "{{ u_vault_listmonk_site_name }}"
-github_org: "{{ u_vault_github_org }}"
+iac__root_domain: "{{ u_vault_iac__root_domain }}" # https://crt.sh/?q={{ iac__root_domain }}
+iac__github_org: "{{ u_vault_iac__github_org }}"
 
-# ARC Github App
-arc_github_app_installation_id: "{{ u_vault_arc_github_app_installation_id }}"
-arc_github_app_app_id: "{{ u_vault_arc_github_app_app_id }}"
+listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
 
-# ArgoCD Github App
-argocd_github_app_installation_id: "{{ u_vault_argocd_github_app_installation_id }}"
-argocd_github_app_app_id: "{{ u_vault_argocd_github_app_app_id }}"
+###
+### EXTERNAL
+### 
+
+# ArgoCD - Github App
+argocd__github_app__installation_id: "{{ u_vault_argocd__github_app__installation_id }}"
+argocd__github_app__app_id: "{{ u_vault_argocd__github_app__app_id }}"
+
+# Github ARC - Github App
+github_arc__github_app__installation_id: "{{ u_vault_github_arc__github_app__installation_id }}"
+github_arc__github_app__app_id: "{{ u_vault_github_arc__github_app__app_id }}"
 
 ## SENTRY ###
 # SETTINGS FOR Github App (loosely based on https://docs.sentry.io/organization/integrations/source-code-mgmt/github/)
 # Github App Name: <Whatever unique>
-# Homepage URL: https://sentry.{{ root_domain }}
-# Callback URL: https://sentry.{{ root_domain }}/auth/sso/
+# Homepage URL: https://sentry.{{ iac__root_domain }}
+# Callback URL: https://sentry.{{ iac__root_domain }}/auth/sso/
 # Request user authorization (OAuth) during installation: CHECKED
-# Webhook URL: https://sentry.{{ root_domain }}/extensions/github/webhook/
+# Webhook URL: https://sentry.{{ iac__root_domain }}/extensions/github/webhook/
 # Webhook Secret: 'openssl rand -base64 500 | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1'
 # Event Subscriptions:
 # - Pull request
@@ -41,8 +47,8 @@ argocd_github_app_app_id: "{{ u_vault_argocd_github_app_app_id }}"
 #     - Metadata: RO
 #     - Pull Requests: RW
 #     - Webhooks: RW
-sentry_github_appid: "{{ u_vault_sentry_github_appid }}"
-sentry_github_appname: "{{ u_vault_sentry_github_appname }}"
+sentry__github_appid: "{{ u_vault_sentry__github_appid }}"
+sentry__github_appname: "{{ u_vault_sentry__github_appname }}"
 
 #################
 ### SECRETS ! ###
@@ -52,6 +58,43 @@ sentry_github_appname: "{{ u_vault_sentry_github_appname }}"
 # requires an encrypted file named "vault"
 # "ansible-vault encrypt ansible/inventories/production/group_vars/all/vault"
 # "ansible-vault decrypt ansible/inventories/production/group_vars/all/vault"
+
+###
+### DEFINED
+### 
+
+# password for postmaster@{{ iac__root_domain }}
+iac__postmaster_password: "{{ vault_iac__postmaster_password }}"
+
+# password for donotreply@{{ iac__root_domain }}
+iac__donotreply_password: "{{ vault_iac__donotreply_password }}"
+
+#
+openldap_stack__ldap_admin_pwd: "{{ vault_openldap_stack__ldap_admin_pwd }}"
+openldap_stack__lam_password: "{{ vault_openldap_stack__lam_password }}"
+openldap_stack__ssp_keyphrase: "{{ vault_openldap_stack__ssp_keyphrase }}"
+
+# password for "admin" user on Hashicorp Vault
+hc_vault__admin_password: "{{ vault_hc_vault__admin_password }}"
+
+#
+prometheus_stack__grafana_admin_pwd: "{{ vault_prometheus_stack__grafana_admin_pwd }}"
+
+#
+listmonk__admin_password: "{{ vault_listmonk__admin_password }}"
+
+#
+matomo__admin_password: "{{ vault_matomo__admin_password }}"
+
+# 12 characters min
+portainer__admin_password: "{{ vault_portainer__admin_password }}"
+
+#
+sentry__usermail_password: "{{ vault_sentry__usermail_password }}"
+
+###
+### EXTERNAL
+### 
 
 # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/#api-tokens
 # https://kubernetes-sigs.github.io/external-dns/v0.12.1/tutorials/cloudflare/#creating-cloudflare-credentials
@@ -64,60 +107,32 @@ sentry_github_appname: "{{ u_vault_sentry_github_appname }}"
 # Access - Organizations, Identity Providers, and Groups - Edit
 # Access - Apps and Policies - Edit
 ## Zones: 
-# Include - Specific Zone - {{ root_domain }}
-cloudflare_account_id: "{{ vault_cloudflare_account_id }}"
-cloudflare_api_token: "{{ vault_cloudflare_api_token }}"
-
-# password for postmaster@{{ root_domain }}
-orguser_postmaster_password: "{{ vault_orguser_postmaster_password }}"
-orguser_donotreply_password: "{{ vault_orguser_donotreply_password }}"
-
-# password for "admin" user on Hashicorp Vault
-hc_vault_admin_password: "{{ vault_hc_vault_admin_password }}"
-
-### MAKE SURE GITHUB APP HAS BELOW RIGHTS
-# https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
-arc_github_app_priv_key: "{{ vault_arc_github_app_priv_key }}"
+# Include - Specific Zone - {{ iac__root_domain }}
+iac__cloudflare__account_id: "{{ vault_iac__cloudflare__account_id }}"
+iac__cloudflare__api_token: "{{ vault_iac__cloudflare__api_token }}"
 
 ### MAKE SURE GITHUB APP HAS BELOW RIGHTS
 # https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential
 # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
-argocd_github_app_priv_key: "{{ vault_argocd_github_app_priv_key }}"
+argocd__github_app__priv_key: "{{ vault_argocd__github_app__priv_key }}"
 
 # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
-argocd_github_webhook_secret: "{{ vault_argocd_github_webhook_secret }}"
+argocd__github_webhook_secret: "{{ vault_argocd__github_webhook_secret }}"
 
-#
-grafana_admin_pwd: "{{ vault_grafana_admin_pwd }}"
+### MAKE SURE GITHUB APP HAS BELOW RIGHTS
+# https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
+github_arc__github_app__priv_key: "{{ vault_github_arc__github_app__priv_key }}"
 
-#
-openldap_stack__ldap_admin_pwd: "{{ vault_openldap_stack__ldap_admin_pwd }}"
-openldap_stack__lam_password: "{{ vault_openldap_stack__lam_password }}"
-openldap_stack__ssp_keyphrase: "{{ vault_openldap_stack__ssp_keyphrase }}"
-
-#
-listmonk_admin_password: "{{ vault_listmonk_admin_password }}"
-
-#
-matomo_password: "{{ vault_matomo_password }}"
-
-# 12 characters min
-portainer_admin_password: "{{ vault_portainer_admin_password }}"
-
-# need to allow secrets and variables updates on organization level
-ansible_github_var_secrets_pat: "{{ vault_ansible_github_var_secrets_pat }}"
-
-#
-zerossl_eab_hmac_key: "{{ vault_zerossl_eab_hmac_key }}"
+# ZeroSSL (if used in k8s__cert_manager)
+cert_manager__zerossl__eab_kid: "{{ u_vault_cert_manager__zerossl__eab_kid }}"
+cert_manager__zerossl__eab_hmac_key: "{{ vault_cert_manager__zerossl__eab_hmac_key }}"
 
 # minimum 8 chars
-minio_tenant_password: "{{ vault_minio_tenant_password }}"
-minio_secret_access_key: "{{ minio_tenant_password }}"
+minio__tenant_password: "{{ vault_minio__tenant_password }}"
+minio__secret_access_key: "{{ minio__tenant_password }}"
 
 #
-sentry_github_clientId: "{{ vault_sentry_github_clientId }}"
-sentry_github_clientSecret: "{{ vault_sentry_github_clientSecret }}"
-sentry_github_privateKey: "{{ vault_sentry_github_privateKey }}"
-sentry_github_webhookSecret: "{{ vault_sentry_github_webhookSecret }}"
-
-sentry_usermail_password: "{{ vault_sentry_usermail_password }}"
+sentry__github_clientId: "{{ vault_sentry__github_clientId }}"
+sentry__github_clientSecret: "{{ vault_sentry__github_clientSecret }}"
+sentry__github_privateKey: "{{ vault_sentry__github_privateKey }}"
+sentry__github_webhookSecret: "{{ vault_sentry__github_webhookSecret }}"

@@ -19,7 +19,7 @@
 
 - name: Make sure destination dir exists
   ansible.builtin.file:
-    path: "{{ pv_path__buildkit__cache }}"
+    path: "{{ iac__pv_path__buildkit__cache }}"
     state: directory
     owner: 1001
     group: 1001
@@ -44,7 +44,7 @@
     create_namespace: false
     # https://github.com/actions/actions-runner-controller/blob/master/charts/gha-runner-scale-set/values.yaml
     values:
-      githubConfigUrl: "{{ github_org_url }}"
+      githubConfigUrl: "{{ iac__github_org_url }}"
       githubConfigSecret: gh-app
       controllerServiceAccount:
         namespace: arc-systems
@@ -76,7 +76,7 @@
                     key: ACTIONS_CACHE_URL
                 # argo-watcher
                 - name: COMMIT_AUTHOR
-                  value: robot@{{ root_domain }}
+                  value: robot@{{ iac__root_domain }}
                 - name: PROJECT_NAME
                   value: default
                 - name: ARGO_WATCHER_URL
@@ -88,14 +88,14 @@
                 - name: work
                   mountPath: /home/runner/_work
                 - name: cache
-                  mountPath: "{{ buildkit_local_mount_path }}"
+                  mountPath: "{{ github_arc__buildkit__local_mount_path }}"
           volumes:
             - name: cache
               persistentVolumeClaim:
                 claimName: buildkit-cache
             - name: crt
               secret:
-                secretName: "{{ org_ca_cert_secret_name }}"
+                secretName: "{{ cert_manager__org_ca__cert_secret_name }}"
             - name: work
               ephemeral:
                 volumeClaimTemplate:

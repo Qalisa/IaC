@@ -19,7 +19,7 @@
 #   ansible.builtin.command: |
 #     kubectl run -n docker-mailserver -it --rm --restart=Never \
 #     --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
-#     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ postmaster_email }} -p {{ orguser_postmaster_password }}'
+#     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ iac__postmaster_email }} -p {{ iac__postmaster_password }}'
 #   register: postmaster_pw_hash
 #   changed_when: postmaster_pw_hash.rc != 0
 
@@ -27,7 +27,7 @@
 #   ansible.builtin.set_fact:
 #     default_accounts_dict: >
 #       {
-#         "{{ postmaster_email }}": "{{ postmaster_pw_hash.stdout_lines[0] }}",
+#         "{{ iac__postmaster_email }}": "{{ postmaster_pw_hash.stdout_lines[0] }}",
 #       }
 
 # # https://webmin.com/faq/#can-i-run-webmin-or-usermin-behind-reverse-proxy

@@ -5,8 +5,8 @@ metadata:
   namespace: docker-mailserver
 immutable: false
 data:
-  POSTMASTER_ADDRESS: {{ postmaster_email }}
-  OVERRIDE_HOSTNAME: {{ docker_mailserver_host }}
+  POSTMASTER_ADDRESS: {{ iac__postmaster_email }}
+  OVERRIDE_HOSTNAME: {{ docker_mailserver__external_hostname }}
   TLS_LEVEL: modern
   POSTSCREEN_ACTION: drop
   FAIL2BAN_BLOCKTYPE: drop
@@ -50,7 +50,7 @@ data:
   # >>> SASL LDAP Authentication
   ENABLE_SASLAUTHD: '1'
   SASLAUTHD_MECHANISMS: ldap
-  SASLAUTHD_LDAP_FILTER: (&(mail=%U@{{ root_domain }})(objectClass=inetOrgPerson))
+  SASLAUTHD_LDAP_FILTER: (&(mail=%U@{{ iac__root_domain }})(objectClass=inetOrgPerson))
   # SASLAUTHD_MECHANISMS: rimap
   # SASLAUTHD_MECH_OPTIONS: "127.0.0.1"
   # <<< LDAP Authentication

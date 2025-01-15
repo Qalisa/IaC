@@ -2,7 +2,7 @@
 - name: Run PipX w/ requisites
   community.general.pipx:
     state: inject
-    name: ansible-dev-tools # name as used in pipx install (that installed ansible bin)
+    name: ansible # name as used in pipx install (that installed ansible bin)
     inject_packages:
       - botocore
       - boto3
@@ -18,10 +18,10 @@
 
 - name: Create default bucket
   amazon.aws.s3_bucket:
-    access_key: "{{ minio_access_key_id }}"
-    secret_key: "{{ minio_secret_access_key }}"
+    access_key: "{{ minio__access_key_id }}"
+    secret_key: "{{ minio__secret_access_key }}"
     #
-    name: "{{ minio_tenant_backup_storage_bucket_name }}"
-    endpoint_url: "{{ minio_tenant_s3_url }}" # HTTPS REQUIRED !
+    name: "{{ minio__tenant__backup_storage__bucket_name }}"
+    endpoint_url: "{{ minio__tenant__s3_url }}" # HTTPS REQUIRED !
     validate_certs: false # ignore self signed certificates
-    region: "{{ minio_tenant_backup_storage_bucket_region }}"
+    region: "{{ minio__tenant__backup_storage__bucket_region }}"

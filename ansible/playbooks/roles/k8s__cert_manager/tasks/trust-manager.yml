@@ -14,14 +14,14 @@
       secretTargets:
         enabled: true
         authorizedSecrets:
-          - "{{ org_ca_cert_secret_name }}"
+          - "{{ cert_manager__org_ca__cert_secret_name }}"
 
 - name: Update namespaces with trust enabled for CA
   kubernetes.core.k8s:
     state: present
     template:
       - path: templates/ns-with-trust.yml.j2
-  loop: "{{ trust_managed_namespaces }}"
+  loop: "{{ cert_manager__trust_managed_namespaces }}"
 
 - name: Wait for pod to become ready
   ansible.builtin.command: |

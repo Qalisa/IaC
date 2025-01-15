@@ -18,8 +18,8 @@
             api_url: https://registry-1.docker.io
             defaultns: library
           - name: Org Private Registry
-            api_url: https://{{ registry_host }}
-            prefix: "{{ registry_host }}"
+            api_url: https://{{ registry__hostname }}
+            prefix: "{{ registry__hostname }}"
             insecure: true
             default: true
 
@@ -29,7 +29,7 @@
 
 - name: Read keys as raw bytes
   ansible.builtin.slurp:
-    src: "{{ generated_creds_dir }}/argocd-token.{{ argocd_account_for_argo_watcher }}.txt"
+    src: "{{ iac__generated_creds_dir }}/argocd-token.{{ argocd__account_for__argo_watcher }}.txt"
   register: admin_token
 - name: Define admin token
   ansible.builtin.set_fact:
@@ -66,11 +66,11 @@
         secretName: "argo-watcher"
       ingress:
         enabled: true
-        className: "{{ ingress_nginx_class }}"
+        className: "{{ iac__ingress_nginx_class }}"
         annotations:
           # when using Cloudflare's proxied DNS record
           nginx.ingress.kubernetes.io/ssl-redirect: "false"
-          cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+          cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
           nginx.ingress.kubernetes.io/ssl-passthrough: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           #

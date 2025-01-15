@@ -29,12 +29,12 @@
           enabled: false
         ingress:
           enabled: true
-          ingressClassName: "{{ ingress_nginx_class }}"
+          ingressClassName: "{{ iac__ingress_nginx_class }}"
           annotations:
             nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__dashboard__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -67,11 +67,11 @@
       changed_when: dashboard_token.rc != 0 # <- Uses the return code to define when the task has changed.
     - name: Make sure destination dir exists
       ansible.builtin.file:
-        path: "{{ generated_creds_dir }}"
+        path: "{{ iac__generated_creds_dir }}"
         state: directory
         mode: "0775"
     - name: Save
       ansible.builtin.copy:
         content: "{{ dashboard_token.stdout }}"
-        dest: "{{ generated_creds_dir }}/dashboard-token.serviceaccount.txt"
+        dest: "{{ iac__generated_creds_dir }}/dashboard-token.serviceaccount.txt"
         mode: "0775"

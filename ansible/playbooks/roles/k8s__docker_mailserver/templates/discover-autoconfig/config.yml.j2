@@ -5,14 +5,14 @@ metadata:
   namespace: docker-mailserver
 immutable: false
 data:
-  COMPANY_NAME: {{ root_domain }}
+  COMPANY_NAME: {{ iac__root_domain }}
   SUPPORT_URL: "https://{{ k8s__docker_mailserver__external_hostname__autodiscover }}"
-  DOMAIN: {{ root_domain }}
+  DOMAIN: {{ iac__root_domain }}
   # IMAP configuration (host mandatory to enable)
-  IMAP_HOST: "{{ docker_mailserver_host }}"
+  IMAP_HOST: "{{ docker_mailserver__external_hostname }}"
   IMAP_PORT: '143'
   IMAP_SOCKET: STARTTLS
   # SMTP configuration (host mandatory to enable)
-  SMTP_HOST: "{{ docker_mailserver_host }}"
+  SMTP_HOST: "{{ docker_mailserver__external_hostname }}"
   SMTP_PORT: '587'
   SMTP_SOCKET: STARTTLS

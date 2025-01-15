@@ -6,7 +6,7 @@
 
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ pv_path__openldap }}"
+    path: "{{ iac__pv_path__openldap }}"
     state: directory
     mode: "0755"
 
@@ -26,14 +26,14 @@
     values:
       replicaCount: 1
       global:
-        ldapDomain: "{{ root_domain }}"
+        ldapDomain: "{{ iac__root_domain }}"
         adminPassword: "{{ openldap_stack__ldap_admin_pwd }}"
         configPassword: "{{ openldap_stack__ldap_admin_pwd }}"
       replication:
         enabled: false
       persistence:
         enabled: true
-        storageClass: "{{ local_storage_class_name }}"
+        storageClass: "{{ iac__local_storage__class_name }}"
         size: "8Gi"
       phpldapadmin:
         enabled: false

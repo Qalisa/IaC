@@ -5,8 +5,8 @@
     state: directory
     mode: "0755"
   loop:
-    - "{{ pv_path__listmonk__db }}"
-    - "{{ pv_path__listmonk__uploads }}"
+    - "{{ iac__pv_path__listmonk__db }}"
+    - "{{ iac__pv_path__listmonk__uploads }}"
 
 - name: Install listmonk
   kubernetes.core.k8s:
@@ -43,8 +43,8 @@
 - name: Update settings
   ansible.builtin.uri:
     url: "{{ k8s__listmonk_api_url_part }}/settings"
-    url_username: "{{ listmonk_admin_username }}"
-    url_password: "{{ listmonk_admin_password }}"
+    url_username: "{{ listmonk__admin_username }}"
+    url_password: "{{ listmonk__admin_password }}"
     validate_certs: false
     method: PUT
     headers:
@@ -54,10 +54,10 @@
       # app
       app.lang: fr
       app.root_url: https://{{ k8s__listmonk__external_hostname }}
-      app.site_name: "{{ listmonk_site_name }}"
-      app.logo_url: "{{ listmonk_logo_url }}"
-      app.favicon_url: "{{ listmonk_favicon_url }}"
-      app.from_email: "{{ listmonk_from_email }}"
+      app.site_name: "{{ listmonk__site_name }}"
+      app.logo_url: "{{ listmonk__logo_url }}"
+      app.favicon_url: "{{ listmonk__favicon_url }}"
+      app.from_email: "{{ listmonk__from_email }}"
       app.enable_public_subscription_page: true
       app.enable_public_archive: true
       app.send_optin_confirmation: true
@@ -100,7 +100,7 @@
           enabled: true
           port: 587
           host: docker-mailserver.docker-mailserver
-          hello_hostname: "{{ docker_mailserver_host }}"
+          hello_hostname: "{{ docker_mailserver__external_hostname }}"
           auth_protocol: login
           tls_type: STARTTLS
           tls_skip_verify: true
@@ -108,6 +108,6 @@
           max_msg_retries: 2
           idle_timeout: 15s
           wait_timeout: 5s
-          username: "{{ donotreply_username }}"
-          password: "{{ orguser_donotreply_password }}"
+          username: "{{ iac__donotreply_username }}"
+          password: "{{ iac__donotreply_password }}"
           email_headers: []

@@ -12,7 +12,7 @@ spec:
     encoding: PKCS1
     size: 2048
   dnsNames:
-    - {{ docker_mailserver_host }}
+    - {{ docker_mailserver__external_hostname }}
   issuerRef:
-    name: "{{ unproxied_default_cluster_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
+    name: "{{ iac__unproxied_certificate_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
     kind: ClusterIssuer

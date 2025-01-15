@@ -23,7 +23,7 @@ spec:
             - clone
             - --single-branch
             - --
-            - {{ k8s__listmonk_static_dir_repo_url }} # Your repo
+            - "{{ iac__github_org_url }}/{{ listmonk__static_dir__repo_name }}" # Your repo
             - "{{ k8s__listmonk_static_dir }}" # Put it in the volume
           securityContext:
             runAsUser: 1 # Any non-root user will do. Match to the workload.
@@ -48,7 +48,7 @@ spec:
           args: ["./listmonk --install --yes --idempotent && ./listmonk --static-dir={{ k8s__listmonk_static_dir }}"]
           volumeMounts:
             - name: uploads
-              mountPath: "{{ pv_path__listmonk__uploads }}"
+              mountPath: "{{ iac__pv_path__listmonk__uploads }}"
               readOnly: false
             - name: static
               mountPath: "{{ k8s__listmonk_static_dir }}"

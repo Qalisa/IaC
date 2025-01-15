@@ -1,2 +1,2 @@
 ---
-k8s__ingress_dashboard__external_hostname: book.{{ root_domain }}
+k8s__ingress_dashboard__external_hostname: book.{{ iac__root_domain }}

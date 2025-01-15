@@ -62,17 +62,17 @@
 
       user:
         create: true
-        email: "{{ sentry_usermail }}"
-        password: "{{ sentry_usermail_password }}"
+        email: "{{ sentry__usermail }}"
+        password: "{{ sentry__usermail_password }}"
 
       mail:
         backend: smtp
         useTls: true
-        username: "{{ donotreply_username }}"
-        password: "{{ orguser_donotreply_password }}"
+        username: "{{ iac__donotreply_username }}"
+        password: "{{ iac__donotreply_password }}"
         port: 587
         host: "docker-mailserver-docker-mailserver"
-        from: "{{ donotreply_email }}"
+        from: "{{ iac__donotreply_email }}"
 
       sourcemaps:
         enabled: true
@@ -132,7 +132,7 @@
       ingress:
         enabled: true
         hostname: "{{ k8s__sentry__external_hostname }}"
-        ingressClassName: "{{ ingress_nginx_class }}"
+        ingressClassName: "{{ iac__ingress_nginx_class }}"
         annotations:
           # If you are using nginx ingress controller, please use at least those 2 annotations
           nginx.ingress.kubernetes.io/use-regex: "true"
@@ -150,8 +150,8 @@
         type: LoadBalancer
 
       github: #   Reference -> https://docs.sentry.io/product/integrations/source-code-mgmt/github/
-        appId: "{{ sentry_github_appid }}"
-        appName: "{{ sentry_github_appname }}"
+        appId: "{{ sentry__github_appid }}"
+        appName: "{{ sentry__github_appname }}"
         existingSecret: "github-app-secrets"
 
       filestore:

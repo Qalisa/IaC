@@ -31,8 +31,8 @@
         secretContents:
           cloud: |
             [default]
-            aws_access_key_id={{ minio_tenant_username }}
-            aws_secret_access_key={{ minio_tenant_password }}
+            aws_access_key_id={{ minio__tenant__username }}
+            aws_secret_access_key={{ minio__tenant_password }}
       configuration:
         # Parameters for the BackupStorageLocation(s). Configure multiple by adding other element(s) to the backupStorageLocation slice.
         # See https://velero.io/docs/v1.6/api-types/backupstoragelocation/
@@ -41,15 +41,15 @@
             # provider is the name for the backup storage location provider.
             provider: aws
             # bucket is the name of the bucket to store backups in. Required.
-            bucket: "{{ minio_tenant_backup_storage_bucket_name }}"
+            bucket: "{{ minio__tenant__backup_storage__bucket_name }}"
             # Additional provider-specific configuration. See link above
             # for details of required/optional fields for your provider.
             config:
-              region: "{{ minio_tenant_backup_storage_bucket_region }}"
+              region: "{{ minio__tenant__backup_storage__bucket_region }}"
               s3ForcePathStyle: "true"
               insecureSkipTLSVerify: true
-              s3Url: "{{ minio_tenant_s3_url }}"
-              publicUrl: "{{ minio_tenant_s3_url }}"
+              s3Url: "{{ minio__tenant__s3_url }}"
+              publicUrl: "{{ minio__tenant__s3_url }}"
 
         # Parameters for the VolumeSnapshotLocation(s). Configure multiple by adding other element(s) to the volumeSnapshotLocation slice.
         # See https://velero.io/docs/v1.6/api-types/volumesnapshotlocation/
@@ -60,8 +60,8 @@
             # Additional provider-specific configuration. See link above
             # for details of required/optional fields for your provider.
             config:
-              region: "{{ minio_tenant_backup_storage_bucket_region }}"
+              region: "{{ minio__tenant__backup_storage__bucket_region }}"
               s3ForcePathStyle: "true"
               insecureSkipTLSVerify: true
-              s3Url: "{{ minio_tenant_s3_url }}"
-              publicUrl: "{{ minio_tenant_s3_url }}"
+              s3Url: "{{ minio__tenant__s3_url }}"
+              publicUrl: "{{ minio__tenant__s3_url }}"

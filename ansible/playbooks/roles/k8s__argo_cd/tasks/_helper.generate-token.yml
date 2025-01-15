@@ -4,7 +4,7 @@
   block:
     - name: Make sure destination dir exists
       ansible.builtin.file:
-        path: "{{ generated_creds_dir }}"
+        path: "{{ iac__generated_creds_dir }}"
         state: directory
         mode: "0775"
     - name: Generate new token
@@ -22,5 +22,5 @@
     - name: Save
       ansible.builtin.copy:
         content: "{{ token.json.token }}"
-        dest: "{{ generated_creds_dir }}/argocd-token.{{ item.username }}.txt"
+        dest: "{{ iac__generated_creds_dir }}/argocd-token.{{ item.username }}.txt"
         mode: "0775"

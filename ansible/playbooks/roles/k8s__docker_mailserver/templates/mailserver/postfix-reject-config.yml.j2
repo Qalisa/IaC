@@ -6,4 +6,4 @@ metadata:
 immutable: false
 data:
   header_checks.pcre: |
-    /^To:.*{{ donotreply_email | replace(".", "\.") }}/ REJECT
+    /^To:.*{{ iac__donotreply_email | replace(".", "\.") }}/ REJECT

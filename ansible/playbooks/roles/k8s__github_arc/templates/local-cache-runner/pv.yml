@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: "{{ k8s__github_arc_local_cache_size }}" 
   local:
-    path: {{ pv_path__github_arc__cache }}
+    path: {{ iac__pv_path__github_arc__cache }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -20,7 +20,7 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ master_node_name }}
+              - {{ iac__master_node_name }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

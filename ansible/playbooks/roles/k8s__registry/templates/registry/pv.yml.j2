@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 40Gi 
   local:
-    path: {{ pv_path__registry }}
+    path: {{ iac__pv_path__registry }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -20,4 +20,4 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ master_node_name }}
+              - {{ iac__master_node_name }}

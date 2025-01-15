@@ -6,7 +6,7 @@
 
 - name: Create Persistent Volume dir path
   ansible.builtin.file:
-    path: "{{ pv_path__hc_vault }}/{{ item }}"
+    path: "{{ iac__pv_path__hc_vault }}/{{ item }}"
     state: directory
     mode: "0755"
   loop:
@@ -74,11 +74,11 @@
 
         ingress:
           enabled: true
-          ingressClassName: "{{ ingress_nginx_class }}"
+          ingressClassName: "{{ iac__ingress_nginx_class }}"
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__hc_vault__external_hostname }}"
@@ -122,7 +122,7 @@
           enabled: false
         dataStorage:
           enabled: true
-          storageClass: "{{ local_storage_class_name }}"
+          storageClass: "{{ iac__local_storage__class_name }}"
       # Vault UI
       ui:
         enabled: true

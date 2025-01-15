@@ -2,7 +2,7 @@
 #
 k8s__hc_vault_namespace: vault
 k8s__hc_vault_pod_name: vault-0
-k8s__hc_vault__external_hostname: vault.{{ root_domain }}
+k8s__hc_vault__external_hostname: vault.{{ iac__root_domain }}
 
 #
-k8s__hc_vault_unseal_keys_path: "{{ generated_creds_dir }}/hc-vault-seal-keys.json"
+k8s__hc_vault_unseal_keys_path: "{{ iac__generated_creds_dir }}/hc-vault-seal-keys.json"

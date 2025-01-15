@@ -6,7 +6,7 @@ metadata:
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+    cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__openldap__external_hostname__ssp }}"
@@ -18,7 +18,7 @@ metadata:
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "false"
 spec:
-  ingressClassName: "{{ ingress_nginx_class }}"
+  ingressClassName: "{{ iac__ingress_nginx_class }}"
   rules:
   - host: "{{ k8s__openldap__external_hostname__ssp }}"
     http:

@@ -22,12 +22,12 @@
       console:
         ingress:
           enabled: true
-          ingressClassName: "{{ ingress_nginx_class }}"
+          ingressClassName: "{{ iac__ingress_nginx_class }}"
           host: "{{ k8s__minio__external_hostname }}"
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ org_ca_name }}"
+            cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__minio__external_hostname }}"
@@ -49,5 +49,5 @@
 - name: Save Token
   ansible.builtin.copy:
     content: "{{ minio_token.stdout }}"
-    dest: "{{ generated_creds_dir }}/minio-console-token.txt"
+    dest: "{{ iac__generated_creds_dir }}/minio-console-token.txt"
     mode: "0775"

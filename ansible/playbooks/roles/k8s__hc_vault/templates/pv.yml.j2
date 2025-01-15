@@ -6,11 +6,11 @@ metadata:
     type: local
     for: "{{ item }}"
 spec:
-  storageClassName: "{{ local_storage_class_name }}"
+  storageClassName: "{{ iac__local_storage__class_name }}"
   capacity:
     storage: 10Gi 
   local:
-    path: "{{ pv_path__hc_vault }}/{{ item }}"
+    path: "{{ iac__pv_path__hc_vault }}/{{ item }}"
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -21,4 +21,4 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ master_node_name }}
+              - {{ iac__master_node_name }}

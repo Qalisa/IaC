@@ -1,9 +1,9 @@
 ---
 k8s__docker_mailserver_config_folder_name: tmp-docker-mailserver
-k8s__docker_mailserver_path_to_config_folder: "{{ pv_path__docker_mailserver }}/{{ k8s__docker_mailserver_config_folder_name }}"
+k8s__docker_mailserver_path_to_config_folder: "{{ iac__pv_path__docker_mailserver }}/{{ k8s__docker_mailserver_config_folder_name }}"
 
-k8s__docker_mailserver__external_hostname__autoconfig: autoconfig.{{ root_domain }}
-k8s__docker_mailserver__external_hostname__autodiscover: autodiscover.{{ root_domain }}
+k8s__docker_mailserver__external_hostname__autoconfig: autoconfig.{{ iac__root_domain }}
+k8s__docker_mailserver__external_hostname__autodiscover: autodiscover.{{ iac__root_domain }}
 
 # Email users (possibly POSTFIX + DOVECOT, eg sending AND receiving email)
 k8s__docker_mailserver__users_group_id: 5000
