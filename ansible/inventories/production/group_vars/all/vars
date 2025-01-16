@@ -109,6 +109,7 @@ sentry__usermail_password: "{{ vault_sentry__usermail_password }}"
 ## Zones: 
 # Include - Specific Zone - {{ iac__root_domain }}
 iac__cloudflare__account_id: "{{ vault_iac__cloudflare__account_id }}"
+iac__cloudflare__zone_id: "{{ vault_iac__cloudflare__zone_id }}"
 iac__cloudflare__api_token: "{{ vault_iac__cloudflare__api_token }}"
 
 ### MAKE SURE GITHUB APP HAS BELOW RIGHTS
