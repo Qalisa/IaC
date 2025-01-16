@@ -42,7 +42,7 @@
 
 - name: Extract DKIM TXT (2/2)
   ansible.builtin.set_fact:
-    dkim_txt: | 
+    dkim_txt: |
       {{ dkim_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}
 
 - name: Add DKIM record on DNS
