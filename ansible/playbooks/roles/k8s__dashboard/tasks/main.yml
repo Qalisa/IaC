@@ -12,6 +12,7 @@
     repo_url: https://kubernetes.github.io/dashboard/
 
 - name: Install Zero-Trust configuration
+  tags: [zto-app]
   kubernetes.core.k8s:
     state: present
     template:

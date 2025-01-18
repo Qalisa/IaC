@@ -18,8 +18,24 @@
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts",
                 "--become --become-user=root",
-                "ansible/playbooks/namespace-deletion.yml",
+                "ansible/playbooks/_namespace-deletion.yml",
                 "--e='ns=${input:nsToDelete}'"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "✅ CF Zero-Trust: apply application policies",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "ansible/playbooks/site.services.yml",
+                "--tags", "zto-app"
             ],
             "options": {
                 "statusbar": {
@@ -34,7 +50,7 @@
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts",
-                "ansible/playbooks/unseal-vault.yml",
+                "ansible/playbooks/_unseal-vault.yml",
                 "--tags", "unseal"
             ],
             "options": {
@@ -50,7 +66,7 @@
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts",
-                "ansible/playbooks/mail-ensure-permissions.yml",
+                "ansible/playbooks/_mail-ensure-permissions.yml",
                 "--tags", "mail-acc-ensure-permissions"
             ],
             "options": {
@@ -73,8 +89,45 @@
                 "--become --become-user=root",
                 "ansible/playbooks/site.yml"
             ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
             "problemMatcher": []
         },
+        {
+            "label": "🚀 Install: K8s only",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/site.kubernetes.yml"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🚀 Install: Services Only",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts",
+                "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/site.services.yml"
+            ],
+            "problemMatcher": []
+        },
+        ///
+        ///
+        ///
         {
             "label": "🔓 Ansible Vault: Decrypt",
             "type": "shell",
@@ -118,7 +171,7 @@
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/upgrade-cluster.yml"
+                "ansible/playbooks/_upgrade-cluster.yml"
             ],
             "options": {
                 "statusbar": {
@@ -136,7 +189,7 @@
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/reset.yml"
+                "ansible/playbooks/_reset.yml"
             ],
             "options": {
                 "statusbar": {

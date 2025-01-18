@@ -10,7 +10,13 @@ metadata:
 spec:
   name: "{{ k8s__minio__external_hostname }}"
   domain: "{{ k8s__minio__external_hostname }}"
-  autoRedirectToIdentity: true
+  autoRedirectToIdentity: false # allow multiple providers to be displayed on appLauncher 
+  appLauncherVisible: true
+  type: self_hosted
+  sessionDuration: 24h
+  enableBindingCookie: true
+  httpOnlyCookieAttribute: true
+  logoUrl: "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
   policies: 
     - name: Allow my rules
       decision: allow

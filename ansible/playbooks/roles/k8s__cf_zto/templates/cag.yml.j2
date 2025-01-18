@@ -8,7 +8,7 @@ metadata:
     #   ensures that the resource isn't removed from cloudflare if the CR is deleted
     cloudflare.zelic.io/prevent-destroy: "false"
 spec:
-  name: Allow All Orgs Members
+  name: Ansible CF ZTO Default Rules
   include:
     - emailDomains:
         - "{{ iac__root_domain }}"

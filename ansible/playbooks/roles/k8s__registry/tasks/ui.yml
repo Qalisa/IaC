@@ -21,6 +21,7 @@
     repo_url: https://helm.joxit.dev
 
 - name: Install Zero-Trust configuration
+  tags: [zto-app]
   kubernetes.core.k8s:
     state: present
     template:

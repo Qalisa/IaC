@@ -7,6 +7,7 @@
       - path: templates/tenant/secret.yml.j2
 
 - name: Install Zero-Trust configuration
+  tags: [zto-app]
   kubernetes.core.k8s:
     state: present
     template:
