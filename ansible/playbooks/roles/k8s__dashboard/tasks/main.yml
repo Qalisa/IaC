@@ -25,11 +25,11 @@
     release_namespace: kubernetes-dashboard
     create_namespace: false
     values:
+      kong:
+        enabled: false
+      metricsScraper:
+        enabled: false
       app:
-        kong:
-          enabled: false
-        metricsScraper:
-          enabled: false
         ingress:
           enabled: true
           ingressClassName: "{{ iac__ingress_nginx_class }}"
