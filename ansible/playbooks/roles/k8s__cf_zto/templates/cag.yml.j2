@@ -8,7 +8,7 @@ metadata:
     #   ensures that the resource isn't removed from cloudflare if the CR is deleted
     cloudflare.zelic.io/prevent-destroy: "false"
 spec:
-  name: Domain's LDAP Users
+  name: "{{ iac__root_domain }} LDAP Users"
   include:
     - emailDomains:
         - "{{ iac__root_domain }}"
