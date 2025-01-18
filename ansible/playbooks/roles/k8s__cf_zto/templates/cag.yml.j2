@@ -1,7 +1,7 @@
 apiVersion: cloudflare.zelic.io/v1alpha1
 kind: CloudflareAccessGroup
 metadata:
-  name: ldap-users
+  name: "{{ cf_zto__ldap_policy__access_group_id }}"
   namespace: "{{ cf_zto__namespace }}"
   annotations:
     # (optional) default: "false"
