@@ -26,7 +26,7 @@
     create_namespace: false
     values:
       kong:
-        enabled: false
+        enabled: true # required since https://github.com/kubernetes/dashboard/pull/9317 wont be merged
       metricsScraper:
         enabled: false
       app:
