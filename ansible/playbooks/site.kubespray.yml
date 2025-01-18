@@ -1,0 +1,23 @@
+---
+- name: Install pre-requisites
+  hosts: all
+  become: true
+  roles:
+    - role: base__common
+    - role: base__kubespray
+
+# runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
+# - name: Reset any Kubespray cluster installed
+#  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+
+# runs the kubespray's "cluster.yml" playbook - Installs Kubespray configuration
+- name: Install & Configure Kubernetes cluster & tools (Containerd, Helm, Ingress Controllers...)
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+
+# ensure services roles are installed and configured AFTER kubernetes is set
+- name: Finish Kubespray requisites installation
+  hosts: all
+  become: true
+  roles:
+    - role: extra__kubespray # Finish kubespray configuration
+    - role: base__docker # Install docker cli + buildkit, for some reason we need to do it after kubespray

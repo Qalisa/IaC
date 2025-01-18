@@ -111,3 +111,8 @@ docker_mailserver__external_hostname: "{{ docker_mailserver__third_level_domain 
 #
 iac__postmaster_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
 iac__donotreply_email: "{{ iac__donotreply_username }}@{{ iac__root_domain }}"
+
+#
+cf_zto__namespace: zero-trust-system
+cf_zto__ldap_policy__access_group_id: ldap-users
+cf_zto__ldap_policy__name: Allow {{ iac__root_domain }} LDAP Users

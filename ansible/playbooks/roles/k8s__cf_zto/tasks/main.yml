@@ -15,14 +15,20 @@
   kubernetes.core.helm:
     name: cloudflare-zero-trust-operator
     chart_ref: zelic-io/cloudflare-zero-trust-operator
-    release_namespace: zero-trust-system
+    release_namespace: "{{ cf_zto__namespace }}"
     create_namespace: false
     wait: false
     values:
       secretRef: cloudflare-creds
 
-- name: Install CloudflareAccessGroup
+- name: Install default LDAP CloudflareAccessGroup
   kubernetes.core.k8s:
     state: present
     template:
       - path: templates/cag.yml.j2
+
+- name: Install special Warp + Launcher App policies
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/caa.specials.yml.j2

@@ -16,6 +16,9 @@ listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
 ### EXTERNAL
 ### 
 
+# CF Zero Trust
+iac__cloudflare__zero_trust__team_name: "{{ u_vault_iac__cloudflare__zero_trust__team_name }}" # see https://one.dash.cloudflare.com/${accountId}/settings/custom_pages#TeamDomain
+
 # ArgoCD - Github App
 argocd__github_app__installation_id: "{{ u_vault_argocd__github_app__installation_id }}"
 argocd__github_app__app_id: "{{ u_vault_argocd__github_app__app_id }}"

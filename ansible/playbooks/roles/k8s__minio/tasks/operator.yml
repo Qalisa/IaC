@@ -5,6 +5,7 @@
     repo_url: https://operator.min.io
 
 - name: Install Zero-Trust configuration
+  tags: [zto-app]
   kubernetes.core.k8s:
     state: present
     template:

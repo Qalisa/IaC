@@ -5,6 +5,7 @@
     repo_url: https://christianhuth.github.io/helm-charts
 
 - name: Install Zero-Trust configuration
+  tags: [zto-app]
   kubernetes.core.k8s:
     state: present
     template:

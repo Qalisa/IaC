@@ -12,6 +12,7 @@
     repo_url: https://kubernetes.github.io/dashboard/
 
 - name: Install Zero-Trust configuration
+  tags: [zto-app]
   kubernetes.core.k8s:
     state: present
     template:
@@ -24,9 +25,11 @@
     release_namespace: kubernetes-dashboard
     create_namespace: false
     values:
+      kong:
+        enabled: true # required since https://github.com/kubernetes/dashboard/pull/9317 wont be merged
+      metricsScraper:
+        enabled: false
       app:
-        kong:
-          enabled: false
         ingress:
           enabled: true
           ingressClassName: "{{ iac__ingress_nginx_class }}"
