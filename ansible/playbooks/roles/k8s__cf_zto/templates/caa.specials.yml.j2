@@ -1,0 +1,47 @@
+apiVersion: cloudflare.zelic.io/v1alpha1
+kind: CloudflareAccessApplication
+metadata:
+  name: warp
+  namespace: "{{ cf_zto__namespace }}"
+  annotations:
+    # (optional) default: "false"
+    #   ensures that the resource isn't removed from cloudflare if the CR is deleted
+    cloudflare.zelic.io/prevent-destroy: "true"
+spec:
+  name: Warp Login App # SPECIFIC
+  domain: "{{ iac__cloudflare__zero_trust__team_name }}.cloudflareaccess.com/warp" # SPECIFIC
+  type: warp # SPECIFIC
+  sessionDuration: 24h
+  autoRedirectToIdentity: false # allow multiple providers to be displayed on appLauncher 
+  policies: 
+    - name: "{{ cf_zto__ldap_policy__name }}"
+      decision: allow
+      include:
+        - accessGroups:
+          - valueFrom:
+              name: "{{ cf_zto__ldap_policy__access_group_id }}"
+              namespace: "{{ cf_zto__namespace }}"
+---
+apiVersion: cloudflare.zelic.io/v1alpha1
+kind: CloudflareAccessApplication
+metadata:
+  name: app-launcher
+  namespace: "{{ cf_zto__namespace }}"
+  annotations:
+    # (optional) default: "false"
+    #   ensures that the resource isn't removed from cloudflare if the CR is deleted
+    cloudflare.zelic.io/prevent-destroy: "true"
+spec:
+  name: App Launcher # SPECIFIC
+  domain: "{{ iac__cloudflare__zero_trust__team_name }}.cloudflareaccess.com" # SPECIFIC
+  type: app_launcher # SPECIFIC
+  sessionDuration: 24h
+  autoRedirectToIdentity: false # allow multiple providers to be displayed on appLauncher 
+  policies: 
+    - name: "{{ cf_zto__ldap_policy__name }}"
+      decision: allow
+      include:
+        - accessGroups:
+          - valueFrom:
+              name: "{{ cf_zto__ldap_policy__access_group_id }}"
+              namespace: "{{ cf_zto__namespace }}"
