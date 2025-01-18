@@ -1,14 +1,14 @@
 apiVersion: cloudflare.zelic.io/v1alpha1
 kind: CloudflareAccessGroup
 metadata:
-  name: accessgroup-root-domain
-  namespace: zero-trust-system
+  name: ldap-users
+  namespace: "{{ cf_zto__namespace }}"
   annotations:
     # (optional) default: "false"
     #   ensures that the resource isn't removed from cloudflare if the CR is deleted
     cloudflare.zelic.io/prevent-destroy: "false"
 spec:
-  name: Ansible CF ZTO Default Rules
+  name: Domain's LDAP Users
   include:
     - emailDomains:
         - "{{ iac__root_domain }}"

@@ -15,7 +15,7 @@
   kubernetes.core.helm:
     name: cloudflare-zero-trust-operator
     chart_ref: zelic-io/cloudflare-zero-trust-operator
-    release_namespace: zero-trust-system
+    release_namespace: "{{ cf_zto__namespace }}"
     create_namespace: false
     wait: false
     values:

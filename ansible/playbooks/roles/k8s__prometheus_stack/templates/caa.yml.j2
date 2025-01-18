@@ -2,7 +2,7 @@ apiVersion: cloudflare.zelic.io/v1alpha1
 kind: CloudflareAccessApplication
 metadata:
   name: "{{ k8s__prometheus_stack__external_hostname }}"
-  namespace: prometheus-stack
+  namespace: "{{ cf_zto__namespace }}"
   annotations:
     # (optional) default: "false"
     #   ensures that the resource isn't removed from cloudflare if the CR is deleted
@@ -22,4 +22,4 @@ spec:
       decision: allow
       include:
         - accessGroups:
-          - value: "accessgroup-root-domain"
+          - value: "ldap-users"

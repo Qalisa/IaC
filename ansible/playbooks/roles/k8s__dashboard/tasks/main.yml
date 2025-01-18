@@ -28,6 +28,8 @@
       app:
         kong:
           enabled: false
+        metricsScraper:
+          enabled: false
         ingress:
           enabled: true
           ingressClassName: "{{ iac__ingress_nginx_class }}"
