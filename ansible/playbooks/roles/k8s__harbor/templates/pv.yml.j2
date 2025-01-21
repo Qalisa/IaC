@@ -5,11 +5,11 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: "{{ k8s__docker_registry__storage_class_name }}"
+  storageClassName: "{{ k8s__harbor__storage_class_name }}"
   capacity:
-    storage: 40Gi 
+    storage: "{{ k8s__harbor__storage_capacity }}"
   local:
-    path: {{ iac__pv_path__docker_registry }}
+    path: {{ iac__pv_path__harbor }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

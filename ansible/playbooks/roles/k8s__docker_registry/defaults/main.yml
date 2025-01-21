@@ -1,8 +1,0 @@
----
-k8s__docker_registry__storage_class_name: local-storage-registry
-# k8s__docker_registry__htpasswd_local_path: "{{ iac__pv_path__docker_registry }}/htpasswd"
-k8s__docker_registry__cert_name: docker-registry
-k8s__docker_registry__cert_secret_name: "{{ k8s__docker_registry__cert_name }}-certs"
-
-k8s__docker_registry__external_hostname__ui: "{{ docker_registry__sld }}-ui.{{ iac__root_domain }}"
-k8s__docker_registry__external_hostname__images_server: "{{ docker_registry__sld }}.{{ iac__root_domain }}"

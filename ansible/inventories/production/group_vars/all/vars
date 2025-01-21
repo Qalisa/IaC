@@ -95,6 +95,11 @@ portainer__admin_password: "{{ vault_portainer__admin_password }}"
 #
 sentry__usermail_password: "{{ vault_sentry__usermail_password }}"
 
+#
+harbor__registry_password: "{{ vault_harbor__registry_password }}"
+harbor__admin_password: "{{ vault_harbor__admin_password }}"
+harbor__secret_key: "{{ vault_harbor__secret_key }}" # must be 16 characters exactly !
+
 ###
 ### EXTERNAL
 ### 

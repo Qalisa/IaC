@@ -1,6 +1,0 @@
----
-- name: Deploy registry server
-  ansible.builtin.import_tasks: images-server.yml
-
-- name: Deploy registry UI
-  ansible.builtin.import_tasks: ui.yml

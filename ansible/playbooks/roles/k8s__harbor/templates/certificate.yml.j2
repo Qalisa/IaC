@@ -2,17 +2,17 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "{{ k8s__docker_registry__cert_name }}"
-  namespace: "{{ docker_registry__namespace }}"
+  name: "{{ k8s__harbor__cert_name }}"
+  namespace: "{{ harbor__namespace }}"
 spec:
-  secretName: "{{ k8s__docker_registry__cert_secret_name }}"
+  secretName: "{{ k8s__harbor__cert_secret_name }}"
   isCA: false
   privateKey:
     algorithm: RSA
     encoding: PKCS1
     size: 2048
   dnsNames:
-    - {{ k8s__docker_registry__external_hostname__images_server }}
+    - {{ k8s__harbor__external_hostname }}
   issuerRef:
     name: "{{ iac__unproxied_certificate_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
     kind: ClusterIssuer
