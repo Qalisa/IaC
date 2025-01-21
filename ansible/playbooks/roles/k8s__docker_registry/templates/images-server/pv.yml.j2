@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: registry
+  name: registry-images-server
   labels:
     type: local
 spec:
-  storageClassName: "{{ k8s__registry_storage_class_name }}"
+  storageClassName: "{{ k8s__docker_registry__storage_class_name }}"
   capacity:
     storage: 40Gi 
   local:
-    path: {{ iac__pv_path__registry }}
+    path: {{ iac__pv_path__docker_registry }}
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #

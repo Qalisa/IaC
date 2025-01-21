@@ -67,7 +67,7 @@ iac__pv_path__portainer: "{{ iac__pv_path_root }}/portainer"
 iac__pv_path__docker_mailserver: "{{ iac__pv_path_root }}/mailserver"
 iac__pv_path__hc_vault: "{{ iac__pv_path_root }}/hc-vault"
 iac__pv_path__roundcube: "{{ iac__pv_path_root }}/roundcube"
-iac__pv_path__registry: "{{ iac__pv_path_root }}/registry"
+iac__pv_path__docker_registry: "{{ iac__pv_path_root }}/docker-registry"
 iac__pv_path__openldap: "{{ iac__pv_path_root }}/openldap"
 iac__pv_path__listmonk__db: "{{ iac__pv_path_root }}/listmonk/db"
 iac__pv_path__listmonk__uploads: "{{ iac__pv_path_root }}/listmonk/uploads"
@@ -90,8 +90,10 @@ minio__tenant__backup_storage__bucket_region: minio
 listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
 
 #
-registry__hostname: registry.kube-system
-registry__default_push_user: "{{ iac__github_org | lower }}" # must always be lowercase
+docker_registry__namespace: kube-system
+docker_registry__sld: registry
+docker_registry__internal_hostname: "{{ docker_registry__sld }}.{{ docker_registry__namespace }}"
+docker_registry__default_push_user: "{{ iac__github_org | lower }}" # must always be lowercase
 
 #
 openldap_stack__namespace: openldap-stack

@@ -9,7 +9,7 @@
   vars:
     content:
       insecure-registries:
-        - "{{ registry__hostname }}"
+        - "{{ docker_registry__internal_hostname }}"
   ansible.builtin.copy:
     dest: /etc/docker/daemon.json
     content: "{{ content | to_nice_json }}"

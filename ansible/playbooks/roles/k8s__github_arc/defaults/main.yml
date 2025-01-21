@@ -6,4 +6,4 @@ k8s__github_arc_runners_ns: arc-runners
 k8s__github_arc_buildkit_ns: arc-buildkit
 k8s__github_arc_cache_url: http://gha-cache.{{ k8s__github_arc_systems_ns }}:3000
 k8s__github_arc_lar_docker_image_name: local-actions-runner
-k8s__github_arc_lar_repository_url: "{{ registry__hostname }}/{{ k8s__github_arc_lar_docker_image_name }}"
+k8s__github_arc_lar_repository_url: "{{ docker_registry__internal_hostname }}/{{ k8s__github_arc_lar_docker_image_name }}"

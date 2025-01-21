@@ -16,8 +16,8 @@
       github_token: "{{ ansible_github_var_secrets_pat }}"
       #
       config:
-        repository_socket: "{{ registry__hostname }}"
-        repository_user: "{{ registry__default_push_user }}"
+        repository_socket: "{{ docker_registry__internal_hostname }}"
+        repository_user: "{{ docker_registry__default_push_user }}"
         cache_path: "{{ github_arc__buildkit__local_mount_path }}"
       #
       variables:

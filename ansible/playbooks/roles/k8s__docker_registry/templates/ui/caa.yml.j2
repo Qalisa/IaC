@@ -1,15 +1,15 @@
 apiVersion: cloudflare.zelic.io/v1alpha1
 kind: CloudflareAccessApplication
 metadata:
-  name: "{{ k8s__registry__external_hostname__ui }}"
+  name: "{{ k8s__docker_registry__external_hostname__ui }}"
   namespace: "{{ cf_zto__namespace }}"
   annotations:
     # (optional) default: "false"
     #   ensures that the resource isn't removed from cloudflare if the CR is deleted
     cloudflare.zelic.io/prevent-destroy: "false"
 spec:
-  name: "{{ k8s__registry__external_hostname__ui }}"
-  domain: "{{ k8s__registry__external_hostname__ui }}"
+  name: "{{ k8s__docker_registry__external_hostname__ui }}"
+  domain: "{{ k8s__docker_registry__external_hostname__ui }}"
   autoRedirectToIdentity: false # allow multiple providers to be displayed on appLauncher 
   appLauncherVisible: true
   type: self_hosted

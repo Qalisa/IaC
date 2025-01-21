@@ -1,7 +1,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: "{{ k8s__registry_storage_class_name }}"
+  name: "{{ k8s__docker_registry__storage_class_name }}"
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: kubernetes.io/no-provisioner

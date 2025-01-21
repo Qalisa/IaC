@@ -2,31 +2,32 @@
 - name: Create Persistent Volume dir path
   tags: [config-more]
   ansible.builtin.file:
-    path: "{{ iac__pv_path__registry }}"
+    path: "{{ iac__pv_path__docker_registry }}"
     state: directory
     mode: "0755"
 
-- name: Prepare registry storage + certs for HTTPS
+- name: Prepare storage / certs for HTTPS / ingress
   tags: [config-more]
   kubernetes.core.k8s:
     state: present
     template:
-      - path: templates/registry/pv.yml.j2
-      - path: templates/registry/sc.yml.j2
+      - path: templates/images-server/pv.yml.j2
+      - path: templates/images-server/sc.yml.j2
+      - path: templates/images-server/ingress.yml.j2
 
-- name: Patch registry services + config to allow HTTPS & generate cert
+- name: Patch services + config to allow HTTPS & generate cert
   tags: [config-more]
   kubernetes.core.k8s:
     state: present
     template:
-      - path: templates/registry/https-patch/service.yml.j2
-      - path: templates/registry/https-patch/config.yml.j2
-      - path: templates/registry/https-patch/server-cert.yml.j2
+      - path: templates/images-server/https-patch/service.yml.j2
+      - path: templates/images-server/https-patch/config.yml.j2
+      - path: templates/images-server/https-patch/server-cert.yml.j2
 
 # might be extensively long depending on provider
 - name: Wait for the associated certificate's secret to be generated
   tags: [config-more]
-  ansible.builtin.command: kubectl get secret {{ k8s__registry_cert_secret_name }} -n kube-system
+  ansible.builtin.command: kubectl get secret {{ k8s__docker_registry__cert_secret_name }} -n {{ docker_registry__namespace }}
   register: secret_status
   changed_when: secret_status.rc != 0
   until: secret_status.rc == 0
@@ -42,7 +43,7 @@
   tags: [config-more]
   kubernetes.core.k8s_json_patch:
     kind: ReplicaSet
-    namespace: kube-system
+    namespace: "{{ docker_registry__namespace }}"
     name: registry
     patch:
       - op: add
@@ -84,7 +85,7 @@
           - mountPath: /var/lib/registry
             name: registry-pvc
           - mountPath: /etc/docker/registry
-            name: registry-config
+            name: registry__images-server-config
           - name: certs
             mountPath: /certs
       - op: replace
@@ -95,11 +96,11 @@
               claimName: registry-pvc
           - configMap:
               defaultMode: 420
-              name: registry-config
-            name: registry-config
+              name: registry__images-server-config
+            name: registry__images-server-config
           - name: certs
             secret:
-              secretName: "{{ k8s__registry_cert_secret_name }}"
+              secretName: "{{ k8s__docker_registry__cert_secret_name }}"
 
 - name: Search for pod exact name
   tags: [config-more]
@@ -114,7 +115,7 @@
   kubernetes.core.k8s:
     api_version: v1
     kind: Pod
-    namespace: kube-system
+    namespace: "{{ docker_registry__namespace }}"
     name: "{{ pod_name_search.resources[0].metadata.name }}"
     state: absent
 
@@ -123,5 +124,11 @@
     state: absent
     api_version: v1
     kind: Ingress
-    namespace: kube-system
+    namespace: "{{ docker_registry__namespace }}"
     name: registry
+
+- name: Override with our own ingress
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/images-server/ingress.yml.j2

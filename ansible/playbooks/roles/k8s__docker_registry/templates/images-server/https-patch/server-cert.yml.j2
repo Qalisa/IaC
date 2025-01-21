@@ -1,10 +1,10 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "{{ k8s__registry_cert_secret_name }}"
-  namespace: kube-system
+  name: "{{ k8s__docker_registry__cert_secret_name }}"
+  namespace: "{{ docker_registry__namespace }}"
 spec:
-  secretName: "{{ k8s__registry_cert_secret_name }}"
+  secretName: "{{ k8s__docker_registry__cert_secret_name }}"
   duration: 24h
   renewBefore: 12h
   issuerRef:
@@ -12,4 +12,4 @@ spec:
     kind: ClusterIssuer
   commonName: "{{ cert_manager__org_ca__name }}'s org private image registry"
   dnsNames:
-    - "{{ registry__hostname }}"
+    - "{{ docker_registry__internal_hostname }}"
