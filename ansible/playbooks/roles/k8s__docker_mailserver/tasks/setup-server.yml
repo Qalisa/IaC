@@ -140,11 +140,11 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: templates/mailserver/certificate.yml.j2
+      - path: templates/certificate.yml.j2
 
 # might be extensively long depending on provider
 - name: Wait for the associated certificate's secret to be generated
-  ansible.builtin.command: kubectl get secret docker-mailserver-certs -n docker-mailserver
+  ansible.builtin.command: kubectl get secret {{ k8s__docker_mailserver__cert_secret_name }} -n docker-mailserver
   register: secret_status
   changed_when: secret_status.rc != 0
   until: secret_status.rc == 0
@@ -161,4 +161,3 @@
       - path: templates/mailserver/ldap-secret.yml.j2
       - path: templates/mailserver/service.yml.j2
       - path: templates/mailserver/deploy.yml.j2
-      - path: templates/mailserver/network-policy.yml.j2

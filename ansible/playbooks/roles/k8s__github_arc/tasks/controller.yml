@@ -3,7 +3,7 @@
   kubernetes.core.helm:
     name: arc
     chart_ref: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
-    release_namespace: "{{ k8s__github_arc_systems_ns }}"
+    release_namespace: "{{ k8s__github_arc__systems_ns }}"
     create_namespace: true
 
 - name: Generate Access Token

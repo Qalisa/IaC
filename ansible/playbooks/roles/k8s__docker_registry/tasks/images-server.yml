@@ -1,0 +1,46 @@
+---
+- name: Install Zero-Trust configuration
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/images-server/pv.yml.j2
+      - path: templates/images-server/sc.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: twuni
+    repo_url: https://helm.twun.io
+
+- name: Install docker registry w/ Helm
+  kubernetes.core.helm:
+    name: docker-registry
+    chart_ref: twuni/docker-registry
+    release_namespace: "{{ docker_registry__namespace }}"
+    create_namespace: false
+    values:
+      persistence:
+        enabled: true
+        size: 40Gi
+        storageClass: "{{ k8s__docker_registry__storage_class_name }}"
+      service:
+        type: LoadBalancer
+      ingress:
+        enabled: true
+        className: "{{ iac__ingress_nginx_class }}"
+        annotations:
+          #
+          nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+          #
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          #
+          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__docker_registry__external_hostname__images_server }}"
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+        hosts:
+          - "{{ k8s__docker_registry__external_hostname__images_server }}"
+        tls:
+          - secretName: "{{ k8s__docker_registry__cert_secret_name }}"
+            hosts:
+              - {{ k8s__docker_registry__external_hostname__images_server }}

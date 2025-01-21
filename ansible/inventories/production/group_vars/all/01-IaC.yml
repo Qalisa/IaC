@@ -90,7 +90,7 @@ minio__tenant__backup_storage__bucket_region: minio
 listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
 
 #
-docker_registry__namespace: kube-system
+docker_registry__namespace: docker-registry
 docker_registry__sld: registry
 docker_registry__internal_hostname: "{{ docker_registry__sld }}.{{ docker_registry__namespace }}"
 docker_registry__default_push_user: "{{ iac__github_org | lower }}" # must always be lowercase

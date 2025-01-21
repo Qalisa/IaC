@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gha-cache
-  namespace: "{{ k8s__github_arc_systems_ns }}"
+  namespace: "{{ k8s__github_arc__systems_ns }}"
   labels:
     app: gha-cache
 spec:

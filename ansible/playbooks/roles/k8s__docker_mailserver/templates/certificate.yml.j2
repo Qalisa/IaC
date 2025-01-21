@@ -5,7 +5,7 @@ metadata:
   name: docker-mailserver
   namespace: docker-mailserver
 spec:
-  secretName: docker-mailserver-certs
+  secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
   isCA: false
   privateKey:
     algorithm: RSA
@@ -13,6 +13,8 @@ spec:
     size: 2048
   dnsNames:
     - {{ docker_mailserver__external_hostname }}
+    - {{ k8s__docker_mailserver__external_hostname__autoconfig }}
+    - {{ k8s__docker_mailserver__external_hostname__autodiscover }}
   issuerRef:
     name: "{{ iac__unproxied_certificate_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
     kind: ClusterIssuer

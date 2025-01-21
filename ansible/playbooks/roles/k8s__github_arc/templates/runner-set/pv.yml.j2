@@ -26,7 +26,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: buildkit-cache
-  namespace: {{ k8s__github_arc_runners_ns }}
+  namespace: {{ k8s__github_arc__runners_ns }}
 spec:
   storageClassName: {{ iac__local_storage__class_name }}
   accessModes:
