@@ -54,10 +54,10 @@ containerd_registries_mirrors: # @amphaal for Qalisa's IaC
       - host: https://registry-1.docker.io
         capabilities: ["pull", "resolve"]
         skip_verify: false
-  - prefix: "{{ harbor__internal_hostname }}"
-    server: "http://{{ harbor__internal_hostname }}"
+  - prefix: "{{ harbor__registry__internal_hostname }}"
+    server: "http://{{ harbor__registry__internal_hostname }}"
     mirrors:
-      - host: "http://{{ harbor__internal_hostname }}"
+      - host: "http://{{ harbor__registry__internal_hostname }}"
         capabilities: ["pull", "resolve", "push"]
         skip_verify: true
 

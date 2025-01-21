@@ -18,8 +18,8 @@
             api_url: https://registry-1.docker.io
             defaultns: library
           - name: Org Private Registry
-            api_url: https://{{ harbor__internal_hostname }}
-            prefix: "{{ harbor__internal_hostname }}"
+            api_url: https://{{ harbor__registry__internal_hostname }}
+            prefix: "{{ harbor__registry__internal_hostname }}"
             insecure: true
             default: true
 

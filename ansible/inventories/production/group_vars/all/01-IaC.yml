@@ -96,7 +96,7 @@ listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
 harbor__namespace: harbor
 harbor__name: harbor
 harbor__sld: registry
-harbor__internal_hostname: "{{ harbor__name }}.{{ harbor__namespace }}"
+harbor__registry__internal_hostname: "{{ harbor__name }}-registry.{{ harbor__namespace }}"
 
 #
 openldap_stack__namespace: openldap-stack
