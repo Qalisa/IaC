@@ -18,72 +18,9 @@
             api_url: https://registry-1.docker.io
             defaultns: library
           - name: Harbor - {{ iac__root_domain }} Private Registry
-            api_url: https://{{ harbor__internal_hostname__registry_v2 }}
+            api_url: http://{{ harbor__internal_hostname__registry_v2 }}
             prefix: "{{ harbor__internal_hostname__registry_v2 }}"
+            # https://argocd-image-updater.readthedocs.io/en/stable/configuration/registries/#configuration-format
+            credentials: secret:{{ k8s__argo_cd__namespace }}/argocd-image-updater#PRIVATE_REGISTRY_V2_AUTH
             insecure: true
             default: true
-
-#
-#
-#
-
-- name: Read keys as raw bytes
-  ansible.builtin.slurp:
-    src: "{{ iac__generated_creds_dir }}/argocd-token.{{ argocd__account_for__argo_watcher }}.txt"
-  register: admin_token
-- name: Define admin token
-  ansible.builtin.set_fact:
-    argo_token: "{{ admin_token.content | b64decode }}"
-- name: Save Secret
-  kubernetes.core.k8s:
-    state: present
-    template:
-      - path: templates/watcher/secret.yml.j2
-
-- name: Add stable chart repo
-  tags: [image-updater]
-  kubernetes.core.helm_repository:
-    name: shini4i
-    repo_url: https://shini4i.github.io/charts/
-
-- name: Install ArgoCD Watcher w/ Helm
-  tags: [image-updater]
-  kubernetes.core.helm:
-    name: "{{ k8s__argo_cd__watcher__internal_name }}"
-    chart_ref: shini4i/argo-watcher
-    release_namespace: "{{ k8s__argo_cd__namespace }}"
-    create_namespace: true
-    wait: true
-    values:
-      argo:
-        url: http://{{ k8s__argo_cd__server_internal_hostname }}
-        # although using admin user is not a problem, we recommend creating a separate user for Argo Watcher
-        # policy.csv example:
-        # p, role:watcher, applications, get, */*, allow
-        # p, role:watcher, applications, sync, */*, allow
-        # g, watcher, role:watcher
-        # secret with ARGO_TOKEN key and optional ARGO_WATCHER_DEPLOY_TOKEN (should match ARGO_WATCHER_DEPLOY_TOKEN on client side)
-        secretName: "argo-watcher"
-      ingress:
-        enabled: true
-        className: "{{ iac__ingress_nginx_class }}"
-        annotations:
-          # when using Cloudflare's proxied DNS record
-          nginx.ingress.kubernetes.io/ssl-redirect: "false"
-          cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
-          nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-          #
-          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__argo_cd__external_hostname__watcher }}"
-          external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
-          #
-          ingress-dashboard/title: ArgoCD Watcher
-          ingress-dashboard/description: Tracks continuous delivery of generated Docker Images of CI into cluster
-          ingress-dashboard/logo-url: /favicon.ico
-          ingress-dashboard/assume-tls: "true"
-          ingress-dashboard/hide: "false"
-        hosts:
-          - host: "{{ k8s__argo_cd__external_hostname__watcher }}"
-            paths:
-              - path: /
-                pathType: ImplementationSpecific
