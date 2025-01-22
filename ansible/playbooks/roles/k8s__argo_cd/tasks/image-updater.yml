@@ -10,7 +10,7 @@
     values:
       extraArgs:
         - --interval
-        - 30s
+        - 1m0s
       config:
         registries:
           - name: Docker Hub
