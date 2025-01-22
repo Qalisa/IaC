@@ -16,7 +16,7 @@
       github_token: "{{ ansible_github_var_secrets_pat }}"
       #
       config:
-        repository_socket: "{{ harbor__registry__internal_hostname }}"
+        repository_socket: "{{ harbor__internal_hostname__registry_v2 }}"
         repository_user: "{{ harbor__registry_username }}"
         cache_path: "{{ github_arc__buildkit__local_mount_path }}"
       #

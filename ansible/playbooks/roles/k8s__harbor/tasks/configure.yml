@@ -1,7 +1,7 @@
 ---
 - name: Create private Harbor project
   ansible.builtin.uri:
-    url: "http://{{ k8s__harbor__core__internal_hostname }}/api/v2.0/projects"
+    url: "http://{{ k8s__harbor__internal_hostname__registry_v2 }}/api/v2.0/projects"
     method: POST
     headers:
       Content-Type: application/json

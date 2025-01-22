@@ -6,6 +6,6 @@ k8s__harbor__cert_name: harbor
 k8s__harbor__cert_secret_name: "{{ k8s__harbor__cert_name }}-certs"
 
 k8s__harbor__external_hostname: "{{ harbor__sld }}.{{ iac__root_domain }}"
-k8s__harbor__core__internal_hostname: "{{ harbor__name }}-core.{{ harbor__namespace }}"
+k8s__harbor__internal_hostname__api: "{{ harbor__internal_hostname__registry_v2 }}" # same as registry (see ingress)
 
 k8s__harbor__admin_username: admin
