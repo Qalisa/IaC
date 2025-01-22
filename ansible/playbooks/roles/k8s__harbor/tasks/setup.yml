@@ -62,7 +62,7 @@
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__harbor__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
             #
-            ingress-dashboard/title: Our private Docker Registry
+            ingress-dashboard/title: Harbor - Private Docker Registry
             ingress-dashboard/description: Stores our organization private Docker Images
             ingress-dashboard/logo-url: /favicon.ico
             ingress-dashboard/assume-tls: "true"
