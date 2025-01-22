@@ -63,7 +63,7 @@ containerd_registries_mirrors: # @amphaal for Qalisa's IaC
 
 # containerd_max_container_log_line_size: 16384
 
-containerd_registry_auth:
+containerd_registry_auth: # @amphaal for Qalisa's IaC
   - registry: "{{ harbor__internal_hostname__registry_v2 }}"
     username: "{{ harbor__admin_username }}"
     password: "{{ harbor__admin_password }}"
