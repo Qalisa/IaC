@@ -97,6 +97,7 @@ harbor__namespace: harbor
 harbor__name: harbor
 harbor__sld: registry
 harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}" # we need the service that responds to /v2/ path
+harbor__admin_username: admin
 
 #
 openldap_stack__namespace: openldap-stack

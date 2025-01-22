@@ -6,7 +6,7 @@
     headers:
       Content-Type: application/json
       Accept: application/json
-      Authorization: "Basic {{ (k8s__harbor__admin_username + ':' + harbor__admin_password) | b64encode }}"  # Replace with your credentials
+      Authorization: "Basic {{ (harbor__admin_username + ':' + harbor__admin_password) | b64encode }}"  # Replace with your credentials
     body_format: json
     body:
       project_name: "{{ iac__github_org | lower }}"
