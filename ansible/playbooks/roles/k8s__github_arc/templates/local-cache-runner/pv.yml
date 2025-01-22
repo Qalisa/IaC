@@ -5,9 +5,9 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: "{{ k8s__github_arc_cache_storage_class_name }}"
+  storageClassName: "{{ k8s__github_arc__cache_storage_class_name }}"
   capacity:
-    storage: "{{ k8s__github_arc_local_cache_size }}" 
+    storage: "{{ k8s__github_arc__local_cache_size }}" 
   local:
     path: {{ iac__pv_path__github_arc__cache }}
   persistentVolumeReclaimPolicy: Retain
@@ -26,11 +26,11 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: gha-cache
-  namespace: "{{ k8s__github_arc_systems_ns }}"
+  namespace: "{{ k8s__github_arc__systems_ns }}"
 spec:
-  storageClassName: {{ k8s__github_arc_cache_storage_class_name }}
+  storageClassName: {{ k8s__github_arc__cache_storage_class_name }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: "{{ k8s__github_arc_local_cache_size }}"
+      storage: "{{ k8s__github_arc__local_cache_size }}"

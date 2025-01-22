@@ -9,13 +9,13 @@
   kubernetes.core.helm:
     name: buildkit
     chart_ref: andrcuns/buildkit-service
-    release_namespace: "{{ k8s__github_arc_buildkit_ns }}"
+    release_namespace: "{{ k8s__github_arc__buildkit_ns }}"
     create_namespace: true
     wait: true
     values:
       buildkitdToml: |
         insecure-entitlements = [ "network.host", "security.insecure" ]
 
-        [registry."{{ registry__hostname }}"]
+        [registry."{{ harbor__registry__internal_hostname }}"]
         http = false
         insecure = true

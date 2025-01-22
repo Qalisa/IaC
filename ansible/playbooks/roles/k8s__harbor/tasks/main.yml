@@ -1,0 +1,6 @@
+---
+- name: Install Harbor
+  ansible.builtin.import_tasks: setup.yml
+
+- name: Configure Harbor
+  ansible.builtin.import_tasks: configure.yml

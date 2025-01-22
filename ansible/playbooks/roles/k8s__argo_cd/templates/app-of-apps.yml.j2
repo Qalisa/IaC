@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ k8s__argo_cd__app_of_apps__name }}
-  namespace: argocd
+  namespace: "{{ k8s__argo_cd__namespace }}"
   annotations:
     notifications.argoproj.io/subscribe.on-sync-running.github: ""
     notifications.argoproj.io/subscribe.on-sync-failed.github: ""
@@ -12,9 +12,9 @@ metadata:
   - resources-finalizer.argocd.argoproj.io # https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#cascading-deletion
 spec:
   destination:
-    namespace: argocd
+    namespace: "{{ k8s__argo_cd__namespace }}"
     server: https://kubernetes.default.svc
-  project: default
+  project: "{{ argocd__project_name }}"
   source:
     path: apps
     repoURL: "{{ iac__github_org_url }}/{{ argocd__app_of_apps__repo_name }}"

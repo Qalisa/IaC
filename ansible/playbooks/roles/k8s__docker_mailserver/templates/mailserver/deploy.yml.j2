@@ -152,7 +152,7 @@ spec:
         # certificates
         - name: certificates-rsa
           secret:
-            secretName: docker-mailserver-certs
+            secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
             items:
               - key: tls.key
                 path: tls.key

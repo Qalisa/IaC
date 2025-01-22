@@ -1,0 +1,74 @@
+---
+# add helm
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: harbor
+    repo_url: https://helm.goharbor.io
+
+- name: Install prerequisites (Storage class / Persistent Volume / certificate)
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/sc.yml.j2
+      - path: templates/certificate.yml.j2
+
+- name: Install Harbor w/ Helm
+  kubernetes.core.helm:
+    name: harbor
+    chart_ref: harbor/harbor
+    release_namespace: "{{ harbor__namespace }}"
+    wait: true
+    values:
+      externalURL: https://{{ k8s__harbor__external_hostname }}
+      harborAdminPassword: "{{ harbor__admin_password }}"
+      secretKey: "{{ harbor__secret_key }}" # must be 16 characters long
+      registry:
+        credentials:
+          username: "{{ harbor__registry_username }}"
+          password: "{{ harbor__registry_password }}"
+      trivy:
+        enabled: false
+      expose:
+        persistence:
+          enabled: true
+          # Setting it to "keep" to avoid removing PVCs during a helm delete
+          # operation. Leaving it empty will delete PVCs after the chart deleted
+          # (this does not apply for PVCs that are created for internal database
+          # and redis components, i.e. they are never deleted automatically)
+          resourcePolicy: ""
+          persistentVolumeClaim:
+            registry:
+              storageClass: "{{ k8s__harbor__storage_class_name }}"
+              size: 20Gi # from 5Gi
+            jobservice:
+              storageClass: "{{ k8s__harbor__storage_class_name }}"
+            database:
+              storageClass: "{{ k8s__harbor__storage_class_name }}"
+            redis:
+              storageClass: "{{ k8s__harbor__storage_class_name }}"
+            trivy:
+              storageClass: "{{ k8s__harbor__storage_class_name }}"
+        ingress:
+          className: "{{ iac__ingress_nginx_class }}"
+          hosts:
+            core: "{{ k8s__harbor__external_hostname }}"
+          annotations:
+            # note different ingress controllers may require a different ssl-redirect annotation
+            # for Envoy, use ingress.kubernetes.io/force-ssl-redirect: "true" and remove the nginx lines below
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/proxy-body-size: "0"
+            #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__harbor__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+            #
+            ingress-dashboard/title: Harbor - Private Docker Registry
+            ingress-dashboard/description: Stores our organization private Docker Images
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+        tls:
+          enabled: true
+          certSource: secret
+          secret:
+            secretName: "{{ k8s__harbor__cert_secret_name }}"

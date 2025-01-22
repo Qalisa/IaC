@@ -11,10 +11,10 @@ dashboard_enabled: false
 helm_enabled: true
 
 # Registry deployment
-registry_enabled: true
-registry_namespace: kube-system
-registry_storage_class: "local-storage-registry"
-registry_disk_size: "40Gi"
+registry_enabled: false
+# registry_namespace: kube-system
+# registry_storage_class: "local-storage-registry"
+# registry_disk_size: "40Gi"
 
 # Metrics Server deployment
 metrics_server_enabled: false

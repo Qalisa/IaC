@@ -58,10 +58,10 @@ spec:
               - op: add
                 path: "/spec/containers/{{elementIndex}}/env/-"
                 value:
-                  name: IMAGE_TAG
+                  name: "{{ kyverno__oc_label_as_env__version }}"
                   value: "{{version}}"
               - op: add
                 path: "/spec/containers/{{elementIndex}}/env/-"
                 value:
-                  name: IMAGE_COMMIT
+                  name: "{{ kyverno__oc_label_as_env__revision }}"
                   value: "{{revision}}"

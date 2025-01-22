@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gha-cache
-  namespace: "{{ k8s__github_arc_systems_ns }}"
+  namespace: "{{ k8s__github_arc__systems_ns }}"
 immutable: false
 data:
-  API_BASE_URL: "{{ k8s__github_arc_cache_url }}"
+  API_BASE_URL: "{{ k8s__github_arc__cache_url }}"

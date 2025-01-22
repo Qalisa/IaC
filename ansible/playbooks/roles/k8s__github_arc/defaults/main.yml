@@ -1,9 +1,9 @@
 ---
-k8s__github_arc_local_cache_size: 25Gi
-k8s__github_arc_cache_storage_class_name: gha-cache
-k8s__github_arc_systems_ns: arc-systems
-k8s__github_arc_runners_ns: arc-runners
-k8s__github_arc_buildkit_ns: arc-buildkit
-k8s__github_arc_cache_url: http://gha-cache.{{ k8s__github_arc_systems_ns }}:3000
-k8s__github_arc_lar_docker_image_name: local-actions-runner
-k8s__github_arc_lar_repository_url: "{{ registry__hostname }}/{{ k8s__github_arc_lar_docker_image_name }}"
+k8s__github_arc__local_cache_size: 25Gi
+k8s__github_arc__cache_storage_class_name: gha-cache
+k8s__github_arc__systems_ns: arc-systems
+k8s__github_arc__runners_ns: arc-runners
+k8s__github_arc__buildkit_ns: arc-buildkit
+k8s__github_arc__cache_url: http://gha-cache.{{ k8s__github_arc__systems_ns }}:3000
+k8s__github_arc__lar_docker_image_name: local-actions-runner
+k8s__github_arc__lar_repository_url: "{{ harbor__registry__internal_hostname }}/{{ k8s__github_arc__lar_docker_image_name }}"
