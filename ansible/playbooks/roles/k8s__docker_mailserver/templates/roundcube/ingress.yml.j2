@@ -18,7 +18,7 @@ metadata:
 spec:
   ingressClassName: "{{ iac__ingress_nginx_class }}"
   rules:
-  - host: "web{{ docker_mailserver__external_hostname }}"
+  - host: "{{ k8s__docker_mailserver__external_hostname__webmail }}"
     http:
       paths:
       - path: /
@@ -28,3 +28,28 @@ spec:
             name: roundcube
             port:
               name: app
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/permanent-redirect: https://{{ k8s__docker_mailserver__external_hostname__webmail }}
+  name: roundcube-alt
+  namespace: docker-mailserver
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "{{ docker_mailserver__external_hostname }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: roundcube
+                port:
+                  name: app
+  tls:
+    - hosts:
+        - "{{ docker_mailserver__external_hostname }}"
+      secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
