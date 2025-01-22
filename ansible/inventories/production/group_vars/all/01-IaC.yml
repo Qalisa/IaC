@@ -109,6 +109,7 @@ openldap_stack__ldap_admin_cn: cn={{ openldap_stack__ldap_admin_user }},{{ openl
 #
 argocd__account_for__github_syncer: github-syncer
 argocd__account_for__argo_watcher: watcher
+argocd__project_name: default
 
 #
 docker_mailserver__external_hostname: "{{ docker_mailserver__third_level_domain }}.{{ iac__root_domain }}"

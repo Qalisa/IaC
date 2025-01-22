@@ -78,9 +78,9 @@
                 - name: COMMIT_AUTHOR
                   value: robot@{{ iac__root_domain }}
                 - name: PROJECT_NAME
-                  value: default
+                  value: "{{ argocd__project_name }}"
                 - name: ARGO_WATCHER_URL
-                  value: http://argo-watcher.argocd
+                  value: http://{{ k8s__argo_cd__watcher__internal_name }}.{{ k8s__argo_cd__namespace }}
               volumeMounts:
                 - name: crt
                   mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls

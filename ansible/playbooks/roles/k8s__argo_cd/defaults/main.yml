@@ -1,7 +1,11 @@
 ---
 k8s__argo_cd_admin_pwd_path: "{{ iac__generated_creds_dir }}/argocd-password.admin.txt"
-k8s__argo_cd_cluster_api_url: http://argocd-server.argocd/api/v1
+k8s__argo_cd__namespace: argocd
+k8s__argo_cd__server_pod_name: argocd-server
+k8s__argo_cd__server_internal_hostname: "{{ k8s__argo_cd__server_pod_name }}.{{ k8s__argo_cd__namespace }}"
+k8s__argo_cd_cluster_api_url: http://{{ k8s__argo_cd__server_internal_hostname }}/api/v1
 k8s__argo_cd__app_of_apps__name: app-of-apps
 k8s__argo_cd__external_hostname: argocd.{{ iac__root_domain }}
 k8s__argo_cd__external_hostname__watcher: argo-watcher.{{ iac__root_domain }}
+k8s__argo_cd__watcher__internal_name: argo-watcher
 k8s__argo_cd__external_hostname_url: https://{{ k8s__argo_cd__external_hostname }}
