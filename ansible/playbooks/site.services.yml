@@ -4,4 +4,24 @@
   hosts: all
   become: true
   roles:
+    - role: k8s__cert_manager # Finish cert-manager configuration (installed along kubespray)
+    - role: k8s__external_dns # bind ingresses to DNS rules on Cloudflare
+    - role: k8s__cf_zto # allow autoconfig of CF zero trust on services
+    - role: k8s__harbor # Finish configuration of harbor (initially installed along kubespray)
+    - role: k8s__dashboard # Setup dashboard (NOT installed from kubespray since it is outdated)
+    ## - role: k8s__prometheus_stack # OPTIONAL
+    ## - role: k8s__webmin # OPTIONAL
+    ## - role: k8s__portainer_ce # OPTIONAL
+    - role: k8s__openldap
+    - role: k8s__docker_mailserver
+    ## - role: k8s__listmonk # OPTIONAL
+    ## - role: k8s__github_arc #OPTIONAL, local runners
+    ## - role: k8s__matomo # OPTIONAL
+    ## - role: k8s__hc_vault # OPTIONAL, allow secure storage of private keys
+    ## - role: k8s__sentry # OPTIONAL (careful, high resources usage !)
+    ## - role: k8s__minio # Storage Object service for storing backups and snapshots
+    ## - role: k8s__velero #
+    - role: k8s__kyverno # policies enforcement and metadata injection
     - role: k8s__argo_cd
+    ## - role: k8s__skooner # alternative dashboard for k8s
+    - role: k8s__ingress_dashboard # list all services

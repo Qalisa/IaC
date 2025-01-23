@@ -24,8 +24,9 @@ iac__donotreply_username: donotreply
 # Root OU : groupOfNames : [users CN]
 iac__ldap__groups: |-
   argocd:
-    admin:
-      - cn={{ iac__postmaster_username }}
+    - groupName: admin
+      members: 
+        - cn={{ iac__postmaster_username }}
 
 #
 sentry__usermail: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"

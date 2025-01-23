@@ -1,0 +1,41 @@
+---
+- name: Get whole config
+  ansible.builtin.set_fact:
+    ldap_config: "{{ iac__ldap__groups | from_yaml }}"
+
+- name: Create root OU
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
+    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    #
+    dn: "{{ openldap_stack__dc_query_string }}"
+    objectClass:
+      - organizationalUnit
+    attributes:
+      ou: "{{ utilities__ldap_org_unit }}"
+
+- name: Create groups, or make sure they exist
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
+    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    #
+    dn: "ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
+    objectClass:
+      - groupOfNames
+    attributes:
+      cn: "{{ item }}"
+  loop: "{{ ldap_config | json_query(utilities__ldap_org_unit + '[*].groupName') }}"
+
+- name: Add members to this group
+  community.general.ldap_attrs:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
+    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    #
+    dn: "cn={{ item.groupName }},ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
+    attributes:
+      member: "{{ item.members }}"
+    state: present # 'exact' would remove all that are not in this
+  loop: "{{ ldap_config | json_query(utilities__ldap_org_unit + '[*]') }}"
