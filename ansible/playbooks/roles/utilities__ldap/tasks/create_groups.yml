@@ -9,9 +9,8 @@
     bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
     bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
     #
-    dn: "{{ openldap_stack__dc_query_string }}"
-    objectClass:
-      - organizationalUnit
+    dn: "ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
+    objectClass: organizationalUnit
     attributes:
       ou: "{{ utilities__ldap_org_unit }}"
 
@@ -21,11 +20,12 @@
     bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
     bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
     #
-    dn: "ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
+    dn: "cn={{ item }},ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
     objectClass:
       - groupOfNames
     attributes:
       cn: "{{ item }}"
+      member: "" # defaults to no members, will fill them later on. Wont override existing
   loop: "{{ ldap_config | json_query(utilities__ldap_org_unit + '[*].groupName') }}"
 
 - name: Add members to this group
@@ -37,5 +37,5 @@
     dn: "cn={{ item.groupName }},ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
     attributes:
       member: "{{ item.members }}"
-    state: present # 'exact' would remove all that are not in this
+    state: present # 'exact' would remove all that are not in this, 'present' is the way to go
   loop: "{{ ldap_config | json_query(utilities__ldap_org_unit + '[*]') }}"
