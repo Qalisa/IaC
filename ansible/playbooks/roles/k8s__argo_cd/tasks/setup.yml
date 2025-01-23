@@ -1,10 +1,11 @@
 ---
-- name: Add stable chart repo
-  kubernetes.core.helm_repository:
-    name: argo
-    repo_url: https://argoproj.github.io/argo-helm
+- name: Install NS + Github App as Cred for Org Repositories
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/secrets.yml.j2
 
-#
 - name: Create OrgUnit + binds to users
   ansible.builtin.include_role:
     name: utilities__ldap
@@ -12,11 +13,13 @@
   vars:
     utilities__ldap_org_unit: argocd
 
+###
+###
+###
+
 - name: Define CM params
   ansible.builtin.set_fact:
     cm:
-      # Argo CD's externally facing base URL (optional). Required when configuring SSO
-      url: "{{ k8s__argo_cd__external_hostname_url }}"
       # Enables application status badge feature
       statusbadge.enabled: true
       # https://medium.com/@attilio.gualandi/how-to-set-ldap-on-argocd-b09b40dfcdf9
@@ -72,47 +75,55 @@
       # Enable self-service notifications config. Used in conjunction with apps-in-any-namespace. (default "false")
       notificationscontroller.selfservice.enabled: false
 
+- name: Define SECRETS params
+  ansible.builtin.set_fact:
+    secret:
+      # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
+      githubSecret: "{{ argocd__github_webhook_secret }}"
+      # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=configs.secret.argocdServerAdminPassword
+      argocdServerAdminPassword: "{{ k8s__argo_cd__admin_password_bcrypted }}"
+      extra:
+        ldap.bindDN: "{{ openldap_stack__ldap_admin_cn }}"
+        ldap.bindPW: "{{ openldap_stack__ldap_admin_pwd }}"
+
+###
+###
+###
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: argo
+    repo_url: https://argoproj.github.io/argo-helm
+
 - name: Install ArgoCD w/ Helm
   kubernetes.core.helm:
     name: argocd
     chart_ref: argo/argo-cd
     release_namespace: argocd
-    create_namespace: true
+    create_namespace: false
     wait: true
     values:
       global:
         domain: "{{ k8s__argo_cd__external_hostname }}"
-        # image:
-        #   tag: # v2.8.19 # enforce, because ArgoCD has an habit to break a lot of thing going upward...
-      notifications:
-        argocdUrl: "{{ k8s__argo_cd__external_hostname_url }}"
-        secret:
-          items:
-            github-privateKey: |
-              {{ argocd__github_app__priv_key }}
-        notifiers:
-          service.github: |
-            appID: "{{ argocd__github_app__app_id }}"
-            installationID: "{{ argocd__github_app__installation_id }}"
-            privateKey: $github-privateKey
-        templates: "{{ lookup('ansible.builtin.file', 'templates/github-notifications/all.yaml.gotmpl') | from_yaml }}"
       configs:
         params: "{{ params }}"
         rbac: "{{ rbac }}"
         cm: "{{ cm | ansible.builtin.combine(cm_more) }}"
-        secret:
-          # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
-          githubSecret: "{{ argocd__github_webhook_secret }}"
-          extra:
-            ldap.bindDN: "{{ openldap_stack__ldap_admin_cn }}"
-            ldap.bindPW: "{{ openldap_stack__ldap_admin_pwd }}"
+        secret: "{{ secret }}"
       certificate:
         enabled: false
+      repoServer:
+        replicas: 1
+      applicationSet:
+        replicas: 1
+      controller:
+        replicas: 1
       server:
         replicas: 1
         ingress:
           enabled: true
           ingressClassName: "{{ iac__ingress_nginx_class }}"
+          tls: false
           annotations:
             # when using Cloudflare's proxied DNS record
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
@@ -128,10 +139,18 @@
             ingress-dashboard/logo-url: /assets/favicon/favicon-32x32.png
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
-          tls: false
-      repoServer:
-        replicas: 1
-      applicationSet:
-        replicas: 1
-      controller:
-        replicas: 1
+      notifications:
+        # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.secret
+        secret:
+          items:
+            # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
+            github-privateKey: |
+              {{ argocd__github_app__priv_key }}
+        # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.notifiers
+        notifiers:
+          service.github: |
+            appID: {{ argocd__github_app__app_id | int }}
+            installationID: {{ argocd__github_app__installation_id | int }}
+            privateKey: $github-privateKey
+        # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.templates
+        templates: "{{ lookup('ansible.builtin.file', 'templates/github-notifications/all.yaml.gotmpl') | from_yaml }}"

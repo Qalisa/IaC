@@ -120,9 +120,12 @@ iac__cloudflare__account_id: "{{ vault_iac__cloudflare__account_id }}"
 iac__cloudflare__zone_id: "{{ vault_iac__cloudflare__zone_id }}"
 iac__cloudflare__api_token: "{{ vault_iac__cloudflare__api_token }}"
 
-### MAKE SURE GITHUB APP HAS BELOW RIGHTS
-# https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential
-# https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
+#
+argocd__admin_password: "{{ vault_argocd__admin_password }}"
+
+### MAKE SURE GITHUB APP HAS BELOW RIGHTS:
+# +> https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential
+# +> https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
 argocd__github_app__priv_key: "{{ vault_argocd__github_app__priv_key }}"
 
 # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
