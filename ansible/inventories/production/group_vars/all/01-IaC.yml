@@ -21,6 +21,12 @@ docker_mailserver__third_level_domain: mail
 iac__postmaster_username: postmaster
 iac__donotreply_username: donotreply
 
+# Root OU : groupOfNames : [users CN]
+iac__ldap__groups: |-
+  argocd:
+    admin:
+      - cn={{ iac__postmaster_username }}
+
 #
 sentry__usermail: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
 
@@ -41,6 +47,7 @@ listmonk__favicon_url: https://{{ iac__root_domain }}/logo.png
 
 #
 harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowercase
+
 
 ############################
 ### SHOULD NOT CUSTOMIZE ###
@@ -102,7 +109,10 @@ harbor__admin_username: admin
 #
 openldap_stack__namespace: openldap-stack
 openldap_stack__ldap_server_hostname: openldap
-openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}/
+docker_mailserver__users_group_name: email-users
+docker_mailserver__users_group_description: "{{ iac__root_domain }}'s users that have a mail account behind a password"
+openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}"
+openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_internal_hostname }}/
 openldap_stack__dc_query_string: "{{ iac__root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
 openldap_stack__ldap_admin_user: admin
 openldap_stack__ldap_admin_cn: cn={{ openldap_stack__ldap_admin_user }},{{ openldap_stack__dc_query_string }}

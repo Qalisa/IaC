@@ -11,6 +11,33 @@
       url: "{{ k8s__argo_cd__external_hostname_url }}"
       # Enables application status badge feature
       statusbadge.enabled: true
+      # https://medium.com/@attilio.gualandi/how-to-set-ldap-on-argocd-b09b40dfcdf9
+      dex.config: |
+        connectors:
+        - type: ldap
+          name: "Email"
+          id: ldap
+          config:
+            host: "{{ openldap_stack__ldap_internal_hostname }}:636"
+            insecureSkipVerify: true
+            bindDN: "$ldap.bindDN"
+            bindPW: "$ldap.bindPW"
+            usernamePrompt: Email
+            userSearch:
+              baseDN: "cn={{ docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}"
+              filter: "(objectClass=inetOrgPerson)"
+              username: mail
+              idAttr: uid
+              emailAttr: mail
+              nameAttr: uid
+              preferredUsernameAttr: uid
+            groupSearch:
+              baseDN: "ou=argocd,{{ openldap_stack__dc_query_string }} "
+              filter: "(objectClass=groupOfNames)"
+              nameAttr: cn
+              userMatchers:
+                - userAttr: DN
+                  groupAttr: member
     ### ACCOUNTS connection methods, only allow API key for Github Syncer
     cm_more: |
       {
@@ -47,6 +74,8 @@
     values:
       global:
         domain: "{{ k8s__argo_cd__external_hostname }}"
+        # image:
+        #   tag: # v2.8.19 # enforce, because ArgoCD has an habit to break a lot of thing going upward...
       notifications:
         argocdUrl: "{{ k8s__argo_cd__external_hostname_url }}"
         secret:
@@ -66,6 +95,9 @@
         secret:
           # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
           githubSecret: "{{ argocd__github_webhook_secret }}"
+          extra:
+            ldap.bindDN: "{{ openldap_stack__ldap_admin_cn }}"
+            ldap.bindPW: "{{ openldap_stack__ldap_admin_pwd }}"
       certificate:
         enabled: false
       server:

@@ -53,9 +53,9 @@ By default, only 2 users are created: `postmaster` and `donotreply`, which are r
 - Create a new user, and make sure that these fields are filled:
   - `Personnal` > `Last name`, which might be the username
   - `Personnal` > `Email address`, which is used as email username, and should look like `<Last name>@<root_domain>`
-  - `Unix` > `Primary Group` to `Email Users`
+  - `Unix` > `Primary Group` to `email-users`
   - `Set Password` button to define a temporary password, that the user should change by using `https://pwd-ldap.<root_domain>`
   - use webmail service, or any e-mail client (`https://webmail.<root_domain>`)
 
 ### Edge case on IaC's `docker-mailserver` reinstall (see #8)
-Once `docker-mailserver` installed along OpenLDAP services, users wont be able to access their mails anymore, but still be able to login. That's because their owner `uid` has been replaced by `Email Users` `guid` as primary owner of their folders containing mail data. To fix this, you might want to run the VSCode task `✅ mailserver: Ensure Mail Accounts Folder Permissions`.
+Once `docker-mailserver` installed along OpenLDAP services, users wont be able to access their mails anymore, but still be able to login. That's because their owner `uid` has been replaced by `email-users` `guid` as primary owner of their folders containing mail data. To fix this, you might want to run the VSCode task `✅ mailserver: Ensure Mail Accounts Folder Permissions`.
