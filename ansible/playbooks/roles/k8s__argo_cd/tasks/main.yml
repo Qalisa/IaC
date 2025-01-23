@@ -8,8 +8,11 @@
 #
 #
 
-- name: Install Image Updater
+- name: Install Argocd Image Updater
   ansible.builtin.import_tasks: image-updater.yml
+
+- name: Install Argo Watcher
+  ansible.builtin.import_tasks: watcher.yml
 
 #
 #

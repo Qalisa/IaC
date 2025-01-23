@@ -7,7 +7,7 @@
     bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
     bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
     #
-    dn: "cn={{ k8s__docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}"
+    dn: "cn={{ docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}"
     scope: "onelevel"
     attrs:
       - uidNumber

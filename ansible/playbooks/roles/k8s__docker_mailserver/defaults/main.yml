@@ -7,8 +7,8 @@ k8s__docker_mailserver__external_hostname__autodiscover: autodiscover.{{ iac__ro
 k8s__docker_mailserver__external_hostname__webmail: webmail.{{ iac__root_domain }}
 
 # Email users (possibly POSTFIX + DOVECOT, eg sending AND receiving email)
+# SHOULD MATCH GID of docker-mailserver's dovecot id group, which create folder structure for IMAP users
 k8s__docker_mailserver__users_group_id: 5000
-k8s__docker_mailserver__users_group_name: Email Users
 
 # might disable this behavior if using self-signed / staging certificates
 k8s__docker_mailserver_roundcube_check_mailserver_certs: true
