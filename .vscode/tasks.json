@@ -123,41 +123,24 @@
         //
         //
         {
-            "label": "🚀 Install: whole site !",
+            "label": "🚀 Install: K8s",
             "type": "shell",
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/site.yml"
+                "ansible/playbooks/site.kubespray.yml"
             ],
             "options": {
                 "statusbar": {
-                    "hide": true
+                    "hide": false
                 }
             },
             "problemMatcher": []
         },
         {
-            "label": "🚀 Install: K8s only",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.kubernetes.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "🚀 Install: Services Only",
+            "label": "🚀 Install: Services",
             "type": "shell",
             "command": [
                 "ansible-playbook",

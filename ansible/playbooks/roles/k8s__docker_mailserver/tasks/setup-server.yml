@@ -17,7 +17,7 @@
 
 # - name: Generate password hash for postmaster
 #   ansible.builtin.command: |
-#     kubectl run -n docker-mailserver -it --rm --restart=Never \
+#     kubectl run -n {{ docker_mailserver__namespace }} -it --rm --restart=Never \
 #     --image ghcr.io/docker-mailserver/docker-mailserver:latest temp-docker-mailserver \
 #     -- /bin/bash -c 'doveadm pw -s SHA512-CRYPT -u {{ iac__postmaster_email }} -p {{ iac__postmaster_password }}'
 #   register: postmaster_pw_hash
@@ -144,7 +144,7 @@
 
 # might be extensively long depending on provider
 - name: Wait for the associated certificate's secret to be generated
-  ansible.builtin.command: kubectl get secret {{ k8s__docker_mailserver__cert_secret_name }} -n docker-mailserver
+  ansible.builtin.command: kubectl get secret {{ k8s__docker_mailserver__cert_secret_name }} -n {{ docker_mailserver__namespace }}
   register: secret_status
   changed_when: secret_status.rc != 0
   until: secret_status.rc == 0

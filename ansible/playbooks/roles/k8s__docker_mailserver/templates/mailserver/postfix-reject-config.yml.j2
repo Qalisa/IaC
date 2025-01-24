@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: postfix-reject
-  namespace: docker-mailserver
+  namespace: "{{ docker_mailserver__namespace }}"
 immutable: false
 data:
   header_checks.pcre: |

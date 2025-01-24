@@ -38,7 +38,7 @@ Make sure you are locally logged on `git` w/ a registered account using :
   - Customize `./ansible/inventories/production/group_vars/all/01-IaC.yml` as needed
   - (Optional) Encrypt `./ansible/inventories/group_vars/all/vault` using VSCode Task `🔒 Ansible Vault: Encrypt`
 - (Optional) You might want to opt-out of certain services by commenting roles within `./ansible/playbooks/site.yml`
-- Launch VSCode Task `🚀 Install: whole site !`
+- Launch VSCode Tasks `🚀 Install: K8s`, then `🚀 Install: Services`
 
 ### How to upgrade from latest kubespray
 - Launch VSCode Task `⛏🔄 Upgrade Ansible requirements`

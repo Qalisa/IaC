@@ -32,7 +32,7 @@
       - top
       - posixGroup
     attributes:
-      gidnumber: "{{ k8s__docker_mailserver__users_group_id }}"
+      gidnumber: "{{ docker_mailserver__users_group_id }}"
       description: "{{ docker_mailserver__users_group_description }}"
 
 #
@@ -48,7 +48,7 @@
       - posixAccount
       - inetOrgPerson
     attributes:
-      gidnumber: "{{ k8s__docker_mailserver__users_group_id }}"
+      gidnumber: "{{ docker_mailserver__users_group_id }}"
       homedirectory: /home/users/{{ item.username }}
       mail:
         # - "{{ item.username }}"

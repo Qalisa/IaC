@@ -1,0 +1,12 @@
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: MX
+  namespace: "{{ docker_mailserver__namespace }}"
+spec:
+  endpoints:
+    - dnsName: "{{ iac__root_domain }}"
+      recordTTL: 1                # 1 is the "Auto" TTL value for Cloudflare
+      recordType: MX
+      targets:
+        - 10 {{ docker_mailserver__external_hostname }} # <priority> <mail_host>

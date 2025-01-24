@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: proxy
-  namespace: docker-mailserver
+  namespace: "{{ docker_mailserver__namespace }}"
   labels:
-    app: docker-mailserver
+    app: "{{ docker_mailserver__server_label }}"
 spec:
   selector:
-    app: docker-mailserver
+    app: "{{ docker_mailserver__server_label }}"
   ports:
     # smtp
     - name: smtp-proxy

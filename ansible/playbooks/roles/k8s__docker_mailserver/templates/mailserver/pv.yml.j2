@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: docker-mailserver
+  name: "{{ docker_mailserver__server_hostname }}"
   labels:
     type: local
 spec:
@@ -25,8 +25,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: docker-mailserver
-  namespace: docker-mailserver
+  name: "{{ docker_mailserver__server_hostname }}"
+  namespace: "{{ docker_mailserver__namespace }}"
 spec:
   storageClassName: {{ iac__local_storage__class_name }}
   accessModes:

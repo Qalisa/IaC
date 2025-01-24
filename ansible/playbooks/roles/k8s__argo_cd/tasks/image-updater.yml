@@ -18,7 +18,7 @@
             api_url: https://registry-1.docker.io
             defaultns: library
           - name: Harbor - {{ iac__root_domain }} Private Registry
-            api_url: http://{{ harbor__internal_hostname__registry_v2 }}
+            api_url: "{{ harbor__internal_hostname__registry_v2__url }}"
             prefix: "{{ harbor__internal_hostname__registry_v2 }}"
             # https://argocd-image-updater.readthedocs.io/en/stable/configuration/registries/#configuration-format
             credentials: secret:{{ argo_cd__namespace }}/argocd-image-updater#PRIVATE_REGISTRY_V2_AUTH

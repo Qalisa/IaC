@@ -20,6 +20,6 @@
   ansible.builtin.file:
     path: "{{ iac__pv_path__docker_mailserver }}/data/{{ item.homeDirectory | split('/') | last }}"
     owner: "{{ item.uidNumber }}"
-    group: "{{ k8s__docker_mailserver__users_group_id }}"
+    group: "{{ docker_mailserver__users_group_id }}"
     recurse: true
     state: directory

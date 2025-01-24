@@ -7,8 +7,8 @@ metadata:
   name: tcp-services
   namespace: ingress-nginx
 data:
-  25:  "docker-mailserver/docker-mailserver:25" # removed ::PROXY
-  465: "docker-mailserver/docker-mailserver:465" # removed ::PROXY
-  587: "docker-mailserver/docker-mailserver:587" # removed ::PROXY
-  143: "docker-mailserver/docker-mailserver:143" # removed ::PROXY
-  993: "docker-mailserver/docker-mailserver:993" # removed ::PROXY
+  25:  "{{ docker_mailserver__namespace }}/{{ docker_mailserver__server_hostname }}:25" # removed ::PROXY
+  465: "{{ docker_mailserver__namespace }}/{{ docker_mailserver__server_hostname }}:465" # removed ::PROXY
+  587: "{{ docker_mailserver__namespace }}/{{ docker_mailserver__server_hostname }}:587" # removed ::PROXY
+  143: "{{ docker_mailserver__namespace }}/{{ docker_mailserver__server_hostname }}:143" # removed ::PROXY
+  993: "{{ docker_mailserver__namespace }}/{{ docker_mailserver__server_hostname }}:993" # removed ::PROXY

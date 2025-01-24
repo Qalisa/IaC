@@ -1,7 +1,7 @@
 ---
 - name: Create private Harbor project
   ansible.builtin.uri:
-    url: "http://{{ k8s__harbor__internal_hostname__registry_v2 }}/api/v2.0/projects"
+    url: "{{ harbor__internal_hostname__registry_v2__url }}/api/v2.0/projects"
     method: POST
     headers:
       Content-Type: application/json
@@ -12,7 +12,7 @@
       project_name: "{{ iac__github_org | lower }}"
       metadata:
         public: "false"
-    validate_certs: true  # Set to yes if using valid certificates
+    validate_certs: false
     status_code:
       - 201 # created
       - 409 # conflict, means it exists

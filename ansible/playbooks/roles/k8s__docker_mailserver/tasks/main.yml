@@ -1,8 +1,5 @@
 ---
-- name: Configure LDAP accounts
-  ansible.builtin.import_tasks: config-ldap.yml
-
-- name: Setup docker-mailserver services
+- name: Setup Server
   ansible.builtin.import_tasks: setup-server.yml
 
 - name: Configure DNS records
@@ -13,6 +10,9 @@
 
 - name: Setup roundcube services
   ansible.builtin.import_tasks: setup-roundcube.yml
+
+##
+##
 
 - name: Ensure Email accounts folder correct permissions
   ansible.builtin.import_tasks: users-acc-ensure-permissions.yml

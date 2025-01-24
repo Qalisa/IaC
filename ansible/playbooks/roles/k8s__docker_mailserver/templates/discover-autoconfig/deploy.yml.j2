@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: docker-mailserver-discover-autoconfig
-  namespace: docker-mailserver
+  name: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
+  namespace: "{{ docker_mailserver__namespace }}"
 spec:
   selector:
     matchLabels:
-      app: docker-mailserver-discover-autoconfig
+      app: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
   template:
     metadata:
       labels:
-        app: docker-mailserver-discover-autoconfig
+        app: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
     spec:
       containers:
-        - name: docker-mailserver-discover-autoconfig
+        - name: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
           image: monogramm/autodiscover-email-settings:latest
           imagePullPolicy: IfNotPresent
           ports:
@@ -22,5 +22,5 @@ spec:
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: docker-mailserver-discover-autoconfig
+                name: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
       restartPolicy: Always

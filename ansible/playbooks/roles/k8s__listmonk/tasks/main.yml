@@ -99,7 +99,7 @@
         - uuid: ""
           enabled: true
           port: 587
-          host: docker-mailserver.docker-mailserver
+          host: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}"
           hello_hostname: "{{ docker_mailserver__external_hostname }}"
           auth_protocol: login
           tls_type: STARTTLS

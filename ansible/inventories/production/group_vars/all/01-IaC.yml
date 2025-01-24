@@ -105,13 +105,22 @@ harbor__namespace: harbor
 harbor__name: harbor
 harbor__sld: registry
 harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}" # we need the service that responds to /v2/ path
+harbor__internal_hostname__registry_v2__url: https://{{ harbor__internal_hostname__registry_v2 }}
 harbor__admin_username: admin
+
+#
+docker_mailserver__namespace: docker-mailserver
+docker_mailserver__server_hostname: docker-mailserver
+docker_mailserver__server_label: docker-mailserver
+docker_mailserver__users_group_name: email-users
+docker_mailserver__users_group_description: "{{ iac__root_domain }}'s users that have a mail account behind a password"
+# Email users (possibly POSTFIX + DOVECOT, eg sending AND receiving email)
+# SHOULD MATCH GID of docker-mailserver's dovecot id group, which create folder structure for IMAP users
+docker_mailserver__users_group_id: 5000
 
 #
 openldap_stack__namespace: openldap-stack
 openldap_stack__ldap_server_hostname: openldap
-docker_mailserver__users_group_name: email-users
-docker_mailserver__users_group_description: "{{ iac__root_domain }}'s users that have a mail account behind a password"
 openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}"
 openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_internal_hostname }}/
 openldap_stack__dc_query_string: "{{ iac__root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
