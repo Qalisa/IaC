@@ -16,3 +16,29 @@ spec:
   issuerRef:
     name: "{{ iac__unproxied_certificate_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
     kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ k8s__harbor__internal_tls_secret_name }}"
+  namespace: "{{ harbor__namespace }}"
+spec:
+  secretName: "{{ k8s__harbor__internal_tls_secret_name }}"
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  dnsNames:
+    - localhost
+    - "{{ harbor__name }}-core"
+    - "{{ harbor__name }}-jobservice"
+    - "{{ harbor__name }}-portal"
+    - "{{ harbor__name }}-registry"
+    - "{{ harbor__name }}-core.{{ harbor__namespace }}"
+    - "{{ harbor__name }}-jobservice.{{ harbor__namespace }}"
+    - "{{ harbor__name }}-portal.{{ harbor__namespace }}"
+    - "{{ harbor__name }}-registry.{{ harbor__namespace }}"
+  issuerRef:
+    name: "{{ cert_manager__org_ca__name }}"
+    kind: ClusterIssuer

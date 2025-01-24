@@ -22,6 +22,15 @@
     values:
       internalTLS:
         enabled: true # without this, we cannot leverage containerd inner service repository fetching (requires HTTPS endpoint !)
+        certSource: secret
+        core:
+          secretName: "{{ k8s__harbor__internal_tls_secret_name }}"
+        jobservice:
+          secretName: "{{ k8s__harbor__internal_tls_secret_name }}"
+        registry:
+          secretName: "{{ k8s__harbor__internal_tls_secret_name }}"
+        portal:
+          secretName: "{{ k8s__harbor__internal_tls_secret_name }}"
       externalURL: https://{{ k8s__harbor__external_hostname }}
       harborAdminPassword: "{{ harbor__admin_password }}"
       secretKey: "{{ harbor__secret_key }}" # must be 16 characters long
