@@ -21,6 +21,12 @@
             "default": "",
             "type": "promptString"
         },
+        {
+            "id": "imageToPull",
+            "description": "Registry path (like \"harbor-core.harbor/<org>/<image>:<tag>\")",
+            "default": "",
+            "type": "promptString"
+        }
     ],
     "tasks": [
         {
@@ -41,6 +47,19 @@
             "type": "shell",
             "command": [
                 "helm uninstall ${input:helmPackage} -n ${input:helmNamespace}"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Try to pull from private registry",
+            "type": "shell",
+            "command": [
+                "systemctl restart containerd && crictl -r /run/containerd/containerd.sock pull ${input:imageToPull}"
             ],
             "options": {
                 "statusbar": {

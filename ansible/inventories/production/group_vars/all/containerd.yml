@@ -55,9 +55,9 @@ containerd_registries_mirrors: # @amphaal for Qalisa's IaC
         capabilities: ["pull", "resolve"]
         skip_verify: false
   - prefix: "{{ harbor__internal_hostname__registry_v2 }}"
-    server: "http://{{ harbor__internal_hostname__registry_v2 }}"
+    server: "https://{{ harbor__internal_hostname__registry_v2 }}"
     mirrors:
-      - host: "http://{{ harbor__internal_hostname__registry_v2 }}"
+      - host: "https://{{ harbor__internal_hostname__registry_v2 }}"
         capabilities: ["pull", "resolve", "push"]
         skip_verify: true
 

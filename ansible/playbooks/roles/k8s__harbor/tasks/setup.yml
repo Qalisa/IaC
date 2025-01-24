@@ -20,6 +20,8 @@
     release_namespace: "{{ harbor__namespace }}"
     wait: true
     values:
+      internalTLS:
+        enabled: true # without this, we cannot leverage containerd inner service repository fetching (requires HTTPS endpoint !)
       externalURL: https://{{ k8s__harbor__external_hostname }}
       harborAdminPassword: "{{ harbor__admin_password }}"
       secretKey: "{{ harbor__secret_key }}" # must be 16 characters long
