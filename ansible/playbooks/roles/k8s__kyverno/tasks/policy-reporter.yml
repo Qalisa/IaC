@@ -19,11 +19,10 @@
     create_namespace: true
     wait: true
     values:
-      kyvernoPlugin:
-        enabled: true
+      plugin:
+        kyverno:
+          enabled: true
       ui:
-        plugins:
-          kyverno: true
         enabled: true
         ingress:
           enabled: true

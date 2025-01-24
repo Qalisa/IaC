@@ -1,4 +1,22 @@
 ---
+- name: Create namespace
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/ns.yml.j2
+
+- name: May create secret
+  register: secret
+  changed_when: secret.rc != 0
+  failed_when: false # replacement for ignore_errors
+  ansible.builtin.command: |
+    kubectl create secret docker-registry
+      harbor-creds
+      --namespace={{ k8s__kyverno__namespace }}
+      --docker-server={{ harbor__internal_hostname__registry_v2 }}
+      --docker-username={{ harbor__admin_username }}
+      --docker-password={{ harbor__admin_password }}
+
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: kyverno
@@ -8,10 +26,13 @@
   kubernetes.core.helm:
     name: trust-manager
     chart_ref: kyverno/kyverno
-    release_namespace: kyverno
-    create_namespace: true
+    release_namespace: "{{ k8s__kyverno__namespace }}"
+    create_namespace: false
     wait: true
     values:
+      global:
+        imagePullSecrets:
+          - harbor-creds
       features:
         registryClient:
           allowInsecure: true
