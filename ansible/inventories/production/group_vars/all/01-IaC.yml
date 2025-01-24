@@ -119,8 +119,10 @@ openldap_stack__ldap_admin_user: admin
 openldap_stack__ldap_admin_cn: cn={{ openldap_stack__ldap_admin_user }},{{ openldap_stack__dc_query_string }}
 
 #
+argo_cd__namespace: argocd
 argocd__account_for__github_syncer: github-syncer
 argocd__account_for__argo_watcher: watcher
+argo_cd__jwt_tokens_secret: accounts-immortal-jwt
 argocd__project_name: default
 
 #

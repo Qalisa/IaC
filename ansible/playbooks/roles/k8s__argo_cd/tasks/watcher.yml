@@ -1,12 +1,16 @@
 ---
-- name: Read keys as raw bytes
-  ansible.builtin.slurp:
-    src: "{{ iac__generated_creds_dir }}/argocd-token.{{ argocd__account_for__argo_watcher }}.txt"
-  register: admin_token
-- name: Define admin token
+- name: Get JWT Secrets
+  kubernetes.core.k8s_info:
+    kind: Secret
+    name: "{{ argo_cd__jwt_tokens_secret }}"
+    namespace: "{{ argo_cd__namespace }}"
+  register: jwt_secrets
+
+- name: Put JWT into variable
   ansible.builtin.set_fact:
-    argo_token: "{{ admin_token.content | b64decode }}"
-- name: Save Secret
+    jwt_token: "{{ jwt_secrets.resources[0].data[argocd__account_for__argo_watcher] }}"
+
+- name: Save Watcher Secret with JWT token
   kubernetes.core.k8s:
     state: present
     template:
@@ -23,7 +27,7 @@
   kubernetes.core.helm:
     name: "{{ k8s__argo_cd__watcher__internal_name }}"
     chart_ref: shini4i/argo-watcher
-    release_namespace: "{{ k8s__argo_cd__namespace }}"
+    release_namespace: "{{ argo_cd__namespace }}"
     create_namespace: true
     wait: true
     values:

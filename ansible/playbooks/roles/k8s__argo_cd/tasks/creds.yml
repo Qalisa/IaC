@@ -1,27 +1,20 @@
 ---
-- name: Login as "admin" user
-  tags: [creds]
-  block:
-    - name: Get ArgoCD authentication token
-      ansible.builtin.uri:
-        url: "{{ k8s__argo_cd_cluster_api_url }}/session"
-        validate_certs: false
-        method: POST
-        body_format: json
-        body:
-          username: "admin"
-          password: "{{ k8s__argo_cd__admin_password_bcrypted | b64decode }}"
-      register: argocd_auth_response
-    - name: Define "admin" session token
-      ansible.builtin.set_fact:
-        admin_bearer: "{{ argocd_auth_response.json.token }}"
+- name: Get ArgoCD authentication token
+  ansible.builtin.uri:
+    url: "{{ k8s__argo_cd_cluster_api_url }}/session"
+    validate_certs: false
+    method: POST
+    body_format: json
+    body:
+      username: "admin"
+      password: "{{ argocd__admin_password }}"
+  register: argocd_auth_response
 
 ##
-- name: Generate tokens into files
-  tags: [creds]
+- name: Generate tokens into Secret
   ansible.builtin.include_tasks: _helper.generate-token.yml
   vars:
-    bearer: "{{ admin_bearer }}"
+    bearer: "{{ argocd_auth_response.json.token }}"
   loop:
     - username: "{{ argocd__account_for__github_syncer }}"
     - username: "{{ argocd__account_for__argo_watcher }}"

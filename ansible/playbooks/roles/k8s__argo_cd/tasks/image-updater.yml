@@ -4,7 +4,7 @@
   kubernetes.core.helm:
     name: argocd-image-updater
     chart_ref: argo/argocd-image-updater
-    release_namespace: "{{ k8s__argo_cd__namespace }}"
+    release_namespace: "{{ argo_cd__namespace }}"
     create_namespace: false
     wait: false
     values:
@@ -21,6 +21,6 @@
             api_url: http://{{ harbor__internal_hostname__registry_v2 }}
             prefix: "{{ harbor__internal_hostname__registry_v2 }}"
             # https://argocd-image-updater.readthedocs.io/en/stable/configuration/registries/#configuration-format
-            credentials: secret:{{ k8s__argo_cd__namespace }}/argocd-image-updater#PRIVATE_REGISTRY_V2_AUTH
+            credentials: secret:{{ argo_cd__namespace }}/argocd-image-updater#PRIVATE_REGISTRY_V2_AUTH
             insecure: true
             default: true
