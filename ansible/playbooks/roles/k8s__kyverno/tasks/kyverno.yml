@@ -24,7 +24,7 @@
 
 - name: Install kyverno w/ Helm
   kubernetes.core.helm:
-    name: trust-manager
+    name: kyverno
     chart_ref: kyverno/kyverno
     release_namespace: "{{ k8s__kyverno__namespace }}"
     create_namespace: false
@@ -32,7 +32,7 @@
     values:
       global:
         imagePullSecrets:
-          - harbor-creds
+          - name: harbor-creds
       features:
         registryClient:
           allowInsecure: true
