@@ -4,6 +4,10 @@ Losely based on kubespray repo default params (https://github.com/kubernetes-sig
 Ansible directory layout follows best practices (https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#directory-layout).
 
 ## How-To use (on server)
+
+### Requirements and considerations
+IaC must be installed on an Ubuntu / Debian system. Has been tested only on-site with a SSH session, not remotely using ansible host.
+
 ### Recommanded
 Using VSCode is recommanded.
 - Connect to remote server using `ms-vscode-remote.remote-ssh` extension. 

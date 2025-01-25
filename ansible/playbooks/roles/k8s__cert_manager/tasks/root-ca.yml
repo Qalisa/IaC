@@ -1,4 +1,7 @@
 ---
+#
+# Generate Bundle
+#
 - name: Update NS so we allow bundle to expose secrets within it
   kubernetes.core.k8s:
     state: present
@@ -59,13 +62,27 @@
     state: directory
     mode: '0755'
 
-- name: Save the certificate to /usr/local/share/ca-certificates
+- name: Save the certificate
   ansible.builtin.copy:
     content: "{{ certificate }}"
-    dest: "{{ cert_dest }}"
+    dest: "/usr/local/share/ca-certificates/{{ iac__root_domain }}-bundle.crt"
     mode: '0755'
 
 - name: Update CA certificates
   changed_when: updated.rc != 0
   register: updated
   ansible.builtin.command: update-ca-certificates
+
+#
+# Ack new CA certificates
+#
+
+- name: Restart containerd
+  ansible.builtin.service:
+    name: containerd
+    state: restarted
+
+- name: Restart kubelet
+  ansible.builtin.service:
+    name: kubelet
+    state: restarted
