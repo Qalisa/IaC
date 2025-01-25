@@ -45,6 +45,10 @@
     dkim_txt: |
       {{ dkim_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}
 
+##
+##
+##
+
 - name: Install ClusterIssuers (prod + staging)
   kubernetes.core.k8s:
     state: present

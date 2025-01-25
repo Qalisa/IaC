@@ -15,19 +15,3 @@
         enabled: true
         authorizedSecrets:
           - "{{ cert_manager__org__root_ca__bundle }}"
-
-- name: Wait for pod to become ready
-  ansible.builtin.command: |
-    kubectl wait
-    pods -l app.kubernetes.io/name=trust-manager
-    --namespace={{ cert_manager__namespace }}
-    --for=condition=Ready
-    --timeout=120s
-  register: pods_ready
-  changed_when: pods_ready.rc != 0
-
-- name: Install CA Bundles
-  kubernetes.core.k8s:
-    state: present
-    template:
-      - path: templates/ca-bundles/default.yml.j2

@@ -142,7 +142,7 @@
     template:
       - path: templates/certificate.yml.j2
 
-# might be extensively long depending on provider
+# might be extensively long depending on Issuer
 - name: Wait for the associated certificate's secret to be generated
   ansible.builtin.command: kubectl get secret {{ k8s__docker_mailserver__cert_secret_name }} -n {{ docker_mailserver__namespace }}
   register: secret_status

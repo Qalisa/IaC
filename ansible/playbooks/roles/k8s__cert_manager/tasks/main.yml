@@ -1,6 +1,9 @@
 ---
-- name: Install issuers
+- name: Install ClusterIssuers
   ansible.builtin.import_tasks: issuers.yml
 
 - name: Install trust-manager
   ansible.builtin.import_tasks: trust-manager.yml
+
+- name: Create bundle for Root CA and make it known
+  ansible.builtin.import_tasks: root-ca.yml

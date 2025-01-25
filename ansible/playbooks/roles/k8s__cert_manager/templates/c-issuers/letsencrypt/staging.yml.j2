@@ -19,5 +19,5 @@ spec:
       - dns01:
           cloudflare:
             apiTokenSecretRef:
-              name: cloudflare-api-token-secret
-              key: api-token
+              name: "{{ k8s__cert_manager__dns01__solver_secret }}"
+              key: "{{ k8s__cert_manager__dns01__solver_secret_key }}"
