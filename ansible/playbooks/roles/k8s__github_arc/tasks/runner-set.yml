@@ -95,7 +95,7 @@
                 claimName: buildkit-cache
             - name: crt
               secret:
-                secretName: "{{ cert_manager__org_ca__cert_secret_name }}"
+                secretName: "{{ cert_manager__org__root_ca__bundle }}"
             - name: work
               ephemeral:
                 volumeClaimTemplate:

@@ -6,7 +6,7 @@ metadata:
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
+    cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__listmonk__external_hostname }}"

@@ -5,13 +5,13 @@
     name: harbor
     repo_url: https://helm.goharbor.io
 
-- name: Install prerequisites (Storage class / Persistent Volume / certificate)
+- name: Install prerequisites (Storage class / Persistent Volume / certificates)
   kubernetes.core.k8s:
     state: present
     template:
       - path: templates/ns.yml.j2
       - path: templates/sc.yml.j2
-      - path: templates/certificate.yml.j2
+      - path: templates/certificates.yml.j2
 
 - name: Install Harbor w/ Helm
   kubernetes.core.helm:

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: cloudflare-api-token-secret
-  namespace: cert-manager
+  namespace: "{{ cert_manager__namespace }}"
 type: Opaque
 stringData:
   api-token: "{{ iac__cloudflare__api_token }}"

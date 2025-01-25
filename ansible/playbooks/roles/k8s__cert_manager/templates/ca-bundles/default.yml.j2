@@ -1,16 +1,18 @@
 apiVersion: trust.cert-manager.io/v1alpha1
 kind: Bundle
 metadata:
-  name: "{{ cert_manager__org_ca__cert_secret_name }}"
+  name: "{{ cert_manager__org__root_ca__bundle }}"
 spec:
   sources:
-    - useDefaultCAs: true
+    - useDefaultCAs: true # include default trusted CAs
+    # include our own root
     - secret:
-        name: "ca-secret.{{ cert_manager__org_ca__name }}"
+        name: "{{ cert_manager__org__root_ca }}"
         key: ca.crt
   target:
     secret:
       key: ca.crt
+    # make it available to namespaces with said labels
     namespaceSelector:
       matchLabels:
         trust: enabled

@@ -61,8 +61,10 @@ iac__master_node_name: node1
 iac__ingress_nginx_class: nginx
 
 #
-cert_manager__org_ca__name: selfsigned
-cert_manager__org_ca__cert_secret_name: "trust-manager.{{ cert_manager__org_ca__name }}"
+cert_manager__namespace: cert-manager # kubespray's default
+cert_manager__org__issuer: selfsigned # dummy issuer; issues Org Root CA + dummy certificates
+cert_manager__org__root_ca: "{{ iac__root_domain }}_root-ca"
+cert_manager__org__root_ca__bundle: "{{ cert_manager__org__root_ca }}.bundle" #default, bundled CAs for a system to trust, including our own root cert
 
 # where generated passwords and other tokens are to be stored while generating services
 iac__generated_creds_dir: "{{ playbook_dir ~ '/../../creds' }}"

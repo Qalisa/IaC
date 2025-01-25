@@ -8,19 +8,19 @@
   kubernetes.core.helm:
     name: trust-manager
     chart_ref: jetstack/trust-manager
-    release_namespace: cert-manager
+    release_namespace: "{{ cert_manager__namespace }}"
     create_namespace: false
     values:
       secretTargets:
         enabled: true
         authorizedSecrets:
-          - "{{ cert_manager__org_ca__cert_secret_name }}"
+          - "{{ cert_manager__org__root_ca__bundle }}"
 
 - name: Wait for pod to become ready
   ansible.builtin.command: |
     kubectl wait
     pods -l app.kubernetes.io/name=trust-manager
-    --namespace=cert-manager
+    --namespace={{ cert_manager__namespace }}
     --for=condition=Ready
     --timeout=120s
   register: pods_ready

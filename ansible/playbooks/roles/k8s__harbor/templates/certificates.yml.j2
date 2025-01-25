@@ -40,5 +40,5 @@ spec:
     - "{{ harbor__name }}-portal.{{ harbor__namespace }}"
     - "{{ harbor__name }}-registry.{{ harbor__namespace }}"
   issuerRef:
-    name: "{{ cert_manager__org_ca__name }}"
+    name: "{{ cert_manager__org__issuer }}"
     kind: ClusterIssuer

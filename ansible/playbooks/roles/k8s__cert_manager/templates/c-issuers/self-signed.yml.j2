@@ -1,4 +1,5 @@
 # A dummy issuer that can generate certificates
+# Its sole purpose is to issue our Org Root Certificate
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -10,12 +11,12 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "{{ cert_manager__org_ca__name }}-ca"
-  namespace: cert-manager
+  name: "{{ cert_manager__org__root_ca }}"
+  namespace: "{{ cert_manager__namespace }}"
 spec:
   isCA: true
-  commonName: "{{ cert_manager__org_ca__name }}'s org Root CA"
-  secretName: "ca-secret.{{ cert_manager__org_ca__name }}"
+  commonName: "{{ iac__root_domain }}'s org Root CA"
+  secretName: "{{ cert_manager__org__root_ca }}"
   privateKey:
     algorithm: ECDSA
     size: 256
@@ -29,7 +30,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: "{{ cert_manager__org_ca__name }}"
+  name: "{{ cert_manager__org__issuer }}"
 spec:
   ca:
-    secretName: "ca-secret.{{ cert_manager__org_ca__name }}"
+    secretName: "{{ cert_manager__org__root_ca }}"
