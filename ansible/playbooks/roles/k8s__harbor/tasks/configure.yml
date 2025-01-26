@@ -1,4 +1,16 @@
 ---
+- name: Check Harbor API health
+  ansible.builtin.uri:
+    url: "{{ harbor__internal_hostname__registry_v2__url }}/api/v2.0/health"
+    method: GET
+    return_content: true
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 20
+  delay: 5
+  ignore_errors: true
+
 - name: Create private Harbor project
   ansible.builtin.uri:
     url: "{{ harbor__internal_hostname__registry_v2__url }}/api/v2.0/projects"

@@ -1,6 +1,7 @@
 api_version: v1
 kind: Namespace
-  labels:
-    trust: enabled # makes the default Org Root CA available within this namespace's Secrets
 metadata:
     name: "{{ cert_manager__namespace }}"
+    labels:
+      # makes the default Org Root CA available within this namespace's Secrets
+      trust: enabled

@@ -1,0 +1,11 @@
+---
+- name: Install Odoo w/ Helm
+  kubernetes.core.helm:
+    name: odoo
+    chart_ref: oci://registry-1.docker.io/bitnamicharts/odoo
+    release_namespace: odoo
+    create_namespace: true
+    wait: true
+    values:
+      global:
+        defaultStorageClass: "{{  }}"
