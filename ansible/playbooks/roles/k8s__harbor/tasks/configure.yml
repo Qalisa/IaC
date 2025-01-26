@@ -3,8 +3,11 @@
   ansible.builtin.uri:
     url: "{{ harbor__internal_hostname__registry_v2__url }}/api/v2.0/health"
     method: GET
+    headers:
+      Content-Type: application/json
     return_content: true
     status_code: 200
+    timeout: 1
   register: result
   until: result.status == 200
   retries: 20
