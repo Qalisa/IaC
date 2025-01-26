@@ -66,7 +66,7 @@
   ansible.builtin.copy:
     content: "{{ certificate }}"
     dest: "/usr/local/share/ca-certificates/{{ iac__root_domain }}-bundle.crt"
-    mode: '0755'
+    mode: '0644'
 
 - name: Update CA certificates
   changed_when: updated.rc != 0
