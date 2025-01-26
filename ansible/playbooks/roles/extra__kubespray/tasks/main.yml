@@ -9,7 +9,7 @@
 - name: Add helm diff plugin
   kubernetes.core.helm_plugin:
     plugin_path: https://github.com/databus23/helm-diff
-    state: latest
+    state: present # cannot use "latest" since we use git repo as source
 
 # https://github.com/siarheidudko/webmin-under-kubernetes-ingress
 - name: Patch external trafic policy of ingress controller service
