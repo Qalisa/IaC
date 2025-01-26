@@ -53,9 +53,9 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: templates/mailserver/CNAME.yml.j2
-      - path: templates/mailserver/DKIM.yml.j2
-      - path: templates/mailserver/DMARC.yml.j2
-      - path: templates/mailserver/MX.yml.j2
-      - path: templates/mailserver/SPF_MCONF.yml.j2
-      - path: templates/mailserver/SRV.yml.j2
+      - path: templates/mailserver/dns/CNAME.yml.j2
+      - path: templates/mailserver/dns/DKIM.yml.j2
+      - path: templates/mailserver/dns/DMARC.yml.j2
+      - path: templates/mailserver/dns/MX.yml.j2
+      - path: templates/mailserver/dns/SPF_MCONF.yml.j2
+      - path: templates/mailserver/dns/SRV.yml.j2
