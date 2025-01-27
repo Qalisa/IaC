@@ -57,6 +57,7 @@
         },
         {
             "label": "Try to pull from private registry",
+            "detail": "Helps debugging registry auth issues",
             "type": "shell",
             "command": [
                 "systemctl restart containerd && crictl -r /run/containerd/containerd.sock pull ${input:imageToPull}"
