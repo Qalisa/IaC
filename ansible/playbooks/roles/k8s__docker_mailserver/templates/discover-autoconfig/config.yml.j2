@@ -5,9 +5,9 @@ metadata:
   namespace: "{{ docker_mailserver__namespace }}"
 immutable: false
 data:
-  COMPANY_NAME: {{ iac__root_domain }}
+  COMPANY_NAME: "{{ iac__root_domain }}"
   SUPPORT_URL: "https://{{ k8s__docker_mailserver__external_hostname__autodiscover }}"
-  DOMAIN: {{ iac__root_domain }}
+  DOMAIN: "{{ iac__root_domain }}"
   # IMAP configuration (host mandatory to enable)
   IMAP_HOST: "{{ docker_mailserver__external_hostname }}"
   IMAP_PORT: '143'

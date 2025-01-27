@@ -4,7 +4,7 @@ metadata:
   name: uploads
   namespace: listmonk
 spec:
-  storageClassName: {{ iac__local_storage__class_name }}
+  storageClassName: "{{ iac__local_storage__class_name }}"
   accessModes:
     - ReadWriteOnce
   resources:

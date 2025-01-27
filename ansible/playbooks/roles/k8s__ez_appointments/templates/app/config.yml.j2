@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ k8s__ez_appointments__app__name }}"
+  namespace: "{{ k8s__ez_appointments__namespace }}"
+data:
+  BASE_URL: https://{{ k8s__ez_appointments__external_hostname }}
+  DB_HOST: "{{ k8s__ez_appointments__db__name }}"
+  LANGUAGE: french
+  DEBUG_MODE: "1"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-config
+  namespace: "{{ k8s__ez_appointments__namespace }}"
+data:
+  email.php: |
+    <?php defined('BASEPATH') or exit('No direct script access allowed');
+
+    // Add custom values by settings them to the $config array.
+    // Example: $config['smtp_host'] = 'smtp.gmail.com';
+    // @link https://codeigniter.com/user_guide/libraries/email.html
+
+    $config['useragent'] = 'Easy!Appointments';
+    $config['protocol'] = 'mail'; // or 'smtp'
+    $config['mailtype'] = 'html'; // or 'text'
+    // $config['smtp_debug'] = '0'; // or '1'
+    // $config['smtp_auth'] = TRUE; //or FALSE for anonymous relay.
+    // $config['smtp_host'] = '';
+    // $config['smtp_user'] = '';
+    // $config['smtp_pass'] = '';
+    // $config['smtp_crypto'] = 'ssl'; // or 'tls'
+    // $config['smtp_port'] = 25;
+    // $config['from_name'] = '';
+    // $config['from_address'] = '';
+    // $config['reply_to'] = '';
+    $config['crlf'] = "\r\n";
+    $config['newline'] = "\r\n";

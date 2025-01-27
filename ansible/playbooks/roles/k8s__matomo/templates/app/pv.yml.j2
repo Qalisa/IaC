@@ -10,7 +10,7 @@ spec:
   capacity:
     storage: 8Gi 
   local:
-    path: {{ iac__pv_path__matomo__app }}
+    path: "{{ iac__pv_path__matomo__app }}"
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -21,4 +21,4 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ iac__master_node_name }}
+              - "{{ iac__master_node_name }}"

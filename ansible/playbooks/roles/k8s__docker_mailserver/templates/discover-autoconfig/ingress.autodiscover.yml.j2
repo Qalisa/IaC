@@ -21,9 +21,9 @@ spec:
   tls:
     - secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
       hosts:
-        - {{ k8s__docker_mailserver__external_hostname__autodiscover }}
+        - "{{ k8s__docker_mailserver__external_hostname__autodiscover }}"
   rules:
-    - host: {{ k8s__docker_mailserver__external_hostname__autodiscover }}
+    - host: "{{ k8s__docker_mailserver__external_hostname__autodiscover }}"
       http:
         paths:
         - path: /

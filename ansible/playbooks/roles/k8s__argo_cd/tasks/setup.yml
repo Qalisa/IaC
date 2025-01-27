@@ -149,8 +149,8 @@
         # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.notifiers
         notifiers:
           service.github: |
-            appID: {{ argocd__github_app__app_id | int }}
-            installationID: {{ argocd__github_app__installation_id | int }}
+            appID: "{{ argocd__github_app__app_id }}"
+            installationID: "{{ argocd__github_app__installation_id }}"
             privateKey: $github-privateKey
         # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.templates
         templates: "{{ lookup('ansible.builtin.file', 'templates/github-notifications/all.yaml.gotmpl') | from_yaml }}"

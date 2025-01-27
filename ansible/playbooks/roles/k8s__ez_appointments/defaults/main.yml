@@ -1,1 +1,9 @@
 ---
+k8s__ez_appointments__namespace: ez-appointments
+k8s__ez_appointments__app__name: app
+k8s__ez_appointments__db__name: db
+k8s__ez_appointments__external_hostname: agenda.{{ iac__root_domain }}
+
+#
+k8s__ez_appointments__mysql_db__name: ez-appointments
+k8s__ez_appointments__mysql_db__password: "{{ k8s__ez_appointments__db__name }}-oK1.vD"

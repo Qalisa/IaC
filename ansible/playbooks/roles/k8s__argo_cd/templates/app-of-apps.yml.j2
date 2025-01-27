@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ k8s__argo_cd__app_of_apps__name }}
+  name: "{{ k8s__argo_cd__app_of_apps__name }}"
   namespace: "{{ argo_cd__namespace }}"
   annotations:
     notifications.argoproj.io/subscribe.on-sync-running.github: ""

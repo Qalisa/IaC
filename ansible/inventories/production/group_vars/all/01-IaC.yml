@@ -88,6 +88,8 @@ iac__pv_path__matomo__db: "{{ iac__pv_path_root }}/matomo/db"
 iac__pv_path__matomo__app: "{{ iac__pv_path_root }}/matomo/app"
 iac__pv_path__github_arc__cache: "{{ iac__pv_path_root }}/gha-cache"
 iac__pv_path__buildkit__cache: "{{ iac__pv_path_root }}/buildkit-cache"
+iac__pv_path__ez_appointments: "{{ iac__pv_path_root }}/ez-appointments"
+iac__pv_path__odoo: "{{ iac__pv_path_root }}/odoo"
 
 #
 github_arc__buildkit__remote_socket: buildkit-buildkit-service.arc-buildkit:1234

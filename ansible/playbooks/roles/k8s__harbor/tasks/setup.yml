@@ -71,7 +71,7 @@
             nginx.ingress.kubernetes.io/proxy-body-size: "0"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__harbor__external_hostname }}"
-            external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
             #
             ingress-dashboard/title: Harbor - Private Docker Registry
             ingress-dashboard/description: Stores our organization private Docker Images
