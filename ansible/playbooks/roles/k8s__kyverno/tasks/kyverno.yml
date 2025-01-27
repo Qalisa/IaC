@@ -5,18 +5,6 @@
     template:
       - path: templates/ns.yml.j2
 
-- name: May create secret
-  register: secret
-  changed_when: secret.rc != 0
-  failed_when: false # replacement for ignore_errors
-  ansible.builtin.command: |
-    kubectl create secret docker-registry
-      harbor-creds
-      --namespace={{ k8s__kyverno__namespace }}
-      --docker-server={{ harbor__internal_hostname__registry_v2 }}
-      --docker-username={{ harbor__admin_username }}
-      --docker-password={{ harbor__admin_password }}
-
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: kyverno
@@ -30,9 +18,17 @@
     create_namespace: false
     wait: true
     values:
-      global:
+      # global:
+      #   imagePullSecrets:
+      #     - name: regcred
+      admissionController:
         imagePullSecrets:
-          - name: harbor-creds
+          - name: regcred
+      imagePullSecrets:
+        regcred:
+          registry: "{{ harbor__internal_hostname__registry_v2 }}"
+          username: "{{ harbor__admin_username }}"
+          password: "{{ harbor__admin_password }}"
       features:
         registryClient:
           allowInsecure: true
