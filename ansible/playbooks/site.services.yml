@@ -4,5 +4,4 @@
   hosts: all
   become: true
   roles:
-    # - role: k8s__odoo_community
-    - role: k8s__ez_appointments
+    - role: k8s__odoo_community

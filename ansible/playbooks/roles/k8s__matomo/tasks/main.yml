@@ -63,12 +63,12 @@
       matomoWebsiteHost: https://{{ k8s__matomo__external_hostname }}
       #
       smtpAuth: Login
-      smtpHost: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}"
-      smtpPort: 587
+      smtpHost: "{{ docker_mailserver__internal_smtp_server }}"
+      smtpPort: "{{ docker_mailserver__internal_smtp_preferred_port }}"
       smtpUser: "{{ iac__donotreply_username }}"
       smtpPassword: "{{ iac__donotreply_password }}"
       smtpProtocol: tls
-      noreplyName: "Do Not Reply"
+      noreplyName: "{{ iac__donotreply_name }}"
       noreplyAddress: "{{ iac__donotreply_email }}"
 
       #

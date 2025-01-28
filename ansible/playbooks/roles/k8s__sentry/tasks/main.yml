@@ -72,8 +72,8 @@
         useTls: true
         username: "{{ iac__donotreply_username }}"
         password: "{{ iac__donotreply_password }}"
-        port: 587
-        host: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}"
+        port: "{{ docker_mailserver__internal_smtp_preferred_port }}"
+        host: "{{ docker_mailserver__internal_smtp_server }}"
         from: "{{ iac__donotreply_email }}"
 
       sourcemaps:

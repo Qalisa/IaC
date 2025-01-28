@@ -23,17 +23,17 @@ data:
     // @link https://codeigniter.com/user_guide/libraries/email.html
 
     $config['useragent'] = 'Easy!Appointments';
-    $config['protocol'] = 'mail'; // or 'smtp'
+    $config['protocol'] = 'smtp'; // or 'mail'
     $config['mailtype'] = 'html'; // or 'text'
-    // $config['smtp_debug'] = '0'; // or '1'
+    // $config['smtp_debug'] = '1'; // or '0'
     // $config['smtp_auth'] = TRUE; //or FALSE for anonymous relay.
-    // $config['smtp_host'] = '';
-    // $config['smtp_user'] = '';
-    // $config['smtp_pass'] = '';
-    // $config['smtp_crypto'] = 'ssl'; // or 'tls'
-    // $config['smtp_port'] = 25;
-    // $config['from_name'] = '';
-    // $config['from_address'] = '';
-    // $config['reply_to'] = '';
+    // $config['smtp_host'] = '{{ docker_mailserver__internal_smtp_server }}';
+    // $config['smtp_user'] = '{{ iac__donotreply_username }}';
+    // $config['smtp_pass'] = '{{ iac__donotreply_password }}';
+    // $config['smtp_crypto'] = 'tls'; // or 'ssl'
+    // $config['smtp_port'] = {{ docker_mailserver__internal_smtp_preferred_port }};
+    // $config['from_name'] = '{{ iac__donotreply_name }}';
+    // $config['from_address'] = '{{ iac__donotreply_email }}';
+    // $config['reply_to'] = '{{ iac__donotreply_email }}';
     $config['crlf'] = "\r\n";
     $config['newline'] = "\r\n";

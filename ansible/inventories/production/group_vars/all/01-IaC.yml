@@ -20,6 +20,7 @@ docker_mailserver__third_level_domain: mail
 #
 iac__postmaster_username: postmaster
 iac__donotreply_username: donotreply
+iac__donotreply_name: Do Not Reply
 
 # Root OU : groupOfNames : [users CN]
 iac__ldap__groups: |-
@@ -121,6 +122,10 @@ docker_mailserver__users_group_description: "{{ iac__root_domain }}'s users that
 # Email users (possibly POSTFIX + DOVECOT, eg sending AND receiving email)
 # SHOULD MATCH GID of docker-mailserver's dovecot id group, which create folder structure for IMAP users
 docker_mailserver__users_group_id: 5000
+
+#
+docker_mailserver__internal_smtp_server: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}"
+docker_mailserver__internal_smtp_preferred_port: 587
 
 #
 openldap_stack__namespace: openldap-stack
