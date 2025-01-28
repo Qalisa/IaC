@@ -50,7 +50,6 @@ listmonk__favicon_url: https://{{ iac__root_domain }}/logo.png
 #
 harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowercase
 
-
 ############################
 ### SHOULD NOT CUSTOMIZE ###
 ############################
@@ -112,6 +111,7 @@ harbor__sld: registry
 harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}" # we need the service that responds to /v2/ path
 harbor__internal_hostname__registry_v2__url: https://{{ harbor__internal_hostname__registry_v2 }}
 harbor__admin_username: admin
+harbor__org_project_name: "{{ iac__github_org | lower }}"
 
 #
 docker_mailserver__namespace: docker-mailserver

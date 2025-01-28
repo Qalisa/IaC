@@ -24,7 +24,7 @@
       Authorization: "Basic {{ (harbor__admin_username + ':' + harbor__admin_password) | b64encode }}"  # Replace with your credentials
     body_format: json
     body:
-      project_name: "{{ iac__github_org | lower }}"
+      project_name: "{{ harbor__org_project_name }}"
       metadata:
         public: "false"
     validate_certs: false
