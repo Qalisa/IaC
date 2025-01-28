@@ -34,6 +34,7 @@ kind: Ingress
 metadata:
   annotations:
     nginx.ingress.kubernetes.io/permanent-redirect: https://{{ k8s__docker_mailserver__external_hostname__webmail }}
+    ingress-dashboard/hide: "true"
   name: roundcube-alt
   namespace: "{{ docker_mailserver__namespace }}"
 spec:
