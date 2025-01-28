@@ -141,7 +141,19 @@
             "problemMatcher": []
         },
         {
+            "label": "Ensure services playbook exists",
+            "type": "shell",
+            "command": "cp -R -u -p ./ansible/playbooks/_.site.services.yml ./ansible/playbooks/site.services.yml",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "statusbar": {
+                    "hide": true
+                },
+            }
+        },
+        {
             "label": "🚀 Install: Services",
+            "dependsOn": "Ensure services playbook exists",
             "type": "shell",
             "command": [
                 "ansible-playbook",

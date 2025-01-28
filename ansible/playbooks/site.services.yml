@@ -1,7 +1,0 @@
----
-# ensure services roles are installed and configured AFTER kubernetes is set
-- name: Install Services w/in Kubernetes
-  hosts: all
-  become: true
-  roles:
-    - role: k8s__odoo_community
