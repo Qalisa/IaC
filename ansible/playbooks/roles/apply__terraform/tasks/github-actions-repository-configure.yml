@@ -1,8 +1,15 @@
 ---
-- name: Get Token Path
+- name: Get JWT Secrets
   tags: [terraform]
+  kubernetes.core.k8s_info:
+    kind: Secret
+    name: "{{ argo_cd__jwt_tokens_secret }}"
+    namespace: "{{ argo_cd__namespace }}"
+  register: jwt_secrets
+
+- name: Put JWT into variable
   ansible.builtin.set_fact:
-    argocd_syncer_token_path: "{{ iac__generated_creds_dir }}/argocd-token.{{ argocd__account_for__github_syncer }}.txt"
+    argocd_syncer_token: "{{ jwt_secrets.resources[0].data[argocd__account_for__github_syncer] }}"
 
 - name: Add secrets and variables to specific Github organization repositories through their topic
   tags: [terraform]
@@ -24,4 +31,4 @@
         github_arc__buildkit__remote_socket: "{{ github_arc__buildkit__remote_socket }}"
       #
       secrets:
-        argocd_syncer_token: "{{ lookup('ansible.builtin.file', argocd_syncer_token_path) }}"
+        argocd_syncer_token: "{{ argocd_syncer_token }}"

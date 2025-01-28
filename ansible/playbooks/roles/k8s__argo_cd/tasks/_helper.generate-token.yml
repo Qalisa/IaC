@@ -1,12 +1,9 @@
 ---
-- name: Generate Token
-  tags: [creds]
+- name: Store token for account
+  vars:
+    namespace: "{{ argo_cd__namespace }}"
+    secret_name: "{{ argo_cd__jwt_tokens_secret }}"
   block:
-    - name: Make sure destination dir exists
-      ansible.builtin.file:
-        path: "{{ iac__generated_creds_dir }}"
-        state: directory
-        mode: "0775"
     - name: Generate new token
       register: token
       ansible.builtin.uri:
@@ -19,8 +16,15 @@
         body_format: json
         body:
           expiresIn: 0 # never expires
-    - name: Save
-      ansible.builtin.copy:
-        content: "{{ token.json.token }}"
-        dest: "{{ iac__generated_creds_dir }}/argocd-token.{{ item.username }}.txt"
-        mode: "0775"
+    - name: Store pair into an object
+      ansible.builtin.set_fact:
+        pair: "{ '{{ item.username }}': '{{ token.json.token }}' }"
+    - name: Save into Secret, override existing value
+      kubernetes.core.k8s:
+        state: present
+        api_version: v1
+        kind: Secret
+        namespace: "{{ namespace }}"
+        name: "{{ secret_name }}"
+        definition:
+          stringData: "{{ pair }}"

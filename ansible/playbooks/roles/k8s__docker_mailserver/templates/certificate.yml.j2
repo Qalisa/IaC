@@ -2,8 +2,8 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: docker-mailserver
-  namespace: docker-mailserver
+  name: "{{ docker_mailserver__server_hostname }}"
+  namespace: "{{ docker_mailserver__namespace }}"
 spec:
   secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
   isCA: false

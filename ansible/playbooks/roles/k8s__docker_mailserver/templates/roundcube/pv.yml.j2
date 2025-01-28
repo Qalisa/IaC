@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 5Gi 
   local:
-    path: {{ iac__pv_path__roundcube }}
+    path: "{{ iac__pv_path__roundcube }}"
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -20,15 +20,15 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ iac__master_node_name }}
+              - "{{ iac__master_node_name }}"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: roundcube
-  namespace: docker-mailserver
+  namespace: "{{ docker_mailserver__namespace }}"
 spec:
-  storageClassName: {{ iac__local_storage__class_name }}
+  storageClassName: "{{ iac__local_storage__class_name }}"
   accessModes:
     - ReadWriteOnce
   resources:

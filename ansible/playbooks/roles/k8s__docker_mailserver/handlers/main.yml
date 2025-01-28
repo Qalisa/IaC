@@ -6,8 +6,8 @@
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: docker-mailserver
-        namespace: docker-mailserver
+        name: "{{ docker_mailserver__server_hostname }}"
+        namespace: "{{ docker_mailserver__namespace }}"
       spec:
         template:
           metadata:

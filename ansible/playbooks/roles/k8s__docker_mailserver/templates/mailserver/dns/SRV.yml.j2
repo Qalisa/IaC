@@ -1,0 +1,35 @@
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: srv-entries
+  namespace: "{{ docker_mailserver__namespace }}"
+spec:
+  endpoints:
+    # AUTODISCOVER
+    - dnsName: _autodiscover._tcp       # Format: _<service>._<protocol>.<domain>
+      recordType: SRV
+      recordTTL: 1                          # 1 is the "Auto" TTL value for Cloudflare
+      targets:
+        - "0 0 443 {{ k8s__docker_mailserver__external_hostname__autodiscover }}"  # Format: <priority> <weight> <port> <target>
+    # IMAP / IMAPS
+    - dnsName: _imap._tcp
+      recordType: SRV
+      recordTTL: 1                          # 1 is the "Auto" TTL value for Cloudflare
+      targets:
+        - "0 0 143 {{ docker_mailserver__external_hostname }}"
+    - dnsName: _imaps._tcp 
+      recordType: SRV
+      recordTTL: 1                          # 1 is the "Auto" TTL value for Cloudflare
+      targets:
+        - "0 0 993 {{ docker_mailserver__external_hostname }}"
+    # SMTP / SMTPS
+    - dnsName: _submission._tcp
+      recordType: SRV
+      recordTTL: 1                          # 1 is the "Auto" TTL value for Cloudflare
+      targets:
+        - "0 0 587 {{ docker_mailserver__external_hostname }}"
+    - dnsName: _submissions._tcp
+      recordType: SRV
+      recordTTL: 1                          # 1 is the "Auto" TTL value for Cloudflare
+      targets:
+        - "0 0 465 {{ docker_mailserver__external_hostname }}"

@@ -1,0 +1,2 @@
+---
+k8s__odoo_community__extername_hostname: odoo.{{ iac__root_domain }}

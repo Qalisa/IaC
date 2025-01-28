@@ -4,6 +4,10 @@ Losely based on kubespray repo default params (https://github.com/kubernetes-sig
 Ansible directory layout follows best practices (https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#directory-layout).
 
 ## How-To use (on server)
+
+### Requirements and considerations
+IaC must be installed on an Ubuntu / Debian system. Has been tested only on-site with a SSH session, not remotely using ansible host.
+
 ### Recommanded
 Using VSCode is recommanded.
 - Connect to remote server using `ms-vscode-remote.remote-ssh` extension. 
@@ -38,7 +42,7 @@ Make sure you are locally logged on `git` w/ a registered account using :
   - Customize `./ansible/inventories/production/group_vars/all/01-IaC.yml` as needed
   - (Optional) Encrypt `./ansible/inventories/group_vars/all/vault` using VSCode Task `🔒 Ansible Vault: Encrypt`
 - (Optional) You might want to opt-out of certain services by commenting roles within `./ansible/playbooks/site.yml`
-- Launch VSCode Task `🚀 Install: whole site !`
+- Launch VSCode Tasks `🚀 Install: K8s`, then `🚀 Install: Services`
 
 ### How to upgrade from latest kubespray
 - Launch VSCode Task `⛏🔄 Upgrade Ansible requirements`

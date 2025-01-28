@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: docker-mailserver
-  namespace: docker-mailserver
+  name: "{{ docker_mailserver__server_hostname }}"
+  namespace: "{{ docker_mailserver__namespace }}"
 immutable: false
 data:
-  POSTMASTER_ADDRESS: {{ iac__postmaster_email }}
-  OVERRIDE_HOSTNAME: {{ docker_mailserver__external_hostname }}
+  POSTMASTER_ADDRESS: "{{ iac__postmaster_email }}"
+  OVERRIDE_HOSTNAME: "{{ docker_mailserver__external_hostname }}"
   TLS_LEVEL: modern
   POSTSCREEN_ACTION: drop
   FAIL2BAN_BLOCKTYPE: drop
@@ -32,7 +32,7 @@ data:
   LDAP_SERVER_HOST: "{{ openldap_stack__ldap_uri }}"
   LDAP_BIND_DN: "{{ openldap_stack__ldap_admin_cn }}"
   # LDAP_BIND_PW: mypassword defined as separate secret manifest !!
-  LDAP_SEARCH_BASE: {{ openldap_stack__dc_query_string }}
+  LDAP_SEARCH_BASE: "{{ openldap_stack__dc_query_string }}"
   LDAP_QUERY_FILTER_DOMAIN: (|(mail=*@%s)(mailAlias=*@%s)(mailGroupMember=*@%s))
   LDAP_QUERY_FILTER_USER: (&(objectClass=inetOrgPerson)(mail=%s))
   LDAP_QUERY_FILTER_ALIAS: (&(objectClass=inetOrgPerson)(mailAlias=%s))

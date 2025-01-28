@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 10Gi 
   local:
-    path: {{ iac__pv_path__portainer }}
+    path: "{{ iac__pv_path__portainer }}"
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -20,5 +20,5 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ iac__master_node_name }}
+              - "{{ iac__master_node_name }}"
               

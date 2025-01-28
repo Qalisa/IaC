@@ -80,7 +80,7 @@
                 - name: PROJECT_NAME
                   value: "{{ argocd__project_name }}"
                 - name: ARGO_WATCHER_URL
-                  value: http://{{ k8s__argo_cd__watcher__internal_name }}.{{ k8s__argo_cd__namespace }}
+                  value: http://{{ k8s__argo_cd__watcher__internal_name }}.{{ argo_cd__namespace }}
               volumeMounts:
                 - name: crt
                   mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls
@@ -95,13 +95,13 @@
                 claimName: buildkit-cache
             - name: crt
               secret:
-                secretName: "{{ cert_manager__org_ca__cert_secret_name }}"
+                secretName: "{{ cert_manager__org__root_ca__bundle }}"
             - name: work
               ephemeral:
                 volumeClaimTemplate:
                   spec:
                     accessModes: ["ReadWriteOnce"]
-                    storageClassName: "local-path"
+                    storageClassName: local-path
                     resources:
                       requests:
                         storage: 1Gi

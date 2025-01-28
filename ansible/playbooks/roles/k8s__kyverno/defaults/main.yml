@@ -1,2 +1,3 @@
 ---
+k8s__kyverno__namespace: kyverno
 k8s__kyverno__external_hostname__policy_reporter: policy-reporter.{{ iac__root_domain }}

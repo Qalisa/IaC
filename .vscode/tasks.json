@@ -5,21 +5,35 @@
     "inputs": [
         {
             "id": "nsToDelete",
-            "description": "Please input the namespace to delete:",
+            "description": "Please input the namespace to delete",
             "default": "",
             "type": "promptString"
         },
+        {
+            "id": "helmPackage",
+            "description": "Please input the helm installation to remove",
+            "default": "",
+            "type": "promptString"
+        },
+        {
+            "id": "helmNamespace",
+            "description": "Please input the namespace to remove the helm installation from",
+            "default": "",
+            "type": "promptString"
+        },
+        {
+            "id": "imageToPull",
+            "description": "Registry path (like \"harbor-core.harbor/<org>/<image>:<tag>\")",
+            "default": "",
+            "type": "promptString"
+        }
     ],
     "tasks": [
         {
-            "label": "👮‍♀️ k8s: Enforce namespace deletion",
+            "label": "👮‍♀️ k8s: Delete namespace",
             "type": "shell",
             "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--become --become-user=root",
-                "ansible/playbooks/_namespace-deletion.yml",
-                "--e='ns=${input:nsToDelete}'"
+                "kubectl delete namespace ${input:nsToDelete}"
             ],
             "options": {
                 "statusbar": {
@@ -28,6 +42,36 @@
             },
             "problemMatcher": []
         },
+        {
+            "label": "👮‍♀️ helm: Uninstall",
+            "type": "shell",
+            "command": [
+                "helm uninstall ${input:helmPackage} -n ${input:helmNamespace}"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Try to pull from private registry",
+            "detail": "Helps debugging registry auth issues",
+            "type": "shell",
+            "command": [
+                "systemctl restart containerd && crictl -r /run/containerd/containerd.sock pull ${input:imageToPull}"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        //
+        //
+        //
         {
             "label": "✅ CF Zero-Trust: apply application policies",
             "type": "shell",
@@ -80,14 +124,14 @@
         //
         //
         {
-            "label": "🚀 Install: whole site !",
+            "label": "🚀 Install: K8s",
             "type": "shell",
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/site.yml"
+                "ansible/playbooks/site.kubespray.yml"
             ],
             "options": {
                 "statusbar": {
@@ -97,24 +141,19 @@
             "problemMatcher": []
         },
         {
-            "label": "🚀 Install: K8s only",
+            "label": "Ensure services playbook exists",
             "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.kubernetes.yml"
-            ],
+            "command": "cp -R -u -p ./ansible/playbooks/_.site.services.yml ./ansible/playbooks/site.services.yml",
             "options": {
+                "cwd": "${workspaceFolder}",
                 "statusbar": {
                     "hide": true
-                }
-            },
-            "problemMatcher": []
+                },
+            }
         },
         {
-            "label": "🚀 Install: Services Only",
+            "label": "🚀 Install: Services",
+            "dependsOn": "Ensure services playbook exists",
             "type": "shell",
             "command": [
                 "ansible-playbook",

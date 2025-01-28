@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: roundcube
-  namespace: docker-mailserver
+  namespace: "{{ docker_mailserver__namespace }}"
 spec:
   selector:
     matchLabels:

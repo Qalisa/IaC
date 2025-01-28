@@ -29,7 +29,7 @@
           annotations:
             # Will be handled by Cloudflare proxy
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
+            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -50,7 +50,7 @@
           annotations:
             # Will be handled by Cloudflare proxy
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
+            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"

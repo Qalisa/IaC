@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 3Gi 
   local:
-    path: {{ iac__pv_path__listmonk__uploads }}
+    path: "{{ iac__pv_path__listmonk__uploads }}"
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce #
@@ -20,4 +20,4 @@ spec:
           - key: kubernetes.io/hostname
             operator: In
             values:
-              - {{ iac__master_node_name }}
+              - "{{ iac__master_node_name }}"

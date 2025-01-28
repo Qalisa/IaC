@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: docker-mailserver
-  namespace: docker-mailserver
+  name: "{{ docker_mailserver__server_hostname }}"
+  namespace: "{{ docker_mailserver__namespace }}"
   annotations:
     ignore-check.kube-linter.io/run-as-non-root: >-
       'docker-mailserver' needs to run as root
@@ -14,17 +14,17 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: docker-mailserver
+      app: "{{ docker_mailserver__server_label }}"
   template:
     metadata:
       labels:
-        app: docker-mailserver
+        app: "{{ docker_mailserver__server_label }}"
       annotations:
-        container.apparmor.security.beta.kubernetes.io/docker-mailserver: runtime/default
+        container.apparmor.security.beta.kubernetes.io/{{ docker_mailserver__server_hostname }}: runtime/default
     spec:
       hostname: mail
       containers:
-        - name: docker-mailserver
+        - name: "{{ docker_mailserver__server_hostname }}"
           image: ghcr.io/docker-mailserver/docker-mailserver:13 # 14.0 is fucked up
           imagePullPolicy: IfNotPresent
 
@@ -74,7 +74,7 @@ spec:
             # configuration 
             - name: data
               mountPath: /tmp/docker-mailserver
-              subPath: tmp-docker-mailserver
+              subPath: "{{ k8s__docker_mailserver_config_folder_name }}"
               readOnly: false
 
             # other PVCs
@@ -139,7 +139,7 @@ spec:
             - secretRef:
                 name: ldap
             - configMapRef:
-                name: docker-mailserver
+                name: "{{ docker_mailserver__server_hostname }}"
 
       restartPolicy: Always
 
@@ -147,7 +147,7 @@ spec:
         # PVCs
         - name: data
           persistentVolumeClaim:
-            claimName: docker-mailserver
+            claimName: "{{ docker_mailserver__server_hostname }}"
 
         # certificates
         - name: certificates-rsa

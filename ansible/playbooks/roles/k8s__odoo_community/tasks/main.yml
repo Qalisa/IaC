@@ -1,0 +1,42 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: bitnami
+    repo_url: https://charts.bitnami.com/bitnami
+
+- name: Install Odoo w/ Helm
+  kubernetes.core.helm:
+    name: odoo
+    chart_ref: bitnami/odoo
+    release_namespace: odoo
+    create_namespace: true
+    wait: true
+    values:
+      odooEmail: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
+      odooPassword: "{{ iac__postmaster_password }}"
+      odooSkipInstall: true
+      smtpHost: "{{ docker_mailserver__internal_smtp_server }}"
+      smtpPort: "{{ docker_mailserver__internal_smtp_preferred_port }}"
+      smtpUser: "{{ iac__donotreply_username }}"
+      smtpPassword: "{{ iac__donotreply_password }}"
+      global:
+        defaultStorageClass: local-path
+      ingress:
+        enabled: true
+        className: "{{ iac__ingress_nginx_class }}"
+        hostname: "{{ k8s__odoo_community__extername_hostname }}"
+        annotations:
+          # when using Cloudflare's proxied DNS record
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
+          nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          #
+          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__odoo_community__extername_hostname }}"
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+          #
+          ingress-dashboard/title: Odoo
+          ingress-dashboard/description: All-in-one CRM-like app
+          ingress-dashboard/logo-url: /favicon.ico
+          ingress-dashboard/assume-tls: "true"
+          ingress-dashboard/hide: "false"

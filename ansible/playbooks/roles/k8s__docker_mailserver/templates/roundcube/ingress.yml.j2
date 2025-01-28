@@ -2,11 +2,11 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: roundcube
-  namespace: docker-mailserver
+  namespace: "{{ docker_mailserver__namespace }}"
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "{{ cert_manager__org_ca__name }}"
+    cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/rewrite-target: /
       #
@@ -34,8 +34,9 @@ kind: Ingress
 metadata:
   annotations:
     nginx.ingress.kubernetes.io/permanent-redirect: https://{{ k8s__docker_mailserver__external_hostname__webmail }}
+    ingress-dashboard/hide: "true"
   name: roundcube-alt
-  namespace: docker-mailserver
+  namespace: "{{ docker_mailserver__namespace }}"
 spec:
   ingressClassName: nginx
   rules:

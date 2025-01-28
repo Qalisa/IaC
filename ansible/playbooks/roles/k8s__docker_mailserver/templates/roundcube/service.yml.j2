@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: roundcube
-  namespace: docker-mailserver
+  namespace: "{{ docker_mailserver__namespace }}"
   labels:
     app: roundcube
 spec:

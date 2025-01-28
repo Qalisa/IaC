@@ -98,8 +98,8 @@
       smtp:
         - uuid: ""
           enabled: true
-          port: 587
-          host: docker-mailserver.docker-mailserver
+          port: "{{ docker_mailserver__internal_smtp_preferred_port }}"
+          host: "{{ docker_mailserver__internal_smtp_server }}"
           hello_hostname: "{{ docker_mailserver__external_hostname }}"
           auth_protocol: login
           tls_type: STARTTLS
