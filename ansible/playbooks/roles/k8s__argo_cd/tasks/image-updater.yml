@@ -1,4 +1,10 @@
 ---
+- name: Install Secret
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/image-updater/secret.yml.j2
+
 - name: Install ArgoCD Image Updater w/ Helm
   tags: [image-updater]
   kubernetes.core.helm:

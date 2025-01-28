@@ -5,9 +5,9 @@ metadata:
   namespace: "{{ k8s__ez_appointments__namespace }}"
 data:
   BASE_URL: https://{{ k8s__ez_appointments__external_hostname }}
-  DB_HOST: "{{ k8s__ez_appointments__db__name }}"
+  DB_HOST: "{{ k8s__ez_appointments__db__name }}.{{ k8s__ez_appointments__namespace }}"
   LANGUAGE: french
-  DEBUG_MODE: "1"
+  DEBUG_MODE: "TRUE"
 ---
 apiVersion: v1
 kind: ConfigMap
