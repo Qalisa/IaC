@@ -20,7 +20,7 @@ listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
 iac__cloudflare__zero_trust__team_name: "{{ u_vault_iac__cloudflare__zero_trust__team_name }}" # see https://one.dash.cloudflare.com/${accountId}/settings/custom_pages#TeamDomain
 
 # ArgoCD - Github App
-argocd__github_app__installation_id: "{{ u_vault_argocd__github_app__installation_id }}"
+argocd__github_app__installation_id: "{{ u_vault_argocd__github_app__installation_id }}" # to get it, go to GH > [Org Profile] > Settings > Github Apps > [Select the App] > [see URL]
 argocd__github_app__app_id: "{{ u_vault_argocd__github_app__app_id }}"
 
 # Github ARC - Github App
@@ -126,6 +126,19 @@ argocd__admin_password: "{{ vault_argocd__admin_password }}"
 ### MAKE SURE GITHUB APP HAS BELOW RIGHTS:
 # +> https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential
 # +> https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
+#
+# GitHub App name: Argo CD On-Premise
+# Homepage URL: https://argocd.{{ iac__root_domain }}
+# No Webhook
+# No Token expiry
+# PERMS:
+# > Repository permissions > Commit statuses: RW
+# > Repository permissions > Content:         RO
+# > Repository permissions > Deployments:     RW
+# > Repository permissions > Metadata:        RO
+# > Repository permissions > Pull Requests:   RW
+
+
 argocd__github_app__priv_key: "{{ vault_argocd__github_app__priv_key }}"
 
 # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/

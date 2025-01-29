@@ -246,32 +246,13 @@
         ///
         ///
         {
-            "label": "⛏0. Install pipX",
-            "type": "shell",
-            "hide": true,
-            "linux": {
-                "command": "sudo apt-get -qq -y install pipx > /dev/null && pipx ensurepath"
-            },
-            "osx": {
-                "command": "brew install pipx && pipx ensurepath"
-            },
-            "windows": {
-                // TODO:
-            },
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "⛏1. Install Ansible & tools",
             "type": "shell",
             "dependsOn": "⛏0. Install pipX",
             "command": [
-                "pipx install --include-deps ansible-core==2.16.4", "&&",
-                "pipx install ansible-lint"
+                // versionning requirement by kubespray
+                "python3 -m pip install --break-system-packages --user ansible-core==2.16.4", "&&",
+                "python3 -m pip install --break-system-packages --user ansible-lint"
             ],
             "options": {
                 "statusbar": {
@@ -283,7 +264,7 @@
         {
             "label": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
             "type": "shell",
-            "command": "pipx inject ansible-core distlib",
+            "command": "python3 -m pip install --break-system-packages distlib",
             "options": {
                 "statusbar": {
                     "hide": true

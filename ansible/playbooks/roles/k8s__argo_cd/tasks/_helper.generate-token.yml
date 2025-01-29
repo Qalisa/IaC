@@ -1,7 +1,7 @@
 ---
 - name: Store token for account
   vars:
-    namespace: "{{ argo_cd__namespace }}"
+    argocd_namespace: "{{ argo_cd__namespace }}"
     secret_name: "{{ argo_cd__jwt_tokens_secret }}"
   block:
     - name: Generate new token
@@ -24,7 +24,7 @@
         state: present
         api_version: v1
         kind: Secret
-        namespace: "{{ namespace }}"
+        namespace: "{{ argocd_namespace }}"
         name: "{{ secret_name }}"
         definition:
           stringData: "{{ pair }}"

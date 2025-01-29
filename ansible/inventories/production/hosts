@@ -2,7 +2,7 @@
 # hosts
 ###
 
-node1 ansible_python_interpreter=auto_legacy ansible_connection=local local_release_dir={{ansible_env.HOME}}/releases webmin_ip_bind=10.0.0.1
+node1 ansible_python_interpreter=/usr/bin/python3 ansible_connection=local local_release_dir={{ansible_env.HOME}}/releases webmin_ip_bind=10.0.0.1
 
 ###
 # groups
