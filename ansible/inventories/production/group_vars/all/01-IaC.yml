@@ -60,9 +60,6 @@ iac__master_node_name: node1
 # MUST be the same as "group_vars/k8s_cluster/addons".iac__ingress_nginx_class
 iac__ingress_nginx_class: nginx
 
-# name as used in pipx install (that installed ansible bin)
-iac__ansible_pipx_venv: ansible
-
 #
 cert_manager__namespace: cert-manager # kubespray's default
 cert_manager__org__issuer: selfsigned # dummy issuer; issues Org Root CA + dummy certificates

@@ -14,7 +14,7 @@
     state: present # latest
     update_cache: true
 
-- name: Run PipX w/ requisites (kubespray)
+- name: Run Pip w/ requisites (kubespray)
   ansible.builtin.pip:
     extra_args: --break-system-packages
     name: 

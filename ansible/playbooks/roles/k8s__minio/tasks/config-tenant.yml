@@ -1,5 +1,5 @@
 ---
-- name: Run PipX w/ requisites
+- name: Run Pip w/ requisites
   ansible.builtin.pip:
     extra_args: --break-system-packages
     name:

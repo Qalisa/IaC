@@ -248,7 +248,6 @@
         {
             "label": "⛏1. Install Ansible & tools",
             "type": "shell",
-            "dependsOn": "⛏0. Install pipX",
             "command": [
                 // versionning requirement by kubespray
                 "python3 -m pip install --break-system-packages --user ansible-core==2.16.4", "&&",
@@ -262,7 +261,7 @@
             "problemMatcher": []
         },
         {
-            "label": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
+            "label": "⛏2pre. Install Kubespray requirements",
             "type": "shell",
             "command": "python3 -m pip install --break-system-packages distlib",
             "options": {
@@ -276,7 +275,7 @@
         {
             "label": "⛏2a. Install IaC requirements",
             "type": "shell",
-            "dependsOn": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
+            "dependsOn": "⛏2pre. Install Kubespray requirements",
             "command": "ansible-galaxy collection install -r ansible/requirements.yml",
             "options": {
                 "statusbar": {
@@ -288,7 +287,7 @@
         {
             "label": "⛏2b. Upgrade IaC requirements",
             "type": "shell",
-            "dependsOn": "⛏2pre. Inject to ansible pipX env Kubespray requirements",
+            "dependsOn": "⛏2pre. Install Kubespray requirements",
             "command": "ansible-galaxy collection install -U -r ansible/requirements.yml",
             "options": {
                 "statusbar": {
