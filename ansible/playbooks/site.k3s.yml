@@ -1,0 +1,7 @@
+---
+- name: Install K3s on Master Node
+  hosts: node1
+  become: yes
+  roles:
+    - role: base__k3s
+    - role: extra__k3s

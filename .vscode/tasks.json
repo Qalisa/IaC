@@ -77,7 +77,7 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "ansible/playbooks/site.services.yml",
                 "--tags", "zto-app"
             ],
@@ -93,7 +93,7 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "ansible/playbooks/_unseal-vault.yml",
                 "--tags", "unseal"
             ],
@@ -109,7 +109,7 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "ansible/playbooks/_mail-ensure-permissions.yml",
                 "--tags", "mail-acc-ensure-permissions"
             ],
@@ -124,18 +124,18 @@
         //
         //
         {
-            "label": "🚀 Install: K8s",
+            "label": "🚀 Install: K3s",
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/site.kubespray.yml"
+                "ansible/playbooks/site.k3s.yml"
             ],
             "options": {
                 "statusbar": {
-                    "hide": true
+                    "hide": false
                 }
             },
             "problemMatcher": []
@@ -157,7 +157,7 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
                 "ansible/playbooks/site.services.yml"
@@ -202,41 +202,7 @@
         //
         //
         //
-        {
-            "label": "🔄 kubespray: Upgrade cluster",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/_upgrade-cluster.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "🗑 kubespray: Delete cluster",
-            "type": "shell",
-            // or: kubeadm reset
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/_reset.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
+
         {
             "label": "🧶 Lint: whole project",
             "type": "shell",
@@ -249,8 +215,7 @@
             "label": "⛏1. Install Ansible & tools",
             "type": "shell",
             "command": [
-                // versionning requirement by kubespray
-                "python3 -m pip install --break-system-packages --user ansible-core==2.16.4", "&&",
+                "python3 -m pip install --break-system-packages --user ansible", "&&",
                 "python3 -m pip install --break-system-packages --user ansible-lint"
             ],
             "options": {
@@ -258,18 +223,6 @@
                     "hide": true
                 }
             },
-            "problemMatcher": []
-        },
-        {
-            "label": "⛏2pre. Install Kubespray requirements",
-            "type": "shell",
-            "command": "python3 -m pip install --break-system-packages distlib",
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "hide": true,
             "problemMatcher": []
         },
         {

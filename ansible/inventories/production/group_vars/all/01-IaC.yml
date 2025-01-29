@@ -54,14 +54,14 @@ harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowe
 ### SHOULD NOT CUSTOMIZE ###
 ############################
 
-# MUST be the same as in "ansible/inventories/production/hosts"
-iac__master_node_name: node1
+# MUST be the same as in "ansible/inventories/production/hosts.yaml"
+iac__master_node_name: node1 # default
 
 # MUST be the same as "group_vars/k8s_cluster/addons".iac__ingress_nginx_class
 iac__ingress_nginx_class: nginx
 
 #
-cert_manager__namespace: cert-manager # kubespray's default
+cert_manager__namespace: cert-manager
 cert_manager__org__issuer: selfsigned # dummy issuer; issues Org Root CA + dummy certificates
 cert_manager__org__root_ca: "{{ iac__root_domain }}-root-ca"
 cert_manager__org__root_ca__bundle: "{{ cert_manager__org__root_ca }}.bundle" # default, bundled CAs for a system to trust, including our own root cert

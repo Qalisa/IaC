@@ -1,0 +1,8 @@
+---
+# https://blog.mossroy.fr/2024/04/16/passage-sur-metallb-au-lieu-de-servicelb-sur-un-cluster-k3s/
+- name: Install and Configure MetalLB
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: templates/metallb.yml.j2
+      - path: templates/metallb.traefik-tweaks.yml.j2

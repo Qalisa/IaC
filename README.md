@@ -1,6 +1,5 @@
 # IaC (Infrastructure as Code)
 Automatize the installation of an opinionated infrastructure for your organization.
-Losely based on kubespray repo default params (https://github.com/kubernetes-sigs/kubespray)
 Ansible directory layout follows best practices (https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#directory-layout).
 
 ## How-To use (on server)
@@ -33,20 +32,15 @@ Make sure you are locally logged on `git` w/ a registered account using :
 
 ### Startup
 - `git clone {this repo}`
-- Launch VSCode Task `1. Install kubespray requirements`
-- Launch VSCode Task `2. Install Ansible dev-tools`
-- Launch VSCode Task `3a. ⛏ Install Ansible requirements`
+- Launch VSCode Task `⛏1. Install Ansible & tools`
+- Launch VSCode Task `⛏2a. Install IaC requirements`
 - Create a `./.ansible-vault-pw` file, containing a password to secure all the secrets related to this stack within ansible vault technology
 - Configure:
   - As documented in `./ansible/inventories/group_vars/all/vars`, create `./ansible/inventories/group_vars/all/vault` file, and fill accordingly
   - Customize `./ansible/inventories/production/group_vars/all/01-IaC.yml` as needed
   - (Optional) Encrypt `./ansible/inventories/group_vars/all/vault` using VSCode Task `🔒 Ansible Vault: Encrypt`
 - (Optional) You might want to opt-out of certain services by commenting roles within `./ansible/playbooks/site.yml`
-- Launch VSCode Tasks `🚀 Install: K8s`, then `🚀 Install: Services`
-
-### How to upgrade from latest kubespray
-- Launch VSCode Task `⛏🔄 Upgrade Ansible requirements`
-- Compare `./requirements.txt`, `./ansible/inventories/production*` with kubespray's repo (https://github.com/kubernetes-sigs/kubespray/tree/master/inventory/sample/group_vars) and merge accordingly
+- Launch VSCode Tasks `🚀 Install: K3s`, then `🚀 Install: Services`
 
 ## Overlook of available services
 Once cluster is setup, you can review all availables services through `book.<root_domain>`.
