@@ -1,7 +1,6 @@
 ---
 - name: Install NS + Github App as Cred for Org Repositories
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ns.yml.j2
       - path: templates/secrets.yml.j2

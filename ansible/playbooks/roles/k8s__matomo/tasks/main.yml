@@ -16,7 +16,6 @@
 
 - name: Prepare volumes manifests
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ns.yml.j2
       - path: templates/app/pv.yml.j2

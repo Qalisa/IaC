@@ -4,7 +4,6 @@
 #
 - name: Update NS so we allow bundle to expose secrets within it
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ns.yml.j2
 
@@ -21,7 +20,6 @@
 #
 - name: Generate Root CA's Bundle
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ca-bundles/defaults-with-root-ca.yml.j2
 

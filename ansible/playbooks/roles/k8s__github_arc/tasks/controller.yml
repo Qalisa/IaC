@@ -18,7 +18,6 @@
 
 - name: Install local cache server + access method to it for runners set
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/local-cache-runner/sc.yml
       - path: templates/local-cache-runner/pv.yml

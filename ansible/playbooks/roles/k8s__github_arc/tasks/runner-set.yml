@@ -29,7 +29,6 @@
 - name: Setup namespace + GH App + Local Cache secrets
   tags: [runner-set]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/runner-set/ns.yml.j2
       - path: templates/runner-set/gh-app-secrets.yml.j2

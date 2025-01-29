@@ -23,7 +23,6 @@
 
 - name: Install github secrets
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ns.yml.j2
       - path: templates/github-app-secrets.yml.j2

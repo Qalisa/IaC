@@ -12,7 +12,6 @@
 
 - name: Create Persistent Volume
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/openldap/pv.yml.j2
 

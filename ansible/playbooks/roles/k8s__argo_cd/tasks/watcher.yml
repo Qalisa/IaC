@@ -12,7 +12,6 @@
 
 - name: Save Watcher Secret with JWT token
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/watcher/secret.yml.j2
 

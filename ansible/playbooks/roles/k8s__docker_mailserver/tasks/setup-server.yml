@@ -1,7 +1,6 @@
 ---
 - name: Create namespace
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ns.yml.j2
 
@@ -138,7 +137,6 @@
 ## REQUIRED TO BE INSTALLED FIRST, since generated secret by this certificate is done async
 - name: Install Certificate first
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/certificate.yml.j2
 
@@ -153,7 +151,6 @@
 
 - name: Then, Install Docker Mailserver
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/mailserver/postfix-reject-config.yml.j2
       - path: templates/mailserver/pv.yml.j2

@@ -7,7 +7,6 @@
 
 - name: Install Roundcube
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ns.yml.j2
       - path: templates/roundcube/config-ssl-staging.yml.j2

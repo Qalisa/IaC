@@ -1,7 +1,6 @@
 ---
 - name: Install service accounts
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ns.yml.j2
       - path: templates/admin-account.yml.j2
@@ -14,7 +13,6 @@
 - name: Install Zero-Trust configuration
   tags: [zto-app]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/caa.yml.j2
 
@@ -55,7 +53,6 @@
 
 - name: Fix Service
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/service.yml.j2
 

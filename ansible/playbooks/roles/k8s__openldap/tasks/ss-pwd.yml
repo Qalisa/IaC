@@ -1,7 +1,6 @@
 ---
 - name: Install self service password
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ss-pwd/secret.yml.j2
       - path: templates/ss-pwd/service.yml.j2

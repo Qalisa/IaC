@@ -7,7 +7,6 @@
 - name: Install Zero-Trust configuration
   tags: [zto-app]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/caa.yml.j2
 
@@ -47,7 +46,6 @@
 #
 - name: Create token
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/token.yml.j2
 
