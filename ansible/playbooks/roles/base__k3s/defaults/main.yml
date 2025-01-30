@@ -1,4 +1,3 @@
 ---
 base__k3s__default_namespace: kube-system
 base__k3s__metallb_namespace: metallb-system
-

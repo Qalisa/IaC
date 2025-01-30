@@ -3,7 +3,7 @@
   ansible.builtin.file:
     path: "{{ iac__pv_path__roundcube }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Install Roundcube
   kubernetes.core.k8s:

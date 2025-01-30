@@ -1,3 +1,4 @@
+---
 - name: Install OpenLDAP
   ansible.builtin.import_tasks: openldap.yml
 

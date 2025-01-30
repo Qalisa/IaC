@@ -10,7 +10,7 @@
 
 ###
 - name: Update python's Kubernetes lib
-  ansible.builtin.pip:
-    extra_args: --break-system-packages --pre --upgrade
-    name:
-      - kubernetes
+  community.general.pipx:
+    name: kubernetes
+    state: latest
+    install_deps: true

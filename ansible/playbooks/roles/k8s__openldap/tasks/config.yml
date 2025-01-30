@@ -6,9 +6,11 @@
     update_cache: true
 
 - name: Install LDAP for Python (2/2)
-  ansible.builtin.pip:
-    extra_args: --break-system-packages
-    name:
+  community.general.pipx:
+    name: ansible
+    state: inject
+    install_deps: true
+    inject_packages:
       - python-ldap
       - passlib
 

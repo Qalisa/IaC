@@ -17,5 +17,5 @@
   kubernetes.core.k8s:
     template:
       path: templates/policies/cp-inject-label.yml.j2
-      variable_start_string: '[['
-      variable_end_string: ']]'
+      variable_start_string: "[["
+      variable_end_string: "]]"

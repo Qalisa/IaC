@@ -31,9 +31,12 @@ Make sure you are locally logged on `git` w/ a registered account using :
   - having your local Github SSH keys agent-forwarded through `ms-vscode-remote.remote-ssh` as this documentation recommands, and obviously configured on your own GitHub account.
 
 ### Startup
+- (Optional) Login with SSH as `root` on your future master node (node1)
+  - or, same user (with root privileges) as defined in `ansible/inventories/production/hosts.yaml`. If users differ, you might experiment strange behavior from ansible / python invocations.
 - `git clone {this repo}`
 - Launch VSCode Task `⛏1. Install Ansible & tools`
 - Launch VSCode Task `⛏2a. Install IaC requirements`
+- (Optional) If working remotely on the node master, reboot the server so `ansible-lint` will be acknoledged
 - Create a `./.ansible-vault-pw` file, containing a password to secure all the secrets related to this stack within ansible vault technology
 - Configure:
   - As documented in `./ansible/inventories/group_vars/all/vars`, create `./ansible/inventories/group_vars/all/vault` file, and fill accordingly

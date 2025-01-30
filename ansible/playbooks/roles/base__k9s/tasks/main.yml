@@ -5,7 +5,7 @@
       - k9s
 
 - name: Create symbolic link
-  file:
+  ansible.builtin.file:
     src: /snap/k9s/current/bin/k9s
     dest: /snap/bin/k9s
     state: link

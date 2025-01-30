@@ -6,9 +6,8 @@
     path_root: "{{ '/' if ansible_user == 'root' else '/home/' }}"
   tasks:
     - name: Delete .kube
-      file:
+      ansible.builtin.file:
         path: "{{ path_root }}{{ ansible_user }}/.kube/"
         state: absent
     - name: Uninstall k3s
-      command: "/usr/local/bin/k3s-uninstall.sh"
-    
+      ansible.builtin.command: "/usr/local/bin/k3s-uninstall.sh"
