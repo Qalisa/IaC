@@ -55,7 +55,6 @@
 
 # - name: Create service to bypass PROXY protocol for in-cluster access
 #   kubernetes.core.k8s:
-#     state: present
 #     template:
 #       - path: templates/mailserver/proxy/service.proxy.yml.j2
 
@@ -65,7 +64,6 @@
 
 # - name: Override additionnal TCP Services handled by NGinx Ingress Controller
 #   kubernetes.core.k8s:
-#     state: present
 #     template:
 #       - path: templates/mailserver/proxy/ingress-tcp.yml.j2
 

@@ -16,7 +16,7 @@
     chart_ref: zelic-io/cloudflare-zero-trust-operator
     release_namespace: "{{ cf_zto__namespace }}"
     create_namespace: false
-    wait: false
+    wait: true
     values:
       secretRef: cloudflare-creds
 

@@ -15,7 +15,6 @@
   tags: [terraform]
   community.general.terraform:
     project_path: "{{ terraform_project_path }}/github-actions-repository-configure"
-    state: present
     force_init: true
     complex_vars: true
     variables:

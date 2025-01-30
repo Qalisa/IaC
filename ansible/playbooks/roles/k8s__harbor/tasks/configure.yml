@@ -1,4 +1,18 @@
 ---
+- name: Configure k3s containerd private repositories
+  ansible.builtin.template:
+    src: templates/registries.yaml.j2
+    dest: /etc/rancher/k3s/registries.yaml
+
+- name: Restart k3s to ack changes
+  ansible.builtin.systemd_service:
+    state: restarted
+    daemon_reload: true
+    name: k3s
+
+##
+##
+
 - name: Check Harbor API health
   ansible.builtin.uri:
     url: "{{ harbor__internal_hostname__registry_v2__url }}/api/v2.0/health"

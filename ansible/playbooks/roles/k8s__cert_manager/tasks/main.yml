@@ -1,4 +1,7 @@
 ---
+- name: Install cert-manager
+  ansible.builtin.import_tasks: cert-manager.yml
+
 - name: Install ClusterIssuers
   ansible.builtin.import_tasks: issuers.yml
 

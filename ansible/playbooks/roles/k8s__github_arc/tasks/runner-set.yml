@@ -2,7 +2,6 @@
 - name: Build Custom runner image and push it
   tags: [runner-set, custom-image]
   community.docker.docker_image:
-    state: present
     name: "{{ k8s__github_arc__lar_docker_image_name }}"
     tag: latest
     build:
