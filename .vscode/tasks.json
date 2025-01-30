@@ -56,6 +56,19 @@
             "problemMatcher": []
         },
         {
+            "label": "👮‍♀️ k3s: DELETE !!!",
+            "type": "shell",
+            "command": [
+                "/usr/local/bin/k3s-uninstall.sh"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Try to pull from private registry",
             "detail": "Helps debugging registry auth issues",
             "type": "shell",

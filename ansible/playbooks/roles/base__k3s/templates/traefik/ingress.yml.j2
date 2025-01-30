@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: traefik-dashboard
+  namespace: "{{ base__k3s__default_namespace }}"  # Replace with the namespace where Traefik is installed
+  annotations:
+    #
+    cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
+    #
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure  # Use the secure entry point
+    traefik.ingress.kubernetes.io/router.tls: "true"  # Enable TLS
+    #
+    external-dns.alpha.kubernetes.io/hostname: traefik.{{ iac__root_domain }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    #
+    ingress-dashboard/title: Traefik Dashboard
+    ingress-dashboard/description: Give precise insights on Ingress configuration and usage
+    ingress-dashboard/logo-url: /favicon.ico
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+spec:
+  rules:
+  - host: traefik.{{ iac__root_domain }}  # Replace with your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: traefik  # Replace with the name of the Traefik service
+            port:
+              name: web  # Replace with the port Traefik dashboard is exposed on

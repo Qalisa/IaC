@@ -1,0 +1,7 @@
+---
+# https://qdnqn.com/k3s-traefik-dashboard/
+- name: Expose Traefik dashboard
+  kubernetes.core.k8s:
+    template:
+      - path: templates/traefik/hcc.expose-dashboard.yml.j2 
+      - path: templates/traefik/ingress.yml.j2 

@@ -2,7 +2,7 @@ apiVersion: helm.cattle.io/v1
 kind: HelmChartConfig
 metadata:
   name: traefik
-  namespace: kube-system
+  namespace: "{{ base__k3s__default_namespace }}"
 spec:
   valuesContent: |-
     # To have the original IP in X-Forwarded-For headers
