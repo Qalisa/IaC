@@ -6,7 +6,7 @@ metadata:
   annotations:
     # when using Cloudflare's proxied DNS record
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    traefik.ingress.kubernetes.io/service.serversscheme: "http"
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__docker_mailserver__external_hostname__autoconfig }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
@@ -17,7 +17,7 @@ metadata:
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "false"
 spec:
-  ingressClassName: "{{ iac__ingress_nginx_class }}"
+  ingressClassName: "{{ iac__ingress_class_name }}"
   tls:
     - secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
       hosts: 

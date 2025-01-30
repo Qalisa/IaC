@@ -4,10 +4,11 @@ metadata:
   name: roundcube
   namespace: "{{ docker_mailserver__namespace }}"
   annotations:
-    # when using Cloudflare's proxied DNS record
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    #
     cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    #
+    nginx.ingress.kubernetes.io/ssl-redirect: "false" # when using Cloudflare's proxied DNS record
+    traefik.ingress.kubernetes.io/service.serversscheme: "http"
     nginx.ingress.kubernetes.io/rewrite-target: /
       #
     ingress-dashboard/title: Roundcube
@@ -16,7 +17,7 @@ metadata:
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "false"
 spec:
-  ingressClassName: "{{ iac__ingress_nginx_class }}"
+  ingressClassName: "{{ iac__ingress_class_name }}"
   rules:
   - host: "{{ k8s__docker_mailserver__external_hostname__webmail }}"
     http:
@@ -38,7 +39,7 @@ metadata:
   name: roundcube-alt
   namespace: "{{ docker_mailserver__namespace }}"
 spec:
-  ingressClassName: nginx
+  ingressClassName: "{{ iac__ingress_class_name }}"
   rules:
     - host: "{{ docker_mailserver__external_hostname }}"
       http:

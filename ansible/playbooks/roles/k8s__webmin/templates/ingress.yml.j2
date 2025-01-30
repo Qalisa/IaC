@@ -4,10 +4,11 @@ metadata:
   name: webmin
   namespace: webmin
   annotations:
-    # when using Cloudflare's proxied DNS record
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    #
     cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    #
+    nginx.ingress.kubernetes.io/ssl-redirect: "false" # when using Cloudflare's proxied DNS record
+    traefik.ingress.kubernetes.io/service.serversscheme: "https"
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__webmin__external_hostname }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -18,7 +19,7 @@ metadata:
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "false"
 spec:
-  ingressClassName: "{{ iac__ingress_nginx_class }}"
+  ingressClassName: "{{ iac__ingress_class_name }}"
   rules:
   - host: "{{ k8s__webmin__external_hostname }}"
     http:

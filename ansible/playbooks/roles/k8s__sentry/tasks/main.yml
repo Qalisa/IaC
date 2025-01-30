@@ -133,7 +133,7 @@
       ingress:
         enabled: true
         hostname: "{{ k8s__sentry__external_hostname }}"
-        ingressClassName: "{{ iac__ingress_nginx_class }}"
+        ingressClassName: "{{ iac__ingress_class_name }}"
         annotations:
           # If you are using nginx ingress controller, please use at least those 2 annotations
           nginx.ingress.kubernetes.io/use-regex: "true"
