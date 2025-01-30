@@ -1,24 +1,6 @@
 ---
-- name: Install K3s (without service LB)
-  shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable servicelb" K3S_KUBECONFIG_MODE="644" sh -
-- name: Ensure .kube directory exists
-  file:
-    path: "/{{ ansible_user }}/.kube"
-    state: directory
-    mode: '0755'
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-- name: Copy K3s kubeconfig to user home
-  copy:
-    src: /etc/rancher/k3s/k3s.yaml
-    dest: "/{{ ansible_user }}/.kube/config"
-    remote_src: yes
-    mode: '0600'
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+- name: Install k3s master node + creds for kubectl
+  ansible.builtin.import_tasks: setup-master.yml
 
-- name: Set KUBECONFIG environment variable
-  lineinfile:
-    path: "/{{ ansible_user }}/.bashrc"
-    line: "export KUBECONFIG=$HOME/.kube/config"
-    create: yes
+- name: Configure MetalLB
+  ansible.builtin.import_tasks: metallb.yml

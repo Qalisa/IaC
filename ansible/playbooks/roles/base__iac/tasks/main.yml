@@ -1,22 +1,16 @@
 ---
+###
 - name: Install Helm
   community.general.snap:
     name:
       - helm
-
 - name: Install helm-diff
   kubernetes.core.helm_plugin:
     plugin_path: https://github.com/databus23/helm-diff
 
+###
 - name: Update python's Kubernetes lib
   ansible.builtin.pip:
     extra_args: --break-system-packages --pre --upgrade
     name:
       - kubernetes
-
-# https://blog.mossroy.fr/2024/04/16/passage-sur-metallb-au-lieu-de-servicelb-sur-un-cluster-k3s/
-- name: Install and Configure MetalLB
-  kubernetes.core.k8s:
-    template:
-      - path: templates/metallb.yml.j2
-      - path: templates/metallb.traefik-tweaks.yml.j2

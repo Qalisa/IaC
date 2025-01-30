@@ -216,7 +216,7 @@
             "type": "shell",
             "command": [
                 "python3 -m pip install --break-system-packages --user ansible", "&&",
-                "python3 -m pip install --break-system-packages --user ansible-lint"
+                "python3 -m pip install --break-system-packages --user ansible-dev-tools",
             ],
             "options": {
                 "statusbar": {

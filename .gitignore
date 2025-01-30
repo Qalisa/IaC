@@ -1,5 +1,15 @@
+#
 ansible/inventories/**/credentials
 ansible/inventories/**/vault
-.ansible-vault-pw
+
+#
 creds
+
+#
+.ansible-vault-pw
+
+# ansible-core
 .ansible
+
+# ansible-lint cache, MUST create
+.cache

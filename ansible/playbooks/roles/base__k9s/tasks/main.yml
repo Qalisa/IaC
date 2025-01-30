@@ -1,0 +1,11 @@
+---
+- name: Install k9s
+  community.general.snap:
+    name:
+      - k9s
+
+- name: Create symbolic link
+  file:
+    src: /snap/k9s/current/bin/k9s
+    dest: /snap/bin/k9s
+    state: link
