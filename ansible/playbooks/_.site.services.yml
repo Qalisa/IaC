@@ -8,13 +8,13 @@
     ### INFRA CRDs ###
     ##################
     - role: k8s__cf_zto                 # Allow autoconfig of CF zero trust on services
-    - role: k8s__cert_manager           # Finish cert-manager configuration (installed along kubespray)
+    - role: k8s__cert_manager           # Allow generation / fetching of certificate
     - role: k8s__external_dns           # Bind ingresses to DNS rules on Cloudflare
     - role: k8s__kyverno                # Policies enforcement and metadata injection
     #############################
     ### MANAGEMENT & INSIGHTS ###
     #############################
-    - role: k8s__dashboard              # Setup dashboard (NOT installed from kubespray since it is outdated)
+    - role: k8s__dashboard              # K8s dashboard 
     # - role: k8s__skooner              # Alternative dashboard for k8s
     - role: k8s__ingress_dashboard      # List all ingresses available externally  
     # - role: k8s__prometheus_stack     # OPTIONAL, tracks insights from apps

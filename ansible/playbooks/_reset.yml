@@ -1,4 +1,14 @@
 ---
-# runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
-- name: Reset
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+- name: Uninstall k3s
+  hosts: all
+  become: true
+  vars:
+    path_root: "{{ '/' if ansible_user == 'root' else '/home/' }}"
+  tasks:
+    - name: Delete .kube
+      file:
+        path: "{{ path_root }}{{ ansible_user }}/.kube/"
+        state: absent
+    - name: Uninstall k3s
+      command: "/usr/local/bin/k3s-uninstall.sh"
+    
