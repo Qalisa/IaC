@@ -55,7 +55,7 @@ harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowe
 ############################
 
 # MUST be the same as in "ansible/inventories/production/hosts.yaml"
-iac__master_node_name: node1 # default
+iac__master_node_name: node1 # default
 
 #
 iac__ingress_class_name: traefik

@@ -3,6 +3,7 @@
   ansible.builtin.template:
     src: templates/registries.yaml.j2
     dest: /etc/rancher/k3s/registries.yaml
+    mode: "0775"
 
 - name: Restart k3s to ack changes
   ansible.builtin.systemd_service:

@@ -10,4 +10,6 @@
         path: "{{ path_root }}{{ ansible_user }}/.kube/"
         state: absent
     - name: Uninstall k3s
-      ansible.builtin.command: "/usr/local/bin/k3s-uninstall.sh"
+      ansible.builtin.command: /usr/local/bin/k3s-uninstall.sh
+      register: uninstalled_result
+      changed_when: uninstalled_result.rc != 0
