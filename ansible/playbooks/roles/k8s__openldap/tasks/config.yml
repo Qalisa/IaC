@@ -3,6 +3,7 @@
   ansible.builtin.apt:
     pkg:
       - python3-ldap
+      - python3-passlib
     update_cache: true
 
 - name: Install LDAP for Python (2/2)

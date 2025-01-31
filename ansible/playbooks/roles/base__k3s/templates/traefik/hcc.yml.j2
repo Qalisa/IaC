@@ -5,6 +5,8 @@ metadata:
   namespace: "{{ base__k3s__default_namespace }}"
 spec:
   valuesContent: |-
+    globalArguments:
+      - "--serversTransport.insecureSkipVerify=true"
     additionalArguments:
       - "--api"
       - "--api.dashboard=true"

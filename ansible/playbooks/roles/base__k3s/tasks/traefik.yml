@@ -4,8 +4,8 @@
     traefik_pod.resources is defined and
     traefik_pod.resources | length > 0 and
     traefik_pod.resources[0].status.phase == "Running"
-  retries: 30
-  delay: 2
+  retries: 20
+  delay: 5
   kubernetes.core.k8s_info:
     kind: Pod
     namespace: "{{ base__k3s__default_namespace }}"

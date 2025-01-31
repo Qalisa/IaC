@@ -4,3 +4,6 @@
 
 - name: Configure Traefik
   ansible.builtin.import_tasks: traefik.yml
+
+- name: Configure cluster DNS to be available to node
+  ansible.builtin.import_tasks: coredns.yml

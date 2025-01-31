@@ -75,6 +75,10 @@ iac__github_org_url: https://github.com/{{ iac__github_org }}
 # default storage class
 iac__local_storage__class_name: local-storage
 
+#
+iac__resolv__resolved_path: /etc/systemd/resolved.conf.d
+iac__resolv__dns_config_file: 10-k3s-coredns.conf
+
 # where should the persistent volume created for X service, store its data on node
 iac__pv_path__portainer: "{{ iac__pv_path_root }}/portainer"
 iac__pv_path__docker_mailserver: "{{ iac__pv_path_root }}/mailserver"
