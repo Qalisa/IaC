@@ -64,7 +64,6 @@
           hosts:
             core: "{{ k8s__harbor__external_hostname }}"
           annotations:
-            traefik.ingress.kubernetes.io/router.middlewares: default-max-body-size@kubernetescrd
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__harbor__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
