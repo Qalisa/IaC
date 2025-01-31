@@ -10,22 +10,6 @@
     state: directory
     mode: "0755"
 
-- name: Recover default Calico's pool IP range from default name
-  ansible.builtin.command: kubectl get ippool default-pool -o jsonpath='{.spec.cidr}'
-  changed_when: kube_pods_subnet.rc != 0
-  register: kube_pods_subnet
-
-- name: Add whitelisted IPs for inner cluster access
-  ansible.builtin.template:
-    src: "templates/mailserver/{{ item }}.j2"
-    dest: "{{ k8s__docker_mailserver_path_to_config_folder }}/{{ item }}"
-    mode: "0755"
-  loop:
-    - fail2ban-jail.cf
-
-- name: Get my public IP from ipify.org
-  community.general.ipify_facts:
-
 ## REQUIRED TO BE INSTALLED FIRST, since generated secret by this certificate is done async
 - name: Install Certificate first
   kubernetes.core.k8s:

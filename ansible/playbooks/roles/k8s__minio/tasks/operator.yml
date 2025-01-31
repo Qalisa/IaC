@@ -26,11 +26,6 @@
           host: "{{ k8s__minio__external_hostname }}"
           annotations:
             #
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-            #
-            nginx.ingress.kubernetes.io/ssl-redirect: "false" # when using Cloudflare's proxied DNS record
-            traefik.ingress.kubernetes.io/service.serversscheme: "http"
-            #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__minio__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
             #

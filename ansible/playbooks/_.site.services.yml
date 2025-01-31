@@ -15,11 +15,8 @@
     ### MANAGEMENT & INSIGHTS ###
     #############################
     - role: k8s__dashboard              # K8s dashboard
-    # - role: k8s__skooner              # Alternative dashboard for k8s
     - role: k8s__ingress_dashboard      # List all ingresses available externally
     # - role: k8s__prometheus_stack     # OPTIONAL, tracks insights from apps
-    # - role: k8s__webmin               # OPTIONAL, allow control of a node / server
-    # - role: k8s__portainer_ce         # OPTIONAL, allow control of docker / k8s instances
     ########################
     ### Safety & Backups ###
     ########################

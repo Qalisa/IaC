@@ -27,9 +27,6 @@
           enabled: true
           className: "{{  iac__ingress_class_name }}"
           annotations:
-            traefik.ingress.kubernetes.io/service.serversscheme: "http"
-            # when using Cloudflare's proxied DNS record
-            nginx.ingress.kubernetes.io/ssl-redirect: "false"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__kyverno__external_hostname__policy_reporter }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"

@@ -23,6 +23,7 @@
     return_content: true
     status_code: 200
     timeout: 1
+    validate_certs: false
   register: result
   until: result.status == 200
   retries: 20

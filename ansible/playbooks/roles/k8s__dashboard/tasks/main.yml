@@ -35,8 +35,6 @@
             scope: disabled
           annotations:
             #
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-            #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__dashboard__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
             #

@@ -4,9 +4,6 @@ metadata:
   name: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
   namespace: "{{ docker_mailserver__namespace }}"
   annotations:
-    # when using Cloudflare's proxied DNS record
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    traefik.ingress.kubernetes.io/service.serversscheme: "http"
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__docker_mailserver__external_hostname__autoconfig }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"

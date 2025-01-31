@@ -5,12 +5,6 @@ metadata:
   namespace: "{{ docker_mailserver__namespace }}"
   annotations:
     #
-    cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-    #
-    nginx.ingress.kubernetes.io/ssl-redirect: "false" # when using Cloudflare's proxied DNS record
-    traefik.ingress.kubernetes.io/service.serversscheme: "http"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-      #
     ingress-dashboard/title: Roundcube
     ingress-dashboard/description: Embedded UI to access {{ iac__root_domain }} emails
     ingress-dashboard/logo-url: /favicon.ico
@@ -34,7 +28,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    nginx.ingress.kubernetes.io/permanent-redirect: https://{{ k8s__docker_mailserver__external_hostname__webmail }}
+    ingress.kubernetes.io/permanent-redirect: https://{{ k8s__docker_mailserver__external_hostname__webmail }}
     ingress-dashboard/hide: "true"
   name: roundcube-alt
   namespace: "{{ docker_mailserver__namespace }}"

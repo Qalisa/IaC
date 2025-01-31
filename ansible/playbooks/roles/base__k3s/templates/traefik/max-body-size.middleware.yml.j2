@@ -1,0 +1,7 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: max-body-size
+  namespace: "{{ base__k3s__default_namespace }}"
+spec:
+  maxBodySize: 0 # 0 means no limit

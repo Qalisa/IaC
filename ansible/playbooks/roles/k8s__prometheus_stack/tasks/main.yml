@@ -25,10 +25,6 @@
           ingressClassName: "{{ iac__ingress_class_name }}"
           annotations:
             #
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-            #
-            nginx.ingress.kubernetes.io/ssl-redirect: "false" # Will be handled by Cloudflare proxy
-            #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
             #
@@ -44,10 +40,6 @@
           enabled: true
           ingressClassName: "{{ iac__ingress_class_name }}"
           annotations:
-            #
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-            #
-            nginx.ingress.kubernetes.io/ssl-redirect: "false" # Will be handled by Cloudflare proxy
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
