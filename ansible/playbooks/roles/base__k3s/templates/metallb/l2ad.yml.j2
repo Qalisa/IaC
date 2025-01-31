@@ -1,8 +1,0 @@
-apiVersion: metallb.io/v1beta1
-kind: L2Advertisement
-metadata:
-  name: traefik
-  namespace: "{{ base__k3s__metallb_namespace }}"
-spec:
-  ipAddressPools:
-    - traefik-pool

@@ -2,8 +2,5 @@
 - name: Install k3s master node + creds for kubectl
   ansible.builtin.import_tasks: setup-master.yml
 
-- name: Configure MetalLB
-  ansible.builtin.import_tasks: metallb.yml
-
 - name: Configure Traefik
   ansible.builtin.import_tasks: traefik.yml

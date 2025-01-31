@@ -71,9 +71,6 @@
       noreplyAddress: "{{ iac__donotreply_email }}"
 
       #
-      service:
-        type: LoadBalancer
-        externalTrafficPolicy: Local
       ingress:
         enabled: true
         ingressClassName: "{{ iac__ingress_class_name }}"

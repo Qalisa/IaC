@@ -1,9 +1,0 @@
-apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
-metadata:
-  name: traefik-pool
-  namespace: "{{ base__k3s__metallb_namespace }}"
-spec:
-  addresses:
-    - 10.5.0.0/16
-  avoidBuggyIPs: true

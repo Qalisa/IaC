@@ -10,12 +10,6 @@
     name: kubernetes-dashboard
     repo_url: https://kubernetes.github.io/dashboard/
 
-- name: Install Zero-Trust configuration
-  tags: [zto-app]
-  kubernetes.core.k8s:
-    template:
-      - path: templates/caa.yml.j2
-
 - name: Install Dashboard w/ Helm
   kubernetes.core.helm:
     name: kubernetes-dashboard
@@ -35,8 +29,9 @@
             #
             cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
             #
-            traefik.ingress.kubernetes.io/service.serversscheme: "https"
-            nginx.ingress.kubernetes.io/ssl-redirect: "false" # when using Cloudflare's proxied DNS record
+            # traefik.ingress.kubernetes.io/router.entrypoints: web
+            # traefik.ingress.kubernetes.io/service.serversscheme: "https"
+            # nginx.ingress.kubernetes.io/ssl-redirect: "false" # when using Cloudflare's proxied DNS record
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__dashboard__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -51,11 +46,6 @@
             - "{{ k8s__dashboard__external_hostname }}"
           tls:
             enabled: false
-
-- name: Fix Service
-  kubernetes.core.k8s:
-    template:
-      - path: templates/service.yml.j2
 
 #
 - name: Save Token

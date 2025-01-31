@@ -147,9 +147,6 @@
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
 
-      service:
-        type: LoadBalancer
-
       github: #   Reference -> https://docs.sentry.io/product/integrations/source-code-mgmt/github/
         appId: "{{ sentry__github_appid }}"
         appName: "{{ sentry__github_appname }}"

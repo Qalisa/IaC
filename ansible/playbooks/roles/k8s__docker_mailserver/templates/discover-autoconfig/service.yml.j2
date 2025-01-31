@@ -6,7 +6,6 @@ metadata:
   labels:
     app: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
 spec:
-  type: LoadBalancer # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
   selector:
     app: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
   ports:

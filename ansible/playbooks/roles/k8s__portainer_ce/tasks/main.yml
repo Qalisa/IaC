@@ -34,8 +34,6 @@
         kubernetes.io/hostname: "{{ iac__master_node_name }}"
       persistence:
         storageClass: "{{ iac__local_storage__class_name }}"
-      service:
-        type: LoadBalancer # https://docs.tigera.io/archive/v3.18/networking/advertise-service-ips#before-you-begin
       tls:
         force: true
         # existingSecret: "portainer-ce-certs"

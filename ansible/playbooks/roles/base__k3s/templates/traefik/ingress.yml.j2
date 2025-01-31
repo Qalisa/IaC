@@ -7,8 +7,7 @@ metadata:
     #
     cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
     #
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure  # Use the secure entry point
-    traefik.ingress.kubernetes.io/router.tls: "true"  # Enable TLS
+    traefik.ingress.kubernetes.io/router.entrypoints: web
     #
     external-dns.alpha.kubernetes.io/hostname: traefik.{{ iac__root_domain }}
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -27,6 +26,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: traefik  # Replace with the name of the Traefik service
+            name: traefik
             port:
-              name: web  # Replace with the port Traefik dashboard is exposed on
+              name: traefik

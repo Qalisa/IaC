@@ -126,7 +126,3 @@
       # Vault UI
       ui:
         enabled: true
-        serviceType: "LoadBalancer"
-        externalTrafficPolicy: "Local"
-        # serviceNodePort: null
-        # externalPort: 8200
