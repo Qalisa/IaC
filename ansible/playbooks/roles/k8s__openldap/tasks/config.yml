@@ -6,15 +6,6 @@
       - python3-passlib
     update_cache: true
 
-- name: Install LDAP for Python (2/2)
-  community.general.pipx:
-    name: ansible
-    state: inject
-    install_deps: true
-    inject_packages:
-      - python-ldap
-      - passlib
-
 - name: Wait for OpenLDAP pod to become ready
   register: pods_ready
   changed_when: pods_ready.rc != 0
