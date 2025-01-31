@@ -7,8 +7,6 @@ metadata:
     #
     cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
     #
-    traefik.ingress.kubernetes.io/router.entrypoints: web
-    #
     external-dns.alpha.kubernetes.io/hostname: traefik.{{ iac__root_domain }}
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     #
@@ -26,6 +24,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: traefik
+            name: traefik-dashboard
             port:
               name: traefik

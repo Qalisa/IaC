@@ -120,6 +120,11 @@ iac__cloudflare__account_id: "{{ vault_iac__cloudflare__account_id }}"
 iac__cloudflare__zone_id: "{{ vault_iac__cloudflare__zone_id }}"
 iac__cloudflare__api_token: "{{ vault_iac__cloudflare__api_token }}"
 
+# PLEASE CONFIGURE CLOUDFLARE FOR "Full (Strict)" in CloudFlare dashboard > /ssl-tls/configuration
+# then generate a cert in CloudFlare dashboard > /ssl-tls/origin/certificate-form
+iac__cloudflare__origin_ca__cert: "{{ vault_iac__cloudflare__origin_ca__cert }}"
+iac__cloudflare__origin_ca__priv_key: "{{ vault_iac__cloudflare__origin_ca__priv_key }}"
+
 #
 argocd__admin_password: "{{ vault_argocd__admin_password }}"
 

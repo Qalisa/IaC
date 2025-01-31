@@ -5,21 +5,17 @@ metadata:
   namespace: "{{ base__k3s__default_namespace }}"
 spec:
   valuesContent: |-
-    service:
-      spec:
-        externalTrafficPolicy: Local
-      annotations:
-        metallb.io/address-pool: traefik-pool
     additionalArguments:
       - "--api"
       - "--api.dashboard=true"
       - "--api.insecure=true"
-    {# ports:
-      traefik:
-        expose:
-            default: true #}
-      {# web:
+    ports:
+      web:
         redirections:
           entryPoint:
-            to: websecure
-            scheme: https #}
+            to: "websecure"
+            scheme: "https"
+            permanent: true
+      websecure:
+        tls:
+          certResolver: default

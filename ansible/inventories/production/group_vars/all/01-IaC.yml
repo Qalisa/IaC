@@ -108,7 +108,7 @@ listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
 harbor__namespace: harbor
 harbor__name: harbor
 harbor__sld: registry
-harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}" # we need the service that responds to /v2/ path
+harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}.svc.cluster.local" # we need the service that responds to /v2/ path
 harbor__internal_hostname__registry_v2__url: https://{{ harbor__internal_hostname__registry_v2 }}
 harbor__admin_username: admin
 harbor__org_project_name: "{{ iac__github_org | lower }}"
@@ -124,13 +124,13 @@ docker_mailserver__users_group_description: "{{ iac__root_domain }}'s users that
 docker_mailserver__users_group_id: 5000
 
 #
-docker_mailserver__internal_smtp_server: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}"
+docker_mailserver__internal_smtp_server: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}.svc.cluster.local"
 docker_mailserver__internal_smtp_preferred_port: 587
 
 #
 openldap_stack__namespace: openldap-stack
 openldap_stack__ldap_server_hostname: openldap
-openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}"
+openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}.svc.cluster.local"
 openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_internal_hostname }}/
 openldap_stack__dc_query_string: "{{ iac__root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
 openldap_stack__ldap_admin_user: admin
