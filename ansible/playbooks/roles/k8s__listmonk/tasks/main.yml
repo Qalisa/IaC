@@ -51,7 +51,7 @@
     body_format: json
     body:
       # app
-      app.lang: fr
+      app.lang: "{{ iac__prefered_lang__sub }}"
       app.root_url: https://{{ k8s__listmonk__external_hostname }}
       app.site_name: "{{ listmonk__site_name }}"
       app.logo_url: "{{ listmonk__logo_url }}"

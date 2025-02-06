@@ -1,0 +1,51 @@
+---
+- name: Compile local DN
+  ansible.builtin.set_fact:
+    local_dn: "ou={{ utilities__ldap_domain }},{{ docker_mailserver__users_group_cn }}"
+
+- name: Create DC Org
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
+    #
+    dn: "{{ local_dn }}"
+    objectClass:
+      - top
+      - organizationalUnit
+    attributes:
+      ou: "{{ utilities__ldap_domain }}"
+
+#
+- name: Create default accounts
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
+    #
+    dn: cn={{ itemAccount.username }},{{ local_dn }}
+    objectClass:
+      - top
+      - posixAccount
+      - inetOrgPerson
+    attributes:
+      gidnumber: "{{ docker_mailserver__users_group_id }}"
+      homedirectory: /home/users/{{ utilities__ldap_domain }}/{{ itemAccount.username }}
+      mail:
+        - "{{ itemAccount.email }}"
+      sn: "{{ itemAccount.username }}"
+      uid: "{{ itemAccount.username }}"
+      uidnumber: "{{ itemAccount.uidn }}"
+      userpassword: "{CRYPT}{{ itemAccount.password | password_hash('md5') }}"
+  loop:
+    - username: "{{ iac__postmaster_username }}"
+      password: "{{ iac__postmaster_password }}"
+      email: "{{ iac__postmaster_username }}@{{ utilities__ldap_domain }}"
+      uidn: 1000
+    - username: "{{ iac__donotreply_username }}"
+      password: "{{ iac__donotreply_password }}"
+      email: "{{ iac__donotreply_username }}@{{ utilities__ldap_domain }}"
+      uidn: 10000
+  loop_control:
+    loop_var: itemAccount
+    label: "{{ itemAccount.email }}"

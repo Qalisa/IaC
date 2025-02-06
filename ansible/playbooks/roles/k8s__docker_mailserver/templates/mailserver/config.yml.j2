@@ -30,9 +30,9 @@ data:
   # >>> Postfix LDAP Integration
   ACCOUNT_PROVISIONER: LDAP
   LDAP_SERVER_HOST: "{{ openldap_stack__ldap_uri }}"
-  LDAP_BIND_DN: "{{ openldap_stack__ldap_admin_cn }}"
+  LDAP_BIND_DN: "{{ iac__ldap__admin__bind_dn }}"
   # LDAP_BIND_PW: mypassword defined as separate secret manifest !!
-  LDAP_SEARCH_BASE: "{{ openldap_stack__dc_query_string }}"
+  LDAP_SEARCH_BASE: "{{ iac__ldap__root_dc }}"
   LDAP_QUERY_FILTER_DOMAIN: (|(mail=*@%s)(mailAlias=*@%s)(mailGroupMember=*@%s))
   LDAP_QUERY_FILTER_USER: (&(objectClass=inetOrgPerson)(mail=%s))
   LDAP_QUERY_FILTER_ALIAS: (&(objectClass=inetOrgPerson)(mailAlias=%s))

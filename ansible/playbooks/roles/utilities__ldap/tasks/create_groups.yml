@@ -6,10 +6,10 @@
 - name: Create root OU
   community.general.ldap_entry:
     server_uri: "{{ openldap_stack__ldap_uri }}"
-    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
-    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
     #
-    dn: "ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
+    dn: "ou={{ utilities__ldap_org_unit }},{{ iac__ldap__root_dc }}"
     objectClass: organizationalUnit
     attributes:
       ou: "{{ utilities__ldap_org_unit }}"
@@ -17,10 +17,10 @@
 - name: Create groups, or make sure they exist
   community.general.ldap_entry:
     server_uri: "{{ openldap_stack__ldap_uri }}"
-    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
-    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
     #
-    dn: "cn={{ item }},ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
+    dn: "cn={{ item }},ou={{ utilities__ldap_org_unit }},{{ iac__ldap__root_dc }}"
     objectClass:
       - groupOfNames
     attributes:
@@ -31,10 +31,10 @@
 - name: Add members to this group
   community.general.ldap_attrs:
     server_uri: "{{ openldap_stack__ldap_uri }}"
-    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
-    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
     #
-    dn: "cn={{ item.groupName }},ou={{ utilities__ldap_org_unit }},{{ openldap_stack__dc_query_string }}"
+    dn: "cn={{ item.groupName }},ou={{ utilities__ldap_org_unit }},{{ iac__ldap__root_dc }}"
     attributes:
       member: "{{ item.members }}"
     state: present # 'exact' would remove all that are not in this, 'present' is the way to go

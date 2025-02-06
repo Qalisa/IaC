@@ -54,6 +54,9 @@ harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowe
 ### SHOULD NOT CUSTOMIZE ###
 ############################
 
+#
+iac__prefered_lang__sub: "{{ iac__prefered_lang | split('_') | first }}"
+
 # MUST be the same as in "ansible/inventories/production/hosts.yaml"
 iac__master_node_name: node1 # default
 
@@ -118,11 +121,18 @@ harbor__admin_username: admin
 harbor__org_project_name: "{{ iac__github_org | lower }}"
 
 #
+iac__ldap__root_domain: iac.local
+iac__ldap__root_dc: "{{ iac__ldap__root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
+iac__ldap__admin__bind_dn: cn=admin,{{ iac__ldap__root_dc }}
+
+#
 docker_mailserver__namespace: docker-mailserver
 docker_mailserver__server_hostname: docker-mailserver
 docker_mailserver__server_label: docker-mailserver
-docker_mailserver__users_group_name: email-users
-docker_mailserver__users_group_description: "{{ iac__root_domain }}'s users that have a mail account behind a password"
+docker_mailserver__users_group_cn: cn=email-users,{{ iac__ldap__root_dc }}
+docker_mailserver__users_group_description: |
+  Users that want to have account behind a password at {{ iac__root_domain }}'s mailserver. Required for all mail users.
+  (No need for this group to have children, just make sure GID is used when creating mail user)
 # Email users (possibly POSTFIX + DOVECOT, eg sending AND receiving email)
 # SHOULD MATCH GID of docker-mailserver's dovecot id group, which create folder structure for IMAP users
 docker_mailserver__users_group_id: 5000
@@ -136,9 +146,6 @@ openldap_stack__namespace: openldap-stack
 openldap_stack__ldap_server_hostname: openldap
 openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}.svc.cluster.local"
 openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_internal_hostname }}/
-openldap_stack__dc_query_string: "{{ iac__root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
-openldap_stack__ldap_admin_user: admin
-openldap_stack__ldap_admin_cn: cn={{ openldap_stack__ldap_admin_user }},{{ openldap_stack__dc_query_string }}
 
 #
 argo_cd__namespace: argocd
@@ -150,7 +157,7 @@ argocd__project_name: default
 #
 docker_mailserver__external_hostname: "{{ docker_mailserver__third_level_domain }}.{{ iac__root_domain }}"
 
-#
+# default from root domain
 iac__postmaster_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
 iac__donotreply_email: "{{ iac__donotreply_username }}@{{ iac__root_domain }}"
 

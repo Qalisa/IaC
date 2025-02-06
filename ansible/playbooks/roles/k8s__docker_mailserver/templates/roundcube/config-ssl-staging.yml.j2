@@ -1,4 +1,3 @@
-{% if k8s__docker_mailserver_roundcube_check_mailserver_certs %}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -19,5 +18,3 @@ data:
             'verify_peer'  => false
         ]
     ];
-
-{% endif %}

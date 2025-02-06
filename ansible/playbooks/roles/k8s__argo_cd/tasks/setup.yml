@@ -34,7 +34,7 @@
             bindPW: "$ldap.bindPW"
             usernamePrompt: Email
             userSearch:
-              baseDN: "cn={{ docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}"
+              baseDN: "{{ docker_mailserver__users_group_cn }}"
               filter: "(objectClass=inetOrgPerson)"
               username: mail
               idAttr: uid
@@ -42,7 +42,7 @@
               nameAttr: uid
               preferredUsernameAttr: uid
             groupSearch:
-              baseDN: "ou=argocd,{{ openldap_stack__dc_query_string }} "
+              baseDN: "ou=argocd,{{ iac__ldap__root_dc }} "
               filter: "(objectClass=groupOfNames)"
               nameAttr: cn
               userMatchers:
@@ -82,8 +82,8 @@
       # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=configs.secret.argocdServerAdminPassword
       argocdServerAdminPassword: "{{ k8s__argo_cd__admin_password_bcrypted }}"
       extra:
-        ldap.bindDN: "{{ openldap_stack__ldap_admin_cn }}"
-        ldap.bindPW: "{{ openldap_stack__ldap_admin_pwd }}"
+        ldap.bindDN: "{{ iac__ldap__admin__bind_dn }}"
+        ldap.bindPW: "{{ iac__ldap__admin__bind_pw }}"
 
 ###
 ###

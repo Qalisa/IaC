@@ -7,8 +7,12 @@
 ### DEFINED - Org identity related
 ### 
 
+iac__prefered_lang: "{{ u_vault_iac__prefered_lang }}" # like en_US, fr_FR...
+
 iac__root_domain: "{{ u_vault_iac__root_domain }}" # https://crt.sh/?q={{ iac__root_domain }}
+iac__alt_domains__json_array: "{{ u_vault_iac__alt_domains }}" # must be a json representation of an array
 iac__github_org: "{{ u_vault_iac__github_org }}"
+iac__ldap_org: "{{ u_vault_iac__ldap_org }}"
 
 listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
 
@@ -73,7 +77,7 @@ iac__postmaster_password: "{{ vault_iac__postmaster_password }}"
 iac__donotreply_password: "{{ vault_iac__donotreply_password }}"
 
 #
-openldap_stack__ldap_admin_pwd: "{{ vault_openldap_stack__ldap_admin_pwd }}"
+iac__ldap__admin__bind_pw: "{{ vault_iac__ldap__admin__bind_pw }}"
 openldap_stack__lam_password: "{{ vault_openldap_stack__lam_password }}"
 openldap_stack__ssp_keyphrase: "{{ vault_openldap_stack__ssp_keyphrase }}"
 

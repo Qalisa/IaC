@@ -1,28 +1,21 @@
 ---
 ##
-## DKIM
+## Generate DKIM
 ##
 
-- name: Pause for 5 secs (to wait for server pod to be invoked)
-  ansible.builtin.pause:
-    seconds: 5
-
-- name: Search for server pod exact name
+- name: Wait until Mailserver pod is created (and Ready !)
+  until: >
+    docker_mailserver_pod_search.resources is defined and
+    docker_mailserver_pod_search.resources | length > 0 and
+    docker_mailserver_pod_search.resources[0].status.phase == "Running"
+  retries: 20
+  delay: 5
   kubernetes.core.k8s_info:
     kind: Pod
+    namespace: "{{ docker_mailserver__namespace }}"
     label_selectors:
-      - app = {{ docker_mailserver__server_label }}
+      - app={{ docker_mailserver__server_label }}
   register: docker_mailserver_pod_search
-
-- name: Wait for pod to become ready
-  ansible.builtin.command: |
-    kubectl wait
-    pod -l app={{ docker_mailserver__server_label }}
-    --namespace={{ docker_mailserver__namespace }}
-    --for=condition=Ready
-    --timeout=240s
-  register: pods_ready
-  changed_when: pods_ready.rc != 0
 
 - name: Generate DKIM from pod
   kubernetes.core.k8s_exec:
@@ -46,15 +39,73 @@
       {{ dkim_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}
 
 ##
-##
+## Deploy DNS Rules (non-provider agnostic !)
+## (dns-external lacks providers support (cloudflare in particular...) with DNSEndpoint CRD)
 ##
 
-- name: Install ClusterIssuers (prod + staging)
-  kubernetes.core.k8s:
-    template:
-      - path: templates/mailserver/dns/CNAME.yml.j2
-      - path: templates/mailserver/dns/DKIM.yml.j2
-      - path: templates/mailserver/dns/DMARC.yml.j2
-      - path: templates/mailserver/dns/MX.yml.j2
-      - path: templates/mailserver/dns/SPF_MCONF.yml.j2
-      - path: templates/mailserver/dns/SRV.yml.j2
+- name: Add DKIM record on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ iac__root_domain }}"
+    record: "{{ docker_mailserver__third_level_domain }}._domainkey"
+    type: TXT
+    value: "\"{{ dkim_txt }}\""
+    api_token: "{{ iac__cloudflare__api_token }}"
+    solo: true
+- name: Add DMARC record on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ iac__root_domain }}"
+    record: _dmarc
+    type: TXT
+    value: "\"v=DMARC1; p=quarantine; ruf=mailto:{{ iac__postmaster_email }}; sp=none; fo=1; ri=86400\""
+    api_token: "{{ iac__cloudflare__api_token }}"
+    solo: true
+- name: Add MX record on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ iac__root_domain }}"
+    record: "@"
+    type: MX
+    priority: 10
+    value: "{{ docker_mailserver__external_hostname }}"
+    api_token: "{{ iac__cloudflare__api_token }}"
+    solo: true
+  failed_when: false # replacement for ignore_errors
+- name: Add SPF + mailconf records on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ iac__root_domain }}"
+    record: "@"
+    type: TXT
+    value: "\"{{ item }}\""
+    api_token: "{{ iac__cloudflare__api_token }}"
+  loop:
+    - "v=spf1 mx ~all"
+    - "mailconf=https://{{ k8s__docker_mailserver__external_hostname__autoconfig }}/mail/config-v1.1.xml"
+- name: Add CNAME records on DNS
+  community.general.cloudflare_dns:
+    zone: "{{ iac__root_domain }}"
+    type: CNAME
+    value: "{{ docker_mailserver__external_hostname }}"
+    record: "{{ item }}"
+    api_token: "{{ iac__cloudflare__api_token }}"
+    solo: true
+  loop:
+    - smtp
+    - imap
+    - autodiscover
+- name: Create an SRV records [service]._tcp
+  community.general.cloudflare_dns:
+    api_token: "{{ iac__cloudflare__api_token }}"
+    domain: "{{ iac__root_domain }}"
+    type: SRV
+    proto: tcp
+    priority: 0
+    weight: 0
+    service: "{{ item.service }}"
+    port: "{{ item.port }}"
+    value: "{{ item.value }}"
+  failed_when: false # replacement for ignore_errors
+  loop:
+    - { service: "autodiscover", port: 443, value: "{{ k8s__docker_mailserver__external_hostname__autodiscover }}" }
+    - { service: "imap", port: 143, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "imaps", port: 993, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "submission", port: 587, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "submissions", port: 465, value: "{{ docker_mailserver__external_hostname }}" }

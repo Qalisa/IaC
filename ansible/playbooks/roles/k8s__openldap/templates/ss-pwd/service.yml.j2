@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: self-service-password
-  namespace: openldap-stack
+  namespace: "{{ openldap_stack__namespace }}"
   labels:
     app: self-service-password
 spec:

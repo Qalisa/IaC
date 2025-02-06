@@ -15,7 +15,7 @@
     template:
       - path: templates/openldap/pv.yml.j2
 
-- name: Install OpenLDAP Stack w/ Helm
+- name: Install OpenLDAP w/ Helm
   kubernetes.core.helm:
     name: "{{ openldap_stack__ldap_server_hostname }}"
     chart_ref: helm-openldap/openldap-stack-ha
@@ -23,11 +23,13 @@
     create_namespace: true
     wait: true
     values:
+      env:
+        LDAP_SKIP_DEFAULT_TREE: "yes"
       replicaCount: 1
       global:
-        ldapDomain: "{{ iac__root_domain }}"
-        adminPassword: "{{ openldap_stack__ldap_admin_pwd }}"
-        configPassword: "{{ openldap_stack__ldap_admin_pwd }}"
+        ldapDomain: "{{ iac__ldap__root_domain }}"
+        adminPassword: "{{ iac__ldap__admin__bind_pw }}"
+        configPassword: "{{ iac__ldap__admin__bind_pw }}"
       replication:
         enabled: false
       persistence:

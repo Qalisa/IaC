@@ -4,10 +4,10 @@
   register: users
   community.general.ldap_search:
     server_uri: "{{ openldap_stack__ldap_uri }}"
-    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
-    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
     #
-    dn: "cn={{ docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}"
+    dn: "{{ docker_mailserver__users_group_cn }}"
     scope: "onelevel"
     attrs:
       - uidNumber

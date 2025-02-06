@@ -39,8 +39,7 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: "{{ docker_mailserver__external_hostname }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
     #
-    ingress.kubernetes.io/redirect-permanent: "true"
-    ingress.kubernetes.io/redirect-regex: "^https://{{ k8s__docker_mailserver__external_hostname__webmail }}"
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-mail-to-webmail@kubernetescrd
     #
     ingress-dashboard/hide: "true"
   name: roundcube-alt
@@ -55,7 +54,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: roundcube
+                name: roundcube # could be a dummy service pointing to nothing, like noop-service
                 port:
                   name: app
   tls:
