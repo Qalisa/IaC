@@ -1,7 +1,7 @@
 ---
 - name: Compile local DN
   ansible.builtin.set_fact:
-    local_dn: "ou={{ utilities__ldap_domain }},{{ docker_mailserver__users_group_cn }}"
+    local_dn: "ou={{ utilities__ldap__build_dc__domain }},{{ docker_mailserver__users_group_cn }}"
 
 - name: Create DC Org
   community.general.ldap_entry:
@@ -14,7 +14,7 @@
       - top
       - organizationalUnit
     attributes:
-      ou: "{{ utilities__ldap_domain }}"
+      ou: "{{ utilities__ldap__build_dc__domain }}"
 
 #
 - name: Create default accounts
@@ -30,7 +30,7 @@
       - inetOrgPerson
     attributes:
       gidnumber: "{{ docker_mailserver__users_group_id }}"
-      homedirectory: /home/users/{{ utilities__ldap_domain }}/{{ itemAccount.username }}
+      homedirectory: /home/users/{{ utilities__ldap__build_dc__domain }}/{{ itemAccount.username }}
       mail:
         - "{{ itemAccount.email }}"
       sn: "{{ itemAccount.username }}"
@@ -40,12 +40,39 @@
   loop:
     - username: "{{ iac__postmaster_username }}"
       password: "{{ iac__postmaster_password }}"
-      email: "{{ iac__postmaster_username }}@{{ utilities__ldap_domain }}"
-      uidn: 1000
+      email: "{{ iac__postmaster_username }}@{{ utilities__ldap__build_dc__domain }}"
+      uidn: "{{ 10000 + domainId }}"
     - username: "{{ iac__donotreply_username }}"
       password: "{{ iac__donotreply_password }}"
-      email: "{{ iac__donotreply_username }}@{{ utilities__ldap_domain }}"
-      uidn: 10000
+      email: "{{ iac__donotreply_username }}@{{ utilities__ldap__build_dc__domain }}"
+      uidn: "{{ 11000 + domainId }}"
   loop_control:
     loop_var: itemAccount
     label: "{{ itemAccount.email }}"
+
+
+#
+- name: Create custom user accounts
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
+    #
+    dn: cn={{ itemAccount.username }},{{ local_dn }}
+    objectClass:
+      - top
+      - posixAccount
+      - inetOrgPerson
+    attributes:
+      gidnumber: "{{ docker_mailserver__users_group_id }}"
+      homedirectory: /home/users/{{ utilities__ldap__build_dc__domain }}/{{ itemAccount.username }}
+      mail:
+        - "{{ itemAccount.username }}@{{ utilities__ldap__build_dc__domain }}"
+      sn: "{{ itemAccount.username }}"
+      uid: "{{ itemAccount.username }}"
+      uidnumber: "{{ iac__mail_users__uid_base + itemAccount.uidn }}"
+      userpassword: "{CRYPT}{{ iac__mail_users__default_password | password_hash('md5') }}"
+  loop: "{{ iac__mail_users[utilities__ldap__build_dc__domain] | default([]) | dict2items(key_name='username', value_name='uidn') }}"
+  loop_control:
+    loop_var: itemAccount
+    label: "{{ itemAccount.username }}@{{ utilities__ldap__build_dc__domain }}"

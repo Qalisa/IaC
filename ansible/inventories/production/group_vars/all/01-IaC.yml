@@ -23,7 +23,7 @@ iac__donotreply_username: donotreply
 iac__donotreply_name: Do Not Reply
 
 # Root OU : groupOfNames : [users CN]
-iac__ldap__groups: |-
+iac__ldap__groups__yaml: |-
   argocd:
     - groupName: admin
       members:
@@ -56,6 +56,9 @@ harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowe
 
 #
 iac__prefered_lang__sub: "{{ iac__prefered_lang | split('_') | first }}"
+
+#
+iac__mail_users__uid_base: 1000
 
 # MUST be the same as in "ansible/inventories/production/hosts.yaml"
 iac__master_node_name: node1 # default

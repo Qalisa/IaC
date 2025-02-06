@@ -51,9 +51,9 @@ Once cluster is setup, you can review all availables services through `book.<roo
 ## Create new users (LDAP / mail)
 By default, only 2 users are created: `postmaster` and `donotreply`, which are required. If you want to create more:
 - Use LAM service (`https://admin-ldap.<root_domain>`), and login as admin.
-- Create a new user, and make sure that these fields are filled:
+- Create a new user in `ou=<domain>,cn=email-users,dc=iac,dc=local`, and make sure that these fields are filled:
   - `Personnal` > `Last name`, which might be the username
-  - `Personnal` > `Email address`, which is used as email username, and should look like `<Last name>@<root_domain>`
+  - `Personnal` > `Email address`, which is used as email username, and should look like `<Last name>@<domain>`
   - `Unix` > `Primary Group` to `email-users`
   - `Set Password` button to define a temporary password, that the user should change by using `https://pwd-ldap.<root_domain>`
   - use webmail service, or any e-mail client (`https://webmail.<root_domain>`)

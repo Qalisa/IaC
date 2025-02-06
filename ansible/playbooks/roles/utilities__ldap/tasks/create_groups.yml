@@ -1,7 +1,7 @@
 ---
 - name: Get whole config
   ansible.builtin.set_fact:
-    ldap_config: "{{ iac__ldap__groups | from_yaml }}"
+    ldap_config: "{{ iac__ldap__groups__yaml | from_yaml }}"
 
 - name: Create root OU
   community.general.ldap_entry:
@@ -9,10 +9,10 @@
     bind_dn: "{{ iac__ldap__admin__bind_dn }}"
     bind_pw: "{{ iac__ldap__admin__bind_pw }}"
     #
-    dn: "ou={{ utilities__ldap_org_unit }},{{ iac__ldap__root_dc }}"
+    dn: "ou={{ utilities__ldap__create_groups__org_unit }},{{ iac__ldap__root_dc }}"
     objectClass: organizationalUnit
     attributes:
-      ou: "{{ utilities__ldap_org_unit }}"
+      ou: "{{ utilities__ldap__create_groups__org_unit }}"
 
 - name: Create groups, or make sure they exist
   community.general.ldap_entry:
@@ -20,13 +20,13 @@
     bind_dn: "{{ iac__ldap__admin__bind_dn }}"
     bind_pw: "{{ iac__ldap__admin__bind_pw }}"
     #
-    dn: "cn={{ item }},ou={{ utilities__ldap_org_unit }},{{ iac__ldap__root_dc }}"
+    dn: "cn={{ item }},ou={{ utilities__ldap__create_groups__org_unit }},{{ iac__ldap__root_dc }}"
     objectClass:
       - groupOfNames
     attributes:
       cn: "{{ item }}"
       member: "" # defaults to no members, will fill them later on. Wont override existing
-  loop: "{{ ldap_config | json_query(utilities__ldap_org_unit + '[*].groupName') }}"
+  loop: "{{ ldap_config | json_query(utilities__ldap__create_groups__org_unit + '[*].groupName') }}"
 
 - name: Add members to this group
   community.general.ldap_attrs:
@@ -34,8 +34,8 @@
     bind_dn: "{{ iac__ldap__admin__bind_dn }}"
     bind_pw: "{{ iac__ldap__admin__bind_pw }}"
     #
-    dn: "cn={{ item.groupName }},ou={{ utilities__ldap_org_unit }},{{ iac__ldap__root_dc }}"
+    dn: "cn={{ item.groupName }},ou={{ utilities__ldap__create_groups__org_unit }},{{ iac__ldap__root_dc }}"
     attributes:
       member: "{{ item.members }}"
     state: present # 'exact' would remove all that are not in this, 'present' is the way to go
-  loop: "{{ ldap_config | json_query(utilities__ldap_org_unit + '[*]') }}"
+  loop: "{{ ldap_config | json_query(utilities__ldap__create_groups__org_unit + '[*]') }}"

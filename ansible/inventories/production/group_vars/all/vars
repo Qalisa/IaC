@@ -7,13 +7,30 @@
 ### DEFINED - Org identity related
 ### 
 
+#
 iac__prefered_lang: "{{ u_vault_iac__prefered_lang }}" # like en_US, fr_FR...
 
+#
 iac__root_domain: "{{ u_vault_iac__root_domain }}" # https://crt.sh/?q={{ iac__root_domain }}
-iac__alt_domains__json_array: "{{ u_vault_iac__alt_domains }}" # must be a json representation of an array
-iac__github_org: "{{ u_vault_iac__github_org }}"
-iac__ldap_org: "{{ u_vault_iac__ldap_org }}"
+iac__alt_domains: "{{ u_vault_iac__alt_domains__yaml | from_yaml }}" # must be a json representation of an array
+### 
+## Expects YAML
+## For each domains (root_domain + alt_domains) 
+## <usernameToCreate>: <intValueAsUID: +1000>
+# |-
+# "test.com":
+#   bobby: 1
+#   john: 2
+# "test.io":
+#   bekam: 3
+###
+iac__mail_users: "{{ u_vault_iac__mail_users__yaml | from_yaml }}"
 
+#
+iac__ldap_org: "{{ u_vault_iac__ldap_org }}"
+iac__github_org: "{{ u_vault_iac__github_org }}"
+
+#
 listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
 
 ###
@@ -69,6 +86,9 @@ sentry__github_appname: "{{ u_vault_sentry__github_appname }}"
 ###
 ### DEFINED
 ### 
+
+#
+iac__mail_users__default_password: "{{ vault_iac__mail_users__default_password }}"
 
 # password for postmaster@{{ iac__root_domain }}
 iac__postmaster_password: "{{ vault_iac__postmaster_password }}"

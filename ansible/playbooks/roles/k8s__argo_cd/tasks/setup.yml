@@ -10,7 +10,7 @@
     name: utilities__ldap
     tasks_from: create_groups
   vars:
-    utilities__ldap_org_unit: argocd
+    utilities__ldap__create_groups__org_unit: argocd
 
 ###
 ###

@@ -49,9 +49,11 @@
 ###
 
 - name: Create DCs
-  loop: "{{ [iac__root_domain] + iac__alt_domains__json_array }}" # root domain + optional alt domains
+  loop: "{{ [iac__root_domain] + iac__alt_domains }}" # root domain + optional alt domains
+  loop_control:
+    index_var: domainId
   ansible.builtin.include_role:
     name: utilities__ldap
     tasks_from: build_dc
   vars:
-    utilities__ldap_domain: "{{ item }}"
+    utilities__ldap__build_dc__domain: "{{ item }}"
