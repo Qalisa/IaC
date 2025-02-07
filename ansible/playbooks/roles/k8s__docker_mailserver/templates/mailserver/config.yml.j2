@@ -48,9 +48,10 @@ data:
   # <<< Dovecot LDAP Integration
 
   # >>> SASL LDAP Authentication
+  # https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/auth-ldap/#saslauthd_ldap_filter
   ENABLE_SASLAUTHD: '1'
   SASLAUTHD_MECHANISMS: ldap
-  SASLAUTHD_LDAP_FILTER: (&(mail=%U@{{ iac__root_domain }})(objectClass=inetOrgPerson))
+  SASLAUTHD_LDAP_FILTER: (&(objectClass=inetOrgPerson)(mail=%u))
   # SASLAUTHD_MECHANISMS: rimap
   # SASLAUTHD_MECH_OPTIONS: "127.0.0.1"
   # <<< LDAP Authentication

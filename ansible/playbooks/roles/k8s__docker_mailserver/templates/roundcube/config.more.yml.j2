@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: roundcube.more.config
+  namespace: "{{ docker_mailserver__namespace }}"
+data:
+  more.inc.php: |
+    <?php
+
+    //
+    $config['imap_auth_type'] = 'PLAIN';
+
+    //
+    $config['smtp_conn_options'] = [
+      'ssl' => [
+        'verify_peer' => false,
+        'verify_peer_name' => false
+      ],
+      'tls' => [
+        'verify_peer' => false,
+        'verify_peer_name' => false
+      ]
+    ];
+
+    //
+    $config['imap_conn_options'] = [
+      'ssl' => [
+        'verify_peer' => false,
+        'verify_peer_name' => false
+      ],
+      'tls' => [
+        'verify_peer' => false,
+        'verify_peer_name' => false
+      ]
+    ];

@@ -7,7 +7,5 @@ immutable: false
 data:
   ROUNDCUBEMAIL_DB_TYPE: sqlite
   ROUNDCUBEMAIL_SKIN: elastic
-  ROUNDCUBEMAIL_DEFAULT_HOST: "tls://{{ k8s__docker_mailserver__internal_hostname }}"
-  # ROUNDCUBEMAIL_DEFAULT_PORT: "993" (IMAPS, defaults to 143 IMAP)
-  ROUNDCUBEMAIL_SMTP_SERVER: "tls://{{ k8s__docker_mailserver__internal_hostname }}"
-  # ROUNDCUBEMAIL_SMTP_PORT: "465" (SUBS, defaults to 587 SUB)
+  ROUNDCUBEMAIL_DEFAULT_HOST: "tls://{{ k8s__docker_mailserver__internal_hostname }}" # secure connection required
+  ROUNDCUBEMAIL_SMTP_SERVER: "tls://{{ k8s__docker_mailserver__internal_hostname }}" # secure connection required
