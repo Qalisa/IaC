@@ -1,8 +1,6 @@
 ---
 ### create_groups.yml
-# which org shoud we pick instructions from
-utilities__ldap__create_groups__org_unit:
+utilities__ldap__create_groups__org_unit: # which org shoud we pick instructions from
 
 ### build_dc.yml
-# which domain to build dc for
-utilities__ldap__build_dc__domain:
+utilities__ldap__build_dc__domain: # which domain to build dc for

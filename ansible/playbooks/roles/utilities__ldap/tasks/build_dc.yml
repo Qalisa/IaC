@@ -1,9 +1,9 @@
 ---
-- name: Compile local DN
+- name: Define OrganizationalUnit DN
   ansible.builtin.set_fact:
     local_dn: "ou={{ utilities__ldap__build_dc__domain }},{{ docker_mailserver__users_group_cn }}"
 
-- name: Create DC Org
+- name: Create OrganizationalUnit
   community.general.ldap_entry:
     server_uri: "{{ openldap_stack__ldap_uri }}"
     bind_dn: "{{ iac__ldap__admin__bind_dn }}"
@@ -16,63 +16,39 @@
     attributes:
       ou: "{{ utilities__ldap__build_dc__domain }}"
 
-#
-- name: Create default accounts
-  community.general.ldap_entry:
-    server_uri: "{{ openldap_stack__ldap_uri }}"
-    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
-    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
-    #
-    dn: cn={{ itemAccount.username }},{{ local_dn }}
-    objectClass:
-      - top
-      - posixAccount
-      - inetOrgPerson
-    attributes:
-      gidnumber: "{{ docker_mailserver__users_group_id }}"
-      homedirectory: "{{ openldap_stack__users_home }}/{{ utilities__ldap__build_dc__domain }}/{{ itemAccount.username }}"
-      mail:
-        - "{{ itemAccount.email }}"
-      sn: "{{ itemAccount.username }}"
-      uid: "{{ itemAccount.username }}"
-      uidnumber: "{{ itemAccount.uidn }}"
-      userpassword: "{CRYPT}{{ itemAccount.password | password_hash('md5') }}"
+##
+- name: Generate users within OrganizationalUnit ("postmaster" + "donotreply")
+  ansible.builtin.include_tasks: _helper.create_user.yml
+  vars:
+    domain: "{{ utilities__ldap__build_dc__domain }}"
+    base_dn: "{{ local_dn }}"
   loop:
-    - username: "{{ iac__postmaster_username }}"
+    - uidn: "{{ 10000 + domainId }}"
+      username: "{{ iac__postmaster_username }}"
       password: "{{ iac__postmaster_password }}"
-      email: "{{ iac__postmaster_username }}@{{ utilities__ldap__build_dc__domain }}"
-      uidn: "{{ 10000 + domainId }}"
-    - username: "{{ iac__donotreply_username }}"
+    - uidn: "{{ 11000 + domainId }}"
+      username: "{{ iac__donotreply_username }}"
       password: "{{ iac__donotreply_password }}"
-      email: "{{ iac__donotreply_username }}@{{ utilities__ldap__build_dc__domain }}"
-      uidn: "{{ 11000 + domainId }}"
   loop_control:
     loop_var: itemAccount
-    label: "{{ itemAccount.email }}"
+    label: "{{ itemAccount.username }}@{{ utilities__ldap__build_dc__domain }}"
 
+- name: Format users for LDAP insertion (1/2)
+  ansible.builtin.set_fact:
+    users_to_insert: |
+      {{ iac__mail_users[utilities__ldap__build_dc__domain] | default([]) | dict2items(key_name='username', value_name='uidn') }}
 
-#
-- name: Create custom user accounts
-  community.general.ldap_entry:
-    server_uri: "{{ openldap_stack__ldap_uri }}"
-    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
-    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
-    #
-    dn: cn={{ itemAccount.username }},{{ local_dn }}
-    objectClass:
-      - top
-      - posixAccount
-      - inetOrgPerson
-    attributes:
-      gidnumber: "{{ docker_mailserver__users_group_id }}"
-      homedirectory: "{{ openldap_stack__users_home }}/{{ utilities__ldap__build_dc__domain }}/{{ itemAccount.username }}"
-      mail:
-        - "{{ itemAccount.username }}@{{ utilities__ldap__build_dc__domain }}"
-      sn: "{{ itemAccount.username }}"
-      uid: "{{ itemAccount.username }}"
-      uidnumber: "{{ iac__mail_users__uid_base + itemAccount.uidn }}"
-      userpassword: "{CRYPT}{{ iac__mail_users__default_password | password_hash('md5') }}"
-  loop: "{{ iac__mail_users[utilities__ldap__build_dc__domain] | default([]) | dict2items(key_name='username', value_name='uidn') }}"
+- name: Format users for LDAP insertion (2/2)
+  ansible.builtin.set_fact:
+    users_to_insert_w_pwd: |
+      {{ users_to_insert | map('combine', {'password': iac__mail_users__default_password}) }}
+
+- name: Generate users within OrganizationalUnit (users)
+  ansible.builtin.include_tasks: _helper.create_user.yml
+  vars:
+    domain: "{{ utilities__ldap__build_dc__domain }}"
+    base_dn: "{{ local_dn }}"
+  loop: "{{ users_to_insert_w_pwd }}"
   loop_control:
     loop_var: itemAccount
     label: "{{ itemAccount.username }}@{{ utilities__ldap__build_dc__domain }}"
