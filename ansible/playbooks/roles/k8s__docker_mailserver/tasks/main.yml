@@ -14,5 +14,5 @@
 ##
 ##
 
-# - name: Ensure Email accounts folder correct permissions
-#   ansible.builtin.import_tasks: users-acc-ensure-permissions.yml
+- name: Ensure Email accounts folder correct permissions
+  ansible.builtin.import_tasks: users-acc-ensure-permissions.yml

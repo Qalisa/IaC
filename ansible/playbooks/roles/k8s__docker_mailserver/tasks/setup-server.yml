@@ -11,7 +11,7 @@
     mode: "0755"
 
 ## REQUIRED TO BE INSTALLED FIRST, since generated secret by this certificate is done async
-- name: Install Certificate first
+- name: Request certificate generation from Issuer with cert-manager's Certificate CRD
   kubernetes.core.k8s:
     template:
       - path: templates/certificate.yml.j2

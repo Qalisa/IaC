@@ -49,7 +49,7 @@
 ###
 
 - name: Create DCs
-  loop: "{{ [iac__root_domain] + iac__alt_domains }}" # root domain + optional alt domains
+  loop: "{{ iac__all_domains }}"
   loop_control:
     index_var: domainId
   ansible.builtin.include_role:

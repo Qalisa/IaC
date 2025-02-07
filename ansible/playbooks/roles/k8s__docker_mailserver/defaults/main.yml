@@ -2,6 +2,9 @@
 k8s__docker_mailserver_config_folder_name: tmp-docker-mailserver
 k8s__docker_mailserver_path_to_config_folder: "{{ iac__pv_path__docker_mailserver }}/{{ k8s__docker_mailserver_config_folder_name }}"
 
+#
+k8s__docker_mailserver__dkim_file_path: "{{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys/{{ iac__root_domain }}/{{ docker_mailserver__third_level_domain }}.txt" 
+
 k8s__docker_mailserver__external_hostname__autoconfig: autoconfig.{{ iac__root_domain }}
 k8s__docker_mailserver__external_hostname__autodiscover: autodiscover.{{ iac__root_domain }}
 k8s__docker_mailserver__external_hostname__webmail: webmail.{{ iac__root_domain }}

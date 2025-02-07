@@ -30,7 +30,7 @@
       - inetOrgPerson
     attributes:
       gidnumber: "{{ docker_mailserver__users_group_id }}"
-      homedirectory: /home/users/{{ utilities__ldap__build_dc__domain }}/{{ itemAccount.username }}
+      homedirectory: "{{ openldap_stack__users_home }}/{{ utilities__ldap__build_dc__domain }}/{{ itemAccount.username }}"
       mail:
         - "{{ itemAccount.email }}"
       sn: "{{ itemAccount.username }}"
@@ -65,7 +65,7 @@
       - inetOrgPerson
     attributes:
       gidnumber: "{{ docker_mailserver__users_group_id }}"
-      homedirectory: /home/users/{{ utilities__ldap__build_dc__domain }}/{{ itemAccount.username }}
+      homedirectory: "{{ openldap_stack__users_home }}/{{ utilities__ldap__build_dc__domain }}/{{ itemAccount.username }}"
       mail:
         - "{{ itemAccount.username }}@{{ utilities__ldap__build_dc__domain }}"
       sn: "{{ itemAccount.username }}"

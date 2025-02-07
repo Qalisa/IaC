@@ -39,7 +39,7 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: "{{ docker_mailserver__external_hostname }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
     #
-    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-mail-to-webmail@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: docker-mailserver-redirect-mail-to-webmail@kubernetescrd
     #
     ingress-dashboard/hide: "true"
   name: roundcube-alt

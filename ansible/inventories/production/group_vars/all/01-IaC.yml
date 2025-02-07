@@ -54,6 +54,9 @@ harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowe
 ### SHOULD NOT CUSTOMIZE ###
 ############################
 
+# root domain + optional alt domains
+iac__all_domains: "{{ [iac__root_domain] + iac__alt_domains }}"
+
 #
 iac__prefered_lang__sub: "{{ iac__prefered_lang | split('_') | first }}"
 
@@ -79,7 +82,7 @@ iac__generated_creds_dir: "{{ playbook_dir ~ '/../../creds' }}"
 iac__github_org_url: https://github.com/{{ iac__github_org }}
 
 # default storage class
-iac__local_storage__class_name: local-storage
+iac__local_storage__class_name: local-path # k3s defaults (https://docs.k3s.io/storage#setting-up-the-local-storage-provider)
 
 #
 iac__resolv__resolved_path: /etc/systemd/resolved.conf.d
@@ -149,6 +152,7 @@ openldap_stack__namespace: openldap-stack
 openldap_stack__ldap_server_hostname: openldap
 openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}.svc.cluster.local"
 openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_internal_hostname }}/
+openldap_stack__users_home: /home/users
 
 #
 argo_cd__namespace: argocd

@@ -61,7 +61,7 @@
             name: pool-0
             volumesPerServer: 1
             size: 20Gi
-            storageClassName: local-path
+            storageClassName: "{{ iac__local_storage__class_name }}"
             ###
             # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/>, to use for deploying Tenant resources.
             #
