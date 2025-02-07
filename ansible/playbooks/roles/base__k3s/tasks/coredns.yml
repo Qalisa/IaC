@@ -7,13 +7,13 @@
   delay: 5
   kubernetes.core.k8s_info:
     kind: Pod
-    namespace: "{{ base__k3s__default_namespace }}"
+    namespace: "{{ k3s__default_namespace }}"
     label_selectors:
       - k8s-app=kube-dns
   register: pod_ready
 
 - name: Fetch CoreDNS ClusterIP
-  ansible.builtin.command: kubectl get pods -n {{ base__k3s__default_namespace }} -l k8s-app=kube-dns -o jsonpath='{.items[0].status.podIP}'
+  ansible.builtin.command: kubectl get pods -n {{ k3s__default_namespace }} -l k8s-app=kube-dns -o jsonpath='{.items[0].status.podIP}'
   register: core_dns_ip
   changed_when: false
 
@@ -28,7 +28,7 @@
     - name: Create k3s CoreDNS configuration file
       ansible.builtin.template:
         dest: "{{ iac__resolv__resolved_path }}/{{ iac__resolv__dns_config_file }}"
-        src: templates/coredns/{{ iac__resolv__dns_config_file }}.j2
+        src: templates/{{ iac__resolv__dns_config_file }}.j2
         mode: '0644'
 
     - name: Restart systemd-resolved

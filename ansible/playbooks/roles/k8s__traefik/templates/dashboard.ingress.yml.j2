@@ -2,10 +2,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: traefik-dashboard
-  namespace: "{{ base__k3s__default_namespace }}"  # Replace with the namespace where Traefik is installed
+  namespace: "{{ k3s__default_namespace }}"  # Replace with the namespace where Traefik is installed
   annotations:
     #
-    external-dns.alpha.kubernetes.io/hostname: traefik.{{ iac__root_domain }}
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__traefik__external_hostname }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     #
     ingress-dashboard/title: Traefik Dashboard
@@ -15,7 +15,7 @@ metadata:
     ingress-dashboard/hide: "false"
 spec:
   rules:
-  - host: traefik.{{ iac__root_domain }}  # Replace with your domain
+  - host: "{{ k8s__traefik__external_hostname }}"
     http:
       paths:
       - path: /

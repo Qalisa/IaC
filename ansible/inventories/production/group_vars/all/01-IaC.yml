@@ -176,3 +176,6 @@ cf_zto__ldap_policy__name: Allow {{ iac__root_domain }} LDAP Users
 #
 kyverno__oc_label_as_env__version: BUILDX_OC_LABEL__VERSION # tag
 kyverno__oc_label_as_env__revision: BUILDX_OC_LABEL__REVISION # commit
+
+#
+k3s__default_namespace: kube-system

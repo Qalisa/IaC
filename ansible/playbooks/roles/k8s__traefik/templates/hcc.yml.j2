@@ -2,7 +2,7 @@ apiVersion: helm.cattle.io/v1
 kind: HelmChartConfig
 metadata:
   name: traefik
-  namespace: "{{ base__k3s__default_namespace }}"
+  namespace: "{{ k3s__default_namespace }}"
 spec:
   valuesContent: |-
     globalArguments:

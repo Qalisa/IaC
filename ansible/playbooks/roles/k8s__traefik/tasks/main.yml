@@ -8,7 +8,7 @@
   delay: 5
   kubernetes.core.k8s_info:
     kind: Pod
-    namespace: "{{ base__k3s__default_namespace }}"
+    namespace: "{{ k3s__default_namespace }}"
     label_selectors:
       - app.kubernetes.io/name=traefik
   register: traefik_pod
@@ -16,26 +16,32 @@
 - name: Add Cloudflare's Full (Strict) SSL/TLS termination
   kubernetes.core.k8s:
     template:
-      - path: templates/traefik/origin-ca.yml.j2
-      - path: templates/traefik/tlsstore.yml.j2
+      - path: templates/origin-ca.yml.j2
+      - path: templates/tlsstore.yml.j2
 
 ###
 
 - name: Process new Traefik configuration
   kubernetes.core.k8s:
     template:
-      - path: templates/traefik/hcc.yml.j2
+      - path: templates/hcc.yml.j2
 
 - name: Wait for Traefik pod to become ready again (would have ack new configuration then)
   register: pods_ready
   changed_when: pods_ready.rc != 0
   ansible.builtin.command: |
-    kubectl wait pod -l app.kubernetes.io/name=traefik --namespace={{ base__k3s__default_namespace }} --for=condition=Ready --timeout=60s
+    kubectl wait pod -l app.kubernetes.io/name=traefik --namespace={{ k3s__default_namespace }} --for=condition=Ready --timeout=60s
 
 ###
+
+- name: Install Zero-Trust configuration
+  tags: [zto-app]
+  kubernetes.core.k8s:
+    template:
+      - path: templates/caa.yml.j2
 
 - name: Expose Traefik dashboard
   kubernetes.core.k8s:
     template:
-      - path: templates/traefik/dashboard.service.yml.j2
-      - path: templates/traefik/dashboard.ingress.yml.j2
+      - path: templates/dashboard.service.yml.j2
+      - path: templates/dashboard.ingress.yml.j2
