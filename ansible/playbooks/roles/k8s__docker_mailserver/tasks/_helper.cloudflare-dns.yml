@@ -1,11 +1,26 @@
 ---
+- name: Extract DKIM TXT (1/2)
+  ansible.builtin.slurp:
+    src: "{{ k8s__docker_mailserver__dkim_domains_path }}/{{ dnsZone }}/{{ k8s__docker_mailserver__dkim_selector }}.txt"
+  register: dkim_txt_file
+
+- name: Extract DKIM TXT (2/2)
+  ansible.builtin.set_fact:
+    dkim: "{{ dkim_txt_file['content'] | b64decode | regex_replace('[\n\r]', '') |
+      regex_replace('.*\"(v=DKIM1.*?)\"\\s+\"(.*?)\"\\s+\"(.*?)\".*', '\\1\\2\\3') }}"
+
+# - name: Display formatted DKIM
+#   ansible.builtin.debug::
+#     var: dkim
+
 ### as of 07/02/2025 "solo: true" is quite buggy (https://github.com/ansible-collections/community.general/pull/9655), delete manually ###
 - name: "Add DKIM - {{ dnsZone }}"
   community.general.cloudflare_dns:
     api_token: "{{ iac__cloudflare__api_token }}"
     zone: "{{ dnsZone }}"
     type: TXT
-    record: mail._domainkey # https://docker-mailserver.github.io/docker-mailserver/latest/config/best-practices/dkim_dmarc_spf/#dkim-dns
+    # https://docker-mailserver.github.io/docker-mailserver/latest/config/best-practices/dkim_dmarc_spf/#dkim-dns
+    record: "{{ k8s__docker_mailserver__dkim_selector }}._domainkey"
     value: "\"{{ dkim }}\""
     solo: true
 

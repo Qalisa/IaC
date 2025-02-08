@@ -79,7 +79,7 @@ spec:
 
             # other PVCs
             - name: data
-              mountPath: /var/mail
+              mountPath: "{{ k8s__docker_mailserver_local_mail_store_path }}"
               subPath: data
               readOnly: false
             - name: data

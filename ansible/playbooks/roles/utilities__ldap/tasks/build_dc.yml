@@ -22,6 +22,7 @@
   vars:
     domain: "{{ utilities__ldap__build_dc__domain }}"
     base_dn: "{{ local_dn }}"
+    utilities__ldap__minimum_uidn: 0
   loop:
     - uidn: "{{ 10000 + domainId }}"
       username: "{{ iac__postmaster_username }}"

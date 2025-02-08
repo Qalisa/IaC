@@ -16,7 +16,7 @@
       mail: "{{ itemAccount.username }}@{{ domain }}"
       sn: "{{ itemAccount.username }}"
       uid: "{{ itemAccount.username }}"
-      uidnumber: "{{ itemAccount.uidn }}"
+      uidnumber: "{{ itemAccount.uidn + utilities__ldap__minimum_uidn }}"
       # userpassword: "{CRYPT}{{ itemAccount.password | password_hash('md5') }}"
 
 - name: Create password for user

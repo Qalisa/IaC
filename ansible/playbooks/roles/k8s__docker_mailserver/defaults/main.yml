@@ -3,8 +3,7 @@ k8s__docker_mailserver_config_folder_name: tmp-docker-mailserver
 k8s__docker_mailserver_path_to_config_folder: "{{ iac__pv_path__docker_mailserver }}/{{ k8s__docker_mailserver_config_folder_name }}"
 
 #
-k8s__docker_mailserver__dkim_file_path: |
-  {{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys/{{ iac__root_domain }}/{{ docker_mailserver__third_level_domain }}.txt
+k8s__docker_mailserver__dkim_domains_path: "{{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys"
 
 k8s__docker_mailserver__external_hostname__autoconfig: autoconfig.{{ iac__root_domain }}
 k8s__docker_mailserver__external_hostname__autodiscover: autodiscover.{{ iac__root_domain }}
@@ -14,3 +13,7 @@ k8s__docker_mailserver__internal_hostname: "{{ docker_mailserver__server_hostnam
 
 #
 k8s__docker_mailserver__cert_secret_name: docker-mailserver-certs
+
+#
+k8s__docker_mailserver_local_mail_store_path: /var/mail
+k8s__docker_mailserver__dkim_selector: mail # https://docker-mailserver.github.io/docker-mailserver/latest/config/best-practices/dkim_dmarc_spf/#dkim-dns

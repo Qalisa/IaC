@@ -26,20 +26,6 @@
   notify:
     - DKIM - Reboot mailserver
 
-- name: Extract DKIM TXT (1/2)
-  ansible.builtin.slurp:
-    src: "{{ k8s__docker_mailserver__dkim_file_path }}"
-  register: dkim_content
-
-- name: Extract DKIM TXT (2/2)
-  ansible.builtin.set_fact:
-    dkim_txt: "{{ dkim_content['content'] | b64decode | regex_replace('[\n\r]', '') |
-      regex_replace('.*\"(v=DKIM1.*?)\"\\s+\"(.*?)\"\\s+\"(.*?)\".*', '\\1\\2\\3') }}"
-
-# - name: Display formatted DKIM
-#   ansible.builtin.debug::
-#     var: dkim_txt
-
 ##
 ## Deploy DNS Rules (non-provider agnostic !)
 ## (dns-external lacks providers support (cloudflare in particular...) with DNSEndpoint CRD)
@@ -47,8 +33,6 @@
 
 - name: Configure Cloudflare DNS zones
   ansible.builtin.include_tasks: _helper.cloudflare-dns.yml
-  vars:
-    dkim: "{{ dkim_txt }}"
   loop: "{{ iac__all_domains }}"
   loop_control:
     loop_var: dnsZone
