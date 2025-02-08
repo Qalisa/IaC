@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: listmonk
-  namespace: listmonk
+  namespace: "{{ k8s__listmonk__namespace }}"
   annotations:
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__listmonk__external_hostname }}"

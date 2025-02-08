@@ -1,12 +1,4 @@
 ---
-- name: Create Persistent Volume dir paths
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: "0755"
-  loop:
-    - "{{ iac__pv_path__ez_appointments }}"
-
 - name: Install Easy!Appointments
   kubernetes.core.k8s:
     template:
@@ -18,7 +10,7 @@
       - path: templates/app/service.yml.j2
       - path: templates/app/ingress.yml.j2
       #
-      - path: templates/db/pv.yml.j2
+      - path: templates/db/pvc.yml.j2
       - path: templates/db/deploy.yml.j2
       - path: templates/db/secret.yml.j2
       - path: templates/db/service.yml.j2

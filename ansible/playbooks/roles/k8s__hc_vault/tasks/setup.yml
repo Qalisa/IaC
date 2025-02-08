@@ -4,19 +4,10 @@
     name: hashicorp
     repo_url: https://helm.releases.hashicorp.com
 
-- name: Create Persistent Volume dir path
-  ansible.builtin.file:
-    path: "{{ iac__pv_path__hc_vault }}/{{ item }}"
-    state: directory
-    mode: "0755"
-  loop:
-    - data-vault-0
-
 - name: Create Persistent Volumes + SSL certificates (injector, server)
   kubernetes.core.k8s:
     template:
       - path: templates/ns.yml.j2
-      - path: templates/pv.yml.j2
       - path: templates/injector/certificate.yml.j2
   loop:
     - data-vault-0
@@ -117,7 +108,6 @@
           enabled: false
         dataStorage:
           enabled: true
-          storageClass: "{{ iac__local_storage__class_name }}"
       # Vault UI
       ui:
         enabled: true

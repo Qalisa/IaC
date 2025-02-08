@@ -1,23 +1,12 @@
 ---
-- name: Create Persistent Volume dir paths
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: "0755"
-  loop:
-    - "{{ iac__pv_path__listmonk__db }}"
-    - "{{ iac__pv_path__listmonk__uploads }}"
-
 - name: Install listmonk
   kubernetes.core.k8s:
     template:
       - path: templates/ns.yml.j2
-      - path: templates/db/pv.yml.j2
       - path: templates/db/pvc.yml.j2
       - path: templates/db/service.yml.j2
       - path: templates/db/deploy.yml.j2
       - path: templates/db/config.yml.j2
-      - path: templates/app/pv-uploads.yml.j2
       - path: templates/app/pvc-uploads.yml.j2
       - path: templates/app/secret.yml.j2
       - path: templates/app/service.yml.j2

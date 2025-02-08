@@ -31,7 +31,7 @@
     template:
       - path: templates/runner-set/ns.yml.j2
       - path: templates/runner-set/gh-app-secrets.yml.j2
-      - path: templates/runner-set/pv.yml.j2
+      - path: templates/runner-set/pvc.yml.j2
 
 - name: Install action runners set
   tags: [runner-set, helm]
@@ -99,7 +99,6 @@
                 volumeClaimTemplate:
                   spec:
                     accessModes: ["ReadWriteOnce"]
-                    storageClassName: "{{ iac__local_storage__class_name }}"
                     resources:
                       requests:
                         storage: 1Gi

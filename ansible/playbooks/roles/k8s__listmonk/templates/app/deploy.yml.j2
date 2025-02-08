@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app
-  namespace: listmonk
+  namespace: "{{ k8s__listmonk__namespace }}"
   annotations:
     argocd.argoproj.io/sync-options: Delete=false # prevent deletion of this deployment on argocd chart deletion
 spec:

@@ -11,6 +11,7 @@
     - role: k8s__cert_manager           # Allow generation / fetching of certificate
     - role: k8s__external_dns           # Bind ingresses to DNS rules on Cloudflare
     - role: k8s__kyverno                # Policies enforcement and metadata injection
+    - role: k8s__longhorn               # Distributed blocks storage
     #############################
     ### MANAGEMENT & INSIGHTS ###
     #############################

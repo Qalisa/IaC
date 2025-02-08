@@ -4,12 +4,6 @@
     template:
       - path: templates/ns.yml.j2
 
-- name: Create Persistent Volume dir path
-  ansible.builtin.file:
-    path: "{{ k8s__docker_mailserver_path_to_config_folder }}"
-    state: directory
-    mode: "0755"
-
 ## REQUIRED TO BE INSTALLED FIRST, since generated secret by this certificate is done async
 - name: Request certificate generation from Issuer with cert-manager's Certificate CRD
   kubernetes.core.k8s:
@@ -29,7 +23,7 @@
   kubernetes.core.k8s:
     template:
       - path: templates/mailserver/postfix-reject-config.yml.j2
-      - path: templates/mailserver/pv.yml.j2
+      - path: templates/mailserver/pvc.yml.j2
       - path: templates/mailserver/config.yml.j2
       - path: templates/mailserver/ldap-secret.yml.j2
       - path: templates/mailserver/service.yml.j2

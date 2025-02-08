@@ -1,1 +1,2 @@
 ---
+k8s__external_dns__namespace: external-dns

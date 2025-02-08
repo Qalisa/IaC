@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
-  namespace: listmonk
+  namespace: "{{ k8s__listmonk__namespace }}"
 spec:
   selector:
     matchLabels:

@@ -4,17 +4,6 @@
     name: helm-openldap
     repo_url: https://jp-gouin.github.io/helm-openldap/
 
-- name: Create Persistent Volume dir path
-  ansible.builtin.file:
-    path: "{{ iac__pv_path__openldap }}"
-    state: directory
-    mode: "0755"
-
-- name: Create Persistent Volume
-  kubernetes.core.k8s:
-    template:
-      - path: templates/openldap/pv.yml.j2
-
 - name: Install OpenLDAP w/ Helm
   kubernetes.core.helm:
     name: "{{ openldap_stack__ldap_server_hostname }}"
@@ -34,7 +23,6 @@
         enabled: false
       persistence:
         enabled: true
-        storageClass: "{{ iac__local_storage__class_name }}"
         size: "8Gi"
       phpldapadmin:
         enabled: false

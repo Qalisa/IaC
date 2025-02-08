@@ -156,5 +156,3 @@
         filesystem:
           persistence:
             enabled: true
-            # will not be used for auxiliary services (RabbitMQ, Clickhouse, Kafka...), so kinda useless
-            storageClass: local-path

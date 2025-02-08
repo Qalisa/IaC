@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: db
-  namespace: "{{ k8s__listmonk__namespace }}"
+  name: "{{ docker_mailserver__server_hostname }}"
+  namespace: "{{ docker_mailserver__namespace }}"
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 25Gi

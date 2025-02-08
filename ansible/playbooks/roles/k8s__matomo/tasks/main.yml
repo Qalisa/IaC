@@ -1,26 +1,8 @@
 ---
-- name: Create Persistent Volume dir path
-  ansible.builtin.file:
-    path: "{{ item.path }}"
-    # owner: "{{ item.owner }}"
-    # group: "{{ item.group }}"
-    state: directory
-    mode: "0755"
-  loop:
-    - path: "{{ iac__pv_path__matomo__db }}"
-    # owner: 1001
-    # group: 1001
-    - path: "{{ iac__pv_path__matomo__app }}"
-      # owner: 1001
-      # group: 0
-
 - name: Prepare volumes manifests
   kubernetes.core.k8s:
     template:
       - path: templates/ns.yml.j2
-      - path: templates/app/pv.yml.j2
-      - path: templates/db/pv.yml.j2
-      - path: templates/db/pvc.yml.j2
 
 - name: MariaDB Update
   register: mariadb_pwd
@@ -42,17 +24,9 @@
         enabled: true
       podLabels:
         app: matomo
-      persistence:
-        storageClass: "{{ iac__local_storage__class_name }}"
-        selector:
-          matchLabels:
-            name: matomo-app
       mariadb:
         auth:
           rootPassword: "{{ mariadb_pwd.stdout | default('') }}"
-        primary:
-          persistence:
-            existingClaim: db
       # externalDatabase:
       #   host: "matomo-mariadb.matomo"
       matomoUsername: "{{ matomo__admin_username }}"
