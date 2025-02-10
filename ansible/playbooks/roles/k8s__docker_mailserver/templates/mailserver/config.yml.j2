@@ -5,53 +5,68 @@ metadata:
   namespace: "{{ docker_mailserver__namespace }}"
 immutable: false
 data:
-  POSTMASTER_ADDRESS: "{{ iac__postmaster_email }}"
-  OVERRIDE_HOSTNAME: "{{ docker_mailserver__external_hostname }}"
-  TLS_LEVEL: modern
-  POSTSCREEN_ACTION: drop
-  FAIL2BAN_BLOCKTYPE: drop
-  UPDATE_CHECK_INTERVAL: 10d
-  POSTFIX_INET_PROTOCOLS: ipv4
-  ENABLE_CLAMAV: '0' # anti-virus, can consume a lot of ram / cpu, slowing down email handling
-  ENABLE_POSTGREY: '0' # greylisting, enabling POSTGREY does some anoying delay :(
-  ENABLE_FAIL2BAN: '1'
-  AMAVIS_LOGLEVEL: '-1'
-  # SPOOF_PROTECTION: '1'
-  MOVE_SPAM_TO_JUNK: '1'
-  ENABLE_UPDATE_CHECK: '1'
-  ENABLE_SPAMASSASSIN: '0' # well, is this needed ? slowing down email handling
-  SUPERVISOR_LOGLEVEL: warn
-  SPAMASSASSIN_SPAM_TO_INBOX: '1'
   #
+  LOG_LEVEL: info
+  #
+  ENABLE_UPDATE_CHECK: "{{ k8s__docker_mailserver__prefer_edge | ternary('0', '1') }}"
+  UPDATE_CHECK_INTERVAL: 10d
+  #
+  TLS_LEVEL: modern
   SSL_TYPE: manual
   SSL_CERT_PATH: /secrets/ssl/rsa/tls.crt
   SSL_KEY_PATH: /secrets/ssl/rsa/tls.key
+  #
+  POSTMASTER_ADDRESS: "{{ iac__postmaster_email }}"
+  OVERRIDE_HOSTNAME: "{{ docker_mailserver__external_hostname }}"
+  SPOOF_PROTECTION: '1'
+  #
+  MOVE_SPAM_TO_JUNK: '1'
+  POSTSCREEN_ACTION: drop
+  POSTFIX_INET_PROTOCOLS: ipv4
+  #
+  ENABLE_CLAMAV: '0' # anti-virus, can consume a lot of ram / cpu, slowing down email handling
+  ENABLE_POSTGREY: '0' # greylisting, enabling POSTGREY does some anoying delay :(
+  #
+  ENABLE_SPAMASSASSIN: '0' # well, is this needed ? slowing down email handling
+  SPAMASSASSIN_SPAM_TO_INBOX: '1'
+  #
+  ENABLE_FAIL2BAN: '1'
+  FAIL2BAN_BLOCKTYPE: drop
 
   # >>> Postfix LDAP Integration
   ACCOUNT_PROVISIONER: LDAP
   LDAP_SERVER_HOST: "{{ openldap_stack__ldap_uri }}"
   LDAP_BIND_DN: "{{ iac__ldap__admin__bind_dn }}"
-  # LDAP_BIND_PW: mypassword defined as separate secret manifest !!
   LDAP_SEARCH_BASE: "{{ iac__ldap__root_dc }}"
   LDAP_QUERY_FILTER_DOMAIN: (|(mail=*@%s)(mailAlias=*@%s)(mailGroupMember=*@%s))
   LDAP_QUERY_FILTER_USER: (&(objectClass=inetOrgPerson)(mail=%s))
   LDAP_QUERY_FILTER_ALIAS: (&(objectClass=inetOrgPerson)(mailAlias=%s))
   LDAP_QUERY_FILTER_GROUP: (&(objectClass=inetOrgPerson)(mailGroupMember=%s))
   LDAP_QUERY_FILTER_SENDERS: (&(objectClass=inetOrgPerson)(|(mail=%s)(mailAlias=%s)(mailGroupMember=%s)))
-  SPOOF_PROTECTION: '1'
   # <<< Postfix LDAP Integration
 
   # >>> Dovecot LDAP Integration
   DOVECOT_USER_FILTER: (&(objectClass=inetOrgPerson)(mail=%u))
-  DOVECOT_PASS_ATTRS: uid=user,userPassword=password
-  DOVECOT_USER_ATTRS: =home={{ k8s__docker_mailserver_local_mail_store_path }}/%d/%n,=mail=maildir:~/Maildir,uidNumber=uid,gidNumber=gid
+  # <ldapField>=<dovecotField>
+  # using a prepending "=" does a static value assignment instead of an LDAP binding
+  DOVECOT_PASS_ATTRS: {{ [
+    "mail=user",
+    "userPassword=password",
+  ] | join(',') }}
+  DOVECOT_USER_ATTRS: {{ [
+    '=home=' ~ k8s__docker_mailserver__local_mail_store_path ~ '/%d/%n',
+    "=mail=maildir:~/Maildir",
+    "uidNumber=uid",
+    "gidNumber=gid"
+  ] | join(',') }}
   # <<< Dovecot LDAP Integration
 
   # >>> SASL LDAP Authentication
   # https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/auth-ldap/#saslauthd_ldap_filter
   ENABLE_SASLAUTHD: '1'
-  SASLAUTHD_MECHANISMS: ldap
-  SASLAUTHD_LDAP_FILTER: (&(objectClass=inetOrgPerson)(mail=%u))
-  # SASLAUTHD_MECHANISMS: rimap
-  # SASLAUTHD_MECH_OPTIONS: "127.0.0.1"
+  SASLAUTHD_MECHANISMS: rimap
+  SASLAUTHD_MECH_OPTIONS: 127.0.0.1
+  # @note since "%u" does not work per documentation above, we'll use rimap instead
+  # SASLAUTHD_MECHANISMS: ldap
+  # SASLAUTHD_LDAP_FILTER: (&(objectClass=inetOrgPerson)(mail=%u))
   # <<< LDAP Authentication

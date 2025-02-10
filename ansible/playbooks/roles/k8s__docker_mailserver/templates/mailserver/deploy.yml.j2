@@ -19,16 +19,15 @@ spec:
     metadata:
       labels:
         app: "{{ docker_mailserver__server_label }}"
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/{{ docker_mailserver__server_hostname }}: runtime/default
     spec:
       hostname: mail
       containers:
         - name: "{{ docker_mailserver__server_hostname }}"
-          image: ghcr.io/docker-mailserver/docker-mailserver:edge
+          image: ghcr.io/docker-mailserver/docker-mailserver:{{ k8s__docker_mailserver__prefer_edge | ternary('edge', k8s__docker_mailserver__stable_version) }}
           imagePullPolicy: IfNotPresent
-
           securityContext:
+            appArmorProfile: 
+              type: RuntimeDefault
             # `allowPrivilegeEscalation: true` is required to support SGID via the `postdrop`
             # executable in `/var/mail-state` for Postfix (maildrop + public dirs):
             # https://github.com/docker-mailserver/docker-mailserver/pull/3625
@@ -71,15 +70,18 @@ spec:
               cpu: 600m
 
           volumeMounts:
-            # configuration 
+            # configurations
             - name: data
               mountPath: /tmp/docker-mailserver
-              subPath: "{{ k8s__docker_mailserver_config_folder_name }}"
+              subPath: "{{ k8s__docker_mailserver__config_folder_name }}"
               readOnly: false
+            - name: patches
+              mountPath: /tmp/docker-mailserver/user-patches.sh
+              subPath: user-patches.sh
 
             # other PVCs
             - name: data
-              mountPath: "{{ k8s__docker_mailserver_local_mail_store_path }}"
+              mountPath: "{{ k8s__docker_mailserver__local_mail_store_path }}"
               subPath: data
               readOnly: false
             - name: data
@@ -145,7 +147,13 @@ spec:
         #
         - name: postfix-reject
           configMap:
-            name: postfix-reject
+            name: dms-postfix-reject
             items:
               - key: header_checks.pcre
                 path: header_checks.pcre
+
+        #
+        - name: patches
+          configMap:
+            name: dms-user-patches
+            defaultMode: 0755

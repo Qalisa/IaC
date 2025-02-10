@@ -9,7 +9,7 @@
 
 - name: Define where DKIM should be located
   ansible.builtin.set_fact:
-    dkim_domains_path: "{{ iac__utilities__longhorn_mount_path }}/{{ k8s__docker_mailserver_config_folder_name }}/opendkim/keys"
+    dkim_domains_path: "{{ iac__utilities__longhorn_mount_path }}/{{ k8s__docker_mailserver__config_folder_name }}/opendkim/keys"
 
 - name: Extract DKIM TXT (1/2)
   ansible.builtin.slurp:

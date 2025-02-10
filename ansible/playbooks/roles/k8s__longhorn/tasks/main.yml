@@ -12,6 +12,12 @@
     create_namespace: true
     wait: true
     values:
+      defaultSettings:
+        defaultReplicaCount: 1
+      persistence:
+        defaultClassReplicaCount: 1
+      longhornUI:
+        replicas: 1
       ingress:
         enabled: true
         host: "{{ k8s__longhorn__external_hostname }}"
