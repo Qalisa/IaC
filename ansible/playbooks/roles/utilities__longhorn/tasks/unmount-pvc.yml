@@ -1,0 +1,10 @@
+---
+- name: Unmount the Longhorn volume
+  ansible.posix.mount:
+    path: "{{ iac__utilities__longhorn_mount_path }}"
+    state: absent
+
+- name: Ensure mount directory is absent
+  ansible.builtin.file:
+    path: "{{ iac__utilities__longhorn_mount_path }}"
+    state: absent

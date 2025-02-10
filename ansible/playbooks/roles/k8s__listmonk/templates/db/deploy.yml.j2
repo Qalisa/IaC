@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: data
-              mountPath: "{{ iac__pv_path__listmonk__db }}"
+              mountPath: /var/lib/postgresql/data
               readOnly: false
           ports:
             - name: db

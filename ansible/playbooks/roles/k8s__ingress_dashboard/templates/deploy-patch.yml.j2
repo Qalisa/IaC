@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dashboard
-  namespace: ingress-dashboard
+  namespace: "{{ k8s__ingress_dashboard__namespace }}"
 spec:
   template:
     spec:

@@ -1,5 +1,5 @@
 ---
-- name: Prepare volumes manifests
+- name: Create namespace
   kubernetes.core.k8s:
     template:
       - path: templates/ns.yml.j2
@@ -9,16 +9,24 @@
   # use "ansible.builtin.shell" for pipeable commands
   ansible.builtin.shell: |
     set -o pipefail
-    kubectl get secret -n matomo matomo-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 -d
+    kubectl get secret matomo-mariadb -n {{ k8s__matomo_namespace }} -o jsonpath="{.data.mariadb-root-password}" | base64 -d
   failed_when: false # replacement for ignore_errors
   changed_when: mariadb_pwd.rc != 0
+
+###
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: bitnami
+    repo_url: https://charts.bitnami.com/bitnami
 
 - name: Install Matomo Stack w/ Helm
   kubernetes.core.helm:
     name: matomo
-    chart_ref: oci://registry-1.docker.io/bitnamicharts/matomo
+    chart_ref: bitnami/matomo
     release_namespace: "{{ k8s__matomo_namespace }}"
     create_namespace: false
+    wait: true
     values:
       volumePermissions:
         enabled: true
@@ -27,8 +35,6 @@
       mariadb:
         auth:
           rootPassword: "{{ mariadb_pwd.stdout | default('') }}"
-      # externalDatabase:
-      #   host: "matomo-mariadb.matomo"
       matomoUsername: "{{ matomo__admin_username }}"
       matomoPassword: "{{ matomo__admin_password }}"
       matomoEmail: "{{ iac__postmaster_email }}"
@@ -43,11 +49,9 @@
       smtpProtocol: tls
       noreplyName: "{{ iac__donotreply_name }}"
       noreplyAddress: "{{ iac__donotreply_email }}"
-
       #
       ingress:
         enabled: true
-        ingressClassName: "{{ iac__ingress_class_name }}"
         hostname: "{{ k8s__matomo__external_hostname }}"
         annotations:
           #
@@ -60,25 +64,30 @@
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
 
-- name: Wait for pod to become ready
-  ansible.builtin.command: |
-    kubectl wait
-    pod -l app=matomo
-    --namespace=matomo
-    --for=condition=Ready
-    --timeout=240s
-  register: pods_ready
-  changed_when: pods_ready.rc != 0
+###
+
+- name: Mount locally PVC
+  ansible.builtin.include_role:
+    name: utilities__longhorn
+    tasks_from: mount-pvc
+  vars:
+    utilities__longhorn__mount_pvc__namespace: "{{ k8s__matomo_namespace }}"
+    utilities__longhorn__mount_pvc__name: matomo-matomo
 
 - name: Wait until the config file exist
   ansible.builtin.wait_for:
-    path: "{{ iac__pv_path__matomo__app }}/config/config.ini.php"
+    path: "{{ iac__utilities__longhorn_mount_path }}/config/config.ini.php"
 
 - name: Edit ini
   community.general.ini_file:
-    path: "{{ iac__pv_path__matomo__app }}/config/config.ini.php"
+    path: "{{ iac__utilities__longhorn_mount_path }}/config/config.ini.php"
     section: General
     no_extra_spaces: true
     option: assume_secure_protocol
     values: "1"
     mode: "0775"
+
+- name: Unmount PVC
+  ansible.builtin.include_role:
+    name: utilities__longhorn
+    tasks_from: unmount-pvc

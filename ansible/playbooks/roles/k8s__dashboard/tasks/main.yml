@@ -30,7 +30,6 @@
       app:
         ingress:
           enabled: true
-          ingressClassName: "{{ iac__ingress_class_name }}"
           issuer: # done below manually, to stick to habits
             scope: disabled
           annotations:

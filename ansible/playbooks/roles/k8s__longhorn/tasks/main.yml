@@ -14,7 +14,6 @@
     values:
       ingress:
         enabled: true
-        ingressClassName: "{{ iac__ingress_class_name }}"
         host: "{{ k8s__longhorn__external_hostname }}"
         annotations:
           #

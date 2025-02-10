@@ -25,7 +25,6 @@
         enabled: true
         ingress:
           enabled: true
-          className: "{{  iac__ingress_class_name }}"
           annotations:
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__kyverno__external_hostname__policy_reporter }}"

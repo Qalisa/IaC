@@ -22,7 +22,6 @@
       ingress:
         console:
           enabled: true
-          ingressClassName: "{{ iac__ingress_class_name }}"
           host: "{{ k8s__minio__external_hostname__console }}"
           annotations:
             #

@@ -14,7 +14,6 @@ metadata:
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "true" # hide, let autoconfig.<iac__root_domain> book entry be upfront
 spec:
-  ingressClassName: "{{ iac__ingress_class_name }}"
   tls:
     - secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
       hosts:

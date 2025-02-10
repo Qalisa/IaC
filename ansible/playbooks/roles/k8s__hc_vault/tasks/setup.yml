@@ -64,7 +64,6 @@
 
         ingress:
           enabled: true
-          ingressClassName: "{{ iac__ingress_class_name }}"
           annotations:
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__hc_vault__external_hostname }}"

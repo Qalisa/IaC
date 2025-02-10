@@ -125,8 +125,7 @@
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_mail-ensure-permissions.yml",
-                "--tags", "mail-acc-ensure-permissions"
+                "ansible/playbooks/_mail-ensure-permissions.yml"
             ],
             "options": {
                 "statusbar": {
@@ -266,7 +265,7 @@
         {
             "label": "⛏2a. Install IaC requirements",
             "type": "shell",
-            "command": "ansible-galaxy collection install -r ansible/requirements.yml",
+            "command": "ansible-galaxy collection install --force -r ansible/requirements.yml",
             "options": {
                 "statusbar": {
                     "hide": true
@@ -280,7 +279,7 @@
             "command": [
                 "pipx upgrade --include-injected ansible", "&&",
                 "pipx upgrade --include-injected ansible-dev-tools", "&&",
-                "ansible-galaxy collection install -U -r ansible/requirements.yml"
+                "ansible-galaxy collection install --force -U -r ansible/requirements.yml"
             ],
             "options": {
                 "statusbar": {

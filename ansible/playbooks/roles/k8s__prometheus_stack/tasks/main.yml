@@ -22,7 +22,6 @@
         adminPassword: "{{ prometheus_stack__grafana_admin_pwd }}"
         ingress:
           enabled: true
-          ingressClassName: "{{ iac__ingress_class_name }}"
           annotations:
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
@@ -38,7 +37,6 @@
       prometheus:
         ingress:
           enabled: true
-          ingressClassName: "{{ iac__ingress_class_name }}"
           annotations:
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname }}"

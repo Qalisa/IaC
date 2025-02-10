@@ -48,7 +48,7 @@ spec:
           args: ["./listmonk --install --yes --idempotent && ./listmonk --static-dir={{ k8s__listmonk_static_dir }}"]
           volumeMounts:
             - name: uploads
-              mountPath: "{{ iac__pv_path__listmonk__uploads }}"
+              mountPath: /listmonk/uploads
               readOnly: false
             - name: static
               mountPath: "{{ k8s__listmonk_static_dir }}"

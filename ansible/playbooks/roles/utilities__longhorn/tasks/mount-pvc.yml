@@ -1,0 +1,29 @@
+---
+- name: Ensure unmounting
+  ansible.builtin.import_tasks: unmount-pvc.yml
+
+###
+
+- name: Get PVC
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: PersistentVolumeClaim
+    namespace: "{{ utilities__longhorn__mount_pvc__namespace }}"
+    name: "{{ utilities__longhorn__mount_pvc__name }}"
+  register: pvc_info
+  until: pvc_info.resources | map(attribute='status.phase') | list | first == "Bound"
+  retries: 10
+  delay: 5
+
+- name: Ensure mount directory exists
+  ansible.builtin.file:
+    path: "{{ iac__utilities__longhorn_mount_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Mount the Longhorn volume
+  ansible.posix.mount:
+    path: "{{ iac__utilities__longhorn_mount_path }}"
+    src: /dev/longhorn/{{ pvc_info.resources[0].spec.volumeName }}
+    fstype: ext4
+    state: mounted

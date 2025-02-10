@@ -25,4 +25,7 @@
 - name: Install policies
   tags: [policies]
   kubernetes.core.k8s:
-    src: src/cp-autorestart-ingress-dashboard.yml
+    template:
+      path: templates/policies/autorestart-on-new-ingresses.yml.j2
+      variable_start_string: "[["
+      variable_end_string: "]]"

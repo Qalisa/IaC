@@ -25,7 +25,7 @@ spec:
       hostname: mail
       containers:
         - name: "{{ docker_mailserver__server_hostname }}"
-          image: ghcr.io/docker-mailserver/docker-mailserver:13 # 14.0 is fucked up
+          image: ghcr.io/docker-mailserver/docker-mailserver:edge
           imagePullPolicy: IfNotPresent
 
           securityContext:

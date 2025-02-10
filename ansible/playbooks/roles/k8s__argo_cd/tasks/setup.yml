@@ -121,7 +121,6 @@
         replicas: 1
         ingress:
           enabled: true
-          ingressClassName: "{{ iac__ingress_class_name }}"
           tls: false
           annotations:
             #

@@ -1,8 +1,25 @@
 ---
+- name: Mount locally PVC
+  ansible.builtin.include_role:
+    name: utilities__longhorn
+    tasks_from: mount-pvc
+  vars:
+    utilities__longhorn__mount_pvc__namespace: "{{ docker_mailserver__namespace }}"
+    utilities__longhorn__mount_pvc__name: "{{ docker_mailserver__server_hostname }}"
+
+- name: Define where DKIM should be located
+  ansible.builtin.set_fact:
+    dkim_domains_path: "{{ iac__utilities__longhorn_mount_path }}/{{ k8s__docker_mailserver_config_folder_name }}/opendkim/keys"
+
 - name: Extract DKIM TXT (1/2)
   ansible.builtin.slurp:
-    src: "{{ k8s__docker_mailserver__dkim_domains_path }}/{{ dnsZone }}/{{ k8s__docker_mailserver__dkim_selector }}.txt"
+    src: "{{ dkim_domains_path }}/{{ dnsZone }}/{{ k8s__docker_mailserver__dkim_selector }}.txt"
   register: dkim_txt_file
+
+- name: Unmount PVC
+  ansible.builtin.include_role:
+    name: utilities__longhorn
+    tasks_from: unmount-pvc
 
 - name: Extract DKIM TXT (2/2)
   ansible.builtin.set_fact:
@@ -10,7 +27,7 @@
       regex_replace('.*\"(v=DKIM1.*?)\"\\s+\"(.*?)\"\\s+\"(.*?)\".*', '\\1\\2\\3') }}"
 
 # - name: Display formatted DKIM
-#   ansible.builtin.debug::
+#   ansible.builtin.debug:
 #     var: dkim
 
 ### as of 07/02/2025 "solo: true" is quite buggy (https://github.com/ansible-collections/community.general/pull/9655), delete manually ###
@@ -23,6 +40,9 @@
     record: "{{ k8s__docker_mailserver__dkim_selector }}._domainkey"
     value: "\"{{ dkim }}\""
     solo: true
+
+###
+###
 
 #
 - name: "Add DMARC - {{ dnsZone }}"

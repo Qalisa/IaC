@@ -14,7 +14,6 @@ metadata:
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "false"
 spec:
-  ingressClassName: "{{ iac__ingress_class_name }}"
   rules:
   - host: "{{ k8s__listmonk__external_hostname }}"
     http:

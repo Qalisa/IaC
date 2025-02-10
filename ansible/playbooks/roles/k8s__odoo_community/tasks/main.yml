@@ -21,7 +21,6 @@
       smtpPassword: "{{ iac__donotreply_password }}"
       ingress:
         enabled: true
-        className: "{{ iac__ingress_class_name }}"
         hostname: "{{ k8s__odoo_community__extername_hostname }}"
         annotations:
           #

@@ -50,7 +50,6 @@
             registry:
               size: 20Gi # from 5Gi
         ingress:
-          className: "{{ iac__ingress_class_name }}"
           hosts:
             core: "{{ k8s__harbor__external_hostname }}"
           annotations:

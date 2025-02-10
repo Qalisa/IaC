@@ -45,7 +45,6 @@
         secretName: "argo-watcher"
       ingress:
         enabled: true
-        className: "{{ iac__ingress_class_name }}"
         annotations:
           #
           external-dns.alpha.kubernetes.io/hostname: "{{ k8s__argo_cd__external_hostname__watcher }}"

@@ -2,7 +2,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: autorestart-ingress-dashboard
+  name: autorestart-on-new-ingresses
   annotations:
     policies.kyverno.io/title: Restart Deployment On Ingress Change
     policies.kyverno.io/category: Other
@@ -27,7 +27,7 @@ spec:
           - apiVersion: apps/v1
             kind: Deployment
             name: dashboard
-            namespace: ingress-dashboard
+            namespace: "[[ k8s__ingress_dashboard__namespace ]]"
         patchStrategicMerge:
           spec:
             template:

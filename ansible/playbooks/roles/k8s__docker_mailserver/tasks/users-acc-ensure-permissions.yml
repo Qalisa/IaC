@@ -1,6 +1,5 @@
 ---
 - name: Get users by id
-  tags: [mail-acc-ensure-permissions]
   register: users
   community.general.ldap_search:
     server_uri: "{{ openldap_stack__ldap_uri }}"
@@ -15,19 +14,30 @@
       - homeDirectory
 
 # - name: Display
-#   tags: [mail-acc-ensure-permissions]
 #   ansible.builtin.debug:
 #     var: users
 
+- name: Mount locally PVC
+  ansible.builtin.include_role:
+    name: utilities__longhorn
+    tasks_from: mount-pvc
+  vars:
+    utilities__longhorn__mount_pvc__namespace: "{{ docker_mailserver__namespace }}"
+    utilities__longhorn__mount_pvc__name: "{{ docker_mailserver__server_hostname }}"
+
 - name: Re-apply legitimate permissions
-  tags: [mail-acc-ensure-permissions]
   failed_when: false # replacement for ignore_errors
   loop: "{{ users.results }}"
   ansible.builtin.file:
-    path: "{{ item.homeDirectory | regex_replace('^' + openldap_stack__users_home + '(.*)', iac__pv_path__docker_mailserver ~ '/data' + '\\1') }}"
+    path: "{{ item.homeDirectory | regex_replace('^' + openldap_stack__users_home + '(.*)', iac__utilities__longhorn_mount_path ~ '/data' + '\\1') }}"
     owner: "{{ item.uidNumber }}"
     group: "{{ docker_mailserver__users_group_id }}"
     recurse: true
     state: directory
   loop_control:
-    label: "{{ item.homeDirectory | regex_replace('^' + openldap_stack__users_home + '(.*)', iac__pv_path__docker_mailserver ~ '/data' + '\\1') }}"
+    label: "{{ item.homeDirectory | regex_replace('^' + openldap_stack__users_home + '(.*)', iac__utilities__longhorn_mount_path ~ '/data' + '\\1') }}"
+
+- name: Unmount PVC
+  ansible.builtin.include_role:
+    name: utilities__longhorn
+    tasks_from: unmount-pvc
