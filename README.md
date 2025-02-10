@@ -6,7 +6,14 @@ Ansible directory layout follows best practices (https://docs.ansible.com/ansibl
 
 ### Requirements and considerations
 IaC must be installed on an Ubuntu / Debian system. Has been tested only on-site with a SSH session, not remotely using ansible host.
-CAREFUL: some Server Providers / ISPs disable explicitely SMTP (eg. https://www.scaleway.com/en/docs/elastic-metal/how-to/enable-smtp/). Please act accordingly to enable it.
+
+#### About SMTP Trafic and SMTP providers (Outlook, Gmail...) network trust checks
+Use https://www.mail-tester.com/ to test trustness of IaC mail installation.
+- Some Server Providers / ISPs disable SMTP outbound trafic, preventing from sending mail. Please act accordingly to enable it.
+  - Scaleway: https://www.scaleway.com/en/docs/elastic-metal/how-to/enable-smtp/
+- Some providers might require (rDNS) or PTR to match to route SMTP trafic from this server. Make it so it matches the mail.<root_domain> domain name.
+  - https://mxtoolbox.com/ReverseLookup.aspx to test correctness
+  - Scaleway: https://www.scaleway.com/en/docs/elastic-metal/how-to/configure-reverse-dns-flexible-ip/
 
 ### Recommanded
 Using VSCode is recommanded.

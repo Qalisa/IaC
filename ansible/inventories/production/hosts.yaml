@@ -6,4 +6,3 @@ ungrouped:
       ansible_connection: local
       ansible_user: root
       local_release_dir: "{{ansible_env.HOME}}/releases"
-      webmin_ip_bind: "10.0.0.1"
