@@ -2,7 +2,6 @@
 - name: Install Secret
   tags: [image-updater]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/image-updater/secret.yml.j2
 

@@ -1,30 +1,29 @@
 ---
 # ensure services roles are installed and configured AFTER kubernetes is set
 - name: Install Services w/in Kubernetes
-  hosts: all
+  hosts: node1
   become: true
   roles:
     ##################
     ### INFRA CRDs ###
     ##################
     - role: k8s__cf_zto                 # Allow autoconfig of CF zero trust on services
-    - role: k8s__cert_manager           # Finish cert-manager configuration (installed along kubespray)
+    - role: k8s__cert_manager           # Allow generation / fetching of certificate
     - role: k8s__external_dns           # Bind ingresses to DNS rules on Cloudflare
     - role: k8s__kyverno                # Policies enforcement and metadata injection
+    - role: k8s__longhorn               # Distributed blocks storage
     #############################
     ### MANAGEMENT & INSIGHTS ###
     #############################
-    - role: k8s__dashboard              # Setup dashboard (NOT installed from kubespray since it is outdated)
-    # - role: k8s__skooner              # Alternative dashboard for k8s
-    - role: k8s__ingress_dashboard      # List all ingresses available externally  
+    - role: k8s__traefik                # Ingress and Routing dashboard
+    - role: k8s__dashboard              # K8s dashboard
+    - role: k8s__ingress_dashboard      # List all ingresses available externally
     # - role: k8s__prometheus_stack     # OPTIONAL, tracks insights from apps
-    # - role: k8s__webmin               # OPTIONAL, allow control of a node / server
-    # - role: k8s__portainer_ce         # OPTIONAL, allow control of docker / k8s instances
     ########################
     ### Safety & Backups ###
     ########################
-    # - role: k8s__minio                # OPTIONAL, Storage Object service for storing backups and snapshots
-    # - role: k8s__velero               # OPTIONAL, tool to orchestrate backups
+    # - role: k8s__minio                # OPTIONAL, S3 compatible Storage Object service
+    # - role: k8s__velero               # OPTIONAL, tool to orchestrate K8s backups (Volumes, custom CRDs...)
     ####################
     ### Org Services ###
     ####################

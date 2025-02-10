@@ -1,20 +1,17 @@
 ---
 - name: Declare Root CA Cert + CIssuer
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/c-issuers/root-ca.yml.j2
 
 - name: Adds Solvers - DNS01 + HTTP01
   kubernetes.core.k8s:
-    state: present
     template:
       # cloudflare
       - path: templates/solvers-secrets/cloudflare.yml.j2
 
 - name: Configure remote certificate providers
   kubernetes.core.k8s:
-    state: present
     template:
       # let's encrypt (default)
       - path: templates/c-issuers/letsencrypt/production.yml.j2

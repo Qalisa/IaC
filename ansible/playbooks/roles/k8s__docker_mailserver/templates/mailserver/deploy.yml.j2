@@ -12,6 +12,9 @@ metadata:
       There are too many files written to make the root FS read-only
 spec:
   replicas: 1
+  strategy:
+    # will wait for old pod to shutdown completely before runing new pod. Prevents logs to be filled with warnings about lockfiles
+    type: Recreate
   selector:
     matchLabels:
       app: "{{ docker_mailserver__server_label }}"
@@ -19,16 +22,15 @@ spec:
     metadata:
       labels:
         app: "{{ docker_mailserver__server_label }}"
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/{{ docker_mailserver__server_hostname }}: runtime/default
     spec:
       hostname: mail
       containers:
         - name: "{{ docker_mailserver__server_hostname }}"
-          image: ghcr.io/docker-mailserver/docker-mailserver:13 # 14.0 is fucked up
+          image: ghcr.io/docker-mailserver/docker-mailserver:{{ k8s__docker_mailserver__prefer_edge | ternary('edge', k8s__docker_mailserver__stable_version) }}
           imagePullPolicy: IfNotPresent
-
           securityContext:
+            appArmorProfile: 
+              type: RuntimeDefault
             # `allowPrivilegeEscalation: true` is required to support SGID via the `postdrop`
             # executable in `/var/mail-state` for Postfix (maildrop + public dirs):
             # https://github.com/docker-mailserver/docker-mailserver/pull/3625
@@ -71,15 +73,33 @@ spec:
               cpu: 600m
 
           volumeMounts:
-            # configuration 
+            # DMS Configuration (https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/optional-config/#volumes)
+            # @note order of mount is important hetre
             - name: data
               mountPath: /tmp/docker-mailserver
-              subPath: "{{ k8s__docker_mailserver_config_folder_name }}"
+              subPath: "{{ k8s__docker_mailserver__config_folder_name }}"
               readOnly: false
-
+            ###
+            - name: config-files
+              subPath: user-patches.sh
+              mountPath: /tmp/docker-mailserver/user-patches.sh
+            - name: config-files
+              subPath: fail2ban-jail.cf
+              mountPath: /tmp/docker-mailserver/fail2ban-jail.cf
+            - name: config-files
+              subPath: postfix-policyd-spf.conf
+              mountPath: /tmp/docker-mailserver/postfix-policyd-spf.conf
+            #
+            - name: config-files
+              subPath: header_checks.pcre
+              mountPath: /etc/postfix/maps/header_checks.pcre
+            - name: config-files
+              subPath: supervisord-gui.conf
+              mountPath: /etc/supervisor/conf.d/supervisord-gui.conf
+                           
             # other PVCs
             - name: data
-              mountPath: /var/mail
+              mountPath: "{{ k8s__docker_mailserver__local_mail_store_path }}"
               subPath: data
               readOnly: false
             - name: data
@@ -96,12 +116,11 @@ spec:
               mountPath: /secrets/ssl/rsa/
               readOnly: true
 
-            #
-            - name: postfix-reject
-              mountPath: /etc/postfix/maps/header_checks.pcre
-              subPath: header_checks.pcre
-
           ports:
+            - name: supervisord-ui
+              containerPort: {{ k8s__docker_mailserver__supervisord_ui__port }}
+              protocol: TCP 
+            #
             - name: smtp
               containerPort: 25
               protocol: TCP
@@ -118,28 +137,11 @@ spec:
               containerPort: 993
               protocol: TCP
 
-            # proxied ports (https://docker-mailserver.github.io/docker-mailserver/edge/config/advanced/kubernetes/#separate-proxy-protocol-ports-for-ingress)
-           # - name: smtp-proxy
-           #   containerPort: 12525
-           #   protocol: TCP
-           # - name: imap-proxy
-           #   containerPort: 10143
-           #   protocol: TCP
-           # - name: subs-proxy
-           #   containerPort: 10465
-           #   protocol: TCP
-           # - name: sub-proxy
-           #   containerPort: 10587
-           #   protocol: TCP
-           # - name: imaps-proxy
-           #   containerPort: 10993
-           #   protocol: TCP
-
           envFrom:
             - secretRef:
-                name: ldap
+                name: dms-ldap
             - configMapRef:
-                name: "{{ docker_mailserver__server_hostname }}"
+                name: dms-config
 
       restartPolicy: Always
 
@@ -160,9 +162,7 @@ spec:
                 path: tls.crt
 
         #
-        - name: postfix-reject
+        - name: config-files
           configMap:
-            name: postfix-reject
-            items:
-              - key: header_checks.pcre
-                path: header_checks.pcre
+            name: dms-config-extra-files
+            defaultMode: 0755 # so we can use exec .sh bash

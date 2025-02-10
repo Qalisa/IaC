@@ -18,10 +18,6 @@ spec:
         key: secret
       keyAlgorithm: HS256
     solvers:
-      # http01 does not allow wildcard issuing
-      # - http01:
-      #    ingress:
-      #      ingressClassName: "{{ iac__ingress_nginx_class }}"
       - dns01:
           cloudflare:
             apiTokenSecretRef:

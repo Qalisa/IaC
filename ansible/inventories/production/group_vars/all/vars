@@ -7,9 +7,30 @@
 ### DEFINED - Org identity related
 ### 
 
+#
+iac__prefered_lang: "{{ u_vault_iac__prefered_lang }}" # like en_US, fr_FR...
+
+#
 iac__root_domain: "{{ u_vault_iac__root_domain }}" # https://crt.sh/?q={{ iac__root_domain }}
+iac__alt_domains: "{{ u_vault_iac__alt_domains__yaml | from_yaml }}" # must be a json representation of an array
+### 
+## Expects YAML
+## For each domains (root_domain + alt_domains) 
+## <usernameToCreate>: <intValueAsUID: +1000>
+# |-
+# "test.com":
+#   bobby: 1
+#   john: 2
+# "test.io":
+#   bekam: 3
+###
+iac__mail_users: "{{ u_vault_iac__mail_users__yaml | from_yaml }}"
+
+#
+iac__ldap_org: "{{ u_vault_iac__ldap_org }}"
 iac__github_org: "{{ u_vault_iac__github_org }}"
 
+#
 listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
 
 ###
@@ -66,6 +87,9 @@ sentry__github_appname: "{{ u_vault_sentry__github_appname }}"
 ### DEFINED
 ### 
 
+#
+iac__mail_users__default_password: "{{ vault_iac__mail_users__default_password }}"
+
 # password for postmaster@{{ iac__root_domain }}
 iac__postmaster_password: "{{ vault_iac__postmaster_password }}"
 
@@ -73,7 +97,7 @@ iac__postmaster_password: "{{ vault_iac__postmaster_password }}"
 iac__donotreply_password: "{{ vault_iac__donotreply_password }}"
 
 #
-openldap_stack__ldap_admin_pwd: "{{ vault_openldap_stack__ldap_admin_pwd }}"
+iac__ldap__admin__bind_pw: "{{ vault_iac__ldap__admin__bind_pw }}"
 openldap_stack__lam_password: "{{ vault_openldap_stack__lam_password }}"
 openldap_stack__ssp_keyphrase: "{{ vault_openldap_stack__ssp_keyphrase }}"
 
@@ -120,6 +144,11 @@ iac__cloudflare__account_id: "{{ vault_iac__cloudflare__account_id }}"
 iac__cloudflare__zone_id: "{{ vault_iac__cloudflare__zone_id }}"
 iac__cloudflare__api_token: "{{ vault_iac__cloudflare__api_token }}"
 
+# PLEASE CONFIGURE CLOUDFLARE FOR "Full (Strict)" in CloudFlare dashboard > /ssl-tls/configuration
+# then generate a cert in CloudFlare dashboard > /ssl-tls/origin/certificate-form
+iac__cloudflare__origin_ca__cert: "{{ vault_iac__cloudflare__origin_ca__cert }}"
+iac__cloudflare__origin_ca__priv_key: "{{ vault_iac__cloudflare__origin_ca__priv_key }}"
+
 #
 argocd__admin_password: "{{ vault_argocd__admin_password }}"
 
@@ -161,3 +190,6 @@ sentry__github_clientId: "{{ vault_sentry__github_clientId }}"
 sentry__github_clientSecret: "{{ vault_sentry__github_clientSecret }}"
 sentry__github_privateKey: "{{ vault_sentry__github_privateKey }}"
 sentry__github_webhookSecret: "{{ vault_sentry__github_webhookSecret }}"
+
+#
+docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__supervisord_ui__password }}"

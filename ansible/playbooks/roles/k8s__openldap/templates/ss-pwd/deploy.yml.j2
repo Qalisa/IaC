@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: self-service-password
-  namespace: openldap-stack
+  namespace: "{{ openldap_stack__namespace }}"
 spec:
   selector:
     matchLabels:

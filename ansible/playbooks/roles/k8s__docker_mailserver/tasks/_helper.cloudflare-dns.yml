@@ -1,0 +1,117 @@
+---
+- name: Mount locally PVC
+  ansible.builtin.include_role:
+    name: utilities__longhorn
+    tasks_from: mount-pvc
+  vars:
+    utilities__longhorn__mount_pvc__namespace: "{{ docker_mailserver__namespace }}"
+    utilities__longhorn__mount_pvc__name: "{{ docker_mailserver__server_hostname }}"
+
+- name: Define where DKIM should be located
+  ansible.builtin.set_fact:
+    dkim_domains_path: "{{ iac__utilities__longhorn_mount_path }}/{{ k8s__docker_mailserver__config_folder_name }}/opendkim/keys"
+
+- name: Extract DKIM TXT (1/2)
+  ansible.builtin.slurp:
+    src: "{{ dkim_domains_path }}/{{ dnsZone }}/{{ k8s__docker_mailserver__dkim_selector }}.txt"
+  register: dkim_txt_file
+
+- name: Unmount PVC
+  ansible.builtin.include_role:
+    name: utilities__longhorn
+    tasks_from: unmount-pvc
+
+- name: Extract DKIM TXT (2/2)
+  ansible.builtin.set_fact:
+    dkim: "{{ dkim_txt_file['content'] | b64decode | regex_replace('[\n\r]', '') |
+      regex_replace('.*\"(v=DKIM1.*?)\"\\s+\"(.*?)\"\\s+\"(.*?)\".*', '\\1\\2\\3') }}"
+
+# - name: Display formatted DKIM
+#   ansible.builtin.debug:
+#     var: dkim
+
+### as of 07/02/2025 "solo: true" is quite buggy (https://github.com/ansible-collections/community.general/pull/9655), delete manually ###
+- name: "Add DKIM - {{ dnsZone }}"
+  community.general.cloudflare_dns:
+    api_token: "{{ iac__cloudflare__api_token }}"
+    zone: "{{ dnsZone }}"
+    type: TXT
+    # https://docker-mailserver.github.io/docker-mailserver/latest/config/best-practices/dkim_dmarc_spf/#dkim-dns
+    record: "{{ k8s__docker_mailserver__dkim_selector }}._domainkey"
+    value: "\"{{ dkim }}\""
+    solo: true
+
+###
+###
+
+#
+- name: "Add DMARC - {{ dnsZone }}"
+  community.general.cloudflare_dns:
+    api_token: "{{ iac__cloudflare__api_token }}"
+    zone: "{{ dnsZone }}"
+    type: TXT
+    record: _dmarc
+    value: "\"v=DMARC1; p=quarantine; ruf=mailto:{{ iac__postmaster_username }}@{{ dnsZone }}; sp=none; fo=1; ri=86400\""
+    solo: true
+
+#
+- name: "Add SPF + mailconf - {{ dnsZone }}"
+  community.general.cloudflare_dns:
+    api_token: "{{ iac__cloudflare__api_token }}"
+    zone: "{{ dnsZone }}"
+    type: TXT
+    record: "@"
+    value: "\"{{ txtContent }}\""
+  loop:
+    - "v=spf1 mx ~all"
+    - "mailconf=https://{{ k8s__docker_mailserver__external_hostname__autoconfig }}/mail/config-v1.1.xml"
+  loop_control:
+    loop_var: txtContent
+
+#
+- name: "Add MX - {{ dnsZone }}"
+  community.general.cloudflare_dns:
+    api_token: "{{ iac__cloudflare__api_token }}"
+    zone: "{{ dnsZone }}"
+    type: MX
+    record: "@"
+    priority: 10
+    value: "{{ docker_mailserver__external_hostname }}"
+    solo: true
+
+#
+- name: "Add CNAME - {{ dnsZone }}"
+  community.general.cloudflare_dns:
+    api_token: "{{ iac__cloudflare__api_token }}"
+    zone: "{{ dnsZone }}"
+    type: CNAME
+    value: "{{ docker_mailserver__external_hostname }}"
+    record: "{{ domainConfig }}"
+    solo: true
+  loop:
+    - smtp
+    - imap
+  loop_control:
+    loop_var: domainConfig
+
+#### https://github.com/ansible-collections/community.general/issues/7780, requires solo: true
+- name: Add SRV - {{ dnsZone }}"
+  community.general.cloudflare_dns:
+    api_token: "{{ iac__cloudflare__api_token }}"
+    domain: "{{ dnsZone }}"
+    type: SRV
+    proto: tcp
+    priority: 0
+    weight: 0
+    service: "{{ config.service }}"
+    port: "{{ config.port }}"
+    value: "{{ config.value }}"
+    solo: true
+  loop:
+    - { service: "autodiscover", port: 443, value: "{{ k8s__docker_mailserver__external_hostname__autodiscover }}" }
+    - { service: "imap", port: 143, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "imaps", port: 993, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "submission", port: 587, value: "{{ docker_mailserver__external_hostname }}" }
+    - { service: "submissions", port: 465, value: "{{ docker_mailserver__external_hostname }}" }
+  loop_control:
+    loop_var: config

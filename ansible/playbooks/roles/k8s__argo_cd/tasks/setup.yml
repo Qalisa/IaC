@@ -1,7 +1,6 @@
 ---
 - name: Install NS + Github App as Cred for Org Repositories
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ns.yml.j2
       - path: templates/secrets.yml.j2
@@ -11,7 +10,7 @@
     name: utilities__ldap
     tasks_from: create_groups
   vars:
-    utilities__ldap_org_unit: argocd
+    utilities__ldap__create_groups__org_unit: argocd
 
 ###
 ###
@@ -35,7 +34,7 @@
             bindPW: "$ldap.bindPW"
             usernamePrompt: Email
             userSearch:
-              baseDN: "cn={{ docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}"
+              baseDN: "{{ docker_mailserver__users_group_cn }}"
               filter: "(objectClass=inetOrgPerson)"
               username: mail
               idAttr: uid
@@ -43,7 +42,7 @@
               nameAttr: uid
               preferredUsernameAttr: uid
             groupSearch:
-              baseDN: "ou=argocd,{{ openldap_stack__dc_query_string }} "
+              baseDN: "ou=argocd,{{ iac__ldap__root_dc }} "
               filter: "(objectClass=groupOfNames)"
               nameAttr: cn
               userMatchers:
@@ -83,8 +82,8 @@
       # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=configs.secret.argocdServerAdminPassword
       argocdServerAdminPassword: "{{ k8s__argo_cd__admin_password_bcrypted }}"
       extra:
-        ldap.bindDN: "{{ openldap_stack__ldap_admin_cn }}"
-        ldap.bindPW: "{{ openldap_stack__ldap_admin_pwd }}"
+        ldap.bindDN: "{{ iac__ldap__admin__bind_dn }}"
+        ldap.bindPW: "{{ iac__ldap__admin__bind_pw }}"
 
 ###
 ###
@@ -122,14 +121,8 @@
         replicas: 1
         ingress:
           enabled: true
-          ingressClassName: "{{ iac__ingress_nginx_class }}"
           tls: false
           annotations:
-            # when using Cloudflare's proxied DNS record
-            nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-            nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__argo_cd__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"

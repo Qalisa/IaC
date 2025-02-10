@@ -1,0 +1,6 @@
+---
+- name: Install k3s master node + creds for kubectl
+  ansible.builtin.import_tasks: setup-master.yml
+
+- name: Configure cluster DNS to be available to node
+  ansible.builtin.import_tasks: coredns.yml

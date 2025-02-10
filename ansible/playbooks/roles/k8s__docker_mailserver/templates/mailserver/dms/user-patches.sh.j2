@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Check if required environment variables are set
+if [ -z "$LDAP_SERVER_HOST" ] || [ -z "$LDAP_BIND_DN" ] || [ -z "$LDAP_BIND_PW" ]; then
+  echo "[ERROR] Required environment variables are not present !"
+  exit 1
+fi
+
+# Install "ldapsearch" binaries
+apt update -y &> /dev/null
+apt install -y ldap-utils &> /dev/null
+
+##
+##
+##
+
+# Set base permissions for {{ k8s__docker_mailserver__local_mail_store_path }}
+chmod 775 {{ k8s__docker_mailserver__local_mail_store_path }}
+echo "[PATCH] Applied 775 permissions to {{ k8s__docker_mailserver__local_mail_store_path }}"
+
+##
+##
+##
+
+# Initialize a list to store users missing attributes
+missing_attributes=()
+
+# Create and set permissions for domain directories
+DOMAINS=({{ iac__all_domains | map('regex_replace', '^(.+)$','"\\1"') | join(' ') }})
+
+for domain in "${DOMAINS[@]}"; do
+  # Create domain directory if it doesn't exist
+  domain_dir="{{ k8s__docker_mailserver__local_mail_store_path }}/${domain}"
+  mkdir -p "$domain_dir"
+  chmod 775 "$domain_dir"
+  echo "[PATCH] Created/updated domain directory for ${domain} with 775 permissions"
+
+  # Query LDAP for users with mail attribute in this domain's OU and get uidNumber, gidNumber
+  ldap_output=$(ldapsearch -LLL -x \
+    -H "$LDAP_SERVER_HOST" \
+    -D "$LDAP_BIND_DN" \
+    -w "$LDAP_BIND_PW" \
+    -b "ou=${domain},{{ docker_mailserver__users_group_cn }}" \
+    "(&(objectClass=inetOrgPerson)(mail=*))" uid uidNumber gidNumber)
+
+  # Remove all line breaks and add breaks before "dn: "
+  formatted_output=$(echo "$ldap_output" | tr '\n' ' ' | sed 's/ dn: /\ndn: /g' | grep -E "^(uid:|uidNumber:|gidNumber:|dn:)")
+
+  # iterate on results
+  echo "$formatted_output" | while read -r line; do    
+    # Initialize user variables
+    uid=$(echo "$line" | grep -oP 'uid: \K\w+')
+    uid_number=$(echo "$line" | grep -oP 'uidNumber: \K\d+')
+    gid_number=$(echo "$line" | grep -oP 'gidNumber: \K\d+')
+
+    # check required LDAP attributes to recreate folders
+    if [ -z "$uid" ] || [ -z "$uid_number" ] || [ -z "$gid_number" ]; then
+      echo "[WARNING] Missing required LDAP attributes (user:'${uid}', uid:'${uid_number}', gid:'${gid_number}') for LDAP user entry >> '${line}', continuing."
+      missing_attributes+=("${uid}")
+      continue
+    fi
+
+    #
+    user_dir="${domain_dir}/${uid}"
+
+    # Create user directory if it doesn't exist based on UID
+    if [ ! -d "$user_dir" ]; then
+      mkdir -p "$user_dir"
+      echo "[PATCH] Missing directory for ${uid}@${domain}, created."
+    fi
+
+    # Apply chown and chmod
+    chmod 755 "$user_dir"
+    chown -R "$uid_number:$gid_number" "$user_dir"
+    # chown -R "{{ docker_mailserver__users_group_id }}:{{ docker_mailserver__users_group_id }}" "$user_dir"
+    echo "[PATCH] Updated directory ownership and permissions for ${uid}@${domain}."
+  done
+done
+
+##
+##
+##
+
+# If there were users missing attributes, throw an error with the list
+if [ ${#missing_attributes[@]} -gt 0 ]; then
+  echo "[ERROR] The following users are missing one or more required attributes (uid, uidNumber, gidNumber):"
+  printf "%s\n" "${missing_attributes[@]}"
+  exit 1  # Exit the script with an error code
+fi
+
+# Final permission check on all directories
+find {{ k8s__docker_mailserver__local_mail_store_path }} -type d -exec chmod 775 {} \;
+echo "[PATCH] Verified permissions on all subdirectories"

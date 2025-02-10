@@ -13,6 +13,7 @@ spec:
     size: 2048
   dnsNames:
     - {{ docker_mailserver__external_hostname }}
+    - {{ k8s__docker_mailserver__external_hostname__webmail }}
     - {{ k8s__docker_mailserver__external_hostname__autoconfig }}
     - {{ k8s__docker_mailserver__external_hostname__autodiscover }}
   issuerRef:

@@ -1,7 +1,8 @@
+---
 - name: Install OpenLDAP
   ansible.builtin.import_tasks: openldap.yml
 
-- name: Configure LDAP accounts
+- name: Configure LDAP
   ansible.builtin.import_tasks: config.yml
 
 - name: Install LDAP Accounts Manager

@@ -56,6 +56,21 @@
             "problemMatcher": []
         },
         {
+            "label": "👮‍♀️ k3s: DELETE !!!",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts.yaml",
+                "ansible/playbooks/_reset.yml"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Try to pull from private registry",
             "detail": "Helps debugging registry auth issues",
             "type": "shell",
@@ -77,7 +92,7 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "ansible/playbooks/site.services.yml",
                 "--tags", "zto-app"
             ],
@@ -93,7 +108,7 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "ansible/playbooks/_unseal-vault.yml",
                 "--tags", "unseal"
             ],
@@ -109,11 +124,28 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "ansible/playbooks/_mail-ensure-permissions.yml",
-                "--tags", "mail-acc-ensure-permissions"
+                "-i ansible/inventories/production/hosts.yaml",
+                "ansible/playbooks/_mail-ensure-permissions.yml"
             ],
             "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "✅ OpenLDAP: List Users",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts.yaml",
+                "ansible/playbooks/_ldap_list_users.yml"
+            ],
+            "options": {
+                "env": {
+                    "ANSIBLE_DISPLAY_OK_HOSTS": "1"
+                },
                 "statusbar": {
                     "hide": true
                 }
@@ -124,14 +156,14 @@
         //
         //
         {
-            "label": "🚀 Install: K8s",
+            "label": "🚀 Install: K3s",
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
-                "ansible/playbooks/site.kubespray.yml"
+                "ansible/playbooks/site.k3s.yml"
             ],
             "options": {
                 "statusbar": {
@@ -157,7 +189,7 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
+                "-i ansible/inventories/production/hosts.yaml",
                 "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
                 "ansible/playbooks/site.services.yml"
@@ -202,45 +234,11 @@
         //
         //
         //
+
         {
-            "label": "🔄 kubespray: Upgrade cluster",
+            "label": "🧶 Lint: Autofix whole project",
             "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/_upgrade-cluster.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "🗑 kubespray: Delete cluster",
-            "type": "shell",
-            // or: kubeadm reset
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/_reset.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "🧶 Lint: whole project",
-            "type": "shell",
-            "command": "ansible-lint"
+            "command": "ansible-lint  --fix"
         },
         ///
         ///
@@ -249,9 +247,13 @@
             "label": "⛏1. Install Ansible & tools",
             "type": "shell",
             "command": [
-                // versionning requirement by kubespray
-                "python3 -m pip install --break-system-packages --user ansible-core==2.16.4", "&&",
-                "python3 -m pip install --break-system-packages --user ansible-lint"
+                //
+                "python3 -m pip install --break-system-packages --user pipx", "&&",
+                "python3 -m pipx ensurepath", "&&",
+                "python3 -m pipx ensurepath --global", "&&", // requires implicit "sudo" !! please be logged as root !!
+                //
+                "python3 -m pipx install --include-deps ansible", "&&",
+                "python3 -m pipx install --include-deps ansible-dev-tools"
             ],
             "options": {
                 "statusbar": {
@@ -261,22 +263,9 @@
             "problemMatcher": []
         },
         {
-            "label": "⛏2pre. Install Kubespray requirements",
-            "type": "shell",
-            "command": "python3 -m pip install --break-system-packages distlib",
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "hide": true,
-            "problemMatcher": []
-        },
-        {
             "label": "⛏2a. Install IaC requirements",
             "type": "shell",
-            "dependsOn": "⛏2pre. Install Kubespray requirements",
-            "command": "ansible-galaxy collection install -r ansible/requirements.yml",
+            "command": "ansible-galaxy collection install --force -r ansible/requirements.yml",
             "options": {
                 "statusbar": {
                     "hide": true
@@ -287,8 +276,11 @@
         {
             "label": "⛏2b. Upgrade IaC requirements",
             "type": "shell",
-            "dependsOn": "⛏2pre. Install Kubespray requirements",
-            "command": "ansible-galaxy collection install -U -r ansible/requirements.yml",
+            "command": [
+                "pipx upgrade --include-injected ansible", "&&",
+                "pipx upgrade --include-injected ansible-dev-tools", "&&",
+                "ansible-galaxy collection install --force -U -r ansible/requirements.yml"
+            ],
             "options": {
                 "statusbar": {
                     "hide": true

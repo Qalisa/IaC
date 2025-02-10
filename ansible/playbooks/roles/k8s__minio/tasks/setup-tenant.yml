@@ -1,7 +1,6 @@
 ---
 - name: Install Secrets
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/tenant/ns.yml.j2
       - path: templates/tenant/secret.yml.j2
@@ -9,7 +8,6 @@
 - name: Install Zero-Trust configuration
   tags: [zto-app]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/tenant/caa.yml.j2
 
@@ -24,13 +22,8 @@
       ingress:
         console:
           enabled: true
-          ingressClassName: "{{ iac__ingress_nginx_class }}"
           host: "{{ k8s__minio__external_hostname__console }}"
           annotations:
-            # when using Cloudflare's proxied DNS record
-            nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
-            nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__minio__external_hostname__console }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -67,7 +60,6 @@
             name: pool-0
             volumesPerServer: 1
             size: 20Gi
-            storageClassName: local-path
             ###
             # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/>, to use for deploying Tenant resources.
             #

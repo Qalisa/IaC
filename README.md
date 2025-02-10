@@ -1,12 +1,22 @@
 # IaC (Infrastructure as Code)
 Automatize the installation of an opinionated infrastructure for your organization.
-Losely based on kubespray repo default params (https://github.com/kubernetes-sigs/kubespray)
 Ansible directory layout follows best practices (https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#directory-layout).
 
 ## How-To use (on server)
 
 ### Requirements and considerations
 IaC must be installed on an Ubuntu / Debian system. Has been tested only on-site with a SSH session, not remotely using ansible host.
+
+#### About SMTP Trafic and SMTP providers (Outlook, Gmail...) network trust checks
+Use https://www.mail-tester.com/, https://www.helloinbox.email/ or https://mxtoolbox.com/emailhealth to test trustness of IaC mail installation.
+- Some Server Providers / ISPs disable SMTP outbound trafic, preventing from sending mail. Please act accordingly to enable it.
+  - Scaleway: https://www.scaleway.com/en/docs/elastic-metal/how-to/enable-smtp/
+- Some providers might require (rDNS) or PTR to match to route SMTP trafic from this server. Make it so it matches the mail.<root_domain> domain name.
+  - https://mxtoolbox.com/ReverseLookup.aspx to test correctness
+  - Scaleway: https://www.scaleway.com/en/docs/elastic-metal/how-to/configure-reverse-dns-flexible-ip/
+- postmaster tools:
+  - https://postmaster.google.com/managedomains?pli=1
+  - https://sendersupport.olc.protection.outlook.com/snds/index.aspx
 
 ### Recommanded
 Using VSCode is recommanded.
@@ -32,21 +42,19 @@ Make sure you are locally logged on `git` w/ a registered account using :
   - having your local Github SSH keys agent-forwarded through `ms-vscode-remote.remote-ssh` as this documentation recommands, and obviously configured on your own GitHub account.
 
 ### Startup
+- (Optional) Login with SSH as `root` on your future master node (node1)
+  - or, same user (with root privileges) as defined in `ansible/inventories/production/hosts.yaml`. If users differ, you might experiment strange behavior from ansible / python invocations.
 - `git clone {this repo}`
-- Launch VSCode Task `1. Install kubespray requirements`
-- Launch VSCode Task `2. Install Ansible dev-tools`
-- Launch VSCode Task `3a. ⛏ Install Ansible requirements`
+- Launch VSCode Task `⛏1. Install Ansible & tools`
+- Launch VSCode Task `⛏2a. Install IaC requirements`
+- (Optional) If working remotely on the node master, reboot the server so `ansible-lint` will be acknoledged
 - Create a `./.ansible-vault-pw` file, containing a password to secure all the secrets related to this stack within ansible vault technology
 - Configure:
   - As documented in `./ansible/inventories/group_vars/all/vars`, create `./ansible/inventories/group_vars/all/vault` file, and fill accordingly
   - Customize `./ansible/inventories/production/group_vars/all/01-IaC.yml` as needed
   - (Optional) Encrypt `./ansible/inventories/group_vars/all/vault` using VSCode Task `🔒 Ansible Vault: Encrypt`
 - (Optional) You might want to opt-out of certain services by commenting roles within `./ansible/playbooks/site.yml`
-- Launch VSCode Tasks `🚀 Install: K8s`, then `🚀 Install: Services`
-
-### How to upgrade from latest kubespray
-- Launch VSCode Task `⛏🔄 Upgrade Ansible requirements`
-- Compare `./requirements.txt`, `./ansible/inventories/production*` with kubespray's repo (https://github.com/kubernetes-sigs/kubespray/tree/master/inventory/sample/group_vars) and merge accordingly
+- Launch VSCode Tasks `🚀 Install: K3s`, then `🚀 Install: Services`
 
 ## Overlook of available services
 Once cluster is setup, you can review all availables services through `book.<root_domain>`.
@@ -54,9 +62,9 @@ Once cluster is setup, you can review all availables services through `book.<roo
 ## Create new users (LDAP / mail)
 By default, only 2 users are created: `postmaster` and `donotreply`, which are required. If you want to create more:
 - Use LAM service (`https://admin-ldap.<root_domain>`), and login as admin.
-- Create a new user, and make sure that these fields are filled:
+- Create a new user in `ou=<domain>,cn=email-users,dc=iac,dc=local`, and make sure that these fields are filled:
   - `Personnal` > `Last name`, which might be the username
-  - `Personnal` > `Email address`, which is used as email username, and should look like `<Last name>@<root_domain>`
+  - `Personnal` > `Email address`, which is used as email username, and should look like `<Last name>@<domain>`
   - `Unix` > `Primary Group` to `email-users`
   - `Set Password` button to define a temporary password, that the user should change by using `https://pwd-ldap.<root_domain>`
   - use webmail service, or any e-mail client (`https://webmail.<root_domain>`)

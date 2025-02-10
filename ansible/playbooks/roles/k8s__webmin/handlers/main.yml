@@ -1,6 +1,0 @@
----
-- name: Restart webmin daemon
-  ansible.builtin.systemd_service:
-    state: restarted
-    name: webmin
-  when: webmin_config.changed or webmin_miniserv_conf.changed

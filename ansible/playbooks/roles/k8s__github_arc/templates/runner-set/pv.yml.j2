@@ -1,34 +1,9 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: buildkit-cache
-  labels:
-    type: local
-spec:
-  storageClassName: "{{ iac__local_storage__class_name }}"
-  capacity:
-    storage: 30Gi 
-  local:
-    path: "{{ iac__pv_path__buildkit__cache }}"
-  persistentVolumeReclaimPolicy: Retain
-  accessModes:
-    - ReadWriteMany
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-          - key: kubernetes.io/hostname
-            operator: In
-            values:
-              - "{{ iac__master_node_name }}"
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: buildkit-cache
   namespace: "{{ k8s__github_arc__runners_ns }}"
 spec:
-  storageClassName: "{{ iac__local_storage__class_name }}"
   accessModes:
     - ReadWriteMany
   resources:

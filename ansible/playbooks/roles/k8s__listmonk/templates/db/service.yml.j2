@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: db
-  namespace: listmonk
+  namespace: "{{ k8s__listmonk__namespace }}"
   labels:
     app: listmonk-db
 spec:

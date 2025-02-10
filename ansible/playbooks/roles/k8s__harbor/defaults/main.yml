@@ -1,5 +1,4 @@
 ---
-k8s__harbor__storage_class_name: local-storage-harbor
 k8s__harbor__storage_capacity: 40Gi
 
 k8s__harbor__cert_name: harbor

@@ -1,2 +1,0 @@
----
-k8s__skooner__external_hostname: skooner.{{ iac__root_domain }}

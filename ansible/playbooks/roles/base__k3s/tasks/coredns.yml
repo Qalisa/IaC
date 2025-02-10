@@ -1,0 +1,37 @@
+- name: Wait until CoreDNS pod is created (and Ready !)
+  until: >
+    pod_ready.resources is defined and
+    pod_ready.resources | length > 0 and
+    pod_ready.resources[0].status.phase == "Running"
+  retries: 20
+  delay: 5
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: "{{ k3s__default_namespace }}"
+    label_selectors:
+      - k8s-app=kube-dns
+  register: pod_ready
+
+- name: Fetch CoreDNS ClusterIP
+  ansible.builtin.command: kubectl get pods -n {{ k3s__default_namespace }} -l k8s-app=kube-dns -o jsonpath='{.items[0].status.podIP}'
+  register: core_dns_ip
+  changed_when: false
+
+- name: Install DNS rule
+  block:
+    - name: Ensure systemd-resolved k3s DNS configuration directory exists
+      ansible.builtin.file:
+        path: "{{ iac__resolv__resolved_path }}"
+        state: directory
+        mode: '0755'
+
+    - name: Create k3s CoreDNS configuration file
+      ansible.builtin.template:
+        dest: "{{ iac__resolv__resolved_path }}/{{ iac__resolv__dns_config_file }}"
+        src: templates/{{ iac__resolv__dns_config_file }}.j2
+        mode: '0644'
+
+    - name: Restart systemd-resolved
+      ansible.builtin.systemd_service:
+        name: systemd-resolved
+        state: restarted

@@ -1,0 +1,29 @@
+---
+- name: Create user (without password)
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
+    #
+    dn: cn={{ itemAccount.username }},{{ base_dn }}
+    objectClass:
+      - top
+      - posixAccount
+      - inetOrgPerson
+    attributes:
+      gidnumber: "{{ docker_mailserver__users_group_id }}"
+      homedirectory: "{{ openldap_stack__users_home }}/{{ domain }}/{{ itemAccount.username }}"
+      mail: "{{ itemAccount.username }}@{{ domain }}"
+      sn: "{{ itemAccount.username }}"
+      uid: "{{ itemAccount.username }}"
+      uidnumber: "{{ itemAccount.uidn + utilities__ldap__minimum_uidn }}"
+      # userpassword: "{CRYPT}{{ itemAccount.password | password_hash('md5') }}"
+
+- name: Create password for user
+  community.general.ldap_passwd:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
+    #
+    dn: cn={{ itemAccount.username }},{{ base_dn }}
+    passwd: "{{ itemAccount.password }}"

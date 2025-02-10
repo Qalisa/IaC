@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: db
-  namespace: listmonk
+  namespace: "{{ k8s__listmonk__namespace }}"
 immutable: false
 data:
   POSTGRES_PASSWORD: listmonk

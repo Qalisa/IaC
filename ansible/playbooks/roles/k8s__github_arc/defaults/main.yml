@@ -1,6 +1,5 @@
 ---
 k8s__github_arc__local_cache_size: 25Gi
-k8s__github_arc__cache_storage_class_name: gha-cache
 k8s__github_arc__systems_ns: arc-systems
 k8s__github_arc__runners_ns: arc-runners
 k8s__github_arc__buildkit_ns: arc-buildkit

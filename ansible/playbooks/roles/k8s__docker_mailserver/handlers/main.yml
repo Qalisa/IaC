@@ -1,7 +1,6 @@
 ---
 - name: DKIM - Reboot mailserver
   kubernetes.core.k8s:
-    state: present
     definition:
       apiVersion: apps/v1
       kind: Deployment

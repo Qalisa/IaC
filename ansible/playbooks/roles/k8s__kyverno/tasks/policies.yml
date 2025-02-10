@@ -5,7 +5,6 @@
 
 - name: Allow alteration of deployments
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/crb-alter-deploy.yml.j2
 
@@ -16,8 +15,7 @@
 - name: Install policies
   tags: [policies]
   kubernetes.core.k8s:
-    state: present
     template:
       path: templates/policies/cp-inject-label.yml.j2
-      variable_start_string: '[['
-      variable_end_string: ']]'
+      variable_start_string: "[["
+      variable_end_string: "]]"

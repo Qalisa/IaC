@@ -1,61 +1,38 @@
 ---
 ##
-## DKIM
+## Generate DKIM
 ##
 
-- name: Pause for 5 secs (to wait for server pod to be invoked)
-  ansible.builtin.pause:
-    seconds: 5
-
-- name: Search for server pod exact name
+- name: Wait until Mailserver pod is created (and Ready !)
+  until: >
+    docker_mailserver_pod_search.resources is defined and
+    docker_mailserver_pod_search.resources | length > 0 and
+    docker_mailserver_pod_search.resources[0].status.phase == "Running"
+  retries: 20
+  delay: 5
   kubernetes.core.k8s_info:
     kind: Pod
+    namespace: "{{ docker_mailserver__namespace }}"
     label_selectors:
-      - app = {{ docker_mailserver__server_label }}
+      - app={{ docker_mailserver__server_label }}
   register: docker_mailserver_pod_search
 
-- name: Wait for pod to become ready
-  ansible.builtin.command: |
-    kubectl wait
-    pod -l app={{ docker_mailserver__server_label }}
-    --namespace={{ docker_mailserver__namespace }}
-    --for=condition=Ready
-    --timeout=240s
-  register: pods_ready
-  changed_when: pods_ready.rc != 0
-
-- name: Generate DKIM from pod
+- name: Generate DKIM for domains, from pod
   kubernetes.core.k8s_exec:
     namespace: "{{ docker_mailserver__namespace }}"
     pod: "{{ docker_mailserver_pod_search.resources[0].metadata.name }}"
-    command: setup config dkim
+    command: setup config dkim domain '{{ iac__all_domains | join(",") }}'
   register: dkim_generation_cmd
   notify:
     - DKIM - Reboot mailserver
 
-- name: Extract DKIM TXT (1/2)
-  ansible.builtin.set_fact:
-    dkim_raw: |
-      {{ lookup('ansible.builtin.file',
-        '{{ k8s__docker_mailserver_path_to_config_folder }}/opendkim/keys/{{ iac__root_domain }}/{{ docker_mailserver__third_level_domain }}.txt'
-        ) }}
-
-- name: Extract DKIM TXT (2/2)
-  ansible.builtin.set_fact:
-    dkim_txt: |
-      {{ dkim_raw | split('(') | last | split(')') | first | regex_replace('  ', ' ') | regex_replace('\"', '') | replace('\n\t ', '') | trim }}
-
 ##
-##
+## Deploy DNS Rules (non-provider agnostic !)
+## (dns-external lacks providers support (cloudflare in particular...) with DNSEndpoint CRD)
 ##
 
-- name: Install ClusterIssuers (prod + staging)
-  kubernetes.core.k8s:
-    state: present
-    template:
-      - path: templates/mailserver/dns/CNAME.yml.j2
-      - path: templates/mailserver/dns/DKIM.yml.j2
-      - path: templates/mailserver/dns/DMARC.yml.j2
-      - path: templates/mailserver/dns/MX.yml.j2
-      - path: templates/mailserver/dns/SPF_MCONF.yml.j2
-      - path: templates/mailserver/dns/SRV.yml.j2
+- name: Configure Cloudflare DNS zones
+  ansible.builtin.include_tasks: _helper.cloudflare-dns.yml
+  loop: "{{ iac__all_domains }}"
+  loop_control:
+    loop_var: dnsZone

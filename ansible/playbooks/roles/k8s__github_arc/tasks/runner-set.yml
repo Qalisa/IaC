@@ -2,7 +2,6 @@
 - name: Build Custom runner image and push it
   tags: [runner-set, custom-image]
   community.docker.docker_image:
-    state: present
     name: "{{ k8s__github_arc__lar_docker_image_name }}"
     tag: latest
     build:
@@ -17,23 +16,14 @@
 #
 #
 
-- name: Make sure destination dir exists
-  ansible.builtin.file:
-    path: "{{ iac__pv_path__buildkit__cache }}"
-    state: directory
-    owner: 1001
-    group: 1001
-    mode: "0775"
-
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
 - name: Setup namespace + GH App + Local Cache secrets
   tags: [runner-set]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/runner-set/ns.yml.j2
       - path: templates/runner-set/gh-app-secrets.yml.j2
-      - path: templates/runner-set/pv.yml.j2
+      - path: templates/runner-set/pvc.yml.j2
 
 - name: Install action runners set
   tags: [runner-set, helm]
@@ -80,7 +70,7 @@
                 - name: PROJECT_NAME
                   value: "{{ argocd__project_name }}"
                 - name: ARGO_WATCHER_URL
-                  value: http://{{ k8s__argo_cd__watcher__internal_name }}.{{ argo_cd__namespace }}
+                  value: http://{{ k8s__argo_cd__watcher__internal_name }}.{{ argo_cd__namespace }}.svc.cluster.local
               volumeMounts:
                 - name: crt
                   mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls
@@ -101,7 +91,6 @@
                 volumeClaimTemplate:
                   spec:
                     accessModes: ["ReadWriteOnce"]
-                    storageClassName: local-path
                     resources:
                       requests:
                         storage: 1Gi

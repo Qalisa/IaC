@@ -12,13 +12,11 @@
 - name: Install Zero-Trust configuration
   tags: [zto-app]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/caa.yml.j2
 
 - name: Install
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/ingress.yml.j2
       - path: templates/deploy-patch.yml.j2
@@ -27,5 +25,7 @@
 - name: Install policies
   tags: [policies]
   kubernetes.core.k8s:
-    state: present
-    src: src/cp-autorestart-ingress-dashboard.yml
+    template:
+      path: templates/policies/autorestart-on-new-ingresses.yml.j2
+      variable_start_string: "[["
+      variable_end_string: "]]"

@@ -7,7 +7,6 @@
 - name: Install Zero-Trust configuration
   tags: [zto-app]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/caa.yml.j2
       - path: templates/caa.graphana.yml.j2
@@ -21,15 +20,9 @@
     values:
       grafana:
         adminPassword: "{{ prometheus_stack__grafana_admin_pwd }}"
-        service:
-          type: LoadBalancer
         ingress:
           enabled: true
-          ingressClassName: "{{ iac__ingress_nginx_class }}"
           annotations:
-            # Will be handled by Cloudflare proxy
-            nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname__graphana }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -42,15 +35,9 @@
           hosts:
             - "{{ k8s__prometheus_stack__external_hostname__graphana }}"
       prometheus:
-        service:
-          type: LoadBalancer
         ingress:
           enabled: true
-          ingressClassName: "{{ iac__ingress_nginx_class }}"
           annotations:
-            # Will be handled by Cloudflare proxy
-            nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__prometheus_stack__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"

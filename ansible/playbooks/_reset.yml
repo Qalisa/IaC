@@ -1,4 +1,24 @@
 ---
-# runs the kubespray's "reset.yml" playbook - delete all that Kubespray could have installed
-- name: Reset
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.reset
+- name: Uninstall k3s
+  hosts: all
+  become: true
+  vars:
+    path_root: "{{ '/' if ansible_user == 'root' else '/home/' }}"
+  tasks:
+    - name: Delete .kube
+      ansible.builtin.file:
+        path: "{{ path_root }}{{ ansible_user }}/.kube/"
+        state: absent
+    - name: Uninstall k3s
+      ansible.builtin.command: /usr/local/bin/k3s-uninstall.sh
+      register: uninstalled_result
+      changed_when: uninstalled_result.rc != 0
+    ###
+    - name: Delete k3s CoreDNS configuration file
+      ansible.builtin.file:
+        state: absent
+        dest: "{{ iac__resolv__resolved_path }}/{{ iac__resolv__dns_config_file }}"
+    - name: Restart systemd-resolved
+      ansible.builtin.systemd_service:
+        name: systemd-resolved
+        state: restarted

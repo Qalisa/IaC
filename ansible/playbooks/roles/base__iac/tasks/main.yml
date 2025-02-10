@@ -1,0 +1,25 @@
+---
+###
+- name: Install Helm
+  community.general.snap:
+    name:
+      - helm
+- name: Install helm-diff
+  kubernetes.core.helm_plugin:
+    plugin_path: https://github.com/databus23/helm-diff
+
+###
+- name: Update python's Kubernetes lib
+  community.general.pipx:
+    name: kubernetes
+    state: latest
+    install_deps: true
+
+###
+- name: Inject jmespath
+  community.general.pipx:
+    name: ansible
+    state: inject
+    install_deps: true
+    inject_packages:
+      - jmespath

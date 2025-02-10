@@ -6,13 +6,20 @@ metadata:
   labels:
     app: "{{ docker_mailserver__server_label }}"
 spec:
-  type: ClusterIP # LoadBalancer
+  type: LoadBalancer
+  # https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/kubernetes/#manually-writing-manifests
+  # `Local` is most likely required, otherwise every incoming request would be identified by the external IP,
+  # which will get banned by Fail2Ban when monitored services are not configured for PROXY protocol
   externalTrafficPolicy: Local
-  externalIPs:
-    - {{ ipify_public_ip }}
   selector:
     app: "{{ docker_mailserver__server_label }}"
   ports:
+    #
+    - name: supervisord-ui
+      port: {{ k8s__docker_mailserver__supervisord_ui__port }}
+      targetPort: supervisord-ui
+      protocol: TCP
+
     # smtp
     - name: smtp
       port: 25

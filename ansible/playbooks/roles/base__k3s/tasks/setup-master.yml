@@ -1,0 +1,49 @@
+---
+- name: Install k3s
+  block:
+    # https://docs.k3s.io/installation/requirements?os=debian
+    - name: Disable UFW
+      community.general.ufw:
+        state: disabled
+    - name: Get k3s installer
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: /tmp/install_k3s.sh
+        force: true
+        mode: "0755"
+    - name: Install K3s
+      ansible.builtin.command:
+        cmd: sh /tmp/install_k3s.sh
+        creates: /usr/local/bin/k3s
+      environment:
+        K3S_KUBECONFIG_MODE: "644"
+        INSTALL_K3S_EXEC: --disable local-storage
+
+##
+- name: Move k3s's generated kubeconfig around and make it available
+  vars:
+    path_root: "{{ '/' if ansible_user == 'root' else '/home/' }}"
+  block:
+    - name: Ensure .kube directory exists
+      ansible.builtin.file:
+        path: "{{ path_root }}{{ ansible_user }}/.kube"
+        state: directory
+        mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+    - name: Copy K3s kubeconfig to user home
+      ansible.builtin.copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "{{ path_root }}{{ ansible_user }}/.kube/config"
+        remote_src: true
+        force: true # force override
+        mode: "0600"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Set KUBECONFIG environment variable
+      ansible.builtin.lineinfile:
+        path: "{{ path_root }}{{ ansible_user }}/.bashrc"
+        line: "export KUBECONFIG=$HOME/.kube/config"
+        create: true
+        mode: "0775"

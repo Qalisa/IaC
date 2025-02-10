@@ -6,7 +6,6 @@ metadata:
   labels:
     app: "{{ k8s__ez_appointments__app__name }}"
 spec:
-  type: LoadBalancer
   selector:
     app: "{{ k8s__ez_appointments__app__name }}"
   ports:

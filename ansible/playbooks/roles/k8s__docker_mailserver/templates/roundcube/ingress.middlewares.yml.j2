@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-mail-to-webmail
+  namespace: "{{ docker_mailserver__namespace }}"
+spec:
+  redirectRegex:
+    regex: ".*"
+    replacement: "https://{{ k8s__docker_mailserver__external_hostname__webmail }}"
+    permanent: true  # Set to false for a 302 redirect instead of 301

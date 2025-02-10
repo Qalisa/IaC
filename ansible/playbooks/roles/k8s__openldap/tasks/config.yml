@@ -3,30 +3,41 @@
   ansible.builtin.apt:
     pkg:
       - python3-ldap
-    state: present # latest
+      - python3-passlib
     update_cache: true
-
-- name: Install LDAP for Python (2/2)
-  ansible.builtin.pip:
-    extra_args: --break-system-packages
-    name:
-      - python-ldap
-      - passlib
 
 - name: Wait for OpenLDAP pod to become ready
   register: pods_ready
   changed_when: pods_ready.rc != 0
   ansible.builtin.command: |
-    kubectl wait pod/openldap-0 --namespace=openldap-stack --for=condition=Ready --timeout=240s
+    kubectl wait pod/openldap-0 --namespace={{ openldap_stack__namespace }} --for=condition=Ready --timeout=240s
+
+###
+###
+###
+
+- name: Create Root DC
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
+    #
+    dn: "{{ iac__ldap__root_dc }}"
+    objectClass:
+      - dcObject
+      - organization
+    attributes:
+      dc: "{{ iac__ldap__root_domain | split('.') | first }}"
+      o: "{{ iac__ldap_org }}"
 
 # Ensure User group matching Docker usergroup exists to allow auto-creation of LDAP user mail directories
 - name: Create default user group for email users
   community.general.ldap_entry:
     server_uri: "{{ openldap_stack__ldap_uri }}"
-    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
-    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
     #
-    dn: cn={{ docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}
+    dn: "{{ docker_mailserver__users_group_cn }}"
     objectClass:
       - top
       - posixGroup
@@ -34,36 +45,15 @@
       gidnumber: "{{ docker_mailserver__users_group_id }}"
       description: "{{ docker_mailserver__users_group_description }}"
 
-#
-- name: Create default accounts
-  community.general.ldap_entry:
-    server_uri: "{{ openldap_stack__ldap_uri }}"
-    bind_dn: "{{ openldap_stack__ldap_admin_cn }}"
-    bind_pw: "{{ openldap_stack__ldap_admin_pwd }}"
-    #
-    dn: cn={{ item.username }},cn={{ docker_mailserver__users_group_name }},{{ openldap_stack__dc_query_string }}
-    objectClass:
-      - top
-      - posixAccount
-      - inetOrgPerson
-    attributes:
-      gidnumber: "{{ docker_mailserver__users_group_id }}"
-      homedirectory: /home/users/{{ item.username }}
-      mail:
-        # - "{{ item.username }}"
-        - "{{ item.email }}"
-      sn: "{{ item.username }}"
-      uid: "{{ item.username }}"
-      uidnumber: "{{ item.uidn }}"
-      userpassword: "{CRYPT}{{ item.password | password_hash('md5') }}"
-  loop:
-    - username: "{{ iac__postmaster_username }}"
-      password: "{{ iac__postmaster_password }}"
-      email: "{{ iac__postmaster_email }}"
-      uidn: 1000
-    - username: "{{ iac__donotreply_username }}"
-      password: "{{ iac__donotreply_password }}"
-      email: "{{ iac__donotreply_email }}"
-      uidn: 10000
+###
+###
+
+- name: Create DCs
+  loop: "{{ iac__all_domains }}"
   loop_control:
-    label: "{{ item.email }}"
+    index_var: domainId
+  ansible.builtin.include_role:
+    name: utilities__ldap
+    tasks_from: build_dc
+  vars:
+    utilities__ldap__build_dc__domain: "{{ item }}"

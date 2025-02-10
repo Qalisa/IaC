@@ -1,0 +1,20 @@
+---
+- name: Display LDAP users
+  hosts: all
+  become: true
+  tasks:
+    - name: Get users
+      register: users
+      community.general.ldap_search:
+        server_uri: "{{ openldap_stack__ldap_uri }}"
+        bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+        bind_pw: "{{ iac__ldap__admin__bind_pw }}"
+        #
+        dn: "{{ docker_mailserver__users_group_cn }}"
+        filter: "(&(homeDirectory=*)(uidNumber=*))"
+        scope: children
+        attrs:
+          - userPassword
+    - name: Display users
+      ansible.builtin.debug:
+        msg: "{{ users.results }}"

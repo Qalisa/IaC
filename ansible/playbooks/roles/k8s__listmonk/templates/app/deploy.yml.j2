@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app
-  namespace: listmonk
+  namespace: "{{ k8s__listmonk__namespace }}"
   annotations:
     argocd.argoproj.io/sync-options: Delete=false # prevent deletion of this deployment on argocd chart deletion
 spec:
@@ -48,7 +48,7 @@ spec:
           args: ["./listmonk --install --yes --idempotent && ./listmonk --static-dir={{ k8s__listmonk_static_dir }}"]
           volumeMounts:
             - name: uploads
-              mountPath: "{{ iac__pv_path__listmonk__uploads }}"
+              mountPath: /listmonk/uploads
               readOnly: false
             - name: static
               mountPath: "{{ k8s__listmonk_static_dir }}"

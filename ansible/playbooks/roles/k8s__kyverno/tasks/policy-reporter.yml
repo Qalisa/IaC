@@ -7,7 +7,6 @@
 - name: Install Zero-Trust configuration
   tags: [zto-app]
   kubernetes.core.k8s:
-    state: present
     template:
       - path: templates/caa.yml.j2
 
@@ -26,11 +25,7 @@
         enabled: true
         ingress:
           enabled: true
-          className: "{{  iac__ingress_nginx_class }}"
           annotations:
-            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-            # when using Cloudflare's proxied DNS record
-            nginx.ingress.kubernetes.io/ssl-redirect: "false"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__kyverno__external_hostname__policy_reporter }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"

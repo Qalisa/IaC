@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: app
-  namespace: listmonk
+  namespace: "{{ k8s__listmonk__namespace }}"
 immutable: false
 data:
   LISTMONK_db__host: db.listmonk

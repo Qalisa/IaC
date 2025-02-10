@@ -1,0 +1,55 @@
+---
+- name: Define OrganizationalUnit DN
+  ansible.builtin.set_fact:
+    local_dn: "ou={{ utilities__ldap__build_dc__domain }},{{ docker_mailserver__users_group_cn }}"
+
+- name: Create OrganizationalUnit
+  community.general.ldap_entry:
+    server_uri: "{{ openldap_stack__ldap_uri }}"
+    bind_dn: "{{ iac__ldap__admin__bind_dn }}"
+    bind_pw: "{{ iac__ldap__admin__bind_pw }}"
+    #
+    dn: "{{ local_dn }}"
+    objectClass:
+      - top
+      - organizationalUnit
+    attributes:
+      ou: "{{ utilities__ldap__build_dc__domain }}"
+
+##
+- name: Generate users within OrganizationalUnit ("postmaster" + "donotreply")
+  ansible.builtin.include_tasks: _helper.create_user.yml
+  vars:
+    domain: "{{ utilities__ldap__build_dc__domain }}"
+    base_dn: "{{ local_dn }}"
+    utilities__ldap__minimum_uidn: 0
+  loop:
+    - uidn: "{{ 10000 + domainId }}"
+      username: "{{ iac__postmaster_username }}"
+      password: "{{ iac__postmaster_password }}"
+    - uidn: "{{ 11000 + domainId }}"
+      username: "{{ iac__donotreply_username }}"
+      password: "{{ iac__donotreply_password }}"
+  loop_control:
+    loop_var: itemAccount
+    label: "{{ itemAccount.username }}@{{ utilities__ldap__build_dc__domain }}"
+
+- name: Format users for LDAP insertion (1/2)
+  ansible.builtin.set_fact:
+    users_to_insert: |
+      {{ iac__mail_users[utilities__ldap__build_dc__domain] | default([]) | dict2items(key_name='username', value_name='uidn') }}
+
+- name: Format users for LDAP insertion (2/2)
+  ansible.builtin.set_fact:
+    users_to_insert_w_pwd: |
+      {{ users_to_insert | map('combine', {'password': iac__mail_users__default_password}) }}
+
+- name: Generate users within OrganizationalUnit (users)
+  ansible.builtin.include_tasks: _helper.create_user.yml
+  vars:
+    domain: "{{ utilities__ldap__build_dc__domain }}"
+    base_dn: "{{ local_dn }}"
+  loop: "{{ users_to_insert_w_pwd }}"
+  loop_control:
+    loop_var: itemAccount
+    label: "{{ itemAccount.username }}@{{ utilities__ldap__build_dc__domain }}"

@@ -2,9 +2,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: db
-  namespace: listmonk
+  namespace: "{{ k8s__listmonk__namespace }}"
 spec:
-  storageClassName: "{{ iac__local_storage__class_name }}"
   accessModes:
     - ReadWriteOnce
   resources:
