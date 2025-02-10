@@ -12,6 +12,9 @@ metadata:
       There are too many files written to make the root FS read-only
 spec:
   replicas: 1
+  strategy:
+    # will wait for old pod to shutdown completely before runing new pod. Prevents logs to be filled with warnings about lockfiles
+    type: Recreate
   selector:
     matchLabels:
       app: "{{ docker_mailserver__server_label }}"
