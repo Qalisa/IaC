@@ -51,6 +51,9 @@ harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowe
 ### SHOULD NOT CUSTOMIZE ###
 ############################
 
+# https://docs.k3s.io/cli/server#networking
+iac__k3s__servicelb__ip_range: "10.42.0.0/16"
+
 # root domain + optional alt domains
 iac__all_domains: "{{ [iac__root_domain] + iac__alt_domains }}"
 

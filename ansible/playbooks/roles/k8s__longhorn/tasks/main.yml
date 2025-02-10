@@ -18,6 +18,11 @@
         defaultClassReplicaCount: 1
       longhornUI:
         replicas: 1
+      csi:
+        attacherReplicaCount: 1
+        provisionerReplicaCount: 1
+        resizerReplicaCount: 1
+        snapshotterReplicaCount: 1
       ingress:
         enabled: true
         host: "{{ k8s__longhorn__external_hostname }}"

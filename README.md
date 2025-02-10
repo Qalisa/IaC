@@ -6,6 +6,7 @@ Ansible directory layout follows best practices (https://docs.ansible.com/ansibl
 
 ### Requirements and considerations
 IaC must be installed on an Ubuntu / Debian system. Has been tested only on-site with a SSH session, not remotely using ansible host.
+CAREFUL: some Server Providers / ISPs disable explicitely SMTP (eg. https://www.scaleway.com/en/docs/elastic-metal/how-to/enable-smtp/). Please act accordingly to enable it.
 
 ### Recommanded
 Using VSCode is recommanded.

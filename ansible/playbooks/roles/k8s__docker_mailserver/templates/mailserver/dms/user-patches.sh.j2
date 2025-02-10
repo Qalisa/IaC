@@ -70,9 +70,9 @@ for domain in "${DOMAINS[@]}"; do
     fi
 
     # Apply chown and chmod
-    chmod -R 755 "$user_dir"
-    # chown "$uid_number:$gid_number" "$user_dir"
-    chown -R "{{ docker_mailserver__users_group_id }}:{{ docker_mailserver__users_group_id }}" "$user_dir"
+    chmod 755 "$user_dir"
+    chown -R "$uid_number:$gid_number" "$user_dir"
+    # chown -R "{{ docker_mailserver__users_group_id }}:{{ docker_mailserver__users_group_id }}" "$user_dir"
     echo "[PATCH] Updated directory ownership and permissions for ${uid}@${domain}."
   done
 done
