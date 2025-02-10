@@ -24,16 +24,8 @@
   delay: 20
 
 ###
-### user-patches.sh
+### Extra config
 ###
-
-- name: Render the user patch bash script
-  ansible.builtin.template:
-    src: templates/mailserver/dms/user-patches.sh.j2
-    dest: /tmp/user-patches.sh  # Temporary location to store the rendered script
-    mode: "0775"
-    comment_start_string: "{[#" # would clash with bash syntax if not redefining
-    comment_end_string: "#]}" # would clash with bash syntax if not redefining
 
 - name: Create ConfigMap with the user patch script
   kubernetes.core.k8s:
@@ -42,42 +34,20 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: dms-user-patches
+        name: dms-config-extra-files
         namespace: "{{ docker_mailserver__namespace }}"
       data:
-        user-patches.sh: "{{ lookup('file', '/tmp/user-patches.sh') }}"
-
-- name: Remove temporary user patch script
-  ansible.builtin.file:
-    path: /tmp/user-patches.sh
-    state: absent
-
-###
-### postfix reject
-###
-
-- name: Template exec on postfix reject regex
-  ansible.builtin.template:
-    src: templates/mailserver/postfix/header_checks.pcre.j2
-    dest: /tmp/postfix-reject.pcre  # Temporary location to store the rendered script
-    mode: "0775"
-
-- name: Create ConfigMap
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: dms-postfix-reject
-        namespace: "{{ docker_mailserver__namespace }}"
-      data:
-        header_checks.pcre: "{{ lookup('file', '/tmp/postfix-reject.pcre') }}"
-
-- name: Remove temporary
-  ansible.builtin.file:
-    path: /tmp/postfix-reject.pcre
-    state: absent
+        postfix-policyd-spf.conf: "{{ lookup('ansible.builtin.template', 'templates/mailserver/postfix/postfix-policyd-spf.conf.j2') }}"
+        header_checks.pcre: "{{ lookup('ansible.builtin.template', 'templates/mailserver/postfix/header_checks.pcre.j2') }}"
+        fail2ban-jail.cf: "{{ lookup('ansible.builtin.template', 'templates/mailserver/fail2ban/fail2ban-jail.cf.j2') }}"
+        supervisord-gui.conf: "{{ lookup('ansible.builtin.template', 'templates/mailserver/supervisord/supervisord-gui.conf.j2') }}"
+        user-patches.sh: |
+          {{ lookup(
+            'ansible.builtin.template',
+            'templates/mailserver/dms/user-patches.sh.j2',
+            comment_start_string='{[#',
+            comment_end_string='#]}'
+          ) }}
 
 ###
 ### Whole install
@@ -91,3 +61,4 @@
       - path: templates/mailserver/secret.yml.j2
       - path: templates/mailserver/service.yml.j2
       - path: templates/mailserver/deploy.yml.j2
+      - path: templates/mailserver/supervisord.ingress.yml.j2

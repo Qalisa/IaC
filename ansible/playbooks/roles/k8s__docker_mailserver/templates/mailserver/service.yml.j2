@@ -14,6 +14,12 @@ spec:
   selector:
     app: "{{ docker_mailserver__server_label }}"
   ports:
+    #
+    - name: supervisord-ui
+      port: {{ k8s__docker_mailserver__supervisord_ui__port }}
+      targetPort: supervisord-ui
+      protocol: TCP
+
     # smtp
     - name: smtp
       port: 25

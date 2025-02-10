@@ -36,6 +36,9 @@ minio__tenant__username: admin
 matomo__admin_username: admin
 
 #
+docker_mailserver__supervisord_ui__user: admin
+
+#
 argocd__app_of_apps__repo_name: argocd-repository # github repo name under organization, containing app of apps argocd manifest
 
 #

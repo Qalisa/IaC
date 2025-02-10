@@ -7,6 +7,7 @@ k8s__docker_mailserver__config_folder_name: tmp-docker-mailserver
 k8s__docker_mailserver__external_hostname__autoconfig: autoconfig.{{ iac__root_domain }}
 k8s__docker_mailserver__external_hostname__autodiscover: autodiscover.{{ iac__root_domain }}
 k8s__docker_mailserver__external_hostname__webmail: webmail.{{ iac__root_domain }}
+k8s__docker_mailserver__external_hostname__supervisord_gui: supervisord-mail.{{ iac__root_domain }}
 
 k8s__docker_mailserver__internal_hostname: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}.svc.cluster.local"
 
@@ -16,3 +17,6 @@ k8s__docker_mailserver__cert_secret_name: docker-mailserver-certs
 #
 k8s__docker_mailserver__local_mail_store_path: /var/mail
 k8s__docker_mailserver__dkim_selector: mail # https://docker-mailserver.github.io/docker-mailserver/latest/config/best-practices/dkim_dmarc_spf/#dkim-dns
+
+#
+k8s__docker_mailserver__supervisord_ui__port: "9001"

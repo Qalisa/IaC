@@ -190,3 +190,6 @@ sentry__github_clientId: "{{ vault_sentry__github_clientId }}"
 sentry__github_clientSecret: "{{ vault_sentry__github_clientSecret }}"
 sentry__github_privateKey: "{{ vault_sentry__github_privateKey }}"
 sentry__github_webhookSecret: "{{ vault_sentry__github_webhookSecret }}"
+
+#
+docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__supervisord_ui__password }}"

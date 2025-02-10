@@ -73,18 +73,30 @@ spec:
               cpu: 600m
 
           volumeMounts:
-            # configurations
+            # DMS Configuration (https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/optional-config/#volumes)
+            # @note order of mount is important hetre
             - name: data
               mountPath: /tmp/docker-mailserver
               subPath: "{{ k8s__docker_mailserver__config_folder_name }}"
               readOnly: false
-            - name: patches
-              mountPath: /tmp/docker-mailserver/user-patches.sh
+            ###
+            - name: config-files
               subPath: user-patches.sh
-            - name: postfix-reject
-              mountPath: /etc/postfix/maps/header_checks.pcre
+              mountPath: /tmp/docker-mailserver/user-patches.sh
+            - name: config-files
+              subPath: fail2ban-jail.cf
+              mountPath: /tmp/docker-mailserver/fail2ban-jail.cf
+            - name: config-files
+              subPath: postfix-policyd-spf.conf
+              mountPath: /tmp/docker-mailserver/postfix-policyd-spf.conf
+            #
+            - name: config-files
               subPath: header_checks.pcre
-
+              mountPath: /etc/postfix/maps/header_checks.pcre
+            - name: config-files
+              subPath: supervisord-gui.conf
+              mountPath: /etc/supervisor/conf.d/supervisord-gui.conf
+                           
             # other PVCs
             - name: data
               mountPath: "{{ k8s__docker_mailserver__local_mail_store_path }}"
@@ -105,6 +117,10 @@ spec:
               readOnly: true
 
           ports:
+            - name: supervisord-ui
+              containerPort: {{ k8s__docker_mailserver__supervisord_ui__port }}
+              protocol: TCP 
+            #
             - name: smtp
               containerPort: 25
               protocol: TCP
@@ -146,15 +162,7 @@ spec:
                 path: tls.crt
 
         #
-        - name: postfix-reject
+        - name: config-files
           configMap:
-            name: dms-postfix-reject
-            items:
-              - key: header_checks.pcre
-                path: header_checks.pcre
-
-        #
-        - name: patches
-          configMap:
-            name: dms-user-patches
-            defaultMode: 0755
+            name: dms-config-extra-files
+            defaultMode: 0755 # so we can use exec .sh bash
