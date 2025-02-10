@@ -5,6 +5,6 @@ metadata:
   namespace: "{{ docker_mailserver__namespace }}"
 spec:
   redirectRegex:
-    regex: "^https?://{{ docker_mailserver__external_hostname }}(.*)"
-    replacement: "https://{{ k8s__docker_mailserver__external_hostname__webmail }}$1"
+    regex: ".*"
+    replacement: "https://{{ k8s__docker_mailserver__external_hostname__webmail }}"
     permanent: true  # Set to false for a 302 redirect instead of 301

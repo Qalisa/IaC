@@ -22,8 +22,8 @@
     ########################
     ### Safety & Backups ###
     ########################
-    # - role: k8s__minio                # OPTIONAL, Storage Object service for storing backups and snapshots
-    # - role: k8s__velero               # OPTIONAL, tool to orchestrate backups
+    # - role: k8s__minio                # OPTIONAL, S3 compatible Storage Object service
+    # - role: k8s__velero               # OPTIONAL, tool to orchestrate K8s backups (Volumes, custom CRDs...)
     ####################
     ### Org Services ###
     ####################

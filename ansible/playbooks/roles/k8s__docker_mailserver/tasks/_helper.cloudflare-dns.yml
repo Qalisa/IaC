@@ -91,7 +91,6 @@
   loop:
     - smtp
     - imap
-    - autodiscover
   loop_control:
     loop_var: domainConfig
 

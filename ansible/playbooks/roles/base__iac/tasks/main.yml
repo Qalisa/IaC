@@ -14,3 +14,12 @@
     name: kubernetes
     state: latest
     install_deps: true
+
+###
+- name: Inject jmespath
+  community.general.pipx:
+    name: ansible
+    state: inject
+    install_deps: true
+    inject_packages:
+      - jmespath

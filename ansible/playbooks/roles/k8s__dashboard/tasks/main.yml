@@ -32,6 +32,7 @@
           enabled: true
           issuer: # done below manually, to stick to habits
             scope: disabled
+          ingressClassName: "" # let default roll
           annotations:
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__dashboard__external_hostname }}"

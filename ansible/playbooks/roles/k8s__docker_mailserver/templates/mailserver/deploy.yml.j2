@@ -78,6 +78,9 @@ spec:
             - name: patches
               mountPath: /tmp/docker-mailserver/user-patches.sh
               subPath: user-patches.sh
+            - name: postfix-reject
+              mountPath: /etc/postfix/maps/header_checks.pcre
+              subPath: header_checks.pcre
 
             # other PVCs
             - name: data
@@ -98,11 +101,6 @@ spec:
               mountPath: /secrets/ssl/rsa/
               readOnly: true
 
-            #
-            - name: postfix-reject
-              mountPath: /etc/postfix/maps/header_checks.pcre
-              subPath: header_checks.pcre
-
           ports:
             - name: smtp
               containerPort: 25
@@ -122,9 +120,9 @@ spec:
 
           envFrom:
             - secretRef:
-                name: ldap
+                name: dms-ldap
             - configMapRef:
-                name: "{{ docker_mailserver__server_hostname }}"
+                name: dms-config
 
       restartPolicy: Always
 
