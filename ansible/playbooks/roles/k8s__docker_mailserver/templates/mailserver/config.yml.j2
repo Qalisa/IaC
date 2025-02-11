@@ -33,7 +33,7 @@ data:
   ENABLE_SPAMASSASSIN: '0' # well, is this needed ? slowing down email handling
   SPAMASSASSIN_SPAM_TO_INBOX: '1'
   #
-  ENABLE_FAIL2BAN: '1'
+  ENABLE_FAIL2BAN: '0' # too restrictive by default, see (https://github.com/Qalisa/IaC/issues/27)
   FAIL2BAN_BLOCKTYPE: drop
 
   # >>> Postfix LDAP Integration
