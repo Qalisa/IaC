@@ -7,40 +7,44 @@
     ##################
     ### INFRA CRDs ###
     ##################
-    - role: k8s__cf_zto                 # Allow autoconfig of CF zero trust on services
-    - role: k8s__cert_manager           # Allow generation / fetching of certificate
-    - role: k8s__external_dns           # Bind ingresses to DNS rules on Cloudflare
-    - role: k8s__kyverno                # Policies enforcement and metadata injection
-    - role: k8s__longhorn               # Distributed blocks storage
+    - role: k8s__cf_zto                           # Allow autoconfig of CF zero trust on services
+    - role: k8s__cert_manager                     # Allow generation / fetching of certificate
+    - role: k8s__external_dns                     # Bind ingresses to DNS rules on Cloudflare
+    - role: k8s__kyverno                          # Policies enforcement and metadata injection
+    - role: k8s__longhorn                         # Distributed blocks storage
     #############################
     ### MANAGEMENT & INSIGHTS ###
     #############################
-    - role: k8s__traefik                # Ingress and Routing dashboard
-    - role: k8s__dashboard              # K8s dashboard
-    - role: k8s__ingress_dashboard      # List all ingresses available externally
-    # - role: k8s__prometheus_stack     # OPTIONAL, tracks insights from apps
+    - role: k8s__traefik                          # Ingress and Routing dashboard
+    - role: k8s__dashboard                        # K8s dashboard
+    - role: k8s__ingress_dashboard                # List all ingresses available externally
+    # - role: k8s__prometheus_stack               # OPTIONAL, tracks insights from apps
     ########################
     ### Safety & Backups ###
     ########################
-    # - role: k8s__minio                # OPTIONAL, S3 compatible Storage Object service
-    # - role: k8s__velero               # OPTIONAL, tool to orchestrate K8s backups (Volumes, custom CRDs...)
+    # - role: k8s__minio                          # OPTIONAL, S3 compatible Storage Object service
+    # - role: k8s__velero                         # OPTIONAL, tool to orchestrate K8s backups (Volumes, custom CRDs...)
     ####################
     ### Org Services ###
     ####################
-    - role: k8s__openldap               # LDAP user & groups management
-    - role: k8s__docker_mailserver      # Mail server
+    - role: k8s__openldap                         # LDAP user & groups management
+    - role: k8s__docker_mailserver                # Mail server
     ##############
     ### DevOps ###
     ##############
-    - role: k8s__harbor                 # Docker images private registry
-    # - role: k8s__github_arc           # OPTIONAL, allow github actions local runners
-    # - role: k8s__hc_vault             # OPTIONAL, allow secure storage of private keys
-    # - role: k8s__sentry               # OPTIONAL, receive debug reports (careful, high resources usage !)
-    # - role: k8s__matomo               # OPTIONAL, allow usage tracking of apps / websites
-    - role: k8s__argo_cd                # Automatize Continuous Delivery
+    - role: k8s__harbor                           # Docker images private registry
+    # - role: k8s__github_arc                     # OPTIONAL, allow github actions local runners
+    # - role: k8s__hc_vault                       # OPTIONAL, allow secure storage of private keys
+    # - role: k8s__sentry                         # OPTIONAL, receive debug reports (careful, high resources usage !)
+    # - role: k8s__matomo                         # OPTIONAL, allow usage tracking of apps / websites
+    - role: k8s__argo_cd                          # Automatize Continuous Delivery
+    ########################
+    ### Custom operators ###
+    ########################
+    - role: k8s__github_push_secrets_operator     # Allow synchronization of secrets and variables to Github CI
     ############
     ### Apps ###
     ############
-    # - role: k8s__odoo_community       # All-in-one, with alot of free apps (CRM and such)
-    # - role: k8s__listmonk             # Allow marketing campaigns
-    # - role: k8s__ez_appointments      # Allow clients to secure appointments
+    # - role: k8s__odoo_community                 # All-in-one, with alot of free apps (CRM and such)
+    # - role: k8s__listmonk                       # Allow marketing campaigns
+    # - role: k8s__ez_appointments                # Allow clients to secure appointments

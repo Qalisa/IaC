@@ -1,0 +1,3 @@
+---
+k8s__github_push_secrets_operator__namespace: gh-secret-operator
+k8s__github_push_secrets_operator__global_secvar_name: gh-action

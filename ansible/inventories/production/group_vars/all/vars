@@ -33,6 +33,8 @@ iac__github_org: "{{ u_vault_iac__github_org }}"
 #
 listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
 
+github_push_secrets_operator__global_gass_name: default
+
 ###
 ### EXTERNAL
 ### 
@@ -47,6 +49,10 @@ argocd__github_app__app_id: "{{ u_vault_argocd__github_app__app_id }}"
 # Github ARC - Github App
 github_arc__github_app__installation_id: "{{ u_vault_github_arc__github_app__installation_id }}"
 github_arc__github_app__app_id: "{{ u_vault_github_arc__github_app__app_id }}"
+
+# github-push-secrets-operator - Github App
+github_push_secrets_operator__github_app__installation_id: "{{ u_vault_github_push_secrets_operator__github_app__installation_id }}"
+github_push_secrets_operator__github_app__app_id: "{{ u_vault_github_push_secrets_operator__github_app__app_id }}"
 
 ## SENTRY ###
 # SETTINGS FOR Github App (loosely based on https://docs.sentry.io/organization/integrations/source-code-mgmt/github/)
@@ -176,6 +182,9 @@ argocd__github_webhook_secret: "{{ vault_argocd__github_webhook_secret }}"
 ### MAKE SURE GITHUB APP HAS BELOW RIGHTS
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
 github_arc__github_app__priv_key: "{{ vault_github_arc__github_app__priv_key }}"
+
+# https://github.com/Qalisa/push-github-secrets-operator
+github_push_secrets_operator__github_app__priv_key: "{{ vault_github_push_secrets_operator__github_app__priv_key }}"
 
 # ZeroSSL (if used in k8s__cert_manager)
 cert_manager__zerossl__eab_kid: "{{ u_vault_cert_manager__zerossl__eab_kid }}"

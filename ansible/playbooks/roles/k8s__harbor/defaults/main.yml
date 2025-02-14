@@ -4,7 +4,6 @@ k8s__harbor__storage_capacity: 40Gi
 k8s__harbor__cert_name: harbor
 k8s__harbor__cert_secret_name: "{{ k8s__harbor__cert_name }}-certs"
 
-k8s__harbor__external_hostname: "{{ harbor__sld }}.{{ iac__root_domain }}"
 k8s__harbor__internal_hostname__api: "{{ harbor__internal_hostname__registry_v2 }}" # same as registry (see ingress)
 
 k8s__harbor__internal_tls_secret_name: harbor-internal-tls

@@ -1,0 +1,23 @@
+---
+- name: Prerequisites
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: qalisa
+    repo_url: https://qalisa.github.io/charts
+
+- name: Install github-push-secrets-operator w/ Helm
+  kubernetes.core.helm:
+    name: github-push-secrets-operator
+    chart_ref: qalisa/github-push-secrets-operator
+    release_namespace: "{{ k8s__github_push_secrets_operator__namespace }}"
+    create_namespace: false
+    wait: true
+    values:
+      github:
+        appId: "{{ github_push_secrets_operator__github_app__app_id }}"
+        installationId: "{{ github_push_secrets_operator__github_app__installation_id }}"
+        privateKey: "{{ github_push_secrets_operator__github_app__priv_key }}"
