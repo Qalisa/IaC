@@ -1,5 +1,5 @@
 ---
-- name: Install github-push-secrets-operator
+- name: Install github-actions-secrets-operator
   ansible.builtin.import_tasks: setup.yml
 
 - name: Configure global

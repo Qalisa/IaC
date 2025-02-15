@@ -50,7 +50,7 @@ argocd__github_app__app_id: "{{ u_vault_argocd__github_app__app_id }}"
 github_arc__github_app__installation_id: "{{ u_vault_github_arc__github_app__installation_id }}"
 github_arc__github_app__app_id: "{{ u_vault_github_arc__github_app__app_id }}"
 
-# github-push-secrets-operator - Github App
+# github-actions-secrets-operator - Github App
 github_push_secrets_operator__github_app__installation_id: "{{ u_vault_github_push_secrets_operator__github_app__installation_id }}"
 github_push_secrets_operator__github_app__app_id: "{{ u_vault_github_push_secrets_operator__github_app__app_id }}"
 

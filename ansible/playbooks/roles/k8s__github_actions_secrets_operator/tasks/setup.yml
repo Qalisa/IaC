@@ -6,13 +6,13 @@
 
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
-    name: qalisa
-    repo_url: https://qalisa.github.io/charts
+    name: qalisa-ghaso
+    repo_url: https://qalisa.github.io/github-actions-secrets-operator
 
-- name: Install github-push-secrets-operator w/ Helm
+- name: Install github-actions-secrets-operator w/ Helm
   kubernetes.core.helm:
-    name: github-push-secrets-operator
-    chart_ref: qalisa/github-push-secrets-operator
+    name: github-actions-secrets-operator
+    chart_ref: qalisa-ghaso/github-actions-secrets-operator
     release_namespace: "{{ k8s__github_push_secrets_operator__namespace }}"
     create_namespace: false
     wait: true
