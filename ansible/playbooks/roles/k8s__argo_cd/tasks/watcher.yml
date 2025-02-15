@@ -24,6 +24,7 @@
   kubernetes.core.helm_repository:
     name: shini4i
     repo_url: https://shini4i.github.io/charts/
+    force_update: true
 
 - name: Install ArgoCD Watcher w/ Helm
   tags: [image-updater]

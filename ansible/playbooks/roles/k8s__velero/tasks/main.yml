@@ -3,6 +3,7 @@
   kubernetes.core.helm_repository:
     name: vmware-tanzu
     repo_url: https://vmware-tanzu.github.io/helm-charts
+    force_update: true
 
 - name: Install Velero w/ Helm
   kubernetes.core.helm:

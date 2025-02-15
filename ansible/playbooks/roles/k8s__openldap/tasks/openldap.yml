@@ -3,6 +3,7 @@
   kubernetes.core.helm_repository:
     name: helm-openldap
     repo_url: https://jp-gouin.github.io/helm-openldap/
+    force_update: true
 
 - name: Install OpenLDAP w/ Helm
   kubernetes.core.helm:

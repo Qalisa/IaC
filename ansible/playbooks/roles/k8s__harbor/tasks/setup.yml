@@ -4,6 +4,7 @@
   kubernetes.core.helm_repository:
     name: harbor
     repo_url: https://helm.goharbor.io
+    force_update: true
 
 - name: Install prerequisites (Storage class / Persistent Volume / certificates)
   kubernetes.core.k8s:

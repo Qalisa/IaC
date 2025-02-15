@@ -3,6 +3,7 @@
   kubernetes.core.helm_repository:
     name: kyverno-policy-reporter
     repo_url: https://kyverno.github.io/policy-reporter
+    force_update: true
 
 - name: Install Zero-Trust configuration
   tags: [zto-app]

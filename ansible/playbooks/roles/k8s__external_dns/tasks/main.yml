@@ -9,6 +9,7 @@
   kubernetes.core.helm_repository:
     name: external-dns
     repo_url: https://kubernetes-sigs.github.io/external-dns/
+    force_update: true
 
 - name: Install External DNS
   kubernetes.core.helm:

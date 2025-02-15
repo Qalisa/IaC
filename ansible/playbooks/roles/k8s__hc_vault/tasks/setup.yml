@@ -3,6 +3,7 @@
   kubernetes.core.helm_repository:
     name: hashicorp
     repo_url: https://helm.releases.hashicorp.com
+    force_update: true
 
 - name: Create Persistent Volumes + SSL certificates (injector, server)
   kubernetes.core.k8s:
