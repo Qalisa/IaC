@@ -7,13 +7,21 @@ spec:
     - secretRef: 
         name: "{{ k8s__github_push_secrets_operator__global_secvar_name }}"
         namespace: "{{ k8s__github_push_secrets_operator__namespace }}"
-      key: TEST_API_KEY
+      key: ARGOCD_SYNCER_TOKEN
     - secretRef:
         name: "{{ k8s__github_push_secrets_operator__global_secvar_name }}"
         namespace: "{{ k8s__github_push_secrets_operator__namespace }}"
-      key: TEST_DB_PASSWORD
+      key: DOCKER_PRIVATE_REGISTRY_PASSWORD
+    - secretRef:
+        name: "{{ k8s__github_push_secrets_operator__global_secvar_name }}"
+        namespace: "{{ k8s__github_push_secrets_operator__namespace }}"
+      key: DOCKER_PRIVATE_REGISTRY_USERNAME
   variables:
     - configMapRef:
         name: "{{ k8s__github_push_secrets_operator__global_secvar_name }}"
         namespace: "{{ k8s__github_push_secrets_operator__namespace }}"
-      key: TEST_API_URL
+      key: PREFERRED_RUNS_ON
+    - configMapRef:
+        name: "{{ k8s__github_push_secrets_operator__global_secvar_name }}"
+        namespace: "{{ k8s__github_push_secrets_operator__namespace }}"
+      key: DOCKER_PRIVATE_REGISTRY_DOMAIN
