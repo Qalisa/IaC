@@ -16,9 +16,13 @@
     chart_ref: qalisa-ghaso/github-actions-secrets-operator
     release_namespace: "{{ k8s__github_actions_secrets_operator__namespace }}"
     create_namespace: false
-    wait: false
+    wait: true
+    set_values:
+      - value: github.appId={{ github_actions_secrets_operator__github_app__app_id }}
+        value_type: string
+      - value: github.installationId={{ github_actions_secrets_operator__github_app__installation_id }}
+        value_type: string
     values:
       github:
-        appId: "{{ github_actions_secrets_operator__github_app__app_id }}"
-        installationId: "{{ github_actions_secrets_operator__github_app__installation_id }}"
-        privateKey: "{{ github_actions_secrets_operator__github_app__priv_key }}"
+        privateKey:
+          explicit: "{{ github_actions_secrets_operator__github_app__priv_key }}"
