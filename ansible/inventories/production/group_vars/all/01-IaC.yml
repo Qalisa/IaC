@@ -57,9 +57,6 @@ harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowe
 # https://docs.k3s.io/cli/server#networking
 iac__k3s__servicelb__ip_range: "10.42.0.0/16"
 
-# should not be used explicitely, unless an helm chart (kubernetes-dashboard, *kof kof*) enforces a specific ingress class that is not handled
-iac__implicit_ingress_class_name: traefik
-
 # root domain + optional alt domains
 iac__all_domains: "{{ [iac__root_domain] + iac__alt_domains }}"
 

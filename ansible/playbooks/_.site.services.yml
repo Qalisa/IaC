@@ -45,6 +45,6 @@
     ############
     ### Apps ###
     ############
-    # - role: k8s__odoo_community                 # All-in-one, with alot of free apps (CRM and such)
+    - role: k8s__odoo_community                 # All-in-one, with alot of free apps (CRM and such)
     # - role: k8s__listmonk                       # Allow marketing campaigns
     # - role: k8s__ez_appointments                # Allow clients to secure appointments

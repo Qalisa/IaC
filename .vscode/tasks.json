@@ -240,6 +240,17 @@
             "type": "shell",
             "command": "ansible-lint  --fix"
         },
+
+        {
+            "label": "🐶 Run K9s",
+            "type": "shell",
+            "command": "k9s",
+            "options": {
+                "env": {
+                    "EDITOR": "nano"
+                }
+            }
+        },
         ///
         ///
         ///
