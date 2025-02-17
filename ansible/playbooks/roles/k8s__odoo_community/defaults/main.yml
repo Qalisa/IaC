@@ -1,2 +1,10 @@
 ---
-k8s__odoo_community__extername_hostname: odoo.{{ iac__root_domain }}
+k8s__odoo_community__namespace: odoo-community
+k8s__odoo_community__extername_hostname: odoo-new.{{ iac__root_domain }}
+
+k8s__odoo_community__db__name: postgresql
+#
+k8s__odoo_community__db__config__db_name: odoo-db
+k8s__odoo_community__db__config__admin_password: odoo-admin_PwD1231.L14d
+k8s__odoo_community__db__config__username: odoo
+k8s__odoo_community__db__config__password: odoo-blaBlA_PwD1231.LCC

@@ -41,19 +41,19 @@ data:
   LDAP_SERVER_HOST: "{{ openldap_stack__ldap_uri }}"
   LDAP_BIND_DN: "{{ iac__ldap__admin__bind_dn }}"
   LDAP_SEARCH_BASE: "{{ iac__ldap__root_dc }}"
-  LDAP_QUERY_FILTER_DOMAIN: (|(mail=*@%s)(mailAlias=*@%s)(mailGroupMember=*@%s))
-  LDAP_QUERY_FILTER_USER: (&(objectClass=inetOrgPerson)(mail=%s))
-  LDAP_QUERY_FILTER_ALIAS: (&(objectClass=inetOrgPerson)(mailAlias=%s))
-  LDAP_QUERY_FILTER_GROUP: (&(objectClass=inetOrgPerson)(mailGroupMember=%s))
-  LDAP_QUERY_FILTER_SENDERS: (&(objectClass=inetOrgPerson)(|(mail=%s)(mailAlias=%s)(mailGroupMember=%s)))
+  LDAP_QUERY_FILTER_DOMAIN: (|({{ iac__ldap__username_attr }}=*@%s)(mailAlias=*@%s)(mailGroupMember=*@%s))
+  LDAP_QUERY_FILTER_USER: (&(objectClass={{ iac__ldap__user_oc }})({{ iac__ldap__username_attr }}=%s))
+  LDAP_QUERY_FILTER_ALIAS: (&(objectClass={{ iac__ldap__user_oc }})(mailAlias=%s))
+  LDAP_QUERY_FILTER_GROUP: (&(objectClass={{ iac__ldap__user_oc }})(mailGroupMember=%s))
+  LDAP_QUERY_FILTER_SENDERS: (&(objectClass={{ iac__ldap__user_oc }})(|({{ iac__ldap__username_attr }}=%s)(mailAlias=%s)(mailGroupMember=%s)))
   # <<< Postfix LDAP Integration
 
   # >>> Dovecot LDAP Integration
-  DOVECOT_USER_FILTER: (&(objectClass=inetOrgPerson)(mail=%u))
+  DOVECOT_USER_FILTER: (&(objectClass={{ iac__ldap__user_oc }})({{ iac__ldap__username_attr }}=%u))
   # <ldapField>=<dovecotField>
   # using a prepending "=" does a static value assignment instead of an LDAP binding
   DOVECOT_PASS_ATTRS: {{ [
-    "mail=user",
+    iac__ldap__username_attr ~ "=user",
     "userPassword=password",
   ] | join(',') }}
   DOVECOT_USER_ATTRS: {{ [
@@ -71,5 +71,5 @@ data:
   SASLAUTHD_MECH_OPTIONS: 127.0.0.1
   # @note since "%u" does not work per documentation above, we'll use rimap instead
   # SASLAUTHD_MECHANISMS: ldap
-  # SASLAUTHD_LDAP_FILTER: (&(objectClass=inetOrgPerson)(mail=%u))
+  # SASLAUTHD_LDAP_FILTER: (&(objectClass={{ iac__ldap__user_oc }})({{ iac__ldap__username_attr }}=%u))
   # <<< LDAP Authentication

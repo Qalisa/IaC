@@ -1,2 +1,3 @@
 ---
 k8s__traefik__external_hostname: traefik.{{ iac__root_domain }}
+k8s__traefik__app_name: traefik

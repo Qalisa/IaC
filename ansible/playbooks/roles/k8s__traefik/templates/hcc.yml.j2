@@ -5,12 +5,19 @@ metadata:
   namespace: "{{ k3s__default_namespace }}"
 spec:
   valuesContent: |-
+    experimental:
+      plugins:
+        ldapAuth:
+          moduleName: "github.com/wiltonsr/ldapAuth"
+          version: "v0.1.10"
     globalArguments:
       - "--serversTransport.insecureSkipVerify=true"
     additionalArguments:
       - "--api"
       - "--api.dashboard=true"
       - "--api.insecure=true"
+    providers:
+        allowCrossNamespace: true
     ports:
       web:
         redirections:

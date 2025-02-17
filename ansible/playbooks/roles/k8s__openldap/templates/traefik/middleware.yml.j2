@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: "[[ iac__traefik__ldap_middleware ]]"
+  namespace: "[[ openldap_stack__namespace ]]"
+spec:
+  plugin:
+    ldapAuth:
+      enabled: true
+      # logLevel: DEBUG
+      attribute: "[[ iac__ldap__username_attr ]]"
+      baseDN: "[[ docker_mailserver__users_group_cn ]]"
+      bindDN: "[[ iac__ldap__admin__bind_dn ]]"
+      bindPassword: "[[ iac__ldap__admin__bind_pw ]]"
+      searchFilter: (&(objectClass=[[ iac__ldap__user_oc ]])({{.Attribute}}={{.Username}}))
+      serverList:
+        - url: "[[ openldap_stack__ldap_uri ]]"
+          port: 389

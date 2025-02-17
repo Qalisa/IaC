@@ -41,7 +41,7 @@ for domain in "${DOMAINS[@]}"; do
     -D "$LDAP_BIND_DN" \
     -w "$LDAP_BIND_PW" \
     -b "ou=${domain},{{ docker_mailserver__users_group_cn }}" \
-    "(&(objectClass=inetOrgPerson)(mail=*))" uid uidNumber gidNumber)
+    "(&(objectClass={{ iac__ldap__user_oc }})({{ iac__ldap__username_attr }}=*))" uid uidNumber gidNumber)
 
   # Remove all line breaks and add breaks before "dn: "
   formatted_output=$(echo "$ldap_output" | tr '\n' ' ' | sed 's/ dn: /\ndn: /g' | grep -E "^(uid:|uidNumber:|gidNumber:|dn:)")

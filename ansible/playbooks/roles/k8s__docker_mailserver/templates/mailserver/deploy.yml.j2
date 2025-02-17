@@ -23,7 +23,7 @@ spec:
       labels:
         app: "{{ docker_mailserver__server_label }}"
     spec:
-      hostname: mail
+      hostname: "{{ docker_mailserver__third_level_domain }}"
       containers:
         - name: "{{ docker_mailserver__server_hostname }}"
           image: ghcr.io/docker-mailserver/docker-mailserver:{{ k8s__docker_mailserver__prefer_edge | ternary('edge', k8s__docker_mailserver__stable_version) }}

@@ -35,10 +35,10 @@
             usernamePrompt: Email
             userSearch:
               baseDN: "{{ docker_mailserver__users_group_cn }}"
-              filter: "(objectClass=inetOrgPerson)"
-              username: mail
+              filter: "(objectClass={{ iac__ldap__user_oc }})"
+              username: "{{ iac__ldap__username_attr }}"
               idAttr: uid
-              emailAttr: mail
+              emailAttr: "{{ iac__ldap__email_attr }}"
               nameAttr: uid
               preferredUsernameAttr: uid
             groupSearch:

@@ -54,6 +54,9 @@ harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowe
 ### SHOULD NOT CUSTOMIZE ###
 ############################
 
+# would use it when using databases (https://stackoverflow.com/a/71560186/3021058)
+iac__local_path_storage_class: local-path
+
 # https://docs.k3s.io/cli/server#networking
 iac__k3s__servicelb__ip_range: "10.42.0.0/16"
 
@@ -114,6 +117,12 @@ harbor__org_project_name: "{{ iac__github_org | lower }}"
 iac__ldap__root_domain: iac.local
 iac__ldap__root_dc: "{{ iac__ldap__root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
 iac__ldap__admin__bind_dn: cn=admin,{{ iac__ldap__root_dc }}
+iac__ldap__username_attr: mail
+iac__ldap__email_attr: mail
+iac__ldap__user_oc: inetOrgPerson
+
+#
+iac__traefik__ldap_middleware: ldap-auth
 
 #
 docker_mailserver__namespace: docker-mailserver
