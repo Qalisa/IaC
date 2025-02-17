@@ -19,6 +19,12 @@
     create_namespace: false
     wait: true
     values:
+      image:
+        tag: "9.0"
+      strategy:
+        # will wait for old pod to shutdown completely before runing new pod. Prevents logs to be filled with warnings about lockfiles
+        # MANDATORY HERE, default behavior makes "The CSRF token is missing. You need to refresh the page" issues when logged in
+        type: Recreate
       serverDefinitions:
         enabled: true
         resourceType: Secret

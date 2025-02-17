@@ -1,14 +1,21 @@
 - name: Define new server configuration using defaults/main.yml variables
   ansible.builtin.set_fact:
-    new_server:
-      "{{ utilities__pgadmin__add_server_definition__id }}":
-        Name: "{{ utilities__pgadmin__add_server_definition__name }}"
-        Group: "{{ utilities__pgadmin__add_server_definition__group }}"
-        Port: "{{ utilities__pgadmin__add_server_definition__port }}"
-        Username: "{{ utilities__pgadmin__add_server_definition__username }}"
-        Host: "{{ utilities__pgadmin__add_server_definition__host }}"
-        SSLMode: "{{ utilities__pgadmin__add_server_definition__sslmode }}"
-        MaintenanceDB: "{{ utilities__pgadmin__add_server_definition__maintenance_db }}"
+    new_server_definition:
+      Name: "{{ utilities__pgadmin__add_server_definition__name }}"
+      Group: "{{ utilities__pgadmin__add_server_definition__group }}"
+      Port: "{{ utilities__pgadmin__add_server_definition__port }}"
+      Username: "{{ utilities__pgadmin__add_server_definition__username }}"
+      Host: "{{ utilities__pgadmin__add_server_definition__host }}"
+      SSLMode: "{{ utilities__pgadmin__add_server_definition__sslmode }}"
+      MaintenanceDB: "{{ utilities__pgadmin__add_server_definition__maintenance_db }}"
+
+- name: Add ID
+  ansible.builtin.set_fact:
+    new_server_definition: "{'{{ utilities__pgadmin__add_server_definition__id }}':{{ new_server_definition | to_json }}}"
+
+##
+##
+##
 
 - name: Fetch existing Secret
   kubernetes.core.k8s_info:
@@ -19,16 +26,20 @@
 
 - name: Extract existing servers.json
   ansible.builtin.set_fact:
-    existing_servers: "{{ secret_info.resources[0].stringData['servers.json'] | from_json }}"
+    existing_servers: "{{ secret_info.resources[0].data['servers.json'] | b64decode | from_json }}"
 
 - name: Merge new server into existing servers
   ansible.builtin.set_fact:
     updated_servers: >-
       {{
         existing_servers | combine({
-          'Servers': existing_servers.Servers | combine(new_server)
+          'Servers': existing_servers.Servers | combine(new_server_definition)
         })
       }}
+
+##
+##
+##
 
 - name: Update the Secret with the new servers.json
   kubernetes.core.k8s:
@@ -52,6 +63,8 @@
       metadata:
         name: "{{ pgadmin__namespace }}-pgadmin4"
         namespace: "{{ pgadmin__namespace }}"
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "{{ ansible_date_time.iso8601 }}"
       spec:
         template:
           metadata:
@@ -61,7 +74,7 @@
 - name: Wait for pgAdmin4 deployment to be ready
   kubernetes.core.k8s_info:
     kind: Deployment
-    name: pgadmin
+    name: "{{ pgadmin__namespace }}-pgadmin4"
     namespace: "{{ pgadmin__namespace }}"
   register: deployment_info
   until: deployment_info.resources[0].status.readyReplicas == deployment_info.resources[0].status.replicas
