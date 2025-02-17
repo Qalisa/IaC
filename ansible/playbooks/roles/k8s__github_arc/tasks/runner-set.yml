@@ -70,7 +70,7 @@
                 - name: PROJECT_NAME
                   value: "{{ argocd__project_name }}"
                 - name: ARGO_WATCHER_URL
-                  value: http://{{ k8s__argo_cd__watcher__internal_name }}.{{ argo_cd__namespace }}.svc.cluster.local
+                  value: http://{{ k8s__argo_cd__watcher__internal_name }}.{{ argo_cd__namespace }}.{{ iac__svc_cluster_host }}
               volumeMounts:
                 - name: crt
                   mountPath: /etc/ssl/certs/ca-certificates.crt # only way to allow our CA to be acked for classic HTTPS calls

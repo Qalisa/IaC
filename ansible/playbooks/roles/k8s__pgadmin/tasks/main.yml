@@ -22,8 +22,7 @@
       image:
         tag: "9.0"
       strategy:
-        # will wait for old pod to shutdown completely before runing new pod. Prevents logs to be filled with warnings about lockfiles
-        # MANDATORY HERE, default behavior makes "The CSRF token is missing. You need to refresh the page" issues when logged in
+        # Cleaner than rollout
         type: Recreate
       serverDefinitions:
         enabled: true
@@ -32,6 +31,13 @@
       env:
         email: "{{ pgadmin__username_email }}"
         password: "{{ pgadmin__password }}"
+        # MANDATORY HERE, default behavior makes "The CSRF token is missing. You need to refresh the page" issues when logged in
+        # https://stackoverflow.com/questions/64394628/csrf-token-is-missing-error-in-docker-pgadmin
+        variables:
+          - name: "PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT"
+            value: "False"
+          - name: "PGADMIN_CONFIG_WTF_CSRF_ENABLED"
+            value: "False"
       ingress:
         enabled: true
         hosts:

@@ -1,6 +1,6 @@
 ---
 k8s__argo_cd__server_pod_name: argocd-server
-k8s__argo_cd__server_internal_hostname: "{{ k8s__argo_cd__server_pod_name }}.{{ argo_cd__namespace }}.svc.cluster.local"
+k8s__argo_cd__server_internal_hostname: "{{ k8s__argo_cd__server_pod_name }}.{{ argo_cd__namespace }}.{{ iac__svc_cluster_host }}"
 k8s__argo_cd_cluster_api_url: http://{{ k8s__argo_cd__server_internal_hostname }}/api/v1
 k8s__argo_cd__app_of_apps__name: app-of-apps
 k8s__argo_cd__external_hostname: argocd.{{ iac__root_domain }}

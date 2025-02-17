@@ -57,6 +57,9 @@ pgadmin__username_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
 ### SHOULD NOT CUSTOMIZE ###
 ############################
 
+#
+iac__svc_cluster_host: svc.cluster.local
+
 # would use it when using databases (https://stackoverflow.com/a/71560186/3021058)
 iac__local_path_storage_class: local-path
 
@@ -111,7 +114,7 @@ listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
 harbor__namespace: harbor
 harbor__name: harbor
 harbor__external_hostname: registry.{{ iac__root_domain }}
-harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}.svc.cluster.local" # we need the service that responds to /v2/ path
+harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}.{{ iac__svc_cluster_host }}" # we need the service that responds to /v2/ path
 harbor__internal_hostname__registry_v2__url: https://{{ harbor__internal_hostname__registry_v2 }}
 harbor__admin_username: admin
 harbor__org_project_name: "{{ iac__github_org | lower }}"
@@ -142,13 +145,13 @@ docker_mailserver__users_group_description: |
 docker_mailserver__users_group_id: 5000
 
 #
-docker_mailserver__internal_smtp_server: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}.svc.cluster.local"
+docker_mailserver__internal_smtp_server: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}.{{ iac__svc_cluster_host }}"
 docker_mailserver__internal_smtp_preferred_port: 587
 
 #
 openldap_stack__namespace: openldap-stack
 openldap_stack__ldap_server_hostname: openldap
-openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}.svc.cluster.local"
+openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}.{{ iac__svc_cluster_host }}"
 openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_internal_hostname }}/
 openldap_stack__users_home: /home/users
 

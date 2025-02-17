@@ -37,10 +37,6 @@
         })
       }}
 
-##
-##
-##
-
 - name: Update the Secret with the new servers.json
   kubernetes.core.k8s:
     state: present
@@ -54,29 +50,74 @@
       stringData:
         servers.json: "{{ updated_servers | to_json }}"
 
-- name: Restart pgAdmin4 deployment
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: "{{ pgadmin__namespace }}-pgadmin4"
-        namespace: "{{ pgadmin__namespace }}"
-        annotations:
-          kubectl.kubernetes.io/restartedAt: "{{ ansible_date_time.iso8601 }}"
-      spec:
-        template:
-          metadata:
-            annotations:
-              kubectl.kubernetes.io/restartedAt: "{{ ansible_date_time.iso8601 }}"
+##
+##
+##
 
-- name: Wait for pgAdmin4 deployment to be ready
+# - name: Restart pgAdmin4 deployment
+#   kubernetes.core.k8s:
+#     state: present
+#     definition:
+#       apiVersion: apps/v1
+#       kind: Deployment
+#       metadata:
+#         name: "{{ pgadmin__namespace }}-pgadmin4"
+#         namespace: "{{ pgadmin__namespace }}"
+#         annotations:
+#           kubectl.kubernetes.io/restartedAt: "{{ ansible_date_time.iso8601 }}"
+#       spec:
+#         template:
+#           metadata:
+#             annotations:
+#               kubectl.kubernetes.io/restartedAt: "{{ ansible_date_time.iso8601 }}"
+
+# - name: Wait for pgAdmin4 deployment to be ready
+#   kubernetes.core.k8s_info:
+#     kind: Deployment
+#     name: "{{ pgadmin__namespace }}-pgadmin4"
+#     namespace: "{{ pgadmin__namespace }}"
+#   register: deployment_info
+#   # DISABLED until https://github.com/Qalisa/IaC/issues/28 is fixed somehow
+#   # when: utilities__pgadmin__add_server_definition__wait | bool
+#   until: >
+#       deployment_info.resources | length > 0 and
+#       (deployment_info.resources[0].status.readyReplicas is defined and
+#       deployment_info.resources[0].status.readyReplicas == deployment_info.resources[0].status.replicas)
+#   retries: 10
+#   delay: 10
+
+##
+##
+##
+
+- name: Get pod
+  until: >
+    pod_search.resources is defined and
+    pod_search.resources | length > 0 and
+    pod_search.resources[0].status.phase == "Running"
+  retries: 20
+  delay: 5
   kubernetes.core.k8s_info:
-    kind: Deployment
-    name: "{{ pgadmin__namespace }}-pgadmin4"
+    kind: Pod
     namespace: "{{ pgadmin__namespace }}"
-  register: deployment_info
-  until: deployment_info.resources[0].status.readyReplicas == deployment_info.resources[0].status.replicas
-  retries: 10
-  delay: 10
+    label_selectors:
+      - app.kubernetes.io/name=pgadmin4
+  register: pod_search
+
+# REQUIRED until https://github.com/Qalisa/IaC/issues/28 is fixed somehow
+- name: Update DB
+  vars:
+    dest: /tmp/servers.json
+  loop:
+    - command: bash -c "echo {{ updated_servers | to_json | b64encode }} | base64 -d > {{ dest }}"
+      descr: Create tmp JSON file
+    - command: /venv/bin/python /pgadmin4/setup.py load-servers --user {{ pgadmin__username_email }} --auth-source internal --replace {{ dest }}
+      descr: Update servers list
+    - command: rm {{ dest }}
+      descr: Remove tmp JSON file
+  loop_control:
+    label: "{{ item.descr }}"
+  kubernetes.core.k8s_exec:
+    namespace: "{{ pgadmin__namespace }}"
+    pod: "{{ pod_search.resources[0].metadata.name }}"
+    command: "{{ item.command }}"
