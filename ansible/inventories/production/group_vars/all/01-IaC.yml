@@ -50,6 +50,9 @@ listmonk__favicon_url: https://{{ iac__root_domain }}/logo.png
 #
 harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowercase
 
+#
+pgadmin__username_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
+
 ############################
 ### SHOULD NOT CUSTOMIZE ###
 ############################
@@ -122,7 +125,9 @@ iac__ldap__email_attr: mail
 iac__ldap__user_oc: inetOrgPerson
 
 #
-iac__traefik__ldap_middleware: ldap-auth
+iac__traefik__ldap_middleware__name: ldap-auth
+iac__traefik__ldap_middleware__namespace: "{{ openldap_stack__namespace }}"
+iac__traefik__ldap_middleware__ref: "{{ iac__traefik__ldap_middleware__namespace }}-{{ iac__traefik__ldap_middleware__name }}@kubernetescrd"
 
 #
 docker_mailserver__namespace: docker-mailserver
@@ -172,3 +177,7 @@ kyverno__oc_label_as_env__revision: BUILDX_OC_LABEL__REVISION # commit
 
 #
 k3s__default_namespace: kube-system
+
+#
+pgadmin__namespace: pgadmin
+pgadmin__serverdef_secret_name: server-definitions

@@ -175,9 +175,9 @@
         {
             "label": "Ensure services playbook exists",
             "type": "shell",
-            "command": "cp -R -u -p ./ansible/playbooks/_.site.services.yml ./ansible/playbooks/site.services.yml",
+            "command": "cp -R -u -p _.site.services.yml site.services.yml",
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}/ansible/playbooks",
                 "statusbar": {
                     "hide": true
                 },

@@ -1,0 +1,69 @@
+- name: Define new server configuration using defaults/main.yml variables
+  ansible.builtin.set_fact:
+    new_server:
+      "{{ utilities__pgadmin__add_server_definition__id }}":
+        Name: "{{ utilities__pgadmin__add_server_definition__name }}"
+        Group: "{{ utilities__pgadmin__add_server_definition__group }}"
+        Port: "{{ utilities__pgadmin__add_server_definition__port }}"
+        Username: "{{ utilities__pgadmin__add_server_definition__username }}"
+        Host: "{{ utilities__pgadmin__add_server_definition__host }}"
+        SSLMode: "{{ utilities__pgadmin__add_server_definition__sslmode }}"
+        MaintenanceDB: "{{ utilities__pgadmin__add_server_definition__maintenance_db }}"
+
+- name: Fetch existing Secret
+  kubernetes.core.k8s_info:
+    kind: Secret
+    name: "{{ pgadmin__serverdef_secret_name }}"
+    namespace: "{{ pgadmin__namespace }}"
+  register: secret_info
+
+- name: Extract existing servers.json
+  ansible.builtin.set_fact:
+    existing_servers: "{{ secret_info.resources[0].stringData['servers.json'] | from_json }}"
+
+- name: Merge new server into existing servers
+  ansible.builtin.set_fact:
+    updated_servers: >-
+      {{
+        existing_servers | combine({
+          'Servers': existing_servers.Servers | combine(new_server)
+        })
+      }}
+
+- name: Update the Secret with the new servers.json
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ pgadmin__serverdef_secret_name }}"
+        namespace: "{{ pgadmin__namespace }}"
+      type: Opaque
+      stringData:
+        servers.json: "{{ updated_servers | to_json }}"
+
+- name: Restart pgAdmin4 deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: "{{ pgadmin__namespace }}-pgadmin4"
+        namespace: "{{ pgadmin__namespace }}"
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubectl.kubernetes.io/restartedAt: "{{ ansible_date_time.iso8601 }}"
+
+- name: Wait for pgAdmin4 deployment to be ready
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    name: pgadmin
+    namespace: "{{ pgadmin__namespace }}"
+  register: deployment_info
+  until: deployment_info.resources[0].status.readyReplicas == deployment_info.resources[0].status.replicas
+  retries: 10
+  delay: 10

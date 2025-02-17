@@ -15,13 +15,57 @@
 
 ###
 
-- name: Add Cloudflare's Full (Strict) SSL/TLS termination
-  kubernetes.core.k8s:
-    template:
-      - path: templates/cf-strict-tls/origin-ca.yml.j2
-      - path: templates/cf-strict-tls/tlsstore.yml.j2
+- name: Define default custom traefik config
+  ansible.builtin.set_fact:
+    custom_traefik_config:
+      experimental:
+        plugins:
+          ldapAuth:
+            moduleName: "github.com/wiltonsr/ldapAuth"
+            version: "v0.1.10"
+      globalArguments:
+        - "--serversTransport.insecureSkipVerify=true"
+      additionalArguments:
+        - "--api"
+        - "--api.dashboard=true"
+        - "--api.insecure=true"
+      providers:
+        allowCrossNamespace: true
+      ports:
+        web:
+          redirections:
+            entryPoint:
+              to: "websecure"
+              scheme: "https"
+              permanent: true
+        websecure:
+          tls: {}
 
-###
+- name: Add Cloudflare's Full (Strict) SSL/TLS termination support for Traefik
+  when: k8s__traefik__cf_strict_tls__enabled | bool
+  block:
+    - name: Add definitions (resolver + origin CA)
+      kubernetes.core.k8s:
+        template:
+          - path: templates/cf-strict-tls/origin-ca.yml.j2
+          - path: templates/cf-strict-tls/tlsstore.yml.j2
+    - name: Update custom traefik config
+      ansible.builtin.set_fact:
+        custom_traefik_config: >-
+          {{
+            custom_traefik_config | combine(
+              {
+                'ports': {
+                  'websecure': {
+                    'tls': {
+                      'certResolver': 'default'
+                    }
+                  }
+                }
+              },
+              recursive=True
+            )
+          }}
 
 - name: Process new Traefik configuration
   kubernetes.core.k8s:

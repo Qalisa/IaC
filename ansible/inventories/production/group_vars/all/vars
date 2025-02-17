@@ -94,6 +94,9 @@ sentry__github_appname: "{{ u_vault_sentry__github_appname }}"
 ### 
 
 #
+pgadmin__password: "{{ vault_pgadmin__password }}"
+
+#
 iac__mail_users__default_password: "{{ vault_iac__mail_users__default_password }}"
 
 # password for postmaster@{{ iac__root_domain }}
@@ -172,7 +175,6 @@ argocd__admin_password: "{{ vault_argocd__admin_password }}"
 # > Repository permissions > Deployments:     RW
 # > Repository permissions > Metadata:        RO
 # > Repository permissions > Pull Requests:   RW
-
 
 argocd__github_app__priv_key: "{{ vault_argocd__github_app__priv_key }}"
 

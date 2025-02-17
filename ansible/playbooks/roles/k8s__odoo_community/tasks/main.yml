@@ -64,3 +64,13 @@
           ingress-dashboard/logo-url: /favicon.ico
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
+
+- name: Add server definition for pgadmin
+  ansible.builtin.include_role:
+    name: utilities__pgadmin
+    tasks_from: add_server_definition
+  vars:
+    utilities__pgadmin__add_server_definition__id: odoo
+    utilities__pgadmin__add_server_definition__name: Odoo
+    utilities__pgadmin__add_server_definition__host: "{{ k8s__odoo_community__db__name }}.{{ k8s__odoo_community__namespace }}.svc.local.cluster"
+    utilities__pgadmin__add_server_definition__username: "{{ k8s__odoo_community__db__config__username }}"

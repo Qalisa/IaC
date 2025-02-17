@@ -1,0 +1,9 @@
+---
+utilities__pgadmin__add_server_definition__id:
+utilities__pgadmin__add_server_definition__name:
+utilities__pgadmin__add_server_definition__host:
+utilities__pgadmin__add_server_definition__group: "Servers"
+utilities__pgadmin__add_server_definition__port: "5432"
+utilities__pgadmin__add_server_definition__username: "postgres"
+utilities__pgadmin__add_server_definition__sslmode: "prefer"
+utilities__pgadmin__add_server_definition__maintenance_db: "postgres"

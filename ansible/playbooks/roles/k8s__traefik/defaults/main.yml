@@ -1,3 +1,7 @@
 ---
 k8s__traefik__external_hostname: traefik.{{ iac__root_domain }}
 k8s__traefik__app_name: traefik
+
+#
+k8s__traefik__cf_strict_tls__enabled: false
+k8s__traefik__cf_strict_tls__cert_resolver_name: default

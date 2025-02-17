@@ -1,8 +1,8 @@
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: "[[ iac__traefik__ldap_middleware ]]"
-  namespace: "[[ openldap_stack__namespace ]]"
+  name: "[[ iac__traefik__ldap_middleware__name ]]"
+  namespace: "[[ iac__traefik__ldap_middleware__namespace ]]"
 spec:
   plugin:
     ldapAuth:
