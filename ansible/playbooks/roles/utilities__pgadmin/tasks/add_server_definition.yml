@@ -12,6 +12,12 @@
           - utilities__pgadmin__add_server_definition__sslmode is defined
           - utilities__pgadmin__add_server_definition__maintenance_db is defined
           - utilities__pgadmin__add_server_definition__passfile is defined
+    - name: Ensure that, if a password is defined, it does not contain the ":" character (pgpass file requirement)
+      ansible.builtin.assert:
+        that:
+          - >
+            (utilities__pgadmin__add_server_definition__password is not defined) or
+            utilities__pgadmin__add_server_definition__password is not contains(":")
     - name: Define new server configuration using defaults/main.yml variables
       ansible.builtin.set_fact:
         new_server_definition:
@@ -68,23 +74,59 @@
 ##
 ##
 
-- name: Persisting password through pgpass
+- name: Get pgadmin pod
+  until: >
+    pod_search.resources is defined and
+    pod_search.resources | length > 0 and
+    pod_search.resources[0].status.phase == "Running"
+  retries: 20
+  delay: 5
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: "{{ pgadmin__namespace }}"
+    label_selectors:
+      - app.kubernetes.io/name=pgadmin4
+  register: pod_search
+
+##
+##
+##
+
+- name: Persisting password through pgpass file
+  when: utilities__pgadmin__add_server_definition__password is defined
   block:
-    - name: Ensure .pgpass file exists with correct permissions
-      ansible.builtin.file:
-        path: "{{ utilities__pgadmin__add_server_definition__passfile }}"
-        state: touch
-        mode: "0600"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
-    - name: Insert or update authentication entry in .pgpass file
-      ansible.builtin.lineinfile:
-        path: "{{ utilities__pgadmin__add_server_definition__passfile }}"
-        regexp: "^{{ host }}:{{ port }}:{{ database }}:.*"
-        line: "{{ host }}:{{ port }}:{{ database }}:{{ user }}:{{ password }}"
-        create: true
-        mode: "0600"
-      no_log: true
+    - name: Base Line
+      ansible.builtin.set_fact:
+        pgpass_line: >-
+          {{ utilities__pgadmin__add_server_definition__host
+          }}:{{ utilities__pgadmin__add_server_definition__port
+          }}:{{ utilities__pgadmin__add_server_definition__maintenance_db }}
+    - name: Base Line 2
+      ansible.builtin.set_fact:
+        pgpass_line_w_pwd: >-
+          {{ pgpass_line
+          }}:{{ utilities__pgadmin__add_server_definition__username
+          }}:{{ utilities__pgadmin__add_server_definition__password }}
+    - name: Update DB with commands
+      vars:
+        dest: /tmp/pgpass.tmp
+      loop:
+        - command: touch {{ utilities__pgadmin__add_server_definition__passfile }}
+          descr: May create pgpass file
+        - command: chmod 0600 {{ utilities__pgadmin__add_server_definition__passfile }}
+          descr: Ensure rights
+        - command: bash -c "grep -v '^{{ pgpass_line }}:' {{ utilities__pgadmin__add_server_definition__passfile }} > {{ dest }} || true"
+          descr: Create tmp file, without credentials we want to insert
+        - command: sh -c 'echo "{{ pgpass_line_w_pwd }}" >> {{ dest }}'
+          descr: Insert credentials line in tmp file
+        - command: mv {{ dest }} {{ utilities__pgadmin__add_server_definition__passfile }}
+          descr: Replace legitimate pgpass file with tmp one
+      loop_control:
+        label: "{{ item.descr }}"
+      kubernetes.core.k8s_exec:
+        namespace: "{{ pgadmin__namespace }}"
+        pod: "{{ pod_search.resources[0].metadata.name }}"
+        command: "{{ item.command }}"
 
 ##
 ##
@@ -92,19 +134,6 @@
 
 - name: Updating server definitions
   block:
-    - name: Get pgadmin pod
-      until: >
-        pod_search.resources is defined and
-        pod_search.resources | length > 0 and
-        pod_search.resources[0].status.phase == "Running"
-      retries: 20
-      delay: 5
-      kubernetes.core.k8s_info:
-        kind: Pod
-        namespace: "{{ pgadmin__namespace }}"
-        label_selectors:
-          - app.kubernetes.io/name=pgadmin4
-      register: pod_search
     - name: Update DB with commands
       vars:
         dest: /tmp/servers.json
