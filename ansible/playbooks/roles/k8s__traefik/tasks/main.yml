@@ -33,12 +33,18 @@
         allowCrossNamespace: true
       ports:
         web:
+          forwardedHeaders:
+            trustedIPs:
+              - "{{ iac__k3s__servicelb__ip_range }}"
           redirections:
             entryPoint:
               to: "websecure"
               scheme: "https"
               permanent: true
         websecure:
+          forwardedHeaders:
+            trustedIPs:
+              - "{{ iac__k3s__servicelb__ip_range }}"
           tls: {}
 
 - name: Add Cloudflare's Full (Strict) SSL/TLS termination support for Traefik

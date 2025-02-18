@@ -22,6 +22,11 @@
         #
         database: "{{ k8s__odoo_community__db__config__db_name }}"
 
+- name: Install STS Middleware
+  kubernetes.core.k8s:
+    template:
+      - path: templates/middleware.yml.j2
+
 - name: Install Odoo w/ Helm
   kubernetes.core.helm:
     name: odoo
@@ -30,9 +35,10 @@
     create_namespace: false
     wait: true
     values:
-      odooSkipInstall: true
+      odooSkipInstall: false
       #
       odooEmail: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
+      # admin:<odooPassword>
       odooPassword: "{{ iac__postmaster_password }}"
       #
       smtpHost: "{{ docker_mailserver__internal_smtp_server }}"
@@ -49,12 +55,31 @@
         database: "{{ k8s__odoo_community__db__config__db_name }}"
         postgresqlPostgresPassword: "{{ k8s__odoo_community__db__config__admin_password }}"
       #
+      extraContainerPorts:
+        - containerPort: 8072
+          name: longpolling
+          protocol: TCP
       service:
         type: ClusterIP
+        extraPorts:
+          - name: longpolling
+            port: 8072
+            protocol: TCP
+            targetPort: longpolling
       ingress:
         enabled: true
         hostname: "{{ k8s__odoo_community__extername_hostname }}"
+        extraRules:
+          - backend:
+              service:
+                name: odoo
+                port:
+                  name: longpolling
+            path: /websocket
+            pathType: ImplementationSpecific
         annotations:
+          #
+          traefik.ingress.kubernetes.io/router.middlewares: "{{ k8s__odoo_community__namespace }}-security-headers@kubernetescrd"
           #
           external-dns.alpha.kubernetes.io/hostname: "{{ k8s__odoo_community__extername_hostname }}"
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
