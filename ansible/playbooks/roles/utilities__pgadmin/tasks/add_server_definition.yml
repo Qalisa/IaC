@@ -107,7 +107,7 @@
           {{ pgpass_line
           }}:{{ utilities__pgadmin__add_server_definition__username
           }}:{{ utilities__pgadmin__add_server_definition__password }}
-    - name: Update DB with commands
+    - name: Update pgpass file with credentials
       vars:
         dest: /tmp/pgpass.tmp
       loop:
@@ -134,7 +134,7 @@
 
 - name: Updating server definitions
   block:
-    - name: Update DB with commands
+    - name: Update server definitions
       vars:
         dest: /tmp/servers.json
       loop:
