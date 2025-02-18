@@ -38,7 +38,6 @@
       odooSkipInstall: false
       #
       odooEmail: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
-      # admin:<odooPassword>
       odooPassword: "{{ iac__postmaster_password }}"
       #
       smtpHost: "{{ docker_mailserver__internal_smtp_server }}"
@@ -98,5 +97,6 @@
     utilities__pgadmin__add_server_definition__id: odoo
     utilities__pgadmin__add_server_definition__name: Odoo
     utilities__pgadmin__add_server_definition__host: "{{ k8s__odoo_community__db__name }}.{{ k8s__odoo_community__namespace }}.{{ iac__svc_cluster_host }}"
+    utilities__pgadmin__add_server_definition__maintenance_db: "{{ k8s__odoo_community__db__config__db_name }}"
     utilities__pgadmin__add_server_definition__username: "{{ k8s__odoo_community__db__config__username }}"
     utilities__pgadmin__add_server_definition__password: "{{ k8s__odoo_community__db__config__password }}"
