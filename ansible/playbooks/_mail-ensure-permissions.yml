@@ -2,5 +2,8 @@
 - name: Ensure mail accounts correct folder permissions
   hosts: all
   become: true
-  roles:
-    - role: k8s__docker_mailserver
+  tasks:
+    - name: GO
+      ansible.builtin.include_role:
+        name: k8s__docker_mailserver
+        tasks_from: users-acc-ensure-permissions
