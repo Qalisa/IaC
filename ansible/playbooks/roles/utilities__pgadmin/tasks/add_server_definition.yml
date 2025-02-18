@@ -107,20 +107,25 @@
           {{ pgpass_line
           }}:{{ utilities__pgadmin__add_server_definition__username
           }}:{{ utilities__pgadmin__add_server_definition__password }}
+        userdir_pass_folder: >-
+          /var/lib/pgadmin/storage/{{ utilities__pgadmin__add_server_definition__for__usermail }}
     - name: Update pgpass file with credentials
       vars:
-        dest: /tmp/pgpass.tmp
+        tmp: /tmp/pgpass.tmp
+        userdir_passfile: "{{ userdir_pass_folder }}{{ utilities__pgadmin__add_server_definition__passfile }}"
       loop:
-        - command: touch {{ utilities__pgadmin__add_server_definition__passfile }}
-          descr: May create pgpass file
-        - command: chmod 0600 {{ utilities__pgadmin__add_server_definition__passfile }}
-          descr: Ensure rights
-        - command: bash -c "grep -v '^{{ pgpass_line }}:' {{ utilities__pgadmin__add_server_definition__passfile }} > {{ dest }} || true"
+        - command: mkdir -p -m 700 {{ userdir_pass_folder }}
+          descr: Ensure "{{ userdir_pass_folder }}" exist
+        - command: touch {{ userdir_passfile }}
+          descr: May create "{{ userdir_passfile }}"
+        - command: bash -c "grep -v '^{{ pgpass_line }}:' {{ userdir_passfile }} > {{ tmp }} || true"
           descr: Create tmp file, without credentials we want to insert
-        - command: sh -c 'echo "{{ pgpass_line_w_pwd }}" >> {{ dest }}'
+        - command: sh -c 'echo "{{ pgpass_line_w_pwd }}" >> {{ tmp }}'
           descr: Insert credentials line in tmp file
-        - command: mv {{ dest }} {{ utilities__pgadmin__add_server_definition__passfile }}
+        - command: mv {{ tmp }} {{ userdir_passfile }}
           descr: Replace legitimate pgpass file with tmp one
+        - command: bash -c "chmod 600 {{ userdir_passfile }}"
+          descr: Ensure rights
       loop_control:
         label: "{{ item.descr }}"
       kubernetes.core.k8s_exec:
