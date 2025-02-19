@@ -35,7 +35,7 @@ spec:
       volumes:
         - name: php-config
           configMap:
-            name: php-config
+            name: "{{ k8s__ez_appointments__app__name }}.php-config"
             items:
               - key: email.php
                 path: email.php

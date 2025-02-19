@@ -1,4 +1,10 @@
 ---
+- name: Install backup secrets
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/backup.secret.yml.j2
+
 - name: Add stable chart repo
   kubernetes.core.helm_repository:
     name: longhorn
@@ -9,10 +15,13 @@
   kubernetes.core.helm:
     name: longhorn
     chart_ref: longhorn/longhorn
-    release_namespace: longhorn-system # required to be specifically "longhorn-system" ! (https://artifacthub.io/packages/helm/longhorn/longhorn)
-    create_namespace: true
+    release_namespace: "{{ k8s__longhorn__namespace }}"
+    create_namespace: false
     wait: true
     values:
+      defaultBackupStore:
+        backupTarget: "{{ longhorn__backup_storage__bucket_url }}"
+        backupTargetCredentialSecret: "{{ k8s__longhorn__backup_credentials__secret_name }}"
       defaultSettings:
         defaultReplicaCount: 1
       persistence:
