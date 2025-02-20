@@ -90,7 +90,7 @@
           #
           ingress-dashboard/title: Odoo
           ingress-dashboard/description: All-in-one CRM-like app
-          ingress-dashboard/logo-url: /favicon.ico
+          ingress-dashboard/logo-url: /web/static/img/favicon.ico
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
 
