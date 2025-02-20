@@ -12,6 +12,7 @@
     - role: k8s__external_dns                     # Bind ingresses to DNS rules on Cloudflare
     - role: k8s__kyverno                          # Policies enforcement and metadata injection
     - role: k8s__longhorn                         # Distributed blocks storage
+    # - role: k8s__dnsutils                       # utility to test DNS behavior within cluster
     #############################
     ### MANAGEMENT & INSIGHTS ###
     #############################
