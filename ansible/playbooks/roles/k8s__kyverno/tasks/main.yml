@@ -1,11 +1,11 @@
 ---
 - name: Install Kyverno
-  ansible.builtin.import_tasks: kyverno.yml
+  ansible.builtin.import_tasks: setup.kyverno.yml
 
 - name: Install Policy Reporter + UI
-  ansible.builtin.import_tasks: policy-reporter.yml
+  ansible.builtin.import_tasks: setup.policy-reporter.yml
 
 ##
 
-- name: Install Policies helpers
-  ansible.builtin.import_tasks: policies-helpers.yml
+- name: Install permissions
+  ansible.builtin.import_tasks: configure.permissions.yml

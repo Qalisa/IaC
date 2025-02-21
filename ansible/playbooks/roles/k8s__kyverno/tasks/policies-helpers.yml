@@ -1,5 +1,0 @@
----
-- name: Allow alteration of deployments
-  kubernetes.core.k8s:
-    template:
-      - path: templates/crb-alter-deploy.yml.j2
