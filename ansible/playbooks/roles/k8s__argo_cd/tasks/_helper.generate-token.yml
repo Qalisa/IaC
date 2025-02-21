@@ -1,4 +1,15 @@
 ---
+# - name: Get ArgoCD authentication token
+#   ansible.builtin.uri:
+#     url: "{{ k8s__argo_cd_cluster_api_url }}/session"
+#     validate_certs: false
+#     method: POST
+#     body_format: json
+#     body:
+#       username: "admin"
+#       password: "{{ argocd__admin_password }}"
+#   register: argocd_auth_response
+
 - name: Store token for account
   vars:
     argocd_namespace: "{{ argo_cd__namespace }}"

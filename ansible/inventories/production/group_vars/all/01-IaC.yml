@@ -157,10 +157,8 @@ openldap_stack__users_home: /home/users
 
 #
 argo_cd__namespace: argocd
-argocd__account_for__github_syncer: github-syncer
-argocd__account_for__argo_watcher: watcher
-argo_cd__jwt_tokens_secret: accounts-immortal-jwt
 argocd__project_name: default
+argo_cd__jwt_tokens_secret: accounts-immortal-jwt
 
 #
 docker_mailserver__external_hostname: "{{ docker_mailserver__third_level_domain }}.{{ iac__root_domain }}"

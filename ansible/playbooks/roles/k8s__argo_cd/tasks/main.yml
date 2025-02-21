@@ -2,20 +2,5 @@
 - name: ArgoCD setup
   ansible.builtin.import_tasks: setup.argocd.yml
 
-- name: Handle credentials + Connect Github Org
-  ansible.builtin.import_tasks: creds.yml
-
-#
-#
-
-- name: Install Argocd Image Updater
-  ansible.builtin.import_tasks: setup.image-updater.yml
-
-- name: Install Argo Watcher
-  ansible.builtin.import_tasks: setup.watcher.yml
-
-#
-#
-
-- name: Add default apps
-  ansible.builtin.import_tasks: default-apps.yml
+- name: Add default ArgoCD Apps
+  ansible.builtin.import_tasks: config.applications.yml

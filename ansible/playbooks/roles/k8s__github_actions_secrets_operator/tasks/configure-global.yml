@@ -1,14 +1,14 @@
 ---
-- name: Get JWT Secrets
-  kubernetes.core.k8s_info:
-    kind: Secret
-    name: "{{ argo_cd__jwt_tokens_secret }}"
-    namespace: "{{ argo_cd__namespace }}"
-  register: jwt_secrets
+# - name: Get JWT Secrets
+#   kubernetes.core.k8s_info:
+#     kind: Secret
+#     name: "{{ argo_cd__jwt_tokens_secret }}"
+#     namespace: "{{ argo_cd__namespace }}"
+#   register: jwt_secrets
 
-- name: Put JWT into variable
-  ansible.builtin.set_fact:
-    github_syncer__jwt_token: "{{ jwt_secrets.resources[0].data[argocd__account_for__github_syncer] }}"
+# - name: Put JWT into variable
+#   ansible.builtin.set_fact:
+#     github_syncer__jwt_token: "{{ jwt_secrets.resources[0].data[argocd__account_for__github_syncer] }}"
 
 - name: Install global configuration
   kubernetes.core.k8s:

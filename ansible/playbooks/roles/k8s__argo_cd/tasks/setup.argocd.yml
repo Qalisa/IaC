@@ -3,7 +3,7 @@
   kubernetes.core.k8s:
     template:
       - path: templates/ns.yml.j2
-      - path: templates/secrets.yml.j2
+      - path: templates/secret.yml.j2
 
 - name: Create OrgUnit + binds to users
   ansible.builtin.include_role:
@@ -48,24 +48,25 @@
               userMatchers:
                 - userAttr: DN
                   groupAttr: member
+      cm_more: {}
     ### ACCOUNTS connection methods, only allow API key for Github Syncer
-    cm_more: |
-      {
-        "accounts.{{ argocd__account_for__github_syncer }}": "apiKey",
-        "accounts.{{ argocd__account_for__argo_watcher }}": "apiKey",
-      }
+    # cm_more: |
+    #   {
+    #     "accounts.{{ argocd__account_for__github_syncer }}": "apiKey",
+    #     "accounts.{{ argocd__account_for__argo_watcher }}": "apiKey",
+    #   }
 
 - name: Define RBAC params
   ansible.builtin.set_fact:
     rbac:
       policy.default: "role:readonly"
-      policy.csv: |
-        p, role:syncer, applications, sync, */*, allow
-        p, role:watcher, applications, get, */*, allow
-        p, role:watcher, applications, sync, */*, allow
+      # policy.csv: |
+      #   p, role:syncer, applications, sync, */*, allow
+      #   p, role:watcher, applications, get, */*, allow
+      #   p, role:watcher, applications, sync, */*, allow
 
-        g, {{ argocd__account_for__argo_watcher }}, role:watcher
-        g, {{ argocd__account_for__github_syncer }}, role:syncer
+      #   g, {{ argocd__account_for__argo_watcher }}, role:watcher
+      #   g, {{ argocd__account_for__github_syncer }}, role:syncer
 
 - name: Define PARAMS params
   ansible.builtin.set_fact:
