@@ -1,5 +1,5 @@
 ---
 k8s__listmonk__external_hostname: listmonk.{{ iac__root_domain }}
-k8s__listmonk_api_url_part: "http://app.listmonk:9000/api"
-k8s__listmonk_static_dir: /listmonk/static
+k8s__listmonk__api_url_part: "http://app.listmonk:9000/api"
+k8s__listmonk__static_dir_repo_name: listmonk-static
 k8s__listmonk__namespace: listmonk

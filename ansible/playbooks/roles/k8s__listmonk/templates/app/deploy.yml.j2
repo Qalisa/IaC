@@ -16,22 +16,6 @@ spec:
     spec:
       restartPolicy: Always
       initContainers:
-        # This container clones the desired git repo to the EmptyDir volume.
-        - name: git-clone
-          image: alpine/git # Any image with git will do
-          args:
-            - clone
-            - --single-branch
-            - --
-            - "{{ iac__github_org_url }}/{{ listmonk__static_dir__repo_name }}" # Your repo
-            - "{{ k8s__listmonk_static_dir }}" # Put it in the volume
-          securityContext:
-            runAsUser: 1 # Any non-root user will do. Match to the workload.
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-          volumeMounts:
-            - name: static
-              mountPath: "{{ k8s__listmonk_static_dir }}"
         - name: database-ready
           image: foobic/pg_isready
           env:
@@ -45,13 +29,13 @@ spec:
           image: listmonk/listmonk:latest
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh","-c"]
-          args: ["./listmonk --install --yes --idempotent && ./listmonk --static-dir={{ k8s__listmonk_static_dir }}"]
+          args: ["./listmonk --install --yes --idempotent && ./listmonk --static-dir=/tmp/git/{{ k8s__listmonk__static_dir_repo_name }}"]
           volumeMounts:
             - name: uploads
               mountPath: /listmonk/uploads
               readOnly: false
             - name: static
-              mountPath: "{{ k8s__listmonk_static_dir }}"
+              mountPath: /tmp/git
               readOnly: true
           envFrom:
             - secretRef:
@@ -67,4 +51,5 @@ spec:
           persistentVolumeClaim:
             claimName: uploads
         - name: static
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: listmonk-static

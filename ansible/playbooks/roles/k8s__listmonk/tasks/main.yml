@@ -30,7 +30,7 @@
 
 - name: Update settings
   ansible.builtin.uri:
-    url: "{{ k8s__listmonk_api_url_part }}/settings"
+    url: "{{ k8s__listmonk__api_url_part }}/settings"
     url_username: "{{ listmonk__admin_username }}"
     url_password: "{{ listmonk__admin_password }}"
     validate_certs: false
