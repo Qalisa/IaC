@@ -19,8 +19,8 @@
     create_namespace: false
     wait: false
     values:
-      domainFilters: "{{ iac__all_domains }}" # mandatory ?
-      registry: dynamodb # https://kubernetes-sigs.github.io/external-dns/v0.14.1/registry/registry/
+      domainFilters: "{{ iac__all_domains }}" # mandatory
+      registry: noop # https://kubernetes-sigs.github.io/external-dns/v0.14.1/registry/registry/
       provider:
         name: cloudflare
       env:

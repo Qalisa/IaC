@@ -1,6 +1,3 @@
 ---
-- name: Setup DynamoDB
-  ansible.builtin.import_tasks: setup.dynamodb.yml
-
 - name: Setup ExternalDNS
   ansible.builtin.import_tasks: setup.external-dns.yml
