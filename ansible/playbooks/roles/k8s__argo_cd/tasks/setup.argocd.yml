@@ -49,7 +49,6 @@
                 - userAttr: DN
                   groupAttr: member
       cm_more: {}
-    ### ACCOUNTS connection methods, only allow API key for Github Syncer
     # cm_more: |
     #   {
     #     "accounts.{{ argocd__account_for__github_syncer }}": "apiKey",
