@@ -1,4 +1,11 @@
 ---
+# required for RWX (https://longhorn.io/docs/1.8.0/deploy/install/#installing-nfsv4-client)
+- name: Install NFS client packages (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name: nfs-common
+    state: present
+    update_cache: true
+
 - name: Install backup secrets
   kubernetes.core.k8s:
     template:
