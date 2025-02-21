@@ -22,7 +22,3 @@ k8s__docker_mailserver__dkim_selector: mail # https://docker-mailserver.github.i
 
 #
 k8s__docker_mailserver__supervisord_ui__port: "9001"
-
-#
-k8s__docker_mailserver__noop__service_name: noop-service
-k8s__docker_mailserver__noop__port_name: noop
