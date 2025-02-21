@@ -1,6 +1,6 @@
 ---
 - name: ArgoCD setup
-  ansible.builtin.import_tasks: setup.yml
+  ansible.builtin.import_tasks: setup.argocd.yml
 
 - name: Handle credentials + Connect Github Org
   ansible.builtin.import_tasks: creds.yml
@@ -9,10 +9,10 @@
 #
 
 - name: Install Argocd Image Updater
-  ansible.builtin.import_tasks: image-updater.yml
+  ansible.builtin.import_tasks: setup.image-updater.yml
 
 - name: Install Argo Watcher
-  ansible.builtin.import_tasks: watcher.yml
+  ansible.builtin.import_tasks: setup.watcher.yml
 
 #
 #

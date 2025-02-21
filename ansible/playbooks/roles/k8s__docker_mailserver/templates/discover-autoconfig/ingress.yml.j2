@@ -1,11 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
+  name: discover-autoconfig
   namespace: "{{ docker_mailserver__namespace }}"
   annotations:
     #
-    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__docker_mailserver__external_hostname__autoconfig }}"
+    external-dns.alpha.kubernetes.io/hostname: |
+      {{ k8s__docker_mailserver__external_hostname__autoconfig }},{{ k8s__docker_mailserver__external_hostname__autodiscover }}
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
     #
     ingress-dashboard/title: E-mail autoconfig
@@ -18,6 +19,7 @@ spec:
     - secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
       hosts: 
         - "{{ k8s__docker_mailserver__external_hostname__autoconfig }}"
+        - "{{ k8s__docker_mailserver__external_hostname__autodiscover }}"
   rules:
     - host: "{{ k8s__docker_mailserver__external_hostname__autoconfig }}"
       http:
@@ -26,6 +28,16 @@ spec:
           pathType: Prefix
           backend:
             service: 
-              name: "{{ docker_mailserver__server_hostname }}-discover-autoconfig"
+              name: discover-autoconfig
+              port:
+                name: manifest-app
+    - host: "{{ k8s__docker_mailserver__external_hostname__autodiscover }}"
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: discover-autoconfig
               port:
                 name: manifest-app

@@ -1,9 +1,9 @@
 ---
 - name: Install operator
-  ansible.builtin.import_tasks: operator.yml
+  ansible.builtin.import_tasks: setup.operator.yml
 
 - name: Install tenant
-  ansible.builtin.import_tasks: setup-tenant.yml
+  ansible.builtin.import_tasks: setup.tenant.yml
 
 - name: Configure tenant
-  ansible.builtin.import_tasks: config-tenant.yml
+  ansible.builtin.import_tasks: config.tenant.yml

@@ -1,8 +1,9 @@
 ---
-- name: Create namespace
+- name: Create namespace + traefik middleware for redirection
   kubernetes.core.k8s:
     template:
       - path: templates/ns.yml.j2
+      - path: templates/middleware.yml.j2
 
 ###
 ### Certificate from Issuer
@@ -61,10 +62,11 @@
       - path: templates/mailserver/secret.yml.j2
       - path: templates/mailserver/service.yml.j2
       - path: templates/mailserver/deploy.yml.j2
-      - path: templates/mailserver/supervisord.ingress.yml.j2
+      - path: templates/mailserver/supervisord/ingress.yml.j2
+      - path: templates/mailserver/ingress.yml.j2
 
 - name: Install Zero-Trust configuration
   tags: [zto-app]
   kubernetes.core.k8s:
     template:
-      - path: templates/mailserver/supervisord.caa.yml.j2
+      - path: templates/mailserver/supervisord/caa.yml.j2

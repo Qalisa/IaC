@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dms-redirect
+  namespace: "{{ docker_mailserver__namespace }}"
+  annotations:
+    external-dns.alpha.kubernetes.io/exclude: "true" # already handled by CNAME
+    traefik.ingress.kubernetes.io/router.middlewares: docker-mailserver-redirect-mail-to-webmail@kubernetescrd
+    ingress-dashboard/hide: "true"
+spec:
+  rules:
+    - host: "{{ k8s__docker_mailserver__external_hostname__smtp }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "{{ k8s__docker_mailserver__noop__service_name }}"
+                port:
+                  name: "{{ k8s__docker_mailserver__noop__port_name }}"
+    - host: "{{ k8s__docker_mailserver__external_hostname__imap }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "{{ k8s__docker_mailserver__noop__service_name }}"
+                port:
+                  name: "{{ k8s__docker_mailserver__noop__port_name }}"
+  tls:
+    - hosts:
+        - "{{ docker_mailserver__external_hostname }}"
+      secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"

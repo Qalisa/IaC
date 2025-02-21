@@ -16,6 +16,8 @@ spec:
     - {{ k8s__docker_mailserver__external_hostname__webmail }}
     - {{ k8s__docker_mailserver__external_hostname__autoconfig }}
     - {{ k8s__docker_mailserver__external_hostname__autodiscover }}
+    - {{ k8s__docker_mailserver__external_hostname__smtp }}
+    - {{ k8s__docker_mailserver__external_hostname__imap }}
   issuerRef:
     name: "{{ iac__unproxied_certificate_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
     kind: ClusterIssuer
