@@ -68,3 +68,15 @@
           certSource: secret
           secret:
             secretName: "{{ k8s__harbor__cert_secret_name }}"
+
+###
+### Policies
+###
+
+- name: Install policies
+  tags: [policies]
+  kubernetes.core.k8s:
+    template:
+      path: templates/policies/cp-inject-label.yml.j2
+      variable_start_string: "[["
+      variable_end_string: "]]"

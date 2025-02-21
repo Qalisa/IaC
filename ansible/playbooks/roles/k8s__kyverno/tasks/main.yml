@@ -7,5 +7,5 @@
 
 ##
 
-- name: Install Policies
-  ansible.builtin.import_tasks: policies.yml
+- name: Install Policies helpers
+  ansible.builtin.import_tasks: policies-helpers.yml
