@@ -18,6 +18,11 @@
 
 - name: Define CM params
   ansible.builtin.set_fact:
+    # cm_more: |
+    #   {
+    #     "accounts.{{ argocd__account_for__github_syncer }}": "apiKey",
+    #     "accounts.{{ argocd__account_for__argo_watcher }}": "apiKey",
+    #   }
     cm:
       # Enables application status badge feature
       statusbadge.enabled: true
@@ -48,12 +53,6 @@
               userMatchers:
                 - userAttr: DN
                   groupAttr: member
-      cm_more: {}
-    # cm_more: |
-    #   {
-    #     "accounts.{{ argocd__account_for__github_syncer }}": "apiKey",
-    #     "accounts.{{ argocd__account_for__argo_watcher }}": "apiKey",
-    #   }
 
 - name: Define RBAC params
   ansible.builtin.set_fact:
@@ -108,7 +107,8 @@
       configs:
         params: "{{ params }}"
         rbac: "{{ rbac }}"
-        cm: "{{ cm | ansible.builtin.combine(cm_more) }}"
+        # cm: "{{ cm | ansible.builtin.combine(cm_more) }}"
+        cm: "{{ cm }}"
         secret: "{{ secret }}"
       certificate:
         enabled: false
