@@ -4,8 +4,6 @@ metadata:
   name: app-of-apps
   namespace: "{{ argocd__namespace }}"
   annotations:
-    # repo to which push notifications
-    argocdRepoURL: "{{ iac__github_org_url }}/{{ argocd__app_of_apps__repo_name }}"
     #
     notifications.argoproj.io/subscribe.on-sync-running.github: ""
     notifications.argoproj.io/subscribe.on-sync-failed.github: ""
