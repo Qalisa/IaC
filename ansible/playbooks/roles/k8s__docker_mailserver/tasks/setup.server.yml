@@ -37,13 +37,13 @@
         name: dms-config-extra-files
         namespace: "{{ docker_mailserver__namespace }}"
       data:
-        postfix-policyd-spf.conf: "{{ lookup('ansible.builtin.template', 'templates/mailserver/postfix/postfix-policyd-spf.conf.j2') }}"
-        header_checks.pcre: "{{ lookup('ansible.builtin.template', 'templates/mailserver/postfix/header_checks.pcre.j2') }}"
-        fail2ban-jail.cf: "{{ lookup('ansible.builtin.template', 'templates/mailserver/fail2ban/fail2ban-jail.cf.j2') }}"
-        supervisord-gui.conf: "{{ lookup('ansible.builtin.template', 'templates/mailserver/supervisord/supervisord-gui.conf.j2') }}"
+        postfix-policyd-spf.conf: "{{ lookup('template', 'templates/mailserver/postfix/postfix-policyd-spf.conf.j2') }}"
+        header_checks.pcre: "{{ lookup('template', 'templates/mailserver/postfix/header_checks.pcre.j2') }}"
+        fail2ban-jail.cf: "{{ lookup('template', 'templates/mailserver/fail2ban/fail2ban-jail.cf.j2') }}"
+        supervisord-gui.conf: "{{ lookup('template', 'templates/mailserver/supervisord/supervisord-gui.conf.j2') }}"
         user-patches.sh: |
           {{ lookup(
-            'ansible.builtin.template',
+            'template',
             'templates/mailserver/dms/user-patches.sh.j2',
             comment_start_string='{[#',
             comment_end_string='#]}'

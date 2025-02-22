@@ -1,18 +1,18 @@
 ---
 - name: Load template values
   ansible.builtin.set_fact:
-    loaded_values: "{{ lookup('file', 'templates/github-notifications/templates-data.yaml') | string | from_yaml }}"
+    loaded_values: "{{ lookup('file', k8s__argocd__notifications_engine__templates__local_path ~ '/templates-data.yaml') | string | from_yaml }}"
 
 - name: Create tmp folder
   ansible.builtin.file:
-    path: "{{ k8s__argocd__gh_notif__workdir }}/compounds"
+    path: "{{ k8s__argocd__notifications_engine__workdir }}/compounds"
     state: directory
     mode: "0775"
 
 - name: Process templates
   ansible.builtin.template:
-    src: templates/github-notifications/template.yml.j2
-    dest: "{{ k8s__argocd__gh_notif__workdir }}/compounds/{{ item.key }}"
+    src: "{{ k8s__argocd__notifications_engine__templates__local_path }}/template.yml.j2"
+    dest: "{{ k8s__argocd__notifications_engine__workdir }}/compounds/{{ item.key }}"
     mode: "755"
     variable_start_string: "[["
     variable_end_string: "]]"
@@ -22,23 +22,23 @@
 
 - name: Process templates (w/ key)
   ansible.builtin.template:
-    src: templates/github-notifications/_template-with-key.yml.j2
+    src: "{{ k8s__argocd__notifications_engine__templates__local_path }}/_template-with-key.yml.j2"
     dest: "{{ dest }}/{{ item }}"
     mode: "755"
   vars:
-    dest: "{{ k8s__argocd__gh_notif__workdir }}/compounds"
+    dest: "{{ k8s__argocd__notifications_engine__workdir }}/compounds"
   loop: "{{ loaded_values.keys() | list }}"
   loop_control:
     label: "{{ item }}"
 
 - name: Merge multiple files into one
   ansible.builtin.shell:
-    cmd: cat {{ loaded_values.keys() | list | join(" ") }} > {{ k8s__argocd__gh_notif__output_file }}
-    chdir: "{{ k8s__argocd__gh_notif__workdir }}/compounds"
+    cmd: cat {{ loaded_values.keys() | list | join(" ") }} > {{ k8s__argocd__notifications_engine__templates__output_file }}
+    chdir: "{{ k8s__argocd__notifications_engine__workdir }}/compounds"
   register: my_output # <- Registers the command output.
   changed_when: my_output.rc != 0 # <- Uses the return code to define when the task has changed.
 
 - name: Remove tmp folder
   ansible.builtin.file:
-    path: "{{ k8s__argocd__gh_notif__workdir }}/compounds"
+    path: "{{ k8s__argocd__notifications_engine__workdir }}/compounds"
     state: absent

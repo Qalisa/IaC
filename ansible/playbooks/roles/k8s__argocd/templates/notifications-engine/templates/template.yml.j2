@@ -1,6 +1,11 @@
+{# https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/#functions #}
+{# https://pkg.go.dev/html/template #}
+{# https://github.com/Qalisa/IaC/issues/19 #}
 message: |-
   [[ item.value.message ]]
 github:
+  repoURL: "{{.app.spec.source.repoURL}}"
+  revision: "{{.app.status.operationState.syncResult.revision}}"
   repoURLPath: "{{.app.spec.source.repoURL}}"
   revisionPath: "{{.app.status.operationState.syncResult.revision}}"
   status:
@@ -9,9 +14,9 @@ github:
     targetURL: "{{.context.argocdUrl}}/applications/{{.app.metaitem.name}}?operation=true"
   deployment:
     state: [[ item.value.github.deployment.state ]]
-    environment: {{ index .app.metaitem.annotations "github.notifications.argoproj.io/environment" | default "unknown" | quote }}
-    environmentURL: {{ index .app.metaitem.annotations "github.notifications.argoproj.io/environment-url" | default "unknown" | quote }}
-    reference: {{ index .app.metaitem.annotations "github.notifications.argoproj.io/revision" | default "unknown" | quote }}
+    environment: "unknown"
+    environmentURL: "unknown"
+    reference: "unknown"
     logURL: "{{.context.argocdUrl}}/applications/{{.app.metaitem.name}}?operation=true"
     requiredContexts: []
     autoMerge: true

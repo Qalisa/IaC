@@ -12,5 +12,11 @@ k8s__argocd__api_url: http://{{ k8s__argocd__internal_hostname }}/api/v1
 k8s__argocd__admin_password_bcrypted: "{{ argocd__admin_password | ansible.builtin.password_hash(hashtype='bcrypt', rounds=10, salt='') }}"
 
 #
-k8s__argocd__gh_notif__workdir: /tmp/gh-notif-config
-k8s__argocd__gh_notif__output_file: "{{ k8s__argocd__gh_notif__workdir }}/output.gotmpl"
+k8s__argocd__notifications_engine__workdir: /tmp/argocd-notifications-engine
+
+#
+k8s__argocd__notifications_engine__templates__local_path: templates/notifications-engine/templates
+k8s__argocd__notifications_engine__templates__output_file: "{{ k8s__argocd__notifications_engine__workdir }}/templates.yaml"
+
+#
+k8s__argocd__notifications_engine__triggers__output_file: templates/notifications-engine/triggers/triggers.yaml

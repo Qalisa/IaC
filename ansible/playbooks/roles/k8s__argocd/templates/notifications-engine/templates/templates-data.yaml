@@ -1,5 +1,20 @@
+###
+### Based on https://raw.githubusercontent.com/argoproj/argo-cd/stable/notifications_catalog/install.yaml
+###
 #
-template.on-sync-succeeded:
+template.app-deployed:
+  message: |-
+    Application {{.app.metadata.name}} is now up and running ! {{.app.status.operationState.finishedAt}}.
+  github:
+    status:
+      state: success
+    deployment:
+      state: success
+    pullRequestComment:
+      content: |-
+        App Deployed !
+#
+template.app-sync-succeeded:
   message: |-
     Application {{.app.metadata.name}} sync succeeded at {{.app.status.operationState.finishedAt}}.
   github:
@@ -11,7 +26,7 @@ template.on-sync-succeeded:
       content: |-
         Sync Succeeded !
 #
-template.on-sync-failed:
+template.app-sync-failed:
   message: |-
     Application {{.app.metadata.name}} sync failed at {{.app.status.operationState.finishedAt}}.
   github:
@@ -23,7 +38,7 @@ template.on-sync-failed:
       content: |-
         Sync Failed.
 #
-template.on-sync-running:
+template.app-sync-running:
   message: |-
     Application {{.app.metadata.name}} sync started at {{.app.status.operationState.startedAt}}.
   github:
@@ -35,7 +50,7 @@ template.on-sync-running:
       content: |-
         Sync Running...
 #
-template.on-sync-status-unknown:
+template.app-sync-status-unknown:
   message: |-
     Application {{.app.metadata.name}} sync status is unknown as of {{.app.status.operationState.finishedAt}}.
   github:

@@ -137,17 +137,18 @@
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
       notifications:
-        # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.secret
+        # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.templates
+        templates: "{{ lookup('file', k8s__argocd__notifications_engine__templates__output_file) | from_yaml }}"
+        triggers: "{{ lookup('file', k8s__argocd__notifications_engine__triggers__output_file) | from_yaml }}"
+        ###
+        ### Configure Github App
+        ###
         secret:
           items:
-            # https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/
             github-privateKey: |
               {{ argocd__github_app__priv_key }}
-        # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.notifiers
         notifiers:
           service.github: |
             appID: "{{ argocd__github_app__app_id }}"
             installationID: "{{ argocd__github_app__installation_id }}"
             privateKey: $github-privateKey
-        # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.templates
-        templates: "{{ lookup('ansible.builtin.file', k8s__argocd__gh_notif__output_file) | from_yaml }}"
