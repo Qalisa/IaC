@@ -2,9 +2,12 @@
 {# https://pkg.go.dev/html/template #}
 {# https://github.com/Qalisa/IaC/issues/19 #}
 {# https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/#templates #}
+{# !!! default example does not account for multi-source Application. Custom "repoURLPath" / "revisionPath" needed #}
 message: |-
   [[ item.value.message ]]
 github:
+  repoURLPath: "{{.app.metadata.annotations.argocdRepoURL}}"
+  revisionPath: "{{.app.status.operationState.operation.sync.revision}}"
   status:
     state: [[ item.value.github.status.state ]]
     label: "continuous-delivery/{{.app.metadata.name}}"
