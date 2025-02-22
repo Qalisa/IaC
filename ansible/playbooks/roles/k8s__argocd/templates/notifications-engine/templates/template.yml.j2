@@ -9,13 +9,6 @@ github:
     state: [[ item.value.github.status.state ]]
     label: "continuous-delivery/{{.app.metaitem.name}}"
     targetURL: "{{.context.argocdUrl}}/applications/{{.app.metaitem.name}}?operation=true"
-  deployment:
-    state: [[ item.value.github.deployment.state ]]
-    environment: "unknown"
-    environmentURL: "https://unknown.com"
-    logURL: "{{.context.argocdUrl}}/applications/{{.app.metaitem.name}}?operation=true"
-    requiredContexts: []
-    transientEnvironment: false
   pullRequestComment:
     content: |-
       [[ item.value.github.pullRequestComment.content ]]
