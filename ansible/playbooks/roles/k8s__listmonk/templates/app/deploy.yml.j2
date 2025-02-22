@@ -1,35 +1,44 @@
+# https://github.com/knadh/listmonk/blob/master/docker-compose.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app
+  name: "{{ k8s__listmonk__app_name }}"
   namespace: "{{ k8s__listmonk__namespace }}"
   annotations:
     argocd.argoproj.io/sync-options: Delete=false # prevent deletion of this deployment on argocd chart deletion
 spec:
   selector:
     matchLabels:
-      app: listmonk
+      app: "{{ k8s__listmonk__app_name }}"
   template:
     metadata:
       labels:
-        app: listmonk
+        app: "{{ k8s__listmonk__app_name }}"
     spec:
       restartPolicy: Always
       initContainers:
         - name: database-ready
-          image: foobic/pg_isready
+          image: foobic/pg_isready:latest
           env:
             - name: HOST 
-              value: db.listmonk
+              value: "{{ k8s__listmonk__internal_hostname__db }}"
             - name: RETRIES
               value: "50"
           command: ["/scripts/pg_isready.sh"]
       containers:
         - name: listmonk
-          image: listmonk/listmonk:latest
+          image: ghcr.io/knadh/listmonk:v4.1.0
           imagePullPolicy: IfNotPresent
-          command: ["/bin/sh","-c"]
-          args: ["./listmonk --install --yes --idempotent && ./listmonk --static-dir=/tmp/git/{{ k8s__listmonk__static_dir_repo_name }}"]
+          command: ["sh", "-c"]
+          # --config (file) param is set to empty so that listmonk only uses the env vars (below) for config.
+          # --install --idempotent ensures that DB installation happens only once on an empty DB, on the first ever start.
+          # --upgrade automatically runs any DB migrations when a new image is pulled.
+          args: 
+            - ./listmonk --install --idempotent --yes --config '' 
+            - "&&"
+            - ./listmonk --upgrade --yes --config ''
+            - "&&" 
+            - ./listmonk --config '' --static-dir=/tmp/git/{{ k8s__listmonk__static_dir_repo_name }}
           volumeMounts:
             - name: uploads
               mountPath: /listmonk/uploads
@@ -39,17 +48,17 @@ spec:
               readOnly: true
           envFrom:
             - secretRef:
-                name: listmonk-admin
+                name: "{{ k8s__listmonk__app_name }}"
             - configMapRef:
-                name: app
+                name: "{{ k8s__listmonk__app_name }}"
           ports:
-            - name: app
+            - name: "{{ k8s__listmonk__app__port_name }}"
               containerPort: 9000
               protocol: TCP
       volumes:
         - name: uploads
           persistentVolumeClaim:
-            claimName: uploads
+            claimName: "{{ k8s__listmonk__app_name }}-uploads"
         - name: static
           persistentVolumeClaim:
             claimName: listmonk-static

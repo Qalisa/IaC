@@ -1,5 +1,23 @@
 ---
-k8s__listmonk__external_hostname: listmonk.{{ iac__root_domain }}
-k8s__listmonk__api_url_part: "http://app.listmonk:9000/api"
-k8s__listmonk__static_dir_repo_name: listmonk-static
 k8s__listmonk__namespace: listmonk
+k8s__listmonk__app_name: listmonk
+
+#
+k8s__listmonk__external_hostname: listmonk.{{ iac__root_domain }}
+k8s__listmonk__internal_hostname: "{{ k8s__listmonk__app_name }}.{{ k8s__listmonk__namespace }}.{{ iac__svc_cluster_host }}"
+
+#
+k8s__listmonk__db_name: postgres
+k8s__listmonk__internal_hostname__db: "{{ k8s__listmonk__db_name }}-postgresql.{{ k8s__listmonk__namespace }}.{{ iac__svc_cluster_host }}"
+
+#
+k8s__listmonk__static_dir_repo_name: listmonk-static
+k8s__listmonk__api_url_part: http://{{ k8s__listmonk__internal_hostname }}/api
+
+#
+k8s__listmonk__app__port_name: app
+
+#
+k8s__listmonk__db__db: listmonk-db
+k8s__listmonk__db__user: listmonk
+k8s__listmonk__db__password: listmonk4.THeWiiN

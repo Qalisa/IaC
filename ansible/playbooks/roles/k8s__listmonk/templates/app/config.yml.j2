@@ -1,9 +1,15 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app
+  name: "{{ k8s__listmonk__app_name }}"
   namespace: "{{ k8s__listmonk__namespace }}"
 immutable: false
 data:
-  LISTMONK_db__host: db.listmonk
+  TZ: Etc/UTC
+  LISTMONK_db__host: "{{ k8s__listmonk__internal_hostname__db }}"
   LISTMONK_app__address: 0.0.0.0:9000
+  LISTMONK_db__database: "{{ k8s__listmonk__db__db }}"
+  LISTMONK_db__ssl_mode: disable
+  LISTMONK_db__max_open: "25"
+  LISTMONK_db__max_idle: "25"
+  LISTMONK_db__max_lifetime: 300s
