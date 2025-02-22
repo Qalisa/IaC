@@ -7,8 +7,8 @@ message: |-
 github:
   status:
     state: [[ item.value.github.status.state ]]
-    label: "continuous-delivery/{{.app.metaitem.name}}"
-    targetURL: "{{.context.argocdUrl}}/applications/{{.app.metaitem.name}}?operation=true"
+    label: "continuous-delivery/{{.app.metadata.name}}"
+    targetURL: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
   pullRequestComment:
     content: |-
       [[ item.value.github.pullRequestComment.content ]]
