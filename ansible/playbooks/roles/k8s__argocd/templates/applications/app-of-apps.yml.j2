@@ -2,17 +2,21 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: app-of-apps
-  namespace: "{{ argo_cd__namespace }}"
+  namespace: "{{ argocd__namespace }}"
   annotations:
     notifications.argoproj.io/subscribe.on-sync-running.github: ""
     notifications.argoproj.io/subscribe.on-sync-failed.github: ""
     notifications.argoproj.io/subscribe.on-sync-succeeded.github: ""
     notifications.argoproj.io/subscribe.on-sync-status-unknown.github: ""
+    #
+    github.notifications.argoproj.io/environment: HEAD
+    github.notifications.argoproj.io/environment-url: "https://[unknown]" {{- /* Find a way to extract it from .helm/values.yaml ? Maybe use Kyverno ? */}}
+    github.notifications.argoproj.io/reference: "v[unknown]" {{- /* Find a way to extract it from .helm/values.yaml ? Maybe use Kyverno ? */}}
   finalizers:
   - resources-finalizer.argocd.argoproj.io # https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#cascading-deletion
 spec:
   destination:
-    namespace: "{{ argo_cd__namespace }}"
+    namespace: "{{ argocd__namespace }}"
     server: https://kubernetes.default.svc
   project: "{{ argocd__project_name }}"
   source:

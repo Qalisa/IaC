@@ -5,14 +5,14 @@
 
 - name: Create tmp folder
   ansible.builtin.file:
-    path: "{{ k8s__argo_cd__gh_notif__workdir }}/compounds"
+    path: "{{ k8s__argocd__gh_notif__workdir }}/compounds"
     state: directory
     mode: "0775"
 
 - name: Process templates
   ansible.builtin.template:
     src: templates/github-notifications/template.yml.j2
-    dest: "{{ k8s__argo_cd__gh_notif__workdir }}/compounds/{{ item.key }}"
+    dest: "{{ k8s__argocd__gh_notif__workdir }}/compounds/{{ item.key }}"
     mode: "755"
     variable_start_string: "[["
     variable_end_string: "]]"
@@ -22,12 +22,12 @@
 
 - name: Merge multiple files into one
   ansible.builtin.shell:
-    cmd: cat {{ loaded_values.keys() | list | join(" ") }} > {{ k8s__argo_cd__gh_notif__output_file }}
-    chdir: "{{ k8s__argo_cd__gh_notif__workdir }}/compounds"
+    cmd: cat {{ loaded_values.keys() | list | join(" ") }} > {{ k8s__argocd__gh_notif__output_file }}
+    chdir: "{{ k8s__argocd__gh_notif__workdir }}/compounds"
   register: my_output # <- Registers the command output.
   changed_when: my_output.rc != 0 # <- Uses the return code to define when the task has changed.
 
 - name: Remove tmp folder
   ansible.builtin.file:
-    path: "{{ k8s__argo_cd__gh_notif__workdir }}/compounds"
+    path: "{{ k8s__argocd__gh_notif__workdir }}/compounds"
     state: absent

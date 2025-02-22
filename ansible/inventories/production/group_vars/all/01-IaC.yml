@@ -157,9 +157,9 @@ openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_internal_hostname }}/
 openldap_stack__users_home: /home/users
 
 #
-argo_cd__namespace: argocd
+argocd__namespace: argocd
 argocd__project_name: default
-argo_cd__jwt_tokens_secret: accounts-immortal-jwt
+argocd__jwt_tokens_secret: accounts-immortal-jwt
 
 #
 docker_mailserver__external_hostname: "{{ docker_mailserver__third_level_domain }}.{{ iac__root_domain }}"

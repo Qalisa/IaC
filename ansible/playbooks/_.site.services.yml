@@ -39,7 +39,7 @@
     # - role: k8s__hc_vault                       # OPTIONAL, allow secure storage of private keys
     # - role: k8s__sentry                         # OPTIONAL, receive debug reports (careful, high resources usage !)
     # - role: k8s__matomo                         # OPTIONAL, allow usage tracking of apps / websites
-    - role: k8s__argo_cd # Automatize Continuous Delivery
+    - role: k8s__argocd # Automatize Continuous Delivery
     ########################
     ### Custom operators ###
     ########################

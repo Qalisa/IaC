@@ -79,7 +79,7 @@
       # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
       githubSecret: "{{ argocd__github_webhook_secret }}"
       # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=configs.secret.argocdServerAdminPassword
-      argocdServerAdminPassword: "{{ k8s__argo_cd__admin_password_bcrypted }}"
+      argocdServerAdminPassword: "{{ k8s__argocd__admin_password_bcrypted }}"
       extra:
         ldap.bindDN: "{{ iac__ldap__admin__bind_dn }}"
         ldap.bindPW: "{{ iac__ldap__admin__bind_pw }}"
@@ -106,7 +106,7 @@
     wait: true
     values:
       global:
-        domain: "{{ k8s__argo_cd__external_hostname }}"
+        domain: "{{ k8s__argocd__external_hostname }}"
       configs:
         params: "{{ params }}"
         rbac: "{{ rbac }}"
@@ -128,7 +128,7 @@
           tls: false
           annotations:
             #
-            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__argo_cd__external_hostname }}"
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__argocd__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
             #
             ingress-dashboard/title: ArgoCD
@@ -150,4 +150,4 @@
             installationID: "{{ argocd__github_app__installation_id }}"
             privateKey: $github-privateKey
         # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.templates
-        templates: "{{ lookup('ansible.builtin.file', k8s__argo_cd__gh_notif__output_file) | from_yaml }}"
+        templates: "{{ lookup('ansible.builtin.file', k8s__argocd__gh_notif__output_file) | from_yaml }}"
