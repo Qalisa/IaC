@@ -1,5 +1,5 @@
 #
-template.app-sync-succeeded:
+template.on-sync-succeeded:
   message: |-
     Application {{.app.metadata.name}} sync succeeded at {{.app.status.operationState.finishedAt}}.
   github:
@@ -12,7 +12,7 @@ template.app-sync-succeeded:
       content: |
         Sync Succeeded !
 #
-template.app-sync-failed:
+template.on-sync-failed:
   message: |-
     Application {{.app.metadata.name}} sync failed at {{.app.status.operationState.finishedAt}}.
   github:
@@ -25,7 +25,7 @@ template.app-sync-failed:
       content: |
         Sync Failed.
 #
-template.app-sync-running:
+template.on-sync-running:
   message: |-
     Application {{.app.metadata.name}} sync started at {{.app.status.operationState.startedAt}}.
   github:
@@ -38,7 +38,7 @@ template.app-sync-running:
       content: |
         Sync Running...
 #
-template.app-sync-status-unknown:
+template.on-sync-status-unknown:
   message: |-
     Application {{.app.metadata.name}} sync status is unknown as of {{.app.status.operationState.finishedAt}}.
   github:
