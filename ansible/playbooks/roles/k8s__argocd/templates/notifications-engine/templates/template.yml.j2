@@ -12,7 +12,7 @@ github:
   deployment:
     state: [[ item.value.github.deployment.state ]]
     environment: "unknown"
-    environmentURL: "unknown"
+    environmentURL: "https://unknown.com"
     logURL: "{{.context.argocdUrl}}/applications/{{.app.metaitem.name}}?operation=true"
     requiredContexts: []
     transientEnvironment: false
