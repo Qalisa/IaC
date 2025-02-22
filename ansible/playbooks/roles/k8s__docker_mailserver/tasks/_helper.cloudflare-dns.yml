@@ -23,8 +23,8 @@
 
 - name: Extract DKIM TXT (2/2)
   ansible.builtin.set_fact:
-    dkim: "{{ dkim_txt_file['content'] | b64decode | regex_replace('[\n\r]', '') |
-      regex_replace('.*\"(v=DKIM1.*?)\"\\s+\"(.*?)\"\\s+\"(.*?)\".*', '\\1\\2\\3') }}"
+    dkim: >-
+      {{ dkim_txt_file['content'] | b64decode | regex_replace('[\n\r]', '') | regex_replace('.*\"(v=DKIM1.*?)\"\\s+\"(.*?)\"\\s+\"(.*?)\".*', '\\1\\2\\3') }}"
 
 # - name: Display formatted DKIM
 #   ansible.builtin.debug:

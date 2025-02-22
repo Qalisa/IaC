@@ -1,3 +1,4 @@
+---
 - name: Structure server definition as JSON
   block:
     - name: Check mandatory variables are defined

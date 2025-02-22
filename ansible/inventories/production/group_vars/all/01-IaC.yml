@@ -114,7 +114,8 @@ listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
 harbor__namespace: harbor
 harbor__name: harbor
 harbor__external_hostname: registry.{{ iac__root_domain }}
-harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}.{{ iac__svc_cluster_host }}" # we need the service that responds to /v2/ path
+# we need the service that responds to /v2/ path
+harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}.{{ iac__svc_cluster_host }}"
 harbor__internal_hostname__registry_v2__url: https://{{ harbor__internal_hostname__registry_v2 }}
 harbor__admin_username: admin
 harbor__org_project_name: "{{ iac__github_org | lower }}"

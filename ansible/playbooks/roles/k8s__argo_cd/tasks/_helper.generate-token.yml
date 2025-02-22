@@ -1,7 +1,7 @@
 ---
 # - name: Get ArgoCD authentication token
 #   ansible.builtin.uri:
-#     url: "{{ k8s__argo_cd_cluster_api_url }}/session"
+#     url: "{{ k8s__argo_cd__api_url }}/session"
 #     validate_certs: false
 #     method: POST
 #     body_format: json
@@ -18,7 +18,7 @@
     - name: Generate new token
       register: token
       ansible.builtin.uri:
-        url: "{{ k8s__argo_cd_cluster_api_url }}/account/{{ item.username }}/token"
+        url: "{{ k8s__argo_cd__api_url }}/account/{{ item.username }}/token"
         validate_certs: false
         method: POST
         headers:

@@ -1,7 +1,16 @@
 ---
 k8s__argo_cd__server_pod_name: argocd-server
-k8s__argo_cd__server_internal_hostname: "{{ k8s__argo_cd__server_pod_name }}.{{ argo_cd__namespace }}.{{ iac__svc_cluster_host }}"
-k8s__argo_cd_cluster_api_url: http://{{ k8s__argo_cd__server_internal_hostname }}/api/v1
+
+#
 k8s__argo_cd__external_hostname: argocd.{{ iac__root_domain }}
+
+#
+k8s__argo_cd__internal_hostname: "{{ k8s__argo_cd__server_pod_name }}.{{ argo_cd__namespace }}.{{ iac__svc_cluster_host }}"
+k8s__argo_cd__api_url: http://{{ k8s__argo_cd__internal_hostname }}/api/v1
+
 #
 k8s__argo_cd__admin_password_bcrypted: "{{ argocd__admin_password | ansible.builtin.password_hash(hashtype='bcrypt', rounds=10, salt='') }}"
+
+#
+k8s__argo_cd__gh_notif__workdir: /tmp/gh-notif-config
+k8s__argo_cd__gh_notif__output_file: "{{ k8s__argo_cd__gh_notif__workdir }}/output.gotmpl"

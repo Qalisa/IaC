@@ -84,6 +84,9 @@
         ldap.bindDN: "{{ iac__ldap__admin__bind_dn }}"
         ldap.bindPW: "{{ iac__ldap__admin__bind_pw }}"
 
+- name: Build Github Notifications template
+  ansible.builtin.import_tasks: _helper.gh-notif-tmpl.yml
+
 ###
 ###
 ###
@@ -147,4 +150,4 @@
             installationID: "{{ argocd__github_app__installation_id }}"
             privateKey: $github-privateKey
         # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.templates
-        templates: "{{ lookup('ansible.builtin.file', 'templates/github-notifications/all.yaml.gotmpl') | from_yaml }}"
+        templates: "{{ lookup('ansible.builtin.file', k8s__argo_cd__gh_notif__output_file) | from_yaml }}"

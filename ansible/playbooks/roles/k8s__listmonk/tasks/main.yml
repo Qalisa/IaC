@@ -1,3 +1,4 @@
+---
 - name: Install postgres
   ansible.builtin.import_tasks: setup.postgres.yml
 
