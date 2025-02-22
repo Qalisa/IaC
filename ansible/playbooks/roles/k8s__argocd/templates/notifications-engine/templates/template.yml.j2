@@ -1,13 +1,10 @@
 {# https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/#functions #}
 {# https://pkg.go.dev/html/template #}
 {# https://github.com/Qalisa/IaC/issues/19 #}
+{# https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/github/#templates #}
 message: |-
   [[ item.value.message ]]
 github:
-  repoURL: "{{.app.spec.source.repoURL}}"
-  revision: "{{.app.status.operationState.syncResult.revision}}"
-  repoURLPath: "{{.app.spec.source.repoURL}}"
-  revisionPath: "{{.app.status.operationState.syncResult.revision}}"
   status:
     state: [[ item.value.github.status.state ]]
     label: "continuous-delivery/{{.app.metaitem.name}}"
@@ -16,10 +13,8 @@ github:
     state: [[ item.value.github.deployment.state ]]
     environment: "unknown"
     environmentURL: "unknown"
-    reference: "unknown"
     logURL: "{{.context.argocdUrl}}/applications/{{.app.metaitem.name}}?operation=true"
     requiredContexts: []
-    autoMerge: true
     transientEnvironment: false
   pullRequestComment:
     content: |-
