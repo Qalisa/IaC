@@ -1,0 +1,2 @@
+{{ item }}: |
+  {{ lookup('file', dest ~ "/" ~ item) | indent(2) }}{{ '\n' }}

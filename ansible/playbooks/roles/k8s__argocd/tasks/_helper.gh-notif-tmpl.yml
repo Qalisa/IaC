@@ -20,6 +20,17 @@
   loop_control:
     label: "{{ item.key }}"
 
+- name: Process templates (w/ key)
+  ansible.builtin.template:
+    src: templates/github-notifications/_template-with-key.yml.j2
+    dest: "{{ dest }}/{{ item }}"
+    mode: "755"
+  vars:
+    dest: "{{ k8s__argocd__gh_notif__workdir }}/compounds"
+  loop: "{{ loaded_values.keys() | list }}"
+  loop_control:
+    label: "{{ item }}"
+
 - name: Merge multiple files into one
   ansible.builtin.shell:
     cmd: cat {{ loaded_values.keys() | list | join(" ") }} > {{ k8s__argocd__gh_notif__output_file }}

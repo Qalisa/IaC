@@ -9,9 +9,9 @@ metadata:
     notifications.argoproj.io/subscribe.on-sync-succeeded.github: ""
     notifications.argoproj.io/subscribe.on-sync-status-unknown.github: ""
     #
-    github.notifications.argoproj.io/environment: HEAD
-    github.notifications.argoproj.io/environment-url: "https://[unknown]" {{- /* Find a way to extract it from .helm/values.yaml ? Maybe use Kyverno ? */}}
-    github.notifications.argoproj.io/reference: "v[unknown]" {{- /* Find a way to extract it from .helm/values.yaml ? Maybe use Kyverno ? */}}
+    github.notifications.argoproj.io/environment: main
+    github.notifications.argoproj.io/environment-url: "https://{{ k8s__argocd__external_hostname }}"
+    github.notifications.argoproj.io/revision: main
   finalizers:
   - resources-finalizer.argocd.argoproj.io # https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#cascading-deletion
 spec:

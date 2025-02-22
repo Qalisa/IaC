@@ -8,8 +8,7 @@ template.on-sync-succeeded:
     deployment:
       state: success
     pullRequestComment:
-      # | instead of |- here to prevent failure as last line of key
-      content: |
+      content: |-
         Sync Succeeded !
 #
 template.on-sync-failed:
@@ -21,8 +20,7 @@ template.on-sync-failed:
     deployment:
       state: failure
     pullRequestComment:
-      # | instead of |- here to prevent failure as last line of key
-      content: |
+      content: |-
         Sync Failed.
 #
 template.on-sync-running:
@@ -34,8 +32,7 @@ template.on-sync-running:
     deployment:
       state: pending
     pullRequestComment:
-      # | instead of |- here to prevent failure as last line of key
-      content: |
+      content: |-
         Sync Running...
 #
 template.on-sync-status-unknown:
@@ -47,6 +44,5 @@ template.on-sync-status-unknown:
     deployment:
       state: error
     pullRequestComment:
-      # | instead of |- here to prevent failure as last line of key
-      content: |
+      content: |-
         Sync State Unknown ?
