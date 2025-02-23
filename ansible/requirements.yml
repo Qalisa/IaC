@@ -3,6 +3,7 @@ collections:
   - name: community.docker
   - name: kubernetes.core
   - name: ansible.posix
+  - name: community.postgresql
   - name: community.general
     source: https://github.com/ansible-collections/community.general.git
     type: git

@@ -6,6 +6,6 @@
         "sanaajani.taskrunnercode",
         "actboy168.tasks",
         "golang.go",
-        "technosophos.vscode-helm"
+        "ms-kubernetes-tools.vscode-kubernetes-tools"
     ]
 }

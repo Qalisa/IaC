@@ -32,6 +32,8 @@ iac__github_org: "{{ u_vault_iac__github_org }}"
 
 #
 listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
+# should at least be an empty []
+listmonk__external_hostname_extras: "{{ u_vault_listmonk__external_hostname_extras }}"
 
 github_actions_secrets_operator__global_gass_name: default
 

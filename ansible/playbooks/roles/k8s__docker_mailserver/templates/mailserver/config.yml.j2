@@ -45,7 +45,7 @@ data:
   LDAP_QUERY_FILTER_USER: (&(objectClass={{ iac__ldap__user_oc }})({{ iac__ldap__username_attr }}=%s))
   LDAP_QUERY_FILTER_ALIAS: (&(objectClass={{ iac__ldap__user_oc }})(mailAlias=%s))
   LDAP_QUERY_FILTER_GROUP: (&(objectClass={{ iac__ldap__user_oc }})(mailGroupMember=%s))
-  LDAP_QUERY_FILTER_SENDERS: (&(objectClass={{ iac__ldap__user_oc }})(|({{ iac__ldap__username_attr }}=%s)(mailAlias=%s)(mailGroupMember=%s)))
+  LDAP_QUERY_FILTER_SENDERS: (|(mail=%s)(uid=postmaster)(uid=donotreply)) # allow postmaster and donotreply accounts to spoof
   # <<< Postfix LDAP Integration
 
   # >>> Dovecot LDAP Integration

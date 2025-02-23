@@ -17,6 +17,12 @@ docker_mailserver__third_level_domain: mail
 #
 iac__postmaster_username: postmaster
 iac__donotreply_username: donotreply
+
+# default from root domain
+iac__postmaster_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
+iac__donotreply_email: "{{ iac__donotreply_username }}@{{ iac__root_domain }}"
+
+#
 iac__donotreply_name: Do Not Reply
 
 # Root OU : groupOfNames : [users CN]
@@ -44,8 +50,9 @@ argocd__app_of_apps__repo_name: argocd-repository # github repo name under organ
 #
 listmonk__static_dir__repo_name: listmonk-static # github repo name under organization, containing listmonk static dir
 listmonk__admin_username: admin
-listmonk__logo_url: https://{{ iac__root_domain }}/logo.png
-listmonk__favicon_url: https://{{ iac__root_domain }}/logo.png
+listmonk__logo_url: https://ivy.community/public/assets/listmonk/logo.png
+listmonk__favicon_url: https://ivy.community/favicon.ico
+listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__donotreply_email }}>"
 
 #
 harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowercase
@@ -108,9 +115,6 @@ minio__tenant__backup_storage__bucket_name: default-backups # https://docs.aws.a
 minio__tenant__backup_storage__bucket_region: minio
 
 #
-listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
-
-#
 harbor__namespace: harbor
 harbor__name: harbor
 harbor__external_hostname: registry.{{ iac__root_domain }}
@@ -163,10 +167,6 @@ argocd__jwt_tokens_secret: accounts-immortal-jwt
 
 #
 docker_mailserver__external_hostname: "{{ docker_mailserver__third_level_domain }}.{{ iac__root_domain }}"
-
-# default from root domain
-iac__postmaster_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
-iac__donotreply_email: "{{ iac__donotreply_username }}@{{ iac__root_domain }}"
 
 #
 cf_zto__namespace: zero-trust-system

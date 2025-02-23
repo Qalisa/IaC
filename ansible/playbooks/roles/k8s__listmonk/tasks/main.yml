@@ -4,3 +4,6 @@
 
 - name: Install Listmonk
   ansible.builtin.import_tasks: setup.listmonk.yml
+
+- name: Configure Listmonk
+  ansible.builtin.import_tasks: configure.listmonk.yml
