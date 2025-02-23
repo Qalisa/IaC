@@ -68,3 +68,15 @@ By default, only 2 users are created: `postmaster` and `donotreply`, which are r
   - `Unix` > `Primary Group` to `email-users`
   - `Set Password` button to define a temporary password, that the user should change by using `https://pwd-ldap.<root_domain>`
   - use webmail service, or any e-mail client (`https://webmail.<root_domain>`)
+
+## Outdated supplementary services
+There is 2 services that are shipped with IaC but we do not recommend to use, but still keep them for documentary purposes:
+
+- Matomo, which helps tracking visitors and other data of installed services
+  - > Outdated feature-wise, prefer using PostHog Cloud free tier, or self-hosted on another node https://posthog.com/docs/self-host
+- Sentry, which tracks live bugs on services
+  - > Heavy on resources on a Single Node, should prefer external use of official on-premise https://develop.sentry.dev/self-hosted/ on another node
+
+## ArgoCD
+To use ArgoCD, you need to provide an `app-of-apps` repository in your Github Organization (https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/). You'll kind the default name of said repo to create on `group_vars`'s `argocd__app_of_apps__repo_name`.
+You can use `Qalisa/argocd-repository` as template on how to use it in real-life example.

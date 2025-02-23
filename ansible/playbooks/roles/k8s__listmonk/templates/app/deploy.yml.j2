@@ -29,16 +29,9 @@ spec:
         - name: listmonk
           image: ghcr.io/knadh/listmonk:v4.1.0
           imagePullPolicy: IfNotPresent
-          command: ["sh", "-c"]
-          # --config (file) param is set to empty so that listmonk only uses the env vars (below) for config.
-          # --install --idempotent ensures that DB installation happens only once on an empty DB, on the first ever start.
-          # --upgrade automatically runs any DB migrations when a new image is pulled.
+          command: ["/bin/sh", "-c"]
           args: 
-            - ./listmonk --install --idempotent --yes --config '' 
-            - "&&"
-            - ./listmonk --upgrade --yes --config ''
-            - "&&" 
-            - ./listmonk --config '' --static-dir=/tmp/git/{{ k8s__listmonk__static_dir_repo_name }}
+            - "./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config ''"
           volumeMounts:
             - name: uploads
               mountPath: /listmonk/uploads
