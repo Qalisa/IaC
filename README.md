@@ -77,6 +77,6 @@ There is 2 services that are shipped with IaC but we do not recommend to use, bu
 - Sentry, which tracks live bugs on services
   - > Heavy on resources on a Single Node, should prefer external use of official on-premise https://develop.sentry.dev/self-hosted/ on another node
 
-## ArgoCD
+## ArgoCD - orchestration of organization-developped services
 To use ArgoCD, you need to provide an `app-of-apps` repository in your Github Organization (https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/). You'll kind the default name of said repo to create on `group_vars`'s `argocd__app_of_apps__repo_name`.
 You can use `Qalisa/argocd-repository` as template on how to use it in real-life example.
