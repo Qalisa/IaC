@@ -89,6 +89,7 @@
         //
         {
             "label": "✅ CF Zero-Trust: apply application policies",
+            "dependsOn": "Ensure services playbook exists",
             "type": "shell",
             "command": [
                 "ansible-playbook",
@@ -104,13 +105,49 @@
             "problemMatcher": []
         },
         {
+            "label": "✅ Kyverno: apply policies",
+            "dependsOn": "Ensure services playbook exists",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts.yaml",
+                "ansible/playbooks/site.services.yml",
+                "--tags", "kyverno-policy"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "✅ ArgoCD: Install Applications",
+            "dependsOn": "Ensure services playbook exists",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production/hosts.yaml",
+                "ansible/playbooks/site.services.yml",
+                "--tags", "argocd-apps"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        //
+        //
+        //
+        {
             "label": "🔓 Hachicorp Vault: Unseal",
             "type": "shell",
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts.yaml",
                 "ansible/playbooks/_unseal-vault.yml",
-                "--tags", "unseal"
             ],
             "options": {
                 "statusbar": {

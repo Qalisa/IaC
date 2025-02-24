@@ -2,7 +2,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: inject-env-var-from-image-label
+  name: image-labels-into-pod-env
   annotations:
     policies.kyverno.io/title: Inject Env Var from Image Label
     policies.kyverno.io/category: Other
@@ -38,14 +38,17 @@ spec:
         foreach:
           - list: "request.object.spec.containers"
             context:
-              - name: version
+              - name: imageVersion
                 imageRegistry:
                   reference: "{{ element.image }}"
                   jmesPath: configData.config.Labels."org.opencontainers.image.version" || ''
-              - name: revision
+              - name: imageRevision
                 imageRegistry:
                   reference: "{{ element.image }}"
                   jmesPath: configData.config.Labels."org.opencontainers.image.revision" || ''
+              - name: version
+                variable:
+                  jmesPath: "request.object.metadata.labels.'app.kubernetes.io/version' || ''"
             preconditions:
               all:
                 - key: "{{version}}"
@@ -58,10 +61,15 @@ spec:
               - op: add
                 path: "/spec/containers/{{elementIndex}}/env/-"
                 value:
-                  name: "[[ kyverno__oc_label_as_env__version ]]"
-                  value: "{{ version }}"
+                  name: "[[ kyverno__injected_env__image_version ]]"
+                  value: "{{ imageVersion }}"
               - op: add
                 path: "/spec/containers/{{elementIndex}}/env/-"
                 value:
-                  name: "[[ kyverno__oc_label_as_env__revision ]]"
-                  value: "{{ revision }}"
+                  name: "[[ kyverno__injected_env__image_revision ]]"
+                  value: "{{ imageRevision }}"
+              - op: add
+                path: "/spec/containers/{{elementIndex}}/env/-"
+                value:
+                  name: "[[ kyverno__injected_env__version ]]"
+                  value: "{{ version }}"

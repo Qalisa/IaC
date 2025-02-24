@@ -23,7 +23,7 @@
       - path: templates/config.yml.j2
 
 - name: Install policies
-  tags: [policies]
+  tags: [kyverno-policy]
   kubernetes.core.k8s:
     template:
       path: templates/policies/autorestart-on-new-ingresses.yml.j2

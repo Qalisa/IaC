@@ -174,8 +174,9 @@ cf_zto__ldap_policy__access_group_id: ldap-users
 cf_zto__ldap_policy__name: Allow {{ iac__root_domain }} LDAP Users
 
 #
-kyverno__oc_label_as_env__version: BUILDX_OC_LABEL__VERSION # tag
-kyverno__oc_label_as_env__revision: BUILDX_OC_LABEL__REVISION # commit
+kyverno__injected_env__image_version: K8S_APP__IMAGE_VERSION # tag
+kyverno__injected_env__image_revision: K8S_APP__IMAGE_REVISION # commit
+kyverno__injected_env__version: K8S_APP__VERSION # helm version
 
 #
 k3s__default_namespace: kube-system

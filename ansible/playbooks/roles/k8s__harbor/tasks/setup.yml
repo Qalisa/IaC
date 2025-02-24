@@ -74,9 +74,9 @@
 ###
 
 - name: Install policies
-  tags: [policies]
+  tags: [kyverno-policy]
   kubernetes.core.k8s:
     template:
-      path: templates/policies/cp-inject-label.yml.j2
+      path: templates/policies/image-labels-into-pod-env.yml.j2
       variable_start_string: "[["
       variable_end_string: "]]"

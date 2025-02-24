@@ -1,6 +1,5 @@
 ---
 - name: Build Custom runner image and push it
-  tags: [runner-set, custom-image]
   community.docker.docker_image:
     name: "{{ k8s__github_arc__lar_docker_image_name }}"
     tag: latest
@@ -18,7 +17,6 @@
 
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
 - name: Setup namespace + GH App + Local Cache secrets
-  tags: [runner-set]
   kubernetes.core.k8s:
     template:
       - path: templates/runner-set/ns.yml.j2
@@ -26,7 +24,6 @@
       - path: templates/runner-set/pvc.yml.j2
 
 - name: Install action runners set
-  tags: [runner-set, helm]
   kubernetes.core.helm:
     name: arc-runner-set
     chart_ref: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set

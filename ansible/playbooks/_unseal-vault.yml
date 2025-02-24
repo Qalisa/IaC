@@ -2,5 +2,8 @@
 - name: Unseal Vault
   hosts: all
   become: true
-  roles:
-    - role: k8s__hc_vault
+  tasks:
+    - name: GO
+      ansible.builtin.include_role:
+        name: k8s__hc_vault
+        tasks_from: _helper.unsealing

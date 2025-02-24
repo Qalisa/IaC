@@ -4,7 +4,3 @@
 
 - name: Configure HC Vault
   ansible.builtin.import_tasks: configure.yml
-
-## not ran normally, requires specific tag to run
-- name: Only unseal
-  ansible.builtin.import_tasks: unsealing.yml
