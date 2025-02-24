@@ -48,7 +48,7 @@ spec:
                   jmesPath: configData.config.Labels."org.opencontainers.image.revision" || ''
               - name: version
                 variable:
-                  jmesPath: "request.object.metadata.labels.'app.kubernetes.io/version' || ''"
+                  jmesPath: request.object.metadata.labels."app.kubernetes.io/version" || ''
             preconditions:
               all:
                 - key: "{{imageVersion}}"
