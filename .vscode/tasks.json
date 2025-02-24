@@ -89,12 +89,11 @@
         //
         {
             "label": "✅ CF Zero-Trust: apply application policies",
-            "dependsOn": "Ensure services playbook exists",
             "type": "shell",
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/site.services.yml",
+                "ansible/playbooks/_.site.services.yml",
                 "--tags", "zto-app"
             ],
             "options": {
@@ -106,12 +105,11 @@
         },
         {
             "label": "✅ Kyverno: apply policies",
-            "dependsOn": "Ensure services playbook exists",
             "type": "shell",
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/site.services.yml",
+                "ansible/playbooks/_.site.services.yml",
                 "--tags", "kyverno-policy"
             ],
             "options": {
@@ -123,12 +121,11 @@
         },
         {
             "label": "✅ ArgoCD: Install Applications",
-            "dependsOn": "Ensure services playbook exists",
             "type": "shell",
             "command": [
                 "ansible-playbook",
                 "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/site.services.yml",
+                "ansible/playbooks/_.site.services.yml",
                 "--tags", "argocd-apps"
             ],
             "options": {

@@ -22,7 +22,7 @@
       - path: templates/deploy-patch.yml.j2
       - path: templates/config.yml.j2
 
-- name: Install policies
+- name: Install Kyverno policy to restart Ingress Dashboard on each Ingress update
   tags: [kyverno-policy]
   kubernetes.core.k8s:
     template:

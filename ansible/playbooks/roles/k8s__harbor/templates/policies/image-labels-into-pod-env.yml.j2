@@ -51,10 +51,13 @@ spec:
                   jmesPath: "request.object.metadata.labels.'app.kubernetes.io/version' || ''"
             preconditions:
               all:
-                - key: "{{version}}"
+                - key: "{{imageVersion}}"
                   operator: NotEquals
                   value: ""
-                - key: "{{revision}}"
+                - key: "{{imageRevision}}"
+                  operator: NotEquals
+                  value: ""
+                - key: "{{version}}"
                   operator: NotEquals
                   value: ""
             patchesJson6902: |-

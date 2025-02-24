@@ -73,7 +73,7 @@
 ### Policies
 ###
 
-- name: Install policies
+- name: Install Kyverno ENV values into deployed Pods from Docker Images labels
   tags: [kyverno-policy]
   kubernetes.core.k8s:
     template:
