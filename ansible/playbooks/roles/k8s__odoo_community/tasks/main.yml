@@ -41,6 +41,8 @@
         # enable Database manager
         - name: ODOO_LIST_DB
           value: "Yes"
+        - name: ODOO_LANG
+          value: "{{ iac__prefered_lang }}"
       #
       odooEmail: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
       odooPassword: "{{ iac__postmaster_password }}"
