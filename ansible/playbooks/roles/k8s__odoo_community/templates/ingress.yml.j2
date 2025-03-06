@@ -20,13 +20,13 @@ spec:
     - host: "{{ k8s__odoo_community__external_hostname }}"
       http:
         paths:
-        - backend:
-            service:
-              name: odoo
-              port:
-                name: longpolling
-            path: /websocket
+          - path: /websocket
             pathType: ImplementationSpecific
+            backend:
+              service:
+                name: odoo
+                port:
+                  name: longpolling
           - path: /
             pathType: Prefix
             backend:
