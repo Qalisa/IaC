@@ -28,6 +28,8 @@
         database: "{{ k8s__listmonk__db__db }}"
 
 - name: Add server definition for pgadmin
+  tags: [pgadmin]
+  when: k8s__listmonk__add_server_definitions_into_pgadmin
   ansible.builtin.include_role:
     name: utilities__pgadmin
     tasks_from: add_server_definition

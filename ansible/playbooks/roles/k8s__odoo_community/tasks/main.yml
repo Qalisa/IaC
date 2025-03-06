@@ -74,7 +74,7 @@
             targetPort: longpolling
       ingress:
         enabled: true
-        hostname: "{{ k8s__odoo_community__extername_hostname }}"
+        hostname: "{{ k8s__odoo_community__external_hostname }}"
         extraRules:
           - backend:
               service:
@@ -87,7 +87,7 @@
           #
           traefik.ingress.kubernetes.io/router.middlewares: "{{ k8s__odoo_community__namespace }}-security-headers@kubernetescrd"
           #
-          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__odoo_community__extername_hostname }}"
+          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__odoo_community__external_hostname }}"
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
           #
           ingress-dashboard/title: Odoo
@@ -97,6 +97,8 @@
           ingress-dashboard/hide: "false"
 
 - name: Add server definition for pgadmin
+  tags: [pgadmin]
+  when: k8s__odoo_community__add_server_definitions_into_pgadmin
   ansible.builtin.include_role:
     name: utilities__pgadmin
     tasks_from: add_server_definition

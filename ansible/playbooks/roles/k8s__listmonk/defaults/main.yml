@@ -28,3 +28,6 @@ k8s__listmonk__admin_api__password: "{{ listmonk__admin_password | hash('md5') }
 
 #
 k8s__listmonk__external_hostnames: "{{ (listmonk__external_hostname_extras | from_yaml) + [k8s__listmonk__external_hostname] }}"
+
+#
+k8s__listmonk__add_server_definitions_into_pgadmin: true
