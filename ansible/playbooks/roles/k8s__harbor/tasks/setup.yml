@@ -39,17 +39,17 @@
           password: "{{ harbor__registry_password }}"
       trivy:
         enabled: false
+      persistence:
+        enabled: true
+        # Setting it to "keep" to avoid removing PVCs during a helm delete
+        # operation. Leaving it empty will delete PVCs after the chart deleted
+        # (this does not apply for PVCs that are created for internal database
+        # and redis components, i.e. they are never deleted automatically)
+        resourcePolicy: ""
+        persistentVolumeClaim:
+          registry:
+            size: 20Gi # from 5Gi
       expose:
-        persistence:
-          enabled: true
-          # Setting it to "keep" to avoid removing PVCs during a helm delete
-          # operation. Leaving it empty will delete PVCs after the chart deleted
-          # (this does not apply for PVCs that are created for internal database
-          # and redis components, i.e. they are never deleted automatically)
-          resourcePolicy: ""
-          persistentVolumeClaim:
-            registry:
-              size: 20Gi # from 5Gi
         ingress:
           hosts:
             core: "{{ harbor__external_hostname }}"
