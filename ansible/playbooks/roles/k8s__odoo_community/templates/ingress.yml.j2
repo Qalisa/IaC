@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: odoo
+  namespace: "{{ k8s__odoo_community__namespace }}"
+  annotations:
+    #
+    traefik.ingress.kubernetes.io/router.middlewares: "{{ k8s__odoo_community__namespace }}-security-headers@kubernetescrd"
+    #
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__odoo_community__external_hostname }}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    #
+    ingress-dashboard/title: Odoo
+    ingress-dashboard/description: All-in-one CRM-like app
+    ingress-dashboard/logo-url: /web/static/img/favicon.ico
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+spec:
+  rules:
+    - host: "{{ k8s__odoo_community__external_hostname }}"
+      http:
+        paths:
+        - backend:
+            service:
+              name: odoo
+              port:
+                name: longpolling
+            path: /websocket
+            pathType: ImplementationSpecific
+          - path: /
+            pathType: Prefix
+            backend:
+              service: 
+                name: odoo
+                port:
+                  name: http

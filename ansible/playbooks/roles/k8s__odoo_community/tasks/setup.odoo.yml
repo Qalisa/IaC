@@ -1,0 +1,12 @@
+---
+- name: Install Odoo
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/middleware.yml.j2
+      - path: templates/pvc.yml.j2
+      - path: templates/secret.yml.j2
+      - path: templates/service.yml.j2
+      - path: templates/deploy.yml.j2
+      - path: templates/ingress.yml.j2
+      - path: templates/config.yml.j2

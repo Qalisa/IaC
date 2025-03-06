@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  namespace: "{{ k8s__odoo_community__namespace }}"
+spec:
+  replicas: 1
+  strategy:
+    # will wait for old pod to shutdown completely before runing new pod. Prevents logs to be filled with warnings about lockfiles
+    type: Recreate
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      containers:
+        - name: odoo
+          image: odoo:latest
+          imagePullPolicy: IfNotPresent
+
+          readinessProbe:
+            failureThreshold: 12
+            httpGet:
+              path: /web/health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/odoo
+              readOnly: false
+
+          ports:
+            - name: http
+              containerPort: 8069
+              protocol: TCP
+            - name: longpolling
+              containerPort: 8072
+              protocol: TCP
+
+          envFrom:
+            - secretRef:
+                name: odoo
+            - configMapRef:
+                name: odoo
+
+      restartPolicy: Always
+
+      volumes:
+        # PVCs
+        - name: data
+          persistentVolumeClaim:
+            claimName: odoo

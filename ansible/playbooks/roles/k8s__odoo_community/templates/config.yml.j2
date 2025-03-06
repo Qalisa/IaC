@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odoo
+  namespace: "{{ k8s__odoo_community__namespace }}"
+immutable: false
+data:
+  ODOO_DATABASE_HOST: "{{ k8s__odoo_community__db__name }}.{{ k8s__odoo_community__namespace }}.{{ iac__svc_cluster_host }}"
+  ODOO_DATABASE_PORT_NUMBER: "5432"
+  ODOO_DATABASE_NAME: "{{ k8s__odoo_community__db__config__db_name }}"
+  ODOO_DATABASE_USER: "{{ k8s__odoo_community__db__config__username }}"
+
+  #
+  ODOO_SMTP_HOST: "{{ docker_mailserver__internal_smtp_prefered_port }}"
+  ODOO_SMTP_PORT_NUMBER: "{{ docker_mailserver__internal_smtp_preferred_port }}"
+  
+  #
+  ODOO_LIST_DB: "Yes"
+  ODOO_LANG: "{{ iac__prefered_lang }}"
+  
