@@ -1,0 +1,1 @@
+odoo -i account -w odoo -r odoo -d /var/lib/odoo

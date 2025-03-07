@@ -18,6 +18,10 @@ k8s__odoo_community__db__config__host: "{{ k8s__odoo_community__db__name }}.{{ k
 # Name of the "database" that Odoo will create on its own; must be separate from previous db names
 k8s__odoo_community__odoo_instance_db_name: odoo1
 k8s__odoo_community__odoo_instance_data_dir: /var/lib/odoo
+k8s__odoo_community__odoo_instance_addons_dir: /mnt/extra-addons
+
+#
+k8s__odoo_community__odoo_included_modules: ['contacts', 'stock', 'account', 'sale_management']
 
 #
 k8s__odoo_community__add_server_definitions_into_pgadmin: false

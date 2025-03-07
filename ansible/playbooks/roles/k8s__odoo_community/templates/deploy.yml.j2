@@ -4,6 +4,7 @@ metadata:
   name: odoo
   namespace: "{{ k8s__odoo_community__namespace }}"
 spec:
+  revisionHistoryLimit: 0
   replicas: 1
   strategy:
     # will wait for old pod to shutdown completely before runing new pod. Prevents logs to be filled with warnings about lockfiles
@@ -20,23 +21,25 @@ spec:
         - name: odoo
           image: odoo:latest
           imagePullPolicy: IfNotPresent
-
+          # should only be ran once. If not, would reset modules at each startup !!
+          args: 
+            - '-i'
+            - "{{ k8s__odoo_community__odoo_included_modules | join(',') }}"
           securityContext:
             runAsUser: 0 # required
             runAsGroup: 0 # required
 
-          {# # copied from bitnami/odoo's helm
+          # copied from bitnami/odoo's helm
           readinessProbe:
-            failureThreshold: 12
+            # failureThreshold: 12
             httpGet:
               path: /web/health
               port: http
               scheme: HTTP
-            # useful, because even at first boot, Odoo might expose this API even if the database is not properly setup !
             initialDelaySeconds: 30
             periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 5
+            successThreshold: 3
+            timeoutSeconds: {{ 60 * 5 }} # maximize it as timeout is the default behavior while setting up modules
 
           # copied from bitnami/odoo's helm
           livenessProbe:
@@ -46,12 +49,16 @@ spec:
             successThreshold: 1
             tcpSocket:
               port: http
-            timeoutSeconds: 5 #}
+            timeoutSeconds: 5
 
           volumeMounts:
             - name: data
               mountPath: "{{ k8s__odoo_community__odoo_instance_data_dir }}"
+              subpath: data
               readOnly: false
+            - name: data
+              mountPath: "{{ k8s__odoo_community__odoo_instance_addons_dir }}"
+              subpath: extra-addons
             - name: config
               mountPath: /etc/odoo
               readOnly: true

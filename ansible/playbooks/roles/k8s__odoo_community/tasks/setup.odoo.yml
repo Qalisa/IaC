@@ -16,7 +16,7 @@
   register: pvc_status
   until: pvc_status.resources[0].status.phase == "Bound"
   retries: 20
-  delay: 10
+  delay: 3
 
 - name: Install Odoo
   kubernetes.core.k8s:
