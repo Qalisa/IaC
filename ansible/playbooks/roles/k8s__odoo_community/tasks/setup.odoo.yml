@@ -7,6 +7,17 @@
       - path: templates/pvc.yml.j2
       - path: templates/secret.yml.j2
 
+- name: Wait for Longhorn to bind the PVC
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: PersistentVolumeClaim
+    namespace: "{{ k8s__odoo_community__namespace }}"
+    name: odoo
+  register: pvc_status
+  until: pvc_status.resources[0].status.phase == "Bound"
+  retries: 20
+  delay: 10
+
 - name: Install Odoo
   kubernetes.core.k8s:
     template:

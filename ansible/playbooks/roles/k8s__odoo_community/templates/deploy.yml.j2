@@ -22,51 +22,35 @@ spec:
           imagePullPolicy: IfNotPresent
 
           securityContext:
-            appArmorProfile: 
-              type: RuntimeDefault
-            # `allowPrivilegeEscalation: true` is required to support SGID via the `postdrop`
-            # executable in `/var/mail-state` for Postfix (maildrop + public dirs):
-            # https://github.com/docker-mailserver/docker-mailserver/pull/3625
-            allowPrivilegeEscalation: true
-            readOnlyRootFilesystem: false
-            runAsUser: 0
-            runAsGroup: 0
-            runAsNonRoot: false
-            privileged: false
-            capabilities:
-              add:
-                # file permission capabilities
-                - CHOWN
-                - FOWNER
-                - MKNOD
-                - SETGID
-                - SETUID
-                - DAC_OVERRIDE
-                # network capabilities
-                - NET_ADMIN  # needed for F2B
-                - NET_RAW    # needed for F2B
-                - NET_BIND_SERVICE
-                # miscellaneous  capabilities
-                - SYS_CHROOT
-                - KILL
-              drop: [ALL]
-            seccompProfile:
-              type: RuntimeDefault
+            runAsUser: 0 # required
+            runAsGroup: 0 # required
 
-          {# readinessProbe:
+          {# # copied from bitnami/odoo's helm
+          readinessProbe:
             failureThreshold: 12
             httpGet:
               path: /web/health
               port: http
               scheme: HTTP
+            # useful, because even at first boot, Odoo might expose this API even if the database is not properly setup !
             initialDelaySeconds: 30
             periodSeconds: 10
             successThreshold: 1
+            timeoutSeconds: 5
+
+          # copied from bitnami/odoo's helm
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 600
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: http
             timeoutSeconds: 5 #}
 
           volumeMounts:
             - name: data
-              mountPath: /var/lib/odoo
+              mountPath: "{{ k8s__odoo_community__odoo_instance_data_dir }}"
               readOnly: false
             - name: config
               mountPath: /etc/odoo
@@ -79,12 +63,6 @@ spec:
             - name: longpolling
               containerPort: 8072
               protocol: TCP
-
-          envFrom:
-            - secretRef:
-                name: odoo
-            - configMapRef:
-                name: odoo
 
       restartPolicy: Always
 
