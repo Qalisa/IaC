@@ -78,6 +78,7 @@ iac__all_domains: "{{ [iac__root_domain] + iac__alt_domains }}"
 
 #
 iac__prefered_lang__sub: "{{ iac__prefered_lang | split('_') | first }}"
+iac__prefered_lang__country: "{{ iac__prefered_lang | split('_') | last }}"
 
 # any mail users created should not be below this number, per convention and prevent overlaping specific users
 iac__mail_users__uid_base: 1000

@@ -20,8 +20,16 @@ k8s__odoo_community__odoo_instance__db_name: odoo1
 k8s__odoo_community__odoo_instance__jsonrpc: http://odoo.{{ k8s__odoo_community__namespace }}.{{ iac__svc_cluster_host }}/jsonrpc
 
 # these are the default, that will be replaced
-k8s__odoo_community__odoo_instance__admin_username: admin
-k8s__odoo_community__odoo_instance__admin_password: admin
+k8s__odoo_community__odoo_instance__default__admin_username: admin
+k8s__odoo_community__odoo_instance__default__admin_password: admin
+k8s__odoo_community__odoo_instance__default__company_name: My Company
+
+#
+k8s__odoo_community__odoo_instance__wanted_locale: "{{ iac__prefered_lang__country }}"
+
+#
+k8s__odoo_community__odoo_instance__admin_username: "{{ iac__postmaster_email }}"
+k8s__odoo_community__odoo_instance__admin_password: "{{ iac__postmaster_password }}"
 
 k8s__odoo_community__odoo_instance__data_dir: /var/lib/odoo
 k8s__odoo_community__odoo_instance__addons_dir: /mnt/extra-addons

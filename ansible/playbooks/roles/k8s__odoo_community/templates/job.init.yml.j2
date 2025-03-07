@@ -20,6 +20,8 @@ spec:
           args:
             - '-i'
             - {{ k8s__odoo_community__odoo_included_modules | join(',') | quote }}
+            - --load-language
+            - {{ iac__prefered_lang }}
             - --stop-after-init
           securityContext:
             runAsUser: 0

@@ -5,5 +5,8 @@
 - name: Install Odoo
   ansible.builtin.import_tasks: setup.odoo.yml
 
+- name: Update default credentials (Only run this once !)
+  ansible.builtin.import_tasks: credentials.odoo.yml
+
 - name: Configure Odoo
   ansible.builtin.import_tasks: configure.odoo.yml
