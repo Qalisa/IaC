@@ -29,7 +29,6 @@
           - "{{ k8s__odoo_community__odoo_instance__db_name }}"
           - "{{ k8s__odoo_community__odoo_instance__admin_username }}"
           - "{{ k8s__odoo_community__odoo_instance__admin_password }}"
-      id: 1
     return_content: true
   register: login_response
   no_log: true
@@ -40,10 +39,119 @@
   when: login_response.json.result is defined
 
 ##
-## UPDATE COMPAGNY DEFAULT COUNTRY
+## Activate currency
 ##
 
-- name: Search for default company (adjust name if needed)
+- name: Find currency ID
+  ansible.builtin.uri:
+    url: "{{ k8s__odoo_community__odoo_instance__jsonrpc }}"
+    method: POST
+    body_format: json
+    body:
+      jsonrpc: "2.0"
+      method: "call"
+      params:
+        service: "object"
+        method: "execute_kw"
+        args:
+          - "{{ k8s__odoo_community__odoo_instance__db_name }}"
+          - "{{ user_id }}"
+          - "{{ k8s__odoo_community__odoo_instance__admin_password }}"
+          - "res.currency"
+          - "search"
+          - [[["name", "=", "{{ k8s__odoo_community__odoo_instance__wanted_currency }}"]]]
+          - {"context": {"active_test": false}, "limit": 1}
+    return_content: true
+  register: currency_search
+  no_log: true
+
+- name: Extract Currency ID
+  ansible.builtin.set_fact:
+    currency_id: "{{ currency_search.json.result.0 }}"
+  when: currency_search.json.result | default([]) | length > 0
+
+- name: Activate currency
+  ansible.builtin.uri:
+    url: "{{ k8s__odoo_community__odoo_instance__jsonrpc }}"
+    method: POST
+    body_format: json
+    body:
+      jsonrpc: "2.0"
+      method: "call"
+      params:
+        service: "object"
+        method: "execute"
+        args:
+          - "{{ k8s__odoo_community__odoo_instance__db_name }}"
+          - "{{ user_id }}"
+          - "{{ k8s__odoo_community__odoo_instance__admin_password }}"
+          - "res.currency"
+          - "write"
+          - ["{{ currency_id }}"]  # Use the ID from currency_search
+          - {"active": true}
+    return_content: true
+  when:
+    - currency_search.json.result | default([]) | length > 0
+
+##
+## UPDATE ACCOUNTING
+##
+
+# Load wanted Chart of Accounts
+- name: Find Chart of Accounts template
+  ansible.builtin.uri:
+    url: "{{ k8s__odoo_community__odoo_instance__jsonrpc }}"
+    method: POST
+    body_format: json
+    body:
+      jsonrpc: "2.0"
+      method: "call"
+      params:
+        service: "object"
+        method: "execute"
+        args:
+          - "{{ k8s__odoo_community__odoo_instance__db_name }}"
+          - "{{ user_id }}"
+          - "{{ k8s__odoo_community__odoo_instance__admin_password }}"
+          - "account.chart.template"
+          - "search"
+          - [["name", "ilike", "{{ k8s__odoo_community__odoo_instance__wanted_chart_of_account }}"]]
+    return_content: true
+  register: coa_search
+  no_log: true
+
+- name: Extract CoA template ID
+  ansible.builtin.set_fact:
+    coa_template_id: "{{ coa_search.json.result.0 }}"
+  when: coa_search.json.result | default([]) | length > 0
+
+- name: Install wanted Chart of Accounts
+  ansible.builtin.uri:
+    url: "{{ k8s__odoo_community__odoo_instance__jsonrpc }}"
+    method: POST
+    body_format: json
+    body:
+      jsonrpc: "2.0"
+      method: "call"
+      params:
+        service: "object"
+        method: "execute"
+        args:
+          - "{{ k8s__odoo_community__odoo_instance__db_name }}"
+          - "{{ user_id }}"
+          - "{{ k8s__odoo_community__odoo_instance__admin_password }}"
+          - "account.chart.template"
+          - "try_loading_for_current_company"
+          - [["1"]]  # Critical: Pass as a list of lists
+          - {}
+    return_content: true
+  no_log: true
+
+##
+## UPDATE COMPAGNY data
+##
+
+- name: Search for default company
   ansible.builtin.uri:
     url: "{{ k8s__odoo_community__odoo_instance__jsonrpc }}"
     method: POST
@@ -61,7 +169,6 @@
           - "res.company"
           - "search"
           - [["name", "=", "{{ k8s__odoo_community__odoo_instance__default__company_name }}"]]  # Default name; adjust as needed
-      id: 2
     return_content: true
   register: company_search_response
   no_log: true
@@ -89,7 +196,6 @@
           - "res.country"
           - "search"
           - [["code", "=", "{{ k8s__odoo_community__odoo_instance__wanted_locale }}"]]
-      id: 3
     return_content: true
   register: country_search_response
   no_log: true
@@ -99,7 +205,7 @@
     lang_id: "{{ country_search_response.json.result.0 }}"
   when: country_search_response.json.result | default([]) | length > 0
 
-- name: Update company's country to France
+- name: Update company
   ansible.builtin.uri:
     url: "{{ k8s__odoo_community__odoo_instance__jsonrpc }}"
     method: POST
@@ -117,8 +223,8 @@
           - "res.company"
           - "write"
           - "{{ company_id }}"
-          - country_id: "{{ lang_id }}"
-      id: 4
+          - { "country_id": "{{ lang_id }}", "currency_id": "{{ currency_id }}", "account_fiscal_country_id": "{{ lang_id }}"}
     return_content: true
-  when: company_id is defined and lang_id is defined
+  when: company_id is defined and lang_id is defined and currency_id is defined
+  register: caca
   no_log: true

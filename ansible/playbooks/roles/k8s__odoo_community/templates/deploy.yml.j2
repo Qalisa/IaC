@@ -33,9 +33,8 @@ spec:
               path: /web/health
               port: http
               scheme: HTTP
-            initialDelaySeconds: 30
             periodSeconds: 10
-            successThreshold: 3
+            successThreshold: 1
             timeoutSeconds: 10
 
           # copied from bitnami/odoo's helm
