@@ -1,1 +1,56 @@
-odoo -i account -w odoo -r odoo -d /var/lib/odoo
+---
+- name: Authenticate to Odoo to get UID
+  ansible.builtin.uri:
+    url: "{{ k8s__odoo_community__odoo_instance__jsonrpc }}"
+    method: POST
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "jsonrpc": "2.0",
+        "method": "call",
+        "params": {
+          "service": "common",
+          "method": "login",
+          "args": ["{{
+            k8s__odoo_community__odoo_instance__db_name
+          }}", "{{
+            k8s__odoo_community__odoo_instance__admin_username
+          }}", "{{
+            k8s__odoo_community__odoo_instance__admin_password
+          }}"]
+        },
+        "id": 1
+      }
+  register: login_response
+  failed_when: login_response.json.result is not defined or login_response.json.result == false
+
+- name: Update admin user's email address
+  ansible.builtin.uri:
+    url: "{{ k8s__odoo_community__odoo_instance__jsonrpc }}"
+    method: POST
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "jsonrpc": "2.0",
+        "method": "call",
+        "params": {
+          "service": "object",
+          "method": "execute_kw",
+          "args": [
+            "{{ k8s__odoo_community__odoo_instance__db_name }}",
+            {{ login_response.json.result }},
+            "{{ k8s__odoo_community__odoo_instance__admin_password }}",
+            "res.users",
+            "write",
+            [[{{ login_response.json.result }}]],
+            {"login": "{{ iac__postmaster_email }}", "password": "{{ iac__postmaster_password }}"}
+          ]
+        },
+        "id": 2
+      }
+  register: update_response
+  failed_when: update_response.json.error is defined

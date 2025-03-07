@@ -17,21 +17,18 @@ spec:
       labels:
         app: odoo
     spec:
+      restartPolicy: Always
       containers:
         - name: odoo
           image: odoo:latest
           imagePullPolicy: IfNotPresent
-          # should only be ran once. If not, would reset modules at each startup !!
-          args: 
-            - '-i'
-            - "{{ k8s__odoo_community__odoo_included_modules | join(',') }}"
           securityContext:
             runAsUser: 0 # required
             runAsGroup: 0 # required
 
           # copied from bitnami/odoo's helm
           readinessProbe:
-            # failureThreshold: 12
+            failureThreshold: 12
             httpGet:
               path: /web/health
               port: http
@@ -39,7 +36,7 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 10
             successThreshold: 3
-            timeoutSeconds: {{ 60 * 5 }} # maximize it as timeout is the default behavior while setting up modules
+            timeoutSeconds: 10
 
           # copied from bitnami/odoo's helm
           livenessProbe:
@@ -53,11 +50,11 @@ spec:
 
           volumeMounts:
             - name: data
-              mountPath: "{{ k8s__odoo_community__odoo_instance_data_dir }}"
+              mountPath: "{{ k8s__odoo_community__odoo_instance__data_dir }}"
               subpath: data
               readOnly: false
             - name: data
-              mountPath: "{{ k8s__odoo_community__odoo_instance_addons_dir }}"
+              mountPath: "{{ k8s__odoo_community__odoo_instance__addons_dir }}"
               subpath: extra-addons
             - name: config
               mountPath: /etc/odoo
@@ -70,9 +67,6 @@ spec:
             - name: longpolling
               containerPort: 8072
               protocol: TCP
-
-      restartPolicy: Always
-
       volumes:
         # PVCs
         - name: data

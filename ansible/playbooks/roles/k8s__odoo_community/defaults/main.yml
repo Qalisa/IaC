@@ -16,9 +16,15 @@ k8s__odoo_community__db__config__password: odoo
 k8s__odoo_community__db__config__host: "{{ k8s__odoo_community__db__name }}.{{ k8s__odoo_community__namespace }}.{{ iac__svc_cluster_host }}"
 
 # Name of the "database" that Odoo will create on its own; must be separate from previous db names
-k8s__odoo_community__odoo_instance_db_name: odoo1
-k8s__odoo_community__odoo_instance_data_dir: /var/lib/odoo
-k8s__odoo_community__odoo_instance_addons_dir: /mnt/extra-addons
+k8s__odoo_community__odoo_instance__db_name: odoo1
+k8s__odoo_community__odoo_instance__jsonrpc: http://odoo.{{ k8s__odoo_community__namespace }}.{{ iac__svc_cluster_host }}/jsonrpc
+
+# these are the default, that will be replaced
+k8s__odoo_community__odoo_instance__admin_username: admin
+k8s__odoo_community__odoo_instance__admin_password: admin
+
+k8s__odoo_community__odoo_instance__data_dir: /var/lib/odoo
+k8s__odoo_community__odoo_instance__addons_dir: /mnt/extra-addons
 
 #
 k8s__odoo_community__odoo_included_modules: ['contacts', 'stock', 'account', 'sale_management']
