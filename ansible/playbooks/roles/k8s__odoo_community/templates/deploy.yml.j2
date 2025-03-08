@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  namespace: "{{ k8s__odoo_community__namespace }}"
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    # will wait for old pod to shutdown completely before runing new pod. Prevents logs to be filled with warnings about lockfiles
+    type: Recreate
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: odoo
+          image: odoo:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0 # required
+            runAsGroup: 0 # required
+
+          # copied from bitnami/odoo's helm
+          readinessProbe:
+            failureThreshold: 20
+            httpGet:
+              path: /web/health
+              port: http
+              scheme: HTTP
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 10
+
+          # copied from bitnami/odoo's helm
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 600
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: http
+            timeoutSeconds: 5
+
+          volumeMounts:
+            - name: data
+              mountPath: "{{ k8s__odoo_community__odoo_instance__data_dir }}"
+              subpath: data
+              readOnly: false
+            - name: data
+              mountPath: "{{ k8s__odoo_community__odoo_instance__addons_dir }}"
+              subpath: extra-addons
+            - name: config
+              mountPath: /etc/odoo
+              readOnly: true
+
+          ports:
+            - name: http
+              containerPort: 8069
+              protocol: TCP
+            - name: longpolling
+              containerPort: 8072
+              protocol: TCP
+      volumes:
+        # PVCs
+        - name: data
+          persistentVolumeClaim:
+            claimName: odoo
+        - name: config
+          secret:
+            secretName: odoo

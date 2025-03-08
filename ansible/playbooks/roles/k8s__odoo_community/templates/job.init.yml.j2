@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: odoo-init
+  namespace: "{{ k8s__odoo_community__namespace }}"
+spec:
+  # Optionally, set a backoff limit to control retries (default is 6)
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: odoo
+          image: odoo:latest
+          imagePullPolicy: IfNotPresent
+            # https://github.com/odoo/odoo/blob/18.0/odoo/tools/config.py
+            # https://odoo-development.readthedocs.io/en/latest/index.html
+          args:
+            - '-i'
+            - {{ k8s__odoo_community__odoo_included_modules | join(',') | quote }}
+            - --load-language
+            - {{ iac__prefered_lang }}
+            - --stop-after-init
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: data
+              mountPath: "{{ k8s__odoo_community__odoo_instance__data_dir }}"
+              subPath: data
+              readOnly: false
+            - name: data
+              mountPath: "{{ k8s__odoo_community__odoo_instance__addons_dir }}"
+              subPath: extra-addons
+            - name: config
+              mountPath: /etc/odoo
+              readOnly: true
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: odoo
+        - name: config
+          secret:
+            secretName: odoo
