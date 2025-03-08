@@ -28,12 +28,12 @@ spec:
 
           # copied from bitnami/odoo's helm
           readinessProbe:
-            failureThreshold: 12
+            failureThreshold: 20
             httpGet:
               path: /web/health
               port: http
               scheme: HTTP
-            periodSeconds: 10
+            periodSeconds: 3
             successThreshold: 1
             timeoutSeconds: 10
 

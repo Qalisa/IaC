@@ -27,7 +27,7 @@ k8s__odoo_community__odoo_instance__default__company_name: My Company
 #
 k8s__odoo_community__odoo_instance__wanted_locale: "{{ iac__prefered_lang__country }}"
 k8s__odoo_community__odoo_instance__wanted_currency: EUR
-k8s__odoo_community__odoo_instance__wanted_chart_of_account: France
+k8s__odoo_community__odoo_instance__wanted_coa: France
 
 #
 k8s__odoo_community__odoo_instance__admin_username: "{{ iac__postmaster_email }}"
@@ -36,15 +36,10 @@ k8s__odoo_community__odoo_instance__admin_password: "{{ iac__postmaster_password
 k8s__odoo_community__odoo_instance__data_dir: /var/lib/odoo
 k8s__odoo_community__odoo_instance__addons_dir: /mnt/extra-addons
 
-#
 k8s__odoo_community__odoo_included_modules: [
-  'base',
-  'l10n_{{ iac__prefered_lang__sub }}',
+  'l10n_{{ iac__prefered_lang__sub }}_account',
   'contacts',
   'product',
-  # 'stock',
-  'account',
-  # 'l10n_{{ iac__prefered_lang__sub }}_account',
   'sale_management'
 ]
 

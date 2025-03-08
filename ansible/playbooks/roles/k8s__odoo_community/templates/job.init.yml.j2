@@ -16,7 +16,8 @@ spec:
         - name: odoo
           image: odoo:latest
           imagePullPolicy: IfNotPresent
-          # Arguments to run the container; they must match the expected command line behavior.
+            # https://github.com/odoo/odoo/blob/18.0/odoo/tools/config.py
+            # https://odoo-development.readthedocs.io/en/latest/index.html
           args:
             - '-i'
             - {{ k8s__odoo_community__odoo_included_modules | join(',') | quote }}
