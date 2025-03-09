@@ -32,11 +32,7 @@
       config:
         issuer: http://{{ k8s__calcom__dex__internal_hostname }}
         storage:
-          type: kubernetes
-          config:
-            inCluster: true
-        web:
-          http: 0.0.0.0:5556
+          type: memory
 
         staticClients:
           - id: "{{ k8s__calcom__dex__oidc_id }}"
@@ -64,7 +60,7 @@
                 nameAttr: uid
                 preferredUsernameAttr: uid
               groupSearch:
-                baseDN: "ou={{ k8s__calcom__dex__group }},{{ iac__ldap__root_dc }} "
+                baseDN: "ou={{ k8s__calcom__dex__group }},{{ iac__ldap__root_dc }}"
                 filter: "(objectClass=groupOfNames)"
                 nameAttr: cn
                 userMatchers:

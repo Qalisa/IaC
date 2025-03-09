@@ -2,5 +2,8 @@
 - name: Install Dex
   ansible.builtin.import_tasks: setup.dex.yml
 
-- name: Install Calcom
+- name: Install Cal.com
   ansible.builtin.import_tasks: setup.calcom.yml
+
+# - name: Configure Cal.com
+#   ansible.builtin.import_tasks: configure.calcom.yml

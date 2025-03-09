@@ -14,3 +14,5 @@ k8s__calcom__dex__internal_hostname: dex.{{ k8s__calcom__namespace }}.{{ iac__sv
 k8s__calcom__dex__group: calcom
 k8s__calcom__dex__oidc_id: cal-com-oidc
 k8s__calcom__dex__oidc_secret: bl2dF.SFS23I;
+
+k8s__calcom__add_server_definitions_into_pgadmin: true
