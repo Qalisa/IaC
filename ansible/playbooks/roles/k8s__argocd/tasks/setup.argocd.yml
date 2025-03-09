@@ -47,7 +47,7 @@
               nameAttr: uid
               preferredUsernameAttr: uid
             groupSearch:
-              baseDN: "ou=argocd,{{ iac__ldap__root_dc }} "
+              baseDN: "ou={{ k8s__argocd__dex__group }},{{ iac__ldap__root_dc }} "
               filter: "(objectClass=groupOfNames)"
               nameAttr: cn
               userMatchers:

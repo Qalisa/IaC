@@ -1,0 +1,48 @@
+---
+- name: Install NS
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/secret.yml.j2
+      - path: templates/pvc.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: calcom
+    repo_url: https://pyrrha.github.io/calcom-helm
+    force_update: true
+
+- name: Install Cal.com w/ Helm
+  kubernetes.core.helm:
+    name: "{{ k8s__calcom__app__name }}"
+    chart_ref: calcom/calcom-stack
+    release_namespace: "{{ k8s__calcom__namespace }}"
+    create_namespace: false
+    wait: true
+    values:
+      postgresql:
+        auth:
+          username: "{{ k8s__calcom__postgres__db_user }}"
+          password: "{{ k8s__calcom__postgres__db_password }}"
+          database: "{{ k8s__calcom__postgres__db_name }}"
+        primary:
+          persistence:
+            storageClass: ""  # will use default storage class
+      calcom:
+        ingress:
+          enabled: true
+          annotations:
+            #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__calcom__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
+            ingress-dashboard/title: "{{ k8s__calcom_descr }}"
+            ingress-dashboard/description: Secure appointments with organization members
+            ingress-dashboard/logo-url: /favicon.ico
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+          hosts:
+            - host: "{{ k8s__calcom__external_hostname }}"
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific

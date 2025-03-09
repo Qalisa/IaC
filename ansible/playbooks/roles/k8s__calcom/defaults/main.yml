@@ -1,0 +1,16 @@
+---
+k8s__calcom__namespace: calcom
+k8s__calcom__app__name: calcom
+k8s__calcom__external_hostname: agenda.{{ iac__root_domain }}
+k8s__calcom__internal_hostname: "{{ k8s__calcom__app__name }}.{{ k8s__calcom__namespace }}.{{ iac__svc_cluster_host }}"
+k8s__calcom_descr: "Cal.com"
+
+k8s__calcom__postgres__internal_hostname: "{{ k8s__calcom__app__name }}-postgresql.{{ k8s__calcom__namespace }}.{{ iac__svc_cluster_host }}"
+k8s__calcom__postgres__db_name: calcom
+k8s__calcom__postgres__db_user: woudddoplibadoup
+k8s__calcom__postgres__db_password: password12334&.34!
+
+k8s__calcom__dex__internal_hostname: dex.{{ k8s__calcom__namespace }}.{{ iac__svc_cluster_host }}:5556
+k8s__calcom__dex__group: calcom
+k8s__calcom__dex__oidc_id: cal-com-oidc
+k8s__calcom__dex__oidc_secret: bl2dF.SFS23I;

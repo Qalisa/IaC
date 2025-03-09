@@ -1,0 +1,6 @@
+---
+- name: Install Dex
+  ansible.builtin.import_tasks: setup.dex.yml
+
+- name: Install Calcom
+  ansible.builtin.import_tasks: setup.calcom.yml
