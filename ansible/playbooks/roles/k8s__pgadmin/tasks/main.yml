@@ -55,3 +55,9 @@
           ingress-dashboard/logo-url: /favicon.ico
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
+
+- name: Install Zero-Trust configuration
+  tags: [zto-app]
+  kubernetes.core.k8s:
+    template:
+      - path: templates/caa.yml.j2
