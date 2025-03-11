@@ -5,6 +5,7 @@
       - path: templates/ns.yml.j2
       - path: templates/middleware.yml.j2
       - path: templates/pvc.yml.j2
+      - path: templates/pvc.addons.yml.j2
       - path: templates/secret.yml.j2
 
 - name: Wait for Longhorn to bind the PVC
