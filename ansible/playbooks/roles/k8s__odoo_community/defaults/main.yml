@@ -36,6 +36,9 @@ k8s__odoo_community__odoo_instance__admin_password: "{{ iac__postmaster_password
 k8s__odoo_community__odoo_instance__data_dir: /var/lib/odoo
 k8s__odoo_community__odoo_instance__addons_dir: /mnt/extra-addons
 
+k8s__odoo_community__addons__repo: https://github.com/odoomates/odooapps
+k8s__odoo_community__addons__branch: "18.0"
+
 k8s__odoo_community__odoo_included_modules: [
   'l10n_{{ iac__prefered_lang__sub }}_account',
   'contacts',
