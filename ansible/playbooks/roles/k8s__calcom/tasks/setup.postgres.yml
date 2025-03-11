@@ -12,9 +12,9 @@
 
 - name: Install Postgres w/ Helm
   kubernetes.core.helm:
-    name: "{{ k8s__listmonk__db_name }}"
+    name: postgresql
     chart_ref: bitnami/postgresql
-    release_namespace: "{{ k8s__listmonk__namespace }}"
+    release_namespace: "{{ k8s__calcom__namespace }}"
     create_namespace: false
     wait: true
     values:

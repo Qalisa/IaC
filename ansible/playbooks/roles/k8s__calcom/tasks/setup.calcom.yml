@@ -20,6 +20,8 @@
     create_namespace: false
     wait: true
     values:
+      image:
+        tag: v5.0.15
       ingress:
         enabled: true
         annotations:
@@ -32,6 +34,8 @@
           ingress-dashboard/logo-url: /favicon.ico
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
+          #
+          traefik.ingress.kubernetes.io/preserve-host: "true"
         hosts:
           - host: "{{ k8s__calcom__external_hostname }}"
             paths:
