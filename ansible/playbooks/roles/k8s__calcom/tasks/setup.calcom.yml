@@ -26,7 +26,7 @@
         enabled: true
         annotations:
           #
-          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__calcom__external_hostname }}"
+          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__calcom__external_hostname__admin }}, {{ k8s__calcom__external_hostname__booking }}"
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
           #
           ingress-dashboard/title: "{{ k8s__calcom_descr }}"
@@ -37,7 +37,17 @@
           #
           traefik.ingress.kubernetes.io/preserve-host: "true"
         hosts:
-          - host: "{{ k8s__calcom__external_hostname }}"
+          - host: "{{ k8s__calcom__external_hostname__booking }}"
             paths:
               - path: /
                 pathType: ImplementationSpecific
+          - host: "{{ k8s__calcom__external_hostname__admin }}"
+            paths:
+              - path: /
+                pathType: ImplementationSpecific
+
+- name: Install Zero-Trust configuration
+  tags: [zto-app]
+  kubernetes.core.k8s:
+    template:
+      - path: templates/calcom/caa.yml.j2

@@ -1,7 +1,11 @@
 ---
 k8s__calcom__namespace: calcom
 k8s__calcom__app__name: calcom
-k8s__calcom__external_hostname: agenda.{{ iac__root_domain }}
+
+k8s__calcom__external_hostname__admin__stub: admin-agenda
+k8s__calcom__external_hostname__admin: "{{ k8s__calcom__external_hostname__admin__stub }}.{{ iac__root_domain }}"
+k8s__calcom__external_hostname__booking: agenda.{{ iac__root_domain }}
+
 k8s__calcom__internal_hostname: "{{ k8s__calcom__app__name }}.{{ k8s__calcom__namespace }}.{{ iac__svc_cluster_host }}"
 k8s__calcom_descr: "Cal.com"
 
