@@ -31,6 +31,10 @@ iac__ldap__groups__yaml: |-
     - groupName: admin
       members:
         - cn={{ iac__postmaster_username }}
+  calcom:
+    - groupName: admin
+      members:
+        - cn={{ iac__postmaster_username }}
 
 #
 sentry__usermail: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
@@ -152,7 +156,7 @@ docker_mailserver__users_group_id: 5000
 
 #
 docker_mailserver__internal_smtp_server: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}.{{ iac__svc_cluster_host }}"
-docker_mailserver__internal_smtp_preferred_port: 587
+docker_mailserver__internal_smtp_preferred_port: 587 # STARTTLS SMTP port
 
 #
 openldap_stack__namespace: openldap-stack

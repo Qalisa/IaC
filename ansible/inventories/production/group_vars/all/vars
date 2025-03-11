@@ -143,10 +143,26 @@ harbor__registry_password: "{{ vault_harbor__registry_password }}"
 harbor__admin_password: "{{ vault_harbor__admin_password }}"
 harbor__secret_key: "{{ vault_harbor__secret_key }}" # must be 16 characters exactly !
 
+#
+calcom__auth_secret: "{{ vault_calcom__auth_secret }}"
+calcom__calendso_encryption_key: "{{ vault_calcom__calendso_encryption_key }}"
+
+#
+argocd__admin_password: "{{ vault_argocd__admin_password }}"
+
+
+# minimum 8 chars
+minio__tenant_password: "{{ vault_minio__tenant_password }}"
+minio__secret_access_key: "{{ minio__tenant_password }}"
+
+#
+docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__supervisord_ui__password }}"
+
 ###
 ### EXTERNAL
 ### 
 
+# get those from your backup storage provider
 longhorn__backup_storage__key_id: "{{ vault_longhorn__backup_storage__key_id }}"
 longhorn__backup_storage__access_key: "{{ vault_longhorn__backup_storage__access_key }}"
 
@@ -170,9 +186,6 @@ iac__cloudflare__zone_ids: "{{ vault_iac__cloudflare__zone_ids }}" # should corr
 # then generate a cert in CloudFlare dashboard > /ssl-tls/origin/certificate-form
 iac__cloudflare__origin_ca__cert: "{{ vault_iac__cloudflare__origin_ca__cert }}"
 iac__cloudflare__origin_ca__priv_key: "{{ vault_iac__cloudflare__origin_ca__priv_key }}"
-
-#
-argocd__admin_password: "{{ vault_argocd__admin_password }}"
 
 ### MAKE SURE GITHUB APP HAS BELOW RIGHTS:
 # +> https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential
@@ -205,15 +218,9 @@ github_actions_secrets_operator__github_app__priv_key: "{{ vault_github_actions_
 cert_manager__zerossl__eab_kid: "{{ u_vault_cert_manager__zerossl__eab_kid }}"
 cert_manager__zerossl__eab_hmac_key: "{{ vault_cert_manager__zerossl__eab_hmac_key }}"
 
-# minimum 8 chars
-minio__tenant_password: "{{ vault_minio__tenant_password }}"
-minio__secret_access_key: "{{ minio__tenant_password }}"
 
 #
 sentry__github_clientId: "{{ vault_sentry__github_clientId }}"
 sentry__github_clientSecret: "{{ vault_sentry__github_clientSecret }}"
 sentry__github_privateKey: "{{ vault_sentry__github_privateKey }}"
 sentry__github_webhookSecret: "{{ vault_sentry__github_webhookSecret }}"
-
-#
-docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__supervisord_ui__password }}"

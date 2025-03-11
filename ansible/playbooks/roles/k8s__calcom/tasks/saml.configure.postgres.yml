@@ -1,0 +1,31 @@
+---
+- name: Install prerequisites to use "community.postgresql.postgresql_db"
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    package:
+      - postgresql
+      - libpq-dev
+      - python3-psycopg2
+
+- name: Create Database for SAML
+  community.postgresql.postgresql_db:
+    login_password: "{{ k8s__calcom__postgres__db_password }}"
+    login_host: "{{ k8s__calcom__postgres__internal_hostname }}"
+    name: "{{ k8s__calcom__saml_db_name }}"
+    owner: "{{ k8s__calcom__postgres__db_user }}"
+
+#
+- name: Add server definition for pgadmin
+  tags: [pgadmin]
+  when: k8s__calcom__add_server_definitions_into_pgadmin
+  ansible.builtin.include_role:
+    name: utilities__pgadmin
+    tasks_from: add_server_definition
+  vars:
+    utilities__pgadmin__add_server_definition__id: calcom-saml
+    utilities__pgadmin__add_server_definition__name: Cal.com - SAML
+    utilities__pgadmin__add_server_definition__host: "{{ k8s__calcom__postgres__internal_hostname }}"
+    utilities__pgadmin__add_server_definition__maintenance_db: "{{ k8s__calcom__saml_db_name }}"
+    utilities__pgadmin__add_server_definition__username: "postgres"
+    utilities__pgadmin__add_server_definition__password: "{{ k8s__calcom__postgres__db_password }}"

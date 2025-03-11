@@ -1,0 +1,43 @@
+---
+- name: Install NS & Secret & PVC
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/calcom/secret.yml.j2
+      - path: templates/calcom/pvc.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: calcom
+    repo_url: https://pyrrha.github.io/calcom-helm
+    force_update: true
+
+- name: Install Cal.com w/ Helm
+  kubernetes.core.helm:
+    name: "{{ k8s__calcom__app__name }}"
+    chart_ref: calcom/calcom
+    release_namespace: "{{ k8s__calcom__namespace }}"
+    create_namespace: false
+    wait: true
+    values:
+      image:
+        tag: v5.0.15
+      ingress:
+        enabled: true
+        annotations:
+          #
+          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__calcom__external_hostname }}"
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+          #
+          ingress-dashboard/title: "{{ k8s__calcom_descr }}"
+          ingress-dashboard/description: Secure appointments with organization members
+          ingress-dashboard/logo-url: /favicon.ico
+          ingress-dashboard/assume-tls: "true"
+          ingress-dashboard/hide: "false"
+          #
+          traefik.ingress.kubernetes.io/preserve-host: "true"
+        hosts:
+          - host: "{{ k8s__calcom__external_hostname }}"
+            paths:
+              - path: /
+                pathType: ImplementationSpecific

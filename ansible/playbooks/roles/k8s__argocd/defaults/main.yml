@@ -2,6 +2,9 @@
 k8s__argocd__server_pod_name: argocd-server
 
 #
+k8s__argocd__dex__group: argocd
+
+#
 k8s__argocd__external_hostname: argocd.{{ iac__root_domain }}
 
 #
