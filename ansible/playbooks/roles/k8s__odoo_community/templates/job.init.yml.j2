@@ -12,21 +12,6 @@ spec:
         app: odoo
     spec:
       restartPolicy: Never
-      initContainers:
-        - name: odooapps-addons
-          image: registry.k8s.io/git-sync/git-sync:v4.4.0
-          args:
-            - "--repo={{ k8s__odoo_community__addons__repo }}"
-            - "--ref={{ k8s__odoo_community__addons__branch }}"
-            - "--root=/tmp/git"
-            - "--period=30s"
-            - "--depth=1"
-            - "--one-time"
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - mountPath: /tmp/git
-              name: odooapps-addons
       containers:
         - name: odoo
           image: odoo:latest
@@ -47,10 +32,6 @@ spec:
               mountPath: "{{ k8s__odoo_community__odoo_instance__data_dir }}"
               subPath: data
               readOnly: false
-            - name: odooapps-addons
-              mountPath: "{{ k8s__odoo_community__odoo_instance__addons_dir }}"
-              subPath: odooapps
-              readOnly: true
             - name: config
               mountPath: /etc/odoo
               readOnly: true
@@ -61,6 +42,3 @@ spec:
         - name: config
           secret:
             secretName: odoo
-        - name: odooapps-addons
-          persistentVolumeClaim:
-            claimName: odooapps-addons

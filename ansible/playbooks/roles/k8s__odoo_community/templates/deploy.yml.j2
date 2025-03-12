@@ -19,10 +19,10 @@ spec:
     spec:
       restartPolicy: Always
       initContainers:
-        - name: odooapps-addons
+        - name: odoomates-addons
           image: registry.k8s.io/git-sync/git-sync:v4.4.0
           args:
-            - "--repo={{ k8s__odoo_community__addons__repo }}"
+            - "--repo={{ k8s__odoo_community__addons__repo__odoomates }}"
             - "--ref={{ k8s__odoo_community__addons__branch }}"
             - "--root=/tmp/git"
             - "--period=30s"
@@ -32,7 +32,21 @@ spec:
             runAsUser: 0
           volumeMounts:
             - mountPath: /tmp/git
-              name: odooapps-addons
+              name: extra-addons
+        - name: qalisa-addons
+          image: registry.k8s.io/git-sync/git-sync:v4.4.0
+          args:
+            - "--repo={{ k8s__odoo_community__addons__repo__qalisa }}"
+            - "--ref={{ k8s__odoo_community__addons__branch }}"
+            - "--root=/tmp/git"
+            - "--period=30s"
+            - "--depth=1"
+            - "--one-time"
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /tmp/git
+              name: extra-addons
 
       containers:
         - name: odoo
@@ -68,9 +82,8 @@ spec:
               mountPath: "{{ k8s__odoo_community__odoo_instance__data_dir }}"
               subPath: data
               readOnly: false
-            - name: odooapps-addons
+            - name: extra-addons
               mountPath: "{{ k8s__odoo_community__odoo_instance__addons_dir }}"
-              subPath: odooapps
               readOnly: true
             - name: config
               mountPath: /etc/odoo
@@ -91,6 +104,6 @@ spec:
         - name: config
           secret:
             secretName: odoo
-        - name: odooapps-addons
+        - name: extra-addons
           persistentVolumeClaim:
-            claimName: odooapps-addons
+            claimName: extra-addons

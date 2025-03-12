@@ -37,13 +37,3 @@
   until: job_info.resources[0].status.succeeded | default(0) | int >= 1
   retries: 100     # Adjust number of retries based on expected job duration
   delay: 10        # Delay between retries (in seconds)
-
-###
-###
-
-- name: Run Odoo
-  kubernetes.core.k8s:
-    template:
-      - path: templates/service.yml.j2
-      - path: templates/deploy.yml.j2
-      - path: templates/ingress.yml.j2
