@@ -162,7 +162,10 @@ docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__superv
 ### EXTERNAL
 ### 
 
-# get those from your backup storage provider
+# https://cal.com/docs/self-hosting/apps/install-apps/google
+calcom__google_api_credentials: "{{ vault_calcom__google_api_credentials }}"
+
+# get those from your backup storage provider
 longhorn__backup_storage__key_id: "{{ vault_longhorn__backup_storage__key_id }}"
 longhorn__backup_storage__access_key: "{{ vault_longhorn__backup_storage__access_key }}"
 
