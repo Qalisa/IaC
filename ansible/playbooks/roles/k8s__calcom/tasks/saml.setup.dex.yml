@@ -37,7 +37,7 @@
         staticClients:
           - id: "{{ k8s__calcom__dex__oidc_id }}"
             redirectURIs:
-              - https://{{ k8s__calcom__external_hostname__admin }}/auth/callback  # Must match Cal.com's URL
+              - https://{{ k8s__calcom__external_hostname }}/auth/callback  # Must match Cal.com's URL
             name: "{{ k8s__calcom_descr }}"
             secret: "{{ k8s__calcom__dex__oidc_secret }}"
 
