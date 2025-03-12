@@ -143,8 +143,12 @@ harbor__registry_password: "{{ vault_harbor__registry_password }}"
 harbor__admin_password: "{{ vault_harbor__admin_password }}"
 harbor__secret_key: "{{ vault_harbor__secret_key }}" # must be 16 characters exactly !
 
-#
+# https://github.com/calcom/cal.com/blob/main/.env.example#L80
+# "openssl rand -base64 32"
 calcom__auth_secret: "{{ vault_calcom__auth_secret }}"
+
+# https://github.com/calcom/cal.com/blob/main/.env.example#L97
+# "openssl rand -base64 32"
 calcom__calendso_encryption_key: "{{ vault_calcom__calendso_encryption_key }}"
 
 #

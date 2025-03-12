@@ -6,6 +6,7 @@ metadata:
 spec:
   # Optionally, set a backoff limit to control retries (default is 6)
   backoffLimit: 1
+  ttlSecondsAfterFinished: 100 # will clean up the job after 100 seconds
   template:
     metadata:
       labels:
@@ -26,6 +27,7 @@ spec:
             runAsUser: 0
           volumeMounts:
             - mountPath: /tmp/git
+              subPath: odoomates
               name: extra-addons
         - name: qalisa-addons
           image: registry.k8s.io/git-sync/git-sync:v4.4.0
@@ -40,6 +42,7 @@ spec:
             runAsUser: 0
           volumeMounts:
             - mountPath: /tmp/git
+              subPath: qalisa
               name: extra-addons
 
       containers:
