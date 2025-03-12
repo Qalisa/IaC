@@ -35,15 +35,9 @@
           ingress-dashboard/assume-tls: "true"
           ingress-dashboard/hide: "false"
           #
-          traefik.ingress.kubernetes.io/preserve-host: "true" # prevents warnings on 404.tsx
+          traefik.ingress.kubernetes.io/preserve-host: "true" # prevents warnings on 404.tsx
         hosts:
           - host: "{{ k8s__calcom__external_hostname }}"
             paths:
               - path: /
                 pathType: ImplementationSpecific
-
-- name: Install Zero-Trust configuration
-  tags: [zto-app]
-  kubernetes.core.k8s:
-    template:
-      - path: templates/calcom/caa.yml.j2
