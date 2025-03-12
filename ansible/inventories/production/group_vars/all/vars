@@ -167,6 +167,7 @@ docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__superv
 ### 
 
 # https://cal.com/docs/self-hosting/apps/install-apps/google
+# https://console.cloud.google.com/apis/api/calendar-json.googleapis.com
 calcom__google_api_credentials: "{{ vault_calcom__google_api_credentials | string }}"
 
 # get those from your backup storage provider
