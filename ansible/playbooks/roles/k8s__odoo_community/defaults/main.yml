@@ -43,6 +43,6 @@ k8s__odoo_community__odoo_instance__addons_paths: >-
   {{ k8s__odoo_community__odoo_instance__addons_dir }}/odoomates/odooapps,
   {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odoo-apps
 
-k8s__odoo_community__odoo_included_modules: ["l10n_{{ iac__prefered_lang__sub }}_account", "contacts", "product", "sale_management"]
+k8s__odoo_community__odoo_included_modules: ["l10n_{{ iac__prefered_lang__sub }}_account", "contacts", "sale_management"]
 #
 k8s__odoo_community__add_server_definitions_into_pgadmin: false
