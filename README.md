@@ -80,3 +80,8 @@ There is 2 services that are shipped with IaC but we do not recommend to use, bu
 ## ArgoCD - orchestration of organization-developped services
 To use ArgoCD, you need to provide an `app-of-apps` repository in your Github Organization (https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/). You'll kind the default name of said repo to create on `group_vars`'s `argocd__app_of_apps__repo_name`.
 You can use `Qalisa/argocd-repository` as template on how to use it in real-life example.
+
+## Odoo - in case of multiple database
+If and only if having multiple odoo databases on your postgres: when sending invoices, you might encounter 404 from your client, it is because `odoo.conf`'s `db_filter` is not configured correctly. You might want to only use one database per Odoo instance.
+
+https://github.com/Qalisa/IaC/issues/37
