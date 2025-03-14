@@ -41,7 +41,7 @@ k8s__odoo_community__addons__repo__qalisa: https://github.com/Qalisa/odoo-apps
 k8s__odoo_community__addons__branch: "18.0"
 k8s__odoo_community__odoo_instance__addons_paths: >-
   {{ k8s__odoo_community__odoo_instance__addons_dir }}/odoomates/odooapps,
-  {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odoo-apps
+  {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odoo-apps/addons
 
 k8s__odoo_community__odoo_included_modules: ["l10n_{{ iac__prefered_lang__sub }}_account", "contacts", "sale_management"]
 #
