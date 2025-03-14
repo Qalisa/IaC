@@ -85,3 +85,7 @@ You can use `Qalisa/argocd-repository` as template on how to use it in real-life
 If and only if having multiple odoo databases on your postgres: when sending invoices, you might encounter 404 from your client, it is because `odoo.conf`'s `db_filter` is not configured correctly. You might want to only use one database per Odoo instance.
 
 https://github.com/Qalisa/IaC/issues/37
+
+## Odoo - in case of backing up
+- You might want to disable postgres StatefulSet probes because of intensive backup operations might render it unresponsive (because bitnami's helm chart allocates too low ressources to it), which would result in an unwanted automatic-restart.
+- You also maybe want to disabe `odoo.conf`'s `db_name`, to see any other instances of backup'd databases 
