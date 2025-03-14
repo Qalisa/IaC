@@ -18,6 +18,11 @@
     create_namespace: false
     wait: true
     values:
+      primary:
+        livenessProbe:
+          # postgres might not respond under heavy load, which is frequent with odoo.
+          # A livenessProbe that fails would restart service automatically, behavior which we do not want
+          enabled: false
       auth:
         #
         postgresPassword: "{{ k8s__odoo_community__db__config__admin_password }}"
