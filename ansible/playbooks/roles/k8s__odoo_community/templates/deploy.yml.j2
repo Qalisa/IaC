@@ -23,7 +23,7 @@ spec:
           image: registry.k8s.io/git-sync/git-sync:v4.4.0
           args:
             - "--repo={{ k8s__odoo_community__addons__repo__odoomates }}"
-            - "--ref={{ k8s__odoo_community__addons__branch }}"
+            - "--ref={{ k8s__odoo_community__addons__branch__odoomates }}"
             - "--root=/tmp/git"
             - "--period=30s"
             - "--depth=1"
@@ -38,7 +38,7 @@ spec:
           image: registry.k8s.io/git-sync/git-sync:v4.4.0
           args:
             - "--repo={{ k8s__odoo_community__addons__repo__qalisa }}"
-            - "--ref={{ k8s__odoo_community__addons__branch }}"
+            - "--ref={{ k8s__odoo_community__addons__branch__qalisa }}"
             - "--root=/tmp/git"
             - "--period=30s"
             - "--depth=1"

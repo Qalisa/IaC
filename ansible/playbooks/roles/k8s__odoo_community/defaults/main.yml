@@ -37,8 +37,11 @@ k8s__odoo_community__odoo_instance__data_dir: /var/lib/odoo
 k8s__odoo_community__odoo_instance__addons_dir: /mnt/extra-addons
 
 k8s__odoo_community__addons__repo__odoomates: https://github.com/odoomates/odooapps
+k8s__odoo_community__addons__branch__odoomates: "18.0"
+
 k8s__odoo_community__addons__repo__qalisa: https://github.com/Qalisa/odoo-apps
-k8s__odoo_community__addons__branch: "18.0"
+k8s__odoo_community__addons__branch__qalisa: "18-0" # enhance compatibility with argocd
+
 k8s__odoo_community__odoo_instance__addons_paths: >-
   {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odooapps,
   {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odoo-apps/addons
