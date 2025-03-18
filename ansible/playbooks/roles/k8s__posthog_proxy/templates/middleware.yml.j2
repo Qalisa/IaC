@@ -1,0 +1,10 @@
+# https://posthog.com/docs/advanced/proxy
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: set-host-header
+  namespace: "{{ k8s__posthog_proxy__namespace }}"
+spec:
+  headers:
+    customRequestHeaders:
+      Host: "{{ k8s__posthog_proxy__vhost }}"

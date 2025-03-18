@@ -3,5 +3,6 @@
   kubernetes.core.k8s:
     template:
       - path: templates/ns.yml.j2
+      - path: templates/middleware.yml.j2
       - path: templates/svc.yml.j2
       - path: templates/ingress.yml.j2
