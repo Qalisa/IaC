@@ -5,6 +5,7 @@ metadata:
   name: gha-cache
   namespace: "{{ k8s__github_arc__systems_ns }}"
 spec:
+  revisionHistoryLimit: 0
   selector:
     matchLabels:
       app: gha-cache

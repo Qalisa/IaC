@@ -1,9 +1,0 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: posthog-headers
-  namespace: "{{ k8s__posthog_proxy__namespace }}"
-spec:
-  headers:
-    customRequestHeaders:
-      Host: "{{ k8s__posthog_proxy__vhost }}"

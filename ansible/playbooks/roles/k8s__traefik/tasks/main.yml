@@ -31,6 +31,10 @@
         - "--api.insecure=true"
       providers:
         allowCrossNamespace: true
+        kubernetesCRD:
+          allowExternalNameServices: true
+        kubernetesIngress:
+          allowExternalNameServices: true
       ports:
         web:
           forwardedHeaders:

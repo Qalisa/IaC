@@ -11,6 +11,7 @@ metadata:
     ignore-check.kube-linter.io/no-read-only-root-fs: >-
       There are too many files written to make the root FS read-only
 spec:
+  revisionHistoryLimit: 0
   replicas: 1
   strategy:
     # will wait for old pod to shutdown completely before runing new pod. Prevents logs to be filled with warnings about lockfiles
