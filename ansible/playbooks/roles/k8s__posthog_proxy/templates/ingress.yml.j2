@@ -5,12 +5,12 @@ metadata:
   namespace: "{{ k8s__posthog_proxy__namespace }}"
   annotations:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
-    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__posthog_proxy__external_hostname }}"
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__posthog_proxy__subdomain }}.{{ external_hostname }}"
     #
     traefik.ingress.kubernetes.io/router.middlewares: "{{ k8s__posthog_proxy__namespace }}-set-host-header@kubernetescrd"
 spec:
   rules:
-  - host: "{{ k8s__posthog_proxy__external_hostname }}"
+  - host: "{{ k8s__posthog_proxy__subdomain }}.{{ external_hostname }}"
     http:
       paths:
       - pathType: Prefix

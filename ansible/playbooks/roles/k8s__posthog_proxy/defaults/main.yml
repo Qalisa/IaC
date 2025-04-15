@@ -1,7 +1,7 @@
 ---
 k8s__posthog_proxy__namespace: posthog-proxy
 #
-k8s__posthog_proxy__external_hostname: relay.{{ iac__root_domain }}
+k8s__posthog_proxy__subdomain: relay
 #
 k8s__posthog_proxy__vhost: eu.i.posthog.com
 k8s__posthog_proxy__vhost__assets: eu-assets.i.posthog.com
