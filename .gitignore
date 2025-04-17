@@ -15,3 +15,5 @@ creds
 .cache
 
 **/ansible-navigator.log
+
+.DS_Store
