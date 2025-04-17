@@ -12,7 +12,7 @@ spec:
     encoding: PKCS1
     size: 2048
   dnsNames:
-    - {{ k8s__harbor__external_hostname }}
+    - {{ harbor__external_hostname }}
   issuerRef:
     name: "{{ iac__unproxied_certificate_issuer }}" # cannot be proxied by Cloudflare, letsencrypt or ZeroSSL required
     kind: ClusterIssuer

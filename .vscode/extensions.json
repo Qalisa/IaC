@@ -5,6 +5,7 @@
         "shd101wyy.markdown-preview-enhanced",
         "sanaajani.taskrunnercode",
         "actboy168.tasks",
-        "golang.go"
+        "golang.go",
+        "ms-kubernetes-tools.vscode-kubernetes-tools"
     ]
 }

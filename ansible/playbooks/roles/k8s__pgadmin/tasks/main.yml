@@ -1,0 +1,63 @@
+---
+- name: Install server definitions
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/serverdefs-secret.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: runix
+    repo_url: https://helm.runix.net
+    force_update: true
+
+- name: Install pgadmin w/ Helm
+  kubernetes.core.helm:
+    name: pgadmin
+    chart_ref: runix/pgadmin4
+    release_namespace: "{{ pgadmin__namespace }}"
+    create_namespace: false
+    wait: true
+    values:
+      image:
+        tag: "9.0"
+      strategy:
+        # Cleaner than rollout
+        type: Recreate
+      serverDefinitions:
+        enabled: true
+        resourceType: Secret
+        existingSecret: "{{ pgadmin__serverdef_secret_name }}"
+      env:
+        email: "{{ pgadmin__username_email }}"
+        password: "{{ pgadmin__password }}"
+        # MANDATORY HERE, default behavior makes "The CSRF token is missing. You need to refresh the page" issues when logged in
+        # https://stackoverflow.com/questions/64394628/csrf-token-is-missing-error-in-docker-pgadmin
+        variables:
+          - name: "PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT"
+            value: "False"
+          - name: "PGADMIN_CONFIG_WTF_CSRF_ENABLED"
+            value: "False"
+      ingress:
+        enabled: true
+        hosts:
+          - host: "{{ k8s__pgadmin__external_hostname }}"
+            paths:
+              - path: /
+                pathType: Prefix
+        annotations:
+          #
+          external-dns.alpha.kubernetes.io/hostname: "{{ k8s__pgadmin__external_hostname }}"
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+          #
+          ingress-dashboard/title: PgAdmin
+          ingress-dashboard/description: Access postgresql databases
+          ingress-dashboard/logo-url: /favicon.ico
+          ingress-dashboard/assume-tls: "true"
+          ingress-dashboard/hide: "false"
+
+- name: Install Zero-Trust configuration
+  tags: [zto-app]
+  kubernetes.core.k8s:
+    template:
+      - path: templates/caa.yml.j2

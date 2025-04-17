@@ -1,0 +1,6 @@
+---
+- name: Install github-actions-secrets-operator
+  ansible.builtin.import_tasks: setup.yml
+
+- name: Configure global
+  ansible.builtin.import_tasks: configure-global.yml

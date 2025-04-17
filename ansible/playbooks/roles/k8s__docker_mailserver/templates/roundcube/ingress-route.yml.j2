@@ -1,0 +1,20 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: redirect-to-webmail
+  namespace: "{{ docker_mailserver__namespace }}"
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: >- 
+        Host(`{{ k8s__docker_mailserver__external_hostname__imap }}`) || 
+        Host(`{{ k8s__docker_mailserver__external_hostname__smtp }}`) || 
+        Host(`{{ docker_mailserver__external_hostname }}`)
+      kind: Rule
+      services:
+        - name: roundcube
+          port: app
+      middlewares:
+        - name: redirect-to-webmail

@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: app
+  name: "{{ k8s__listmonk__app_name }}"
   namespace: "{{ k8s__listmonk__namespace }}"
   labels:
-    app: listmonk
+    app: "{{ k8s__listmonk__app_name }}"
 spec:
   selector:
-    app: listmonk
+    app: "{{ k8s__listmonk__app_name }}"
   ports:
-    - name: app
-      port: 9000
-      targetPort: app
+    - name: "{{ k8s__listmonk__app__port_name }}"
+      port: 80
+      targetPort: "{{ k8s__listmonk__app__port_name }}"
       protocol: TCP

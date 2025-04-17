@@ -4,6 +4,7 @@ metadata:
   name: lam
   namespace: "{{ openldap_stack__namespace }}"
 spec:
+  revisionHistoryLimit: 0
   selector:
     matchLabels:
       app: lam

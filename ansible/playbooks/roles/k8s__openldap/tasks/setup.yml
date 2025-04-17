@@ -1,0 +1,31 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: helm-openldap
+    repo_url: https://jp-gouin.github.io/helm-openldap/
+    force_update: true
+
+- name: Install OpenLDAP w/ Helm
+  kubernetes.core.helm:
+    name: "{{ openldap_stack__ldap_server_hostname }}"
+    chart_ref: helm-openldap/openldap-stack-ha
+    release_namespace: "{{ openldap_stack__namespace }}"
+    create_namespace: true
+    wait: true
+    values:
+      env:
+        LDAP_SKIP_DEFAULT_TREE: "yes"
+      replicaCount: 1
+      global:
+        ldapDomain: "{{ iac__ldap__root_domain }}"
+        adminPassword: "{{ iac__ldap__admin__bind_pw }}"
+        configPassword: "{{ iac__ldap__admin__bind_pw }}"
+      replication:
+        enabled: false
+      persistence:
+        enabled: true
+        size: "8Gi"
+      phpldapadmin:
+        enabled: false
+      ltb-passwd:
+        enabled: false

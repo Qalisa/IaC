@@ -1,0 +1,84 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: odoo-init
+  namespace: "{{ k8s__odoo_community__namespace }}"
+spec:
+  # Optionally, set a backoff limit to control retries (default is 6)
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 100 # will clean up the job after 100 seconds
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: odoomates-addons
+          image: registry.k8s.io/git-sync/git-sync:v4.4.0
+          args:
+            - "--repo={{ k8s__odoo_community__addons__repo__odoomates }}"
+            - "--ref={{ k8s__odoo_community__addons__branch__odoomates }}"
+            - "--root=/tmp/git"
+            - "--period=30s"
+            - "--depth=1"
+            - "--one-time"
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /tmp/git
+              subPath: odoomates
+              name: extra-addons
+        - name: qalisa-addons
+          image: registry.k8s.io/git-sync/git-sync:v4.4.0
+          args:
+            - "--repo={{ k8s__odoo_community__addons__repo__qalisa }}"
+            - "--ref={{ k8s__odoo_community__addons__branch__qalisa }}"
+            - "--root=/tmp/git"
+            - "--period=30s"
+            - "--depth=1"
+            - "--one-time"
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /tmp/git
+              subPath: qalisa
+              name: extra-addons
+
+      containers:
+        - name: odoo
+          image: odoo:latest
+          imagePullPolicy: IfNotPresent
+            # https://github.com/odoo/odoo/blob/18.0/odoo/tools/config.py
+            # https://odoo-development.readthedocs.io/en/latest/index.html
+          args:
+            - '-i'
+            - {{ k8s__odoo_community__odoo_included_modules | join(',') | quote }}
+            - --load-language
+            - {{ iac__prefered_lang }}
+            - --stop-after-init
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: data
+              mountPath: "{{ k8s__odoo_community__odoo_instance__data_dir }}"
+              subPath: data
+              readOnly: false
+            - name: extra-addons
+              mountPath: "{{ k8s__odoo_community__odoo_instance__addons_dir }}"
+              readOnly: true
+            - name: config
+              mountPath: /etc/odoo
+              readOnly: true
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: odoo
+        - name: config
+          secret:
+            secretName: odoo
+        - name: extra-addons
+          persistentVolumeClaim:
+            claimName: extra-addons

@@ -1,0 +1,16 @@
+---
+utilities__pgadmin__add_server_definition__id:
+utilities__pgadmin__add_server_definition__name:
+utilities__pgadmin__add_server_definition__host:
+utilities__pgadmin__add_server_definition__group: "Servers"
+utilities__pgadmin__add_server_definition__port: "5432"
+# default database to connect to
+utilities__pgadmin__add_server_definition__maintenance_db:
+utilities__pgadmin__add_server_definition__username: "postgres"
+utilities__pgadmin__add_server_definition__password:
+utilities__pgadmin__add_server_definition__sslmode: "prefer"
+# https://stackoverflow.com/a/69475874/3021058
+utilities__pgadmin__add_server_definition__passfile: "/pgpass"
+utilities__pgadmin__add_server_definition__wait: false
+#
+utilities__pgadmin__add_server_definition__for__usermail: "{{ pgadmin__username_email | regex_replace('@', '_') }}"

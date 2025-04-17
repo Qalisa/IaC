@@ -4,6 +4,7 @@
   kubernetes.core.helm_repository:
     name: harbor
     repo_url: https://helm.goharbor.io
+    force_update: true
 
 - name: Install prerequisites (Storage class / Persistent Volume / certificates)
   kubernetes.core.k8s:
@@ -29,7 +30,7 @@
           secretName: "{{ k8s__harbor__internal_tls_secret_name }}"
         portal:
           secretName: "{{ k8s__harbor__internal_tls_secret_name }}"
-      externalURL: https://{{ k8s__harbor__external_hostname }}
+      externalURL: https://{{ harbor__external_hostname }}
       harborAdminPassword: "{{ harbor__admin_password }}"
       secretKey: "{{ harbor__secret_key }}" # must be 16 characters long
       registry:
@@ -38,28 +39,28 @@
           password: "{{ harbor__registry_password }}"
       trivy:
         enabled: false
+      persistence:
+        enabled: true
+        # Setting it to "keep" to avoid removing PVCs during a helm delete
+        # operation. Leaving it empty will delete PVCs after the chart deleted
+        # (this does not apply for PVCs that are created for internal database
+        # and redis components, i.e. they are never deleted automatically)
+        resourcePolicy: ""
+        persistentVolumeClaim:
+          registry:
+            size: 20Gi # from 5Gi
       expose:
-        persistence:
-          enabled: true
-          # Setting it to "keep" to avoid removing PVCs during a helm delete
-          # operation. Leaving it empty will delete PVCs after the chart deleted
-          # (this does not apply for PVCs that are created for internal database
-          # and redis components, i.e. they are never deleted automatically)
-          resourcePolicy: ""
-          persistentVolumeClaim:
-            registry:
-              size: 20Gi # from 5Gi
         ingress:
           hosts:
-            core: "{{ k8s__harbor__external_hostname }}"
+            core: "{{ harbor__external_hostname }}"
           annotations:
             #
-            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__harbor__external_hostname }}"
+            external-dns.alpha.kubernetes.io/hostname: "{{ harbor__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
             #
             ingress-dashboard/title: Harbor - Private Docker Registry
             ingress-dashboard/description: Stores our organization private Docker Images
-            ingress-dashboard/logo-url: "https://{{ k8s__harbor__external_hostname }}/favicon.ico?v=2"
+            ingress-dashboard/logo-url: "https://{{ harbor__external_hostname }}/favicon.ico?v=2"
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
         tls:
@@ -67,3 +68,15 @@
           certSource: secret
           secret:
             secretName: "{{ k8s__harbor__cert_secret_name }}"
+
+###
+### Policies
+###
+
+- name: Install Kyverno ENV values into deployed Pods from Docker Images labels
+  tags: [kyverno-policy]
+  kubernetes.core.k8s:
+    template:
+      path: templates/policies/image-labels-into-pod-env.yml.j2
+      variable_start_string: "[["
+      variable_end_string: "]]"

@@ -1,0 +1,2 @@
+---
+k8s__pgadmin__external_hostname: pgadmin.{{ iac__root_domain }}

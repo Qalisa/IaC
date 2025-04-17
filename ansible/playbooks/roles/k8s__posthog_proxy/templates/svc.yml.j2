@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-proxy
+  namespace: "{{ k8s__posthog_proxy__namespace }}"
+spec:
+  type: ExternalName
+  externalName: "{{ k8s__posthog_proxy__vhost }}"
+  ports:
+  - name: https
+    protocol: TCP
+    port: 443
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-assets-proxy
+  namespace: "{{ k8s__posthog_proxy__namespace }}"
+spec:
+  type: ExternalName
+  externalName: "{{ k8s__posthog_proxy__vhost__assets }}"
+  ports:
+  - name: https
+    protocol: TCP
+    port: 443
+      

@@ -1,0 +1,8 @@
+---
+- name: Install global configuration
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/global/config.yml.j2
+      - path: templates/global/secret.yml.j2
+      - path: templates/global/_gass.yml.j2

@@ -6,6 +6,9 @@
         "**/ansible/playbooks/roles/**/{defaults,tasks,handlers,meta}/*.yml": "ansible",
     },
     "ansible.python.interpreterPath": "/usr/bin/python3",
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "always"
+    }
     // "ansible.validation.lint.arguments": "-vvv",
     // "ansible.python.interpreterPath": "[PLEASE SET THIS IN YOUR User Settings, NOT in Workspace Settings !]",
 }

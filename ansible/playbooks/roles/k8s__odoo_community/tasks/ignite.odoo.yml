@@ -1,0 +1,7 @@
+---
+- name: Run Odoo
+  kubernetes.core.k8s:
+    template:
+      - path: templates/service.yml.j2
+      - path: templates/deploy.yml.j2
+      - path: templates/ingress.yml.j2

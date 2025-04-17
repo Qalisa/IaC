@@ -1,0 +1,31 @@
+---
+- name: Install Cloudflare's secrets
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/cf/secret.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: external-dns
+    repo_url: https://kubernetes-sigs.github.io/external-dns/
+    force_update: true
+
+- name: Install External DNS
+  kubernetes.core.helm:
+    name: external-dns
+    chart_ref: external-dns/external-dns
+    release_namespace: "{{ k8s__external_dns__namespace }}"
+    create_namespace: false
+    wait: false
+    values:
+      domainFilters: "{{ iac__all_domains }}" # mandatory
+      registry: noop # https://kubernetes-sigs.github.io/external-dns/v0.14.1/registry/registry/
+      provider:
+        name: cloudflare
+      env:
+        - name: CF_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: cloudflare-api-creds
+              key: apiToken

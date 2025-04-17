@@ -69,5 +69,23 @@ By default, only 2 users are created: `postmaster` and `donotreply`, which are r
   - `Set Password` button to define a temporary password, that the user should change by using `https://pwd-ldap.<root_domain>`
   - use webmail service, or any e-mail client (`https://webmail.<root_domain>`)
 
-### Edge case on IaC's `docker-mailserver` reinstall (see #8)
-Once `docker-mailserver` installed along OpenLDAP services, users wont be able to access their mails anymore, but still be able to login. That's because their owner `uid` has been replaced by `email-users` `guid` as primary owner of their folders containing mail data. To fix this, you might want to run the VSCode task `✅ mailserver: Ensure Mail Accounts Folder Permissions`.
+## Outdated supplementary services
+There is 2 services that are shipped with IaC but we do not recommend to use, but still keep them for documentary purposes:
+
+- Matomo, which helps tracking visitors and other data of installed services
+  - > Outdated feature-wise, prefer using PostHog Cloud free tier, or self-hosted on another node https://posthog.com/docs/self-host
+- Sentry, which tracks live bugs on services
+  - > Heavy on resources on a Single Node, should prefer external use of official on-premise https://develop.sentry.dev/self-hosted/ on another node
+
+## ArgoCD - orchestration of organization-developped services
+To use ArgoCD, you need to provide an `app-of-apps` repository in your Github Organization (https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/). You'll kind the default name of said repo to create on `group_vars`'s `argocd__app_of_apps__repo_name`.
+You can use `Qalisa/argocd-repository` as template on how to use it in real-life example.
+
+## Odoo - in case of multiple database
+If and only if having multiple odoo databases on your postgres: when sending invoices, you might encounter 404 from your client, it is because `odoo.conf`'s `db_filter` is not configured correctly. You might want to only use one database per Odoo instance.
+
+https://github.com/Qalisa/IaC/issues/37
+
+## Odoo - in case of backing up
+- You might want to disable postgres StatefulSet probes because of intensive backup operations might render it unresponsive (because bitnami's helm chart allocates too low ressources to it), which would result in an unwanted automatic-restart.
+- You also maybe want to disabe `odoo.conf`'s `db_name`, to see any other instances of backup'd databases 

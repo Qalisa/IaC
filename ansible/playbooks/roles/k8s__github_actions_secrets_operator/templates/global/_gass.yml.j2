@@ -1,0 +1,23 @@
+apiVersion: qalisa.github.io/v1alpha1
+kind: GithubActionSecretsSync
+metadata:
+  name: "{{ github_actions_secrets_operator__global_gass_name }}"
+spec:
+  secrets:
+    - secretRef:
+        name: "{{ k8s__github_actions_secrets_operator__global_secvar_name }}"
+        namespace: "{{ k8s__github_actions_secrets_operator__namespace }}"
+      key: DOCKER_PRIVATE_REGISTRY_PASSWORD
+    - secretRef:
+        name: "{{ k8s__github_actions_secrets_operator__global_secvar_name }}"
+        namespace: "{{ k8s__github_actions_secrets_operator__namespace }}"
+      key: DOCKER_PRIVATE_REGISTRY_USERNAME
+  variables:
+    - configMapRef:
+        name: "{{ k8s__github_actions_secrets_operator__global_secvar_name }}"
+        namespace: "{{ k8s__github_actions_secrets_operator__namespace }}"
+      key: PREFERRED_RUNS_ON
+    - configMapRef:
+        name: "{{ k8s__github_actions_secrets_operator__global_secvar_name }}"
+        namespace: "{{ k8s__github_actions_secrets_operator__namespace }}"
+      key: DOCKER_PRIVATE_REGISTRY_DOMAIN

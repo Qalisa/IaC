@@ -4,6 +4,7 @@ metadata:
   name: roundcube
   namespace: "{{ docker_mailserver__namespace }}"
 spec:
+  revisionHistoryLimit: 0
   selector:
     matchLabels:
       app: roundcube

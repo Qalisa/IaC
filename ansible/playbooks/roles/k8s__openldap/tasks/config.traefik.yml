@@ -1,0 +1,7 @@
+---
+- name: Configure Traefik LDAP Middleware
+  kubernetes.core.k8s:
+    template:
+      path: templates/traefik/middleware.yml.j2
+      variable_start_string: "[["
+      variable_end_string: "]]"

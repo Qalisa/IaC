@@ -32,6 +32,10 @@ iac__github_org: "{{ u_vault_iac__github_org }}"
 
 #
 listmonk__site_name: "{{ u_vault_listmonk__site_name }}"
+# should at least be an empty []
+listmonk__external_hostname_extras: "{{ u_vault_listmonk__external_hostname_extras }}"
+
+github_actions_secrets_operator__global_gass_name: default
 
 ###
 ### EXTERNAL
@@ -47,6 +51,10 @@ argocd__github_app__app_id: "{{ u_vault_argocd__github_app__app_id }}"
 # Github ARC - Github App
 github_arc__github_app__installation_id: "{{ u_vault_github_arc__github_app__installation_id }}"
 github_arc__github_app__app_id: "{{ u_vault_github_arc__github_app__app_id }}"
+
+# github-actions-secrets-operator - Github App
+github_actions_secrets_operator__github_app__installation_id: "{{ u_vault_github_actions_secrets_operator__github_app__installation_id }}"
+github_actions_secrets_operator__github_app__app_id: "{{ u_vault_github_actions_secrets_operator__github_app__app_id }}"
 
 ## SENTRY ###
 # SETTINGS FOR Github App (loosely based on https://docs.sentry.io/organization/integrations/source-code-mgmt/github/)
@@ -74,6 +82,14 @@ github_arc__github_app__app_id: "{{ u_vault_github_arc__github_app__app_id }}"
 sentry__github_appid: "{{ u_vault_sentry__github_appid }}"
 sentry__github_appname: "{{ u_vault_sentry__github_appname }}"
 
+# https://longhorn.io/docs/1.8.0/snapshots-and-backups/backup-and-restore/set-backup-target/#set-up-aws-s3-backupstore
+# https://oopflow.medium.com/how-to-backup-longhorn-to-minio-s3-9c8c126ae92e
+###
+# https://<s3host_proxy_dn>
+longhorn__backup_storage__endpoint: "{{ u_vault_longhorn__backup_storage__endpoint }}"
+# s3://<your-bucket-name>@<region>/
+longhorn__backup_storage__bucket_url: "{{ u_vault_longhorn__backup_storage__bucket_url }}"
+
 #################
 ### SECRETS ! ###
 #################
@@ -86,6 +102,9 @@ sentry__github_appname: "{{ u_vault_sentry__github_appname }}"
 ###
 ### DEFINED
 ### 
+
+#
+pgadmin__password: "{{ vault_pgadmin__password }}"
 
 #
 iac__mail_users__default_password: "{{ vault_iac__mail_users__default_password }}"
@@ -121,9 +140,36 @@ harbor__registry_password: "{{ vault_harbor__registry_password }}"
 harbor__admin_password: "{{ vault_harbor__admin_password }}"
 harbor__secret_key: "{{ vault_harbor__secret_key }}" # must be 16 characters exactly !
 
+# https://github.com/calcom/cal.com/blob/main/.env.example#L80
+# "openssl rand -base64 32"
+calcom__auth_secret: "{{ vault_calcom__auth_secret }}"
+
+# https://github.com/calcom/cal.com/blob/main/.env.example#L97
+# "openssl rand -base64 32"
+calcom__calendso_encryption_key: "{{ vault_calcom__calendso_encryption_key }}"
+
+#
+argocd__admin_password: "{{ vault_argocd__admin_password }}"
+
+
+# minimum 8 chars
+minio__tenant_password: "{{ vault_minio__tenant_password }}"
+minio__secret_access_key: "{{ minio__tenant_password }}"
+
+#
+docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__supervisord_ui__password }}"
+
 ###
 ### EXTERNAL
 ### 
+
+# https://cal.com/docs/self-hosting/apps/install-apps/google
+# https://console.cloud.google.com/apis/api/calendar-json.googleapis.com
+calcom__google_api_credentials: "{{ vault_calcom__google_api_credentials | string }}"
+
+# get those from your backup storage provider
+longhorn__backup_storage__key_id: "{{ vault_longhorn__backup_storage__key_id }}"
+longhorn__backup_storage__access_key: "{{ vault_longhorn__backup_storage__access_key }}"
 
 # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/#api-tokens
 # https://kubernetes-sigs.github.io/external-dns/v0.12.1/tutorials/cloudflare/#creating-cloudflare-credentials
@@ -138,16 +184,13 @@ harbor__secret_key: "{{ vault_harbor__secret_key }}" # must be 16 characters exa
 ## Zones: 
 # Include - Specific Zone - {{ iac__root_domain }}
 iac__cloudflare__account_id: "{{ vault_iac__cloudflare__account_id }}"
-iac__cloudflare__zone_id: "{{ vault_iac__cloudflare__zone_id }}"
 iac__cloudflare__api_token: "{{ vault_iac__cloudflare__api_token }}"
+iac__cloudflare__zone_ids: "{{ vault_iac__cloudflare__zone_ids }}" # should correspond to an [] array of {{ iac__all_domains }} CF Zone IDs
 
 # PLEASE CONFIGURE CLOUDFLARE FOR "Full (Strict)" in CloudFlare dashboard > /ssl-tls/configuration
 # then generate a cert in CloudFlare dashboard > /ssl-tls/origin/certificate-form
 iac__cloudflare__origin_ca__cert: "{{ vault_iac__cloudflare__origin_ca__cert }}"
 iac__cloudflare__origin_ca__priv_key: "{{ vault_iac__cloudflare__origin_ca__priv_key }}"
-
-#
-argocd__admin_password: "{{ vault_argocd__admin_password }}"
 
 ### MAKE SURE GITHUB APP HAS BELOW RIGHTS:
 # +> https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential
@@ -164,7 +207,6 @@ argocd__admin_password: "{{ vault_argocd__admin_password }}"
 # > Repository permissions > Metadata:        RO
 # > Repository permissions > Pull Requests:   RW
 
-
 argocd__github_app__priv_key: "{{ vault_argocd__github_app__priv_key }}"
 
 # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
@@ -174,19 +216,16 @@ argocd__github_webhook_secret: "{{ vault_argocd__github_webhook_secret }}"
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/authenticating-to-the-github-api
 github_arc__github_app__priv_key: "{{ vault_github_arc__github_app__priv_key }}"
 
+# https://github.com/Qalisa/push-github-secrets-operator
+github_actions_secrets_operator__github_app__priv_key: "{{ vault_github_actions_secrets_operator__github_app__priv_key }}"
+
 # ZeroSSL (if used in k8s__cert_manager)
 cert_manager__zerossl__eab_kid: "{{ u_vault_cert_manager__zerossl__eab_kid }}"
 cert_manager__zerossl__eab_hmac_key: "{{ vault_cert_manager__zerossl__eab_hmac_key }}"
 
-# minimum 8 chars
-minio__tenant_password: "{{ vault_minio__tenant_password }}"
-minio__secret_access_key: "{{ minio__tenant_password }}"
 
 #
 sentry__github_clientId: "{{ vault_sentry__github_clientId }}"
 sentry__github_clientSecret: "{{ vault_sentry__github_clientSecret }}"
 sentry__github_privateKey: "{{ vault_sentry__github_privateKey }}"
 sentry__github_webhookSecret: "{{ vault_sentry__github_webhookSecret }}"
-
-#
-docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__supervisord_ui__password }}"

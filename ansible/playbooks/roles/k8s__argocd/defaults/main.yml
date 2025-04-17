@@ -1,0 +1,25 @@
+---
+k8s__argocd__server_pod_name: argocd-server
+
+#
+k8s__argocd__dex__group: argocd
+
+#
+k8s__argocd__external_hostname: argocd.{{ iac__root_domain }}
+
+#
+k8s__argocd__internal_hostname: "{{ k8s__argocd__server_pod_name }}.{{ argocd__namespace }}.{{ iac__svc_cluster_host }}"
+k8s__argocd__api_url: http://{{ k8s__argocd__internal_hostname }}/api/v1
+
+#
+k8s__argocd__admin_password_bcrypted: "{{ argocd__admin_password | ansible.builtin.password_hash(hashtype='bcrypt', rounds=10, salt='') }}"
+
+#
+k8s__argocd__notifications_engine__workdir: /tmp/argocd-notifications-engine
+
+#
+k8s__argocd__notifications_engine__templates__local_path: templates/notifications-engine/templates
+k8s__argocd__notifications_engine__templates__output_file: "{{ k8s__argocd__notifications_engine__workdir }}/templates.yaml"
+
+#
+k8s__argocd__notifications_engine__triggers__output_file: templates/notifications-engine/triggers/triggers.yaml

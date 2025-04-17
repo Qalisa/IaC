@@ -1,0 +1,70 @@
+---
+- name: Create namespace
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+
+###
+### Certificate from Issuer
+###
+
+## REQUIRED TO BE INSTALLED FIRST, since generated secret by this certificate is done async
+- name: Request certificate generation from Issuer with cert-manager's Certificate CRD
+  kubernetes.core.k8s:
+    template:
+      - path: templates/certificate.yml.j2
+
+# might be extensively long depending on Issuer
+- name: Wait for the associated certificate's secret to be generated
+  ansible.builtin.command: kubectl get secret {{ k8s__docker_mailserver__cert_secret_name }} -n {{ docker_mailserver__namespace }}
+  register: secret_status
+  changed_when: secret_status.rc != 0
+  until: secret_status.rc == 0
+  retries: 20
+  delay: 20
+
+###
+### Extra config
+###
+
+- name: Create ConfigMap with the user patch script
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: dms-config-extra-files
+        namespace: "{{ docker_mailserver__namespace }}"
+      data:
+        postfix-policyd-spf.conf: "{{ lookup('template', 'templates/mailserver/postfix/postfix-policyd-spf.conf.j2') }}"
+        header_checks.pcre: "{{ lookup('template', 'templates/mailserver/postfix/header_checks.pcre.j2') }}"
+        fail2ban-jail.cf: "{{ lookup('template', 'templates/mailserver/fail2ban/fail2ban-jail.cf.j2') }}"
+        supervisord-gui.conf: "{{ lookup('template', 'templates/mailserver/supervisord/supervisord-gui.conf.j2') }}"
+        user-patches.sh: |
+          {{ lookup(
+            'template',
+            'templates/mailserver/dms/user-patches.sh.j2',
+            comment_start_string='{[#',
+            comment_end_string='#]}'
+          ) }}
+
+###
+### Whole install
+###
+
+- name: Then, Install Docker Mailserver
+  kubernetes.core.k8s:
+    template:
+      - path: templates/mailserver/pvc.yml.j2
+      - path: templates/mailserver/config.yml.j2
+      - path: templates/mailserver/secret.yml.j2
+      - path: templates/mailserver/service.yml.j2
+      - path: templates/mailserver/deploy.yml.j2
+      - path: templates/mailserver/supervisord/ingress.yml.j2
+
+- name: Install Zero-Trust configuration
+  tags: [zto-app]
+  kubernetes.core.k8s:
+    template:
+      - path: templates/mailserver/supervisord/caa.yml.j2

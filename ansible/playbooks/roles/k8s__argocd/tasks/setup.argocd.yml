@@ -1,0 +1,154 @@
+---
+- name: Install NS + Github App as Cred for Org Repositories
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/secret.yml.j2
+
+- name: Create OrgUnit + binds to users
+  ansible.builtin.include_role:
+    name: utilities__ldap
+    tasks_from: create_groups
+  vars:
+    utilities__ldap__create_groups__org_unit: argocd
+
+###
+###
+###
+
+- name: Define CM params
+  ansible.builtin.set_fact:
+    # cm_more: |
+    #   {
+    #     "accounts.{{ argocd__account_for__github_syncer }}": "apiKey",
+    #     "accounts.{{ argocd__account_for__argo_watcher }}": "apiKey",
+    #   }
+    cm:
+      # Enables application status badge feature
+      statusbadge.enabled: true
+      # https://medium.com/@attilio.gualandi/how-to-set-ldap-on-argocd-b09b40dfcdf9
+      dex.config: |
+        connectors:
+        - type: ldap
+          name: "Email"
+          id: ldap
+          config:
+            host: "{{ openldap_stack__ldap_internal_hostname }}:636"
+            insecureSkipVerify: true
+            bindDN: "$ldap.bindDN"
+            bindPW: "$ldap.bindPW"
+            usernamePrompt: Email
+            userSearch:
+              baseDN: "{{ docker_mailserver__users_group_cn }}"
+              filter: "(objectClass={{ iac__ldap__user_oc }})"
+              username: "{{ iac__ldap__username_attr }}"
+              idAttr: uid
+              emailAttr: "{{ iac__ldap__email_attr }}"
+              nameAttr: uid
+              preferredUsernameAttr: uid
+            groupSearch:
+              baseDN: "ou={{ k8s__argocd__dex__group }},{{ iac__ldap__root_dc }} "
+              filter: "(objectClass=groupOfNames)"
+              nameAttr: cn
+              userMatchers:
+                - userAttr: DN
+                  groupAttr: member
+
+- name: Define RBAC params
+  ansible.builtin.set_fact:
+    rbac:
+      policy.default: "role:readonly"
+      # policy.csv: |
+      #   p, role:syncer, applications, sync, */*, allow
+      #   p, role:watcher, applications, get, */*, allow
+      #   p, role:watcher, applications, sync, */*, allow
+
+      #   g, {{ argocd__account_for__argo_watcher }}, role:watcher
+      #   g, {{ argocd__account_for__github_syncer }}, role:syncer
+
+- name: Define PARAMS params
+  ansible.builtin.set_fact:
+    params:
+      server.insecure: true
+      # Enable self-service notifications config. Used in conjunction with apps-in-any-namespace. (default "false")
+      notificationscontroller.selfservice.enabled: false
+
+- name: Define SECRETS params
+  ansible.builtin.set_fact:
+    secret:
+      # https://argo-cd.readthedocs.io/en/latest/operator-manual/webhook/
+      githubSecret: "{{ argocd__github_webhook_secret }}"
+      # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=configs.secret.argocdServerAdminPassword
+      argocdServerAdminPassword: "{{ k8s__argocd__admin_password_bcrypted }}"
+      extra:
+        ldap.bindDN: "{{ iac__ldap__admin__bind_dn }}"
+        ldap.bindPW: "{{ iac__ldap__admin__bind_pw }}"
+
+- name: Build Github Notifications template
+  ansible.builtin.import_tasks: _helper.gh-notif-tmpl.yml
+
+###
+###
+###
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: argo
+    repo_url: https://argoproj.github.io/argo-helm
+    force_update: true
+
+- name: Install ArgoCD w/ Helm
+  kubernetes.core.helm:
+    name: argocd
+    chart_ref: argo/argo-cd
+    release_namespace: argocd
+    create_namespace: false
+    wait: true
+    values:
+      global:
+        domain: "{{ k8s__argocd__external_hostname }}"
+      configs:
+        params: "{{ params }}"
+        rbac: "{{ rbac }}"
+        # cm: "{{ cm | ansible.builtin.combine(cm_more) }}"
+        cm: "{{ cm }}"
+        secret: "{{ secret }}"
+      certificate:
+        enabled: false
+      repoServer:
+        replicas: 1
+      applicationSet:
+        replicas: 1
+      controller:
+        replicas: 1
+      server:
+        replicas: 1
+        ingress:
+          enabled: true
+          tls: false
+          annotations:
+            #
+            external-dns.alpha.kubernetes.io/hostname: "{{ k8s__argocd__external_hostname }}"
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+            #
+            ingress-dashboard/title: ArgoCD
+            ingress-dashboard/description: Automatize k8s app deployment through GitOps
+            ingress-dashboard/logo-url: /assets/favicon/favicon-32x32.png
+            ingress-dashboard/assume-tls: "true"
+            ingress-dashboard/hide: "false"
+      notifications:
+        # https://artifacthub.io/packages/helm/argo/argo-cd?modal=values&path=notifications.templates
+        templates: "{{ lookup('file', k8s__argocd__notifications_engine__templates__output_file) | from_yaml }}"
+        triggers: "{{ lookup('file', k8s__argocd__notifications_engine__triggers__output_file) | from_yaml }}"
+        ###
+        ### Configure Github App
+        ###
+        secret:
+          items:
+            github-privateKey: |
+              {{ argocd__github_app__priv_key }}
+        notifiers:
+          service.github: |
+            appID: "{{ argocd__github_app__app_id }}"
+            installationID: "{{ argocd__github_app__installation_id }}"
+            privateKey: $github-privateKey

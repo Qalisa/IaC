@@ -4,20 +4,4 @@ metadata:
   name: traefik
   namespace: "{{ k3s__default_namespace }}"
 spec:
-  valuesContent: |-
-    globalArguments:
-      - "--serversTransport.insecureSkipVerify=true"
-    additionalArguments:
-      - "--api"
-      - "--api.dashboard=true"
-      - "--api.insecure=true"
-    ports:
-      web:
-        redirections:
-          entryPoint:
-            to: "websecure"
-            scheme: "https"
-            permanent: true
-      websecure:
-        tls:
-          certResolver: default
+  valuesContent: "{{ custom_traefik_config }}"

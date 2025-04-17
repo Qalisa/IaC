@@ -1,1 +1,0 @@
-/usr/local/bin/argo-watcher -client

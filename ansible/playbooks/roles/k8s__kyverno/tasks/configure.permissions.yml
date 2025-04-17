@@ -1,0 +1,9 @@
+---
+- name: Apply permissions
+  kubernetes.core.k8s:
+    template:
+      # admission-controller
+      - path: templates/permissions/admission-controller/read-secrets.yml.j2
+      # background-controller
+      - path: templates/permissions/background-controller/crud-deployments.yml.j2
+      - path: templates/permissions/background-controller/crud-secrets.yml.j2

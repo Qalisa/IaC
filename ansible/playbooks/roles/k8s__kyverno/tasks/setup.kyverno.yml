@@ -1,0 +1,34 @@
+---
+- name: Create namespace
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: kyverno
+    repo_url: https://kyverno.github.io/kyverno/
+    force_update: true
+
+- name: Install kyverno w/ Helm
+  kubernetes.core.helm:
+    name: kyverno
+    chart_ref: kyverno/kyverno
+    release_namespace: "{{ k8s__kyverno__namespace }}"
+    create_namespace: false
+    wait: true
+    values:
+      # global:
+      #   imagePullSecrets:
+      #     - name: regcred
+      admissionController:
+        imagePullSecrets:
+          - name: regcred
+      imagePullSecrets:
+        regcred:
+          registry: "{{ harbor__internal_hostname__registry_v2 }}"
+          username: "{{ harbor__admin_username }}"
+          password: "{{ harbor__admin_password }}"
+      features:
+        registryClient:
+          allowInsecure: true

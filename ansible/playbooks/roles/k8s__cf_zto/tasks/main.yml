@@ -9,6 +9,7 @@
   kubernetes.core.helm_repository:
     name: zelic-io
     repo_url: https://zelic-io.github.io/charts
+    force_update: true
 
 - name: Install CF Zero Trust Operator
   kubernetes.core.helm:

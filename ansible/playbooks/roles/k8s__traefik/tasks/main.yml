@@ -10,27 +10,79 @@
     kind: Pod
     namespace: "{{ k3s__default_namespace }}"
     label_selectors:
-      - app.kubernetes.io/name=traefik
+      - app.kubernetes.io/name={{ k8s__traefik__app_name }}
   register: traefik_pod
 
-- name: Add Cloudflare's Full (Strict) SSL/TLS termination
-  kubernetes.core.k8s:
-    template:
-      - path: templates/origin-ca.yml.j2
-      - path: templates/tlsstore.yml.j2
-
 ###
+
+- name: Define default custom traefik config
+  ansible.builtin.set_fact:
+    custom_traefik_config:
+      experimental:
+        plugins:
+          ldapAuth:
+            moduleName: "github.com/wiltonsr/ldapAuth"
+            version: "v0.1.10"
+      globalArguments:
+        - "--serversTransport.insecureSkipVerify=true"
+      additionalArguments:
+        - "--api"
+        - "--api.dashboard=true"
+        - "--api.insecure=true"
+      providers:
+        allowCrossNamespace: true
+        kubernetesCRD:
+          allowExternalNameServices: true
+        kubernetesIngress:
+          allowExternalNameServices: true
+      ports:
+        web:
+          forwardedHeaders:
+            trustedIPs:
+              - "{{ iac__k3s__servicelb__ip_range }}"
+          redirections:
+            entryPoint:
+              to: "websecure"
+              scheme: "https"
+              permanent: true
+        websecure:
+          forwardedHeaders:
+            trustedIPs:
+              - "{{ iac__k3s__servicelb__ip_range }}"
+          tls: {}
+
+- name: Add Cloudflare's Full (Strict) SSL/TLS termination support for Traefik
+  when: k8s__traefik__cf_strict_tls__enabled | bool
+  block:
+    - name: Add definitions (resolver + origin CA)
+      kubernetes.core.k8s:
+        template:
+          - path: templates/cf-strict-tls/origin-ca.yml.j2
+          - path: templates/cf-strict-tls/tlsstore.yml.j2
+    - name: Update custom traefik config
+      ansible.builtin.set_fact:
+        custom_traefik_config: >-
+          {{
+            custom_traefik_config | combine(
+              {
+                'ports': {
+                  'websecure': {
+                    'tls': {
+                      'certResolver': 'default'
+                    }
+                  }
+                }
+              },
+              recursive=True
+            )
+          }}
 
 - name: Process new Traefik configuration
   kubernetes.core.k8s:
     template:
       - path: templates/hcc.yml.j2
-
-- name: Wait for Traefik pod to become ready again (would have ack new configuration then)
-  register: pods_ready
-  changed_when: pods_ready.rc != 0
-  ansible.builtin.command: |
-    kubectl wait pod -l app.kubernetes.io/name=traefik --namespace={{ k3s__default_namespace }} --for=condition=Ready --timeout=60s
+  notify:
+    - Wait pod restart
 
 ###
 
@@ -43,5 +95,5 @@
 - name: Expose Traefik dashboard
   kubernetes.core.k8s:
     template:
-      - path: templates/dashboard.service.yml.j2
-      - path: templates/dashboard.ingress.yml.j2
+      - path: templates/dashboard/service.yml.j2
+      - path: templates/dashboard/ingress.yml.j2

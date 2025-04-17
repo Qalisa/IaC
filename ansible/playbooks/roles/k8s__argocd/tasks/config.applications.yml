@@ -1,0 +1,7 @@
+---
+- name: Install App of apps repository to ArgoCD
+  tags: [argocd-apps]
+  kubernetes.core.k8s:
+    template:
+      - path: templates/applications/app-of-apps.secret.yml.j2
+      - path: templates/applications/app-of-apps.yml.j2

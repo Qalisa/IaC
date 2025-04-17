@@ -15,6 +15,7 @@
   kubernetes.core.helm_repository:
     name: kubernetes-dashboard
     repo_url: https://kubernetes.github.io/dashboard/
+    force_update: true
 
 - name: Install Dashboard w/ Helm
   kubernetes.core.helm:
@@ -23,6 +24,9 @@
     release_namespace: "{{ k8s__dashboard__namespace }}"
     create_namespace: false
     values:
+      web:
+        image:
+          tag: latest
       kong:
         enabled: true # required since https://github.com/kubernetes/dashboard/pull/9317 wont be merged
       metricsScraper:
@@ -30,10 +34,15 @@
       app:
         ingress:
           enabled: true
-          issuer: # done below manually, to stick to habits
-            scope: disabled
-          ingressClassName: "{{ iac__implicit_ingress_class_name }}"
+          issuer:
+            scope: disabled # disables cert-manager annotations
+          useDefaultIngressClass: true
+          useDefaultAnnotations: false
           annotations:
+            #
+            cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}" # necessary
+            #
+            # traefik.ingress.kubernetes.io/router.middlewares: "{{ iac__traefik__ldap_middleware__ref }}"
             #
             external-dns.alpha.kubernetes.io/hostname: "{{ k8s__dashboard__external_hostname }}"
             external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -43,11 +52,10 @@
             ingress-dashboard/logo-url: /assets/images/kubernetes-logo.png
             ingress-dashboard/assume-tls: "true"
             ingress-dashboard/hide: "false"
-          useDefaultAnnotations: false
           hosts:
             - "{{ k8s__dashboard__external_hostname }}"
           tls:
-            enabled: false
+            enabled: true # necessary
 
 #
 - name: Save Token

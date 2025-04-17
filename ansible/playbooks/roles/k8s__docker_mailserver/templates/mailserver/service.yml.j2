@@ -5,6 +5,12 @@ metadata:
   namespace: "{{ docker_mailserver__namespace }}"
   labels:
     app: "{{ docker_mailserver__server_label }}"
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{[
+      docker_mailserver__external_hostname,
+      k8s__docker_mailserver__external_hostname__smtp,
+      k8s__docker_mailserver__external_hostname__imap
+    ] | join(",") | quote }}
 spec:
   type: LoadBalancer
   # https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/kubernetes/#manually-writing-manifests

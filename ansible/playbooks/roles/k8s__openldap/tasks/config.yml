@@ -10,7 +10,7 @@
   register: pods_ready
   changed_when: pods_ready.rc != 0
   ansible.builtin.command: |
-    kubectl wait pod/openldap-0 --namespace={{ openldap_stack__namespace }} --for=condition=Ready --timeout=240s
+    kubectl wait pod/{{ openldap_stack__ldap_server_hostname }}-0 --namespace={{ openldap_stack__namespace }} --for=condition=Ready --timeout=240s
 
 ###
 ###

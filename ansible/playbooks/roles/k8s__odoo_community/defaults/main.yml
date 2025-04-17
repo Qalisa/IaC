@@ -1,2 +1,51 @@
 ---
-k8s__odoo_community__extername_hostname: odoo.{{ iac__root_domain }}
+k8s__odoo_community__namespace: odoo-community
+k8s__odoo_community__external_hostname: odoo.{{ iac__root_domain }}
+
+# name of postgres's helm setup manifests
+k8s__odoo_community__db__name: odoo-postgresql
+
+#
+k8s__odoo_community__db__config__admin_password: odoo-admin_PwD1231.L14d
+# https://github.com/odoo/odoo/issues/182551
+# https://hub.docker.com/_/odoo
+# Default expected values by Odoo for initial database access
+k8s__odoo_community__db__config__db_name: postgres
+k8s__odoo_community__db__config__username: odoo
+k8s__odoo_community__db__config__password: odoo
+k8s__odoo_community__db__config__host: "{{ k8s__odoo_community__db__name }}.{{ k8s__odoo_community__namespace }}.{{ iac__svc_cluster_host }}"
+
+# Name of the "database" that Odoo will create on its own; must be separate from previous db names
+k8s__odoo_community__odoo_instance__db_name: odoo1
+k8s__odoo_community__odoo_instance__jsonrpc: http://odoo.{{ k8s__odoo_community__namespace }}.{{ iac__svc_cluster_host }}/jsonrpc
+
+# these are the default, that will be replaced
+k8s__odoo_community__odoo_instance__default__admin_username: admin
+k8s__odoo_community__odoo_instance__default__admin_password: admin
+k8s__odoo_community__odoo_instance__default__company_name: My Company
+
+#
+k8s__odoo_community__odoo_instance__wanted_locale: "{{ iac__prefered_lang__country }}"
+k8s__odoo_community__odoo_instance__wanted_currency: EUR
+k8s__odoo_community__odoo_instance__wanted_coa: France
+
+#
+k8s__odoo_community__odoo_instance__admin_username: "{{ iac__postmaster_email }}"
+k8s__odoo_community__odoo_instance__admin_password: "{{ iac__postmaster_password }}"
+
+k8s__odoo_community__odoo_instance__data_dir: /var/lib/odoo
+k8s__odoo_community__odoo_instance__addons_dir: /mnt/extra-addons
+
+k8s__odoo_community__addons__repo__odoomates: https://github.com/odoomates/odooapps
+k8s__odoo_community__addons__branch__odoomates: "18.0"
+
+k8s__odoo_community__addons__repo__qalisa: https://github.com/Qalisa/odoo-apps
+k8s__odoo_community__addons__branch__qalisa: "18-0" # enhance compatibility with argocd
+
+k8s__odoo_community__odoo_instance__addons_paths: >-
+  {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odooapps,
+  {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odoo-apps/addons
+
+k8s__odoo_community__odoo_included_modules: ["l10n_{{ iac__prefered_lang__sub }}_account", "contacts", "sale_management"]
+#
+k8s__odoo_community__add_server_definitions_into_pgadmin: false

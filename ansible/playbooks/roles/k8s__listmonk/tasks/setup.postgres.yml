@@ -1,0 +1,42 @@
+---
+- name: Install namespace
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: bitnami
+    repo_url: https://charts.bitnami.com/bitnami
+    force_update: true
+
+- name: Install Postgres w/ Helm
+  kubernetes.core.helm:
+    name: "{{ k8s__listmonk__db_name }}"
+    chart_ref: bitnami/postgresql
+    release_namespace: "{{ k8s__listmonk__namespace }}"
+    create_namespace: false
+    wait: true
+    values:
+      auth:
+        #
+        postgresPassword: "{{ k8s__listmonk__db__password }}"
+        #
+        username: "{{ k8s__listmonk__db__user }}"
+        password: "{{ k8s__listmonk__db__password }}"
+        #
+        database: "{{ k8s__listmonk__db__db }}"
+
+- name: Add server definition for pgadmin
+  tags: [pgadmin]
+  when: k8s__listmonk__add_server_definitions_into_pgadmin
+  ansible.builtin.include_role:
+    name: utilities__pgadmin
+    tasks_from: add_server_definition
+  vars:
+    utilities__pgadmin__add_server_definition__id: listmonk
+    utilities__pgadmin__add_server_definition__name: Listmonk
+    utilities__pgadmin__add_server_definition__host: "{{ k8s__listmonk__internal_hostname__db }}"
+    utilities__pgadmin__add_server_definition__maintenance_db: "{{ k8s__listmonk__db__db }}"
+    utilities__pgadmin__add_server_definition__username: "{{ k8s__listmonk__db__user }}"
+    utilities__pgadmin__add_server_definition__password: "{{ k8s__listmonk__db__password }}"

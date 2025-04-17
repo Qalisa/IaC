@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dms-supervisord-gui
+  namespace: "{{ docker_mailserver__namespace }}"
+  annotations:
+    #
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__docker_mailserver__external_hostname__supervisord_gui }}"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    #
+    ingress-dashboard/title: Supervisord GUI for mailserver
+    ingress-dashboard/description: Control inner processes for docker-mailserver
+    ingress-dashboard/logo-url: https://avatars.githubusercontent.com/u/513914
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+spec:
+  rules:
+    - host: "{{ k8s__docker_mailserver__external_hostname__supervisord_gui }}"
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: "{{ docker_mailserver__server_hostname }}"
+              port:
+                name: supervisord-ui

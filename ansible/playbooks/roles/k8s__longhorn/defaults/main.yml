@@ -1,2 +1,4 @@
 ---
+k8s__longhorn__namespace: longhorn-system # required to be specifically "longhorn-system" ! (https://artifacthub.io/packages/helm/longhorn/longhorn)
 k8s__longhorn__external_hostname: longhorn.{{ iac__root_domain }}
+k8s__longhorn__backup_credentials__secret_name: backup-default

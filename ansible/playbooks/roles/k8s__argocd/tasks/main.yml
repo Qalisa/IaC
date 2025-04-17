@@ -1,0 +1,6 @@
+---
+- name: ArgoCD setup
+  ansible.builtin.import_tasks: setup.argocd.yml
+
+- name: Add default ArgoCD Apps
+  ansible.builtin.import_tasks: config.applications.yml

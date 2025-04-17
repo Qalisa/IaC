@@ -3,6 +3,7 @@
   kubernetes.core.helm_repository:
     name: andrcuns
     repo_url: https://andrcuns.github.io/charts
+    force_update: true
 
 # https://github.com/moby/buildkit/tree/master/examples/kubernetes
 - name: Install Buildkit Runners

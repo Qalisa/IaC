@@ -1,0 +1,39 @@
+---
+- name: Install Odoo (prerequisites)
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/middleware.yml.j2
+      - path: templates/pvc.yml.j2
+      - path: templates/pvc.addons.yml.j2
+      - path: templates/secret.yml.j2
+
+- name: Wait for Longhorn to bind the PVC
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: PersistentVolumeClaim
+    namespace: "{{ k8s__odoo_community__namespace }}"
+    name: odoo
+  register: pvc_status
+  until: pvc_status.resources[0].status.phase == "Bound"
+  retries: 20
+  delay: 3
+
+###
+###
+
+- name: Init Odoo modules
+  kubernetes.core.k8s:
+    template:
+      - path: templates/job.init.yml.j2
+
+- name: Get Job status
+  kubernetes.core.k8s_info:
+    api_version: batch/v1
+    kind: Job
+    namespace: "{{ k8s__odoo_community__namespace }}"
+    name: odoo-init
+  register: job_info
+  until: job_info.resources[0].status.succeeded | default(0) | int >= 1
+  retries: 100 # Adjust number of retries based on expected job duration
+  delay: 10 # Delay between retries (in seconds)

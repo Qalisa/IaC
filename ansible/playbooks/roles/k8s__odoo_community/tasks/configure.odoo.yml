@@ -1,0 +1,19 @@
+---
+- name: Wait until deployment is available
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: odoo
+    namespace: "{{ k8s__odoo_community__namespace }}"
+  register: deployment_info
+  until: deployment_info.resources[0].status.availableReplicas | default(0) | int >= 1
+  retries: 30 # Adjust the number of retries based on expected deployment startup time
+  delay: 10 # Delay in seconds between each retry
+
+##
+##
+##
+
+- name: Ask for user to install Addon
+  ansible.builtin.pause:
+    prompt: Please install manually Qalisa's Addons. Then, press return to continue.

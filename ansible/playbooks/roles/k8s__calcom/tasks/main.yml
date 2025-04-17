@@ -1,0 +1,19 @@
+---
+## - name: Install Dex
+##   ansible.builtin.import_tasks: saml.setup.dex.yml
+
+#
+
+- name: Install postgresql
+  ansible.builtin.import_tasks: setup.postgres.yml
+
+## - name: Configure postgresql (SAML Database)
+##   ansible.builtin.import_tasks: saml.configure.postgres.yml
+
+#
+
+- name: Install Cal.com
+  ansible.builtin.import_tasks: setup.calcom.yml
+
+## - name: Configure Cal.com
+##   ansible.builtin.import_tasks: saml.configure.calcom.yml

@@ -1,0 +1,68 @@
+---
+- name: Install NS
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+
+- name: Create OrgUnit + binds to users
+  ansible.builtin.include_role:
+    name: utilities__ldap
+    tasks_from: create_groups
+  vars:
+    utilities__ldap__create_groups__org_unit: calcom
+
+###
+###
+###
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: dex
+    repo_url: https://charts.dexidp.io
+    force_update: true
+
+- name: Install Dex w/ Helm
+  kubernetes.core.helm:
+    name: dex
+    chart_ref: dex/dex
+    release_namespace: "{{ k8s__calcom__namespace }}"
+    create_namespace: false
+    wait: true
+    values:
+      config:
+        issuer: http://{{ k8s__calcom__dex__internal_hostname }}
+        storage:
+          type: memory
+
+        staticClients:
+          - id: "{{ k8s__calcom__dex__oidc_id }}"
+            redirectURIs:
+              - https://{{ k8s__calcom__external_hostname }}/auth/callback # Must match Cal.com's URL
+            name: "{{ k8s__calcom_descr }}"
+            secret: "{{ k8s__calcom__dex__oidc_secret }}"
+
+        connectors:
+          - type: ldap
+            name: "Email"
+            id: ldap
+            config:
+              host: "{{ openldap_stack__ldap_internal_hostname }}:636"
+              insecureSkipVerify: true
+              bindDN: "{{ iac__ldap__admin__bind_dn }}"
+              bindPW: "{{ iac__ldap__admin__bind_pw }}"
+              usernamePrompt: Email
+              userSearch:
+                baseDN: "{{ docker_mailserver__users_group_cn }}"
+                filter: "(objectClass={{ iac__ldap__user_oc }})"
+                username: "{{ iac__ldap__username_attr }}"
+                idAttr: uid
+                emailAttr: "{{ iac__ldap__email_attr }}"
+                nameAttr: uid
+                preferredUsernameAttr: uid
+              groupSearch:
+                baseDN: "ou={{ k8s__calcom__dex__group }},{{ iac__ldap__root_dc }}"
+                filter: "(objectClass=groupOfNames)"
+                nameAttr: cn
+                userMatchers:
+                  - userAttr: DN
+                    groupAttr: member

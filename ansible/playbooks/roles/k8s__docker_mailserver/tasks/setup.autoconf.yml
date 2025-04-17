@@ -1,0 +1,9 @@
+---
+- name: Install Docker Mailserver Autoconfig
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+      - path: templates/discover-autoconfig/config.yml.j2
+      - path: templates/discover-autoconfig/service.yml.j2
+      - path: templates/discover-autoconfig/deploy.yml.j2
+      - path: templates/discover-autoconfig/ingress.yml.j2

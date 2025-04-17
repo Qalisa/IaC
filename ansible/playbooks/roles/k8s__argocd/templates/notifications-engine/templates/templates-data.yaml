@@ -1,0 +1,63 @@
+###
+### Based on https://raw.githubusercontent.com/argoproj/argo-cd/stable/notifications_catalog/install.yaml
+###
+#
+template.app-deployed:
+  message: |-
+    Application {{.app.metadata.name}} is now up and running ! {{.app.status.operationState.finishedAt}}.
+  github:
+    status:
+      state: success
+    deployment:
+      state: success
+    pullRequestComment:
+      content: |-
+        App Deployed !
+#
+template.app-sync-succeeded:
+  message: |-
+    Application {{.app.metadata.name}} sync succeeded at {{.app.status.operationState.finishedAt}}.
+  github:
+    status:
+      state: success
+    deployment:
+      state: success
+    pullRequestComment:
+      content: |-
+        Sync Succeeded !
+#
+template.app-sync-failed:
+  message: |-
+    Application {{.app.metadata.name}} sync failed at {{.app.status.operationState.finishedAt}}.
+  github:
+    status:
+      state: failure
+    deployment:
+      state: failure
+    pullRequestComment:
+      content: |-
+        Sync Failed.
+#
+template.app-sync-running:
+  message: |-
+    Application {{.app.metadata.name}} sync started at {{.app.status.operationState.startedAt}}.
+  github:
+    status:
+      state: pending
+    deployment:
+      state: pending
+    pullRequestComment:
+      content: |-
+        Sync Running...
+#
+template.app-sync-status-unknown:
+  message: |-
+    Application {{.app.metadata.name}} sync status is unknown as of {{.app.status.operationState.finishedAt}}.
+  github:
+    status:
+      state: error
+    deployment:
+      state: error
+    pullRequestComment:
+      content: |-
+        Sync State Unknown ?

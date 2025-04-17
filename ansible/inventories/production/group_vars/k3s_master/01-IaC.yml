@@ -17,11 +17,21 @@ docker_mailserver__third_level_domain: mail
 #
 iac__postmaster_username: postmaster
 iac__donotreply_username: donotreply
+
+# default from root domain
+iac__postmaster_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
+iac__donotreply_email: "{{ iac__donotreply_username }}@{{ iac__root_domain }}"
+
+#
 iac__donotreply_name: Do Not Reply
 
 # Root OU : groupOfNames : [users CN]
 iac__ldap__groups__yaml: |-
   argocd:
+    - groupName: admin
+      members:
+        - cn={{ iac__postmaster_username }}
+  calcom:
     - groupName: admin
       members:
         - cn={{ iac__postmaster_username }}
@@ -44,27 +54,35 @@ argocd__app_of_apps__repo_name: argocd-repository # github repo name under organ
 #
 listmonk__static_dir__repo_name: listmonk-static # github repo name under organization, containing listmonk static dir
 listmonk__admin_username: admin
-listmonk__logo_url: https://{{ iac__root_domain }}/logo.png
-listmonk__favicon_url: https://{{ iac__root_domain }}/logo.png
+listmonk__logo_url: https://ivy.community/public/assets/listmonk/logo.png
+listmonk__favicon_url: https://ivy.community/favicon.ico
+listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__donotreply_email }}>"
 
 #
 harbor__registry_username: "{{ iac__github_org | lower }}" # must always be lowercase
+
+#
+pgadmin__username_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
 
 ############################
 ### SHOULD NOT CUSTOMIZE ###
 ############################
 
+#
+iac__svc_cluster_host: svc.cluster.local
+
+# would use it when using databases (https://stackoverflow.com/a/71560186/3021058)
+iac__local_path_storage_class: local-path
+
 # https://docs.k3s.io/cli/server#networking
 iac__k3s__servicelb__ip_range: "10.42.0.0/16"
-
-# should not be used explicitely, unless an helm chart (kubernetes-dashboard, *kof kof*) enforces a specific ingress class that is not handled
-iac__implicit_ingress_class_name: traefik
 
 # root domain + optional alt domains
 iac__all_domains: "{{ [iac__root_domain] + iac__alt_domains }}"
 
 #
 iac__prefered_lang__sub: "{{ iac__prefered_lang | split('_') | first }}"
+iac__prefered_lang__country: "{{ iac__prefered_lang | split('_') | last }}"
 
 # any mail users created should not be below this number, per convention and prevent overlaping specific users
 iac__mail_users__uid_base: 1000
@@ -102,13 +120,11 @@ minio__tenant__backup_storage__bucket_name: default-backups # https://docs.aws.a
 minio__tenant__backup_storage__bucket_region: minio
 
 #
-listmonk__from_email: "{{ listmonk__site_name }} <{{ iac__postmaster_email }}>"
-
-#
 harbor__namespace: harbor
 harbor__name: harbor
-harbor__sld: registry
-harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}.svc.cluster.local" # we need the service that responds to /v2/ path
+harbor__external_hostname: registry.{{ iac__root_domain }}
+# we need the service that responds to /v2/ path
+harbor__internal_hostname__registry_v2: "{{ harbor__name }}-core.{{ harbor__namespace }}.{{ iac__svc_cluster_host }}"
 harbor__internal_hostname__registry_v2__url: https://{{ harbor__internal_hostname__registry_v2 }}
 harbor__admin_username: admin
 harbor__org_project_name: "{{ iac__github_org | lower }}"
@@ -117,6 +133,14 @@ harbor__org_project_name: "{{ iac__github_org | lower }}"
 iac__ldap__root_domain: iac.local
 iac__ldap__root_dc: "{{ iac__ldap__root_domain | split('.') | map('regex_replace', '^(.*)$', 'dc=\\1') | list | join(',') }}"
 iac__ldap__admin__bind_dn: cn=admin,{{ iac__ldap__root_dc }}
+iac__ldap__username_attr: mail
+iac__ldap__email_attr: mail
+iac__ldap__user_oc: inetOrgPerson
+
+#
+iac__traefik__ldap_middleware__name: ldap-auth
+iac__traefik__ldap_middleware__namespace: "{{ openldap_stack__namespace }}"
+iac__traefik__ldap_middleware__ref: "{{ iac__traefik__ldap_middleware__namespace }}-{{ iac__traefik__ldap_middleware__name }}@kubernetescrd"
 
 #
 docker_mailserver__namespace: docker-mailserver
@@ -131,29 +155,23 @@ docker_mailserver__users_group_description: |
 docker_mailserver__users_group_id: 5000
 
 #
-docker_mailserver__internal_smtp_server: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}.svc.cluster.local"
-docker_mailserver__internal_smtp_preferred_port: 587
+docker_mailserver__internal_smtp_server: "{{ docker_mailserver__server_hostname }}.{{ docker_mailserver__namespace }}.{{ iac__svc_cluster_host }}"
+docker_mailserver__internal_smtp_preferred_port: 587 # STARTTLS SMTP port
 
 #
 openldap_stack__namespace: openldap-stack
 openldap_stack__ldap_server_hostname: openldap
-openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}.svc.cluster.local"
+openldap_stack__ldap_internal_hostname: "{{ openldap_stack__ldap_server_hostname }}.{{ openldap_stack__namespace }}.{{ iac__svc_cluster_host }}"
 openldap_stack__ldap_uri: ldap://{{ openldap_stack__ldap_internal_hostname }}/
 openldap_stack__users_home: /home/users
 
 #
-argo_cd__namespace: argocd
-argocd__account_for__github_syncer: github-syncer
-argocd__account_for__argo_watcher: watcher
-argo_cd__jwt_tokens_secret: accounts-immortal-jwt
+argocd__namespace: argocd
 argocd__project_name: default
+argocd__jwt_tokens_secret: accounts-immortal-jwt
 
 #
 docker_mailserver__external_hostname: "{{ docker_mailserver__third_level_domain }}.{{ iac__root_domain }}"
-
-# default from root domain
-iac__postmaster_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
-iac__donotreply_email: "{{ iac__donotreply_username }}@{{ iac__root_domain }}"
 
 #
 cf_zto__namespace: zero-trust-system
@@ -161,8 +179,13 @@ cf_zto__ldap_policy__access_group_id: ldap-users
 cf_zto__ldap_policy__name: Allow {{ iac__root_domain }} LDAP Users
 
 #
-kyverno__oc_label_as_env__version: BUILDX_OC_LABEL__VERSION # tag
-kyverno__oc_label_as_env__revision: BUILDX_OC_LABEL__REVISION # commit
+kyverno__injected_env__image_version: K8S_APP__IMAGE_VERSION # tag
+kyverno__injected_env__image_revision: K8S_APP__IMAGE_REVISION # commit
+kyverno__injected_env__version: K8S_APP__VERSION # helm version
 
 #
 k3s__default_namespace: kube-system
+
+#
+pgadmin__namespace: pgadmin
+pgadmin__serverdef_secret_name: server-definitions

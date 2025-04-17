@@ -6,7 +6,7 @@ metadata:
   annotations:
     #
     external-dns.alpha.kubernetes.io/hostname: "{{ k8s__docker_mailserver__external_hostname__webmail }}"
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     #
     ingress-dashboard/title: Roundcube
     ingress-dashboard/description: Embedded UI to access {{ iac__root_domain }} emails
@@ -25,91 +25,3 @@ spec:
               name: roundcube
               port:
                 name: app
-  tls:
-    - hosts:
-        - "{{ docker_mailserver__external_hostname }}"
-      secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    #
-    external-dns.alpha.kubernetes.io/hostname: "{{ docker_mailserver__external_hostname }}"
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
-    #
-    traefik.ingress.kubernetes.io/router.middlewares: docker-mailserver-redirect-mail-to-webmail@kubernetescrd
-    #
-    ingress-dashboard/hide: "true"
-  name: roundcube-alt
-  namespace: "{{ docker_mailserver__namespace }}"
-spec:
-  rules:
-    - host: "{{ docker_mailserver__external_hostname }}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: roundcube # could be a dummy service pointing to nothing, like noop-service
-                port:
-                  name: app
-  tls:
-    - hosts:
-        - "{{ docker_mailserver__external_hostname }}"
-      secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    #
-    traefik.ingress.kubernetes.io/router.middlewares: docker-mailserver-redirect-mail-to-webmail@kubernetescrd
-    #
-    ingress-dashboard/hide: "true"
-  name: dms-imap
-  namespace: "{{ docker_mailserver__namespace }}"
-spec:
-  rules:
-    - host: imap.{{ iac__root_domain }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: roundcube # could be a dummy service pointing to nothing, like noop-service
-                port:
-                  name: app
-  tls:
-    - hosts:
-        - "{{ docker_mailserver__external_hostname }}"
-      secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    #
-    traefik.ingress.kubernetes.io/router.middlewares: docker-mailserver-redirect-mail-to-webmail@kubernetescrd
-    #
-    ingress-dashboard/hide: "true"
-  name: dms-smtp
-  namespace: "{{ docker_mailserver__namespace }}"
-spec:
-  rules:
-    - host: smtp.{{ iac__root_domain }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: roundcube # could be a dummy service pointing to nothing, like noop-service
-                port:
-                  name: app
-  tls:
-    - hosts:
-        - "{{ docker_mailserver__external_hostname }}"
-      secretName: "{{ k8s__docker_mailserver__cert_secret_name }}"

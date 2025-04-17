@@ -23,8 +23,8 @@
 
 - name: Extract DKIM TXT (2/2)
   ansible.builtin.set_fact:
-    dkim: "{{ dkim_txt_file['content'] | b64decode | regex_replace('[\n\r]', '') |
-      regex_replace('.*\"(v=DKIM1.*?)\"\\s+\"(.*?)\"\\s+\"(.*?)\".*', '\\1\\2\\3') }}"
+    dkim: >-
+      {{ dkim_txt_file['content'] | b64decode | regex_replace('[\n\r]', '') | regex_replace('.*\"(v=DKIM1.*?)\"\\s+\"(.*?)\"\\s+\"(.*?)\".*', '\\1\\2\\3') }}"
 
 # - name: Display formatted DKIM
 #   ansible.builtin.debug:
@@ -68,7 +68,6 @@
   loop_control:
     loop_var: txtContent
 
-#
 - name: "Add MX - {{ dnsZone }}"
   community.general.cloudflare_dns:
     api_token: "{{ iac__cloudflare__api_token }}"
@@ -80,19 +79,15 @@
     solo: true
 
 #
-- name: "Add CNAME - {{ dnsZone }}"
+- name: "Add MX - {{ dnsZone }}"
   community.general.cloudflare_dns:
     api_token: "{{ iac__cloudflare__api_token }}"
     zone: "{{ dnsZone }}"
-    type: CNAME
+    type: MX
+    record: "@"
+    priority: 10
     value: "{{ docker_mailserver__external_hostname }}"
-    record: "{{ domainConfig }}"
     solo: true
-  loop:
-    - smtp
-    - imap
-  loop_control:
-    loop_var: domainConfig
 
 #### https://github.com/ansible-collections/community.general/issues/7780, requires solo: true
 - name: Add SRV - {{ dnsZone }}"

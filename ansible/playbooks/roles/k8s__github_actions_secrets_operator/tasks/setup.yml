@@ -1,0 +1,28 @@
+---
+- name: Prerequisites
+  kubernetes.core.k8s:
+    template:
+      - path: templates/ns.yml.j2
+
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: qalisa-ghaso
+    repo_url: https://qalisa.github.io/github-actions-secrets-operator
+    force_update: true
+
+- name: Install github-actions-secrets-operator w/ Helm
+  kubernetes.core.helm:
+    name: github-actions-secrets-operator
+    chart_ref: qalisa-ghaso/github-actions-secrets-operator
+    release_namespace: "{{ k8s__github_actions_secrets_operator__namespace }}"
+    create_namespace: false
+    wait: true
+    set_values:
+      - value: github.appId={{ github_actions_secrets_operator__github_app__app_id }}
+        value_type: string
+      - value: github.installationId={{ github_actions_secrets_operator__github_app__installation_id }}
+        value_type: string
+    values:
+      github:
+        privateKey:
+          explicit: "{{ github_actions_secrets_operator__github_app__priv_key }}"

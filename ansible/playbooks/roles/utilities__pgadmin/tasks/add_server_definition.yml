@@ -1,0 +1,158 @@
+---
+- name: Structure server definition as JSON
+  block:
+    - name: Check mandatory variables are defined
+      ansible.builtin.assert:
+        that:
+          - utilities__pgadmin__add_server_definition__id is defined
+          - utilities__pgadmin__add_server_definition__name is defined
+          - utilities__pgadmin__add_server_definition__group is defined
+          - utilities__pgadmin__add_server_definition__port is defined
+          - utilities__pgadmin__add_server_definition__username is defined
+          - utilities__pgadmin__add_server_definition__host is defined
+          - utilities__pgadmin__add_server_definition__sslmode is defined
+          - utilities__pgadmin__add_server_definition__maintenance_db is defined
+          - utilities__pgadmin__add_server_definition__passfile is defined
+    - name: Ensure that, if a password is defined, it does not contain the ":" character (pgpass file requirement)
+      ansible.builtin.assert:
+        that:
+          - >
+            (utilities__pgadmin__add_server_definition__password is not defined) or
+            utilities__pgadmin__add_server_definition__password is not contains(":")
+    - name: Define new server configuration using defaults/main.yml variables
+      ansible.builtin.set_fact:
+        new_server_definition:
+          Name: "{{ utilities__pgadmin__add_server_definition__name }}"
+          Group: "{{ utilities__pgadmin__add_server_definition__group }}"
+          Port: "{{ utilities__pgadmin__add_server_definition__port }}"
+          Username: "{{ utilities__pgadmin__add_server_definition__username }}"
+          Host: "{{ utilities__pgadmin__add_server_definition__host }}"
+          SSLMode: "{{ utilities__pgadmin__add_server_definition__sslmode }}"
+          MaintenanceDB: "{{ utilities__pgadmin__add_server_definition__maintenance_db }}"
+          PassFile: "{{ utilities__pgadmin__add_server_definition__passfile }}"
+    - name: Add ID
+      ansible.builtin.set_fact:
+        new_server_definition: "{'{{ utilities__pgadmin__add_server_definition__id }}':{{ new_server_definition | to_json }}}"
+
+##
+##
+##
+
+- name: Updating existing Secret with server definitions
+  block:
+    - name: Fetch existing Secret
+      kubernetes.core.k8s_info:
+        kind: Secret
+        name: "{{ pgadmin__serverdef_secret_name }}"
+        namespace: "{{ pgadmin__namespace }}"
+      register: secret_info
+    - name: Extract existing servers.json
+      ansible.builtin.set_fact:
+        existing_servers: "{{ secret_info.resources[0].data['servers.json'] | b64decode | from_json }}"
+    - name: Merge new server into existing servers
+      ansible.builtin.set_fact:
+        updated_servers: >-
+          {{
+            existing_servers | combine({
+              'Servers': existing_servers.Servers | combine(new_server_definition)
+            })
+          }}
+    # Kind of useless (https://github.com/Qalisa/IaC/issues/28)
+    - name: Update the Secret with the new servers.json
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: "{{ pgadmin__serverdef_secret_name }}"
+            namespace: "{{ pgadmin__namespace }}"
+          type: Opaque
+          stringData:
+            servers.json: "{{ updated_servers | to_json }}"
+
+##
+##
+##
+
+- name: Get pgadmin pod
+  until: >
+    pod_search.resources is defined and
+    pod_search.resources | length > 0 and
+    pod_search.resources[0].status.phase == "Running"
+  retries: 20
+  delay: 5
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: "{{ pgadmin__namespace }}"
+    label_selectors:
+      - app.kubernetes.io/name=pgadmin4
+  register: pod_search
+
+##
+##
+##
+
+- name: Persisting password through pgpass file
+  when: utilities__pgadmin__add_server_definition__password is defined
+  block:
+    - name: Base Line
+      ansible.builtin.set_fact:
+        pgpass_line: >-
+          {{ utilities__pgadmin__add_server_definition__host
+          }}:{{ utilities__pgadmin__add_server_definition__port
+          }}:{{ utilities__pgadmin__add_server_definition__maintenance_db }}
+    - name: Base Line 2
+      ansible.builtin.set_fact:
+        pgpass_line_w_pwd: >-
+          {{ pgpass_line
+          }}:{{ utilities__pgadmin__add_server_definition__username
+          }}:{{ utilities__pgadmin__add_server_definition__password }}
+        userdir_pass_folder: >-
+          /var/lib/pgadmin/storage/{{ utilities__pgadmin__add_server_definition__for__usermail }}
+    - name: Update pgpass file with credentials
+      vars:
+        tmp: /tmp/pgpass.tmp
+        userdir_passfile: "{{ userdir_pass_folder }}{{ utilities__pgadmin__add_server_definition__passfile }}"
+      loop:
+        - command: mkdir -p -m 700 {{ userdir_pass_folder }}
+          descr: Ensure "{{ userdir_pass_folder }}" exist
+        - command: touch {{ userdir_passfile }}
+          descr: May create "{{ userdir_passfile }}"
+        - command: bash -c "grep -v '^{{ pgpass_line }}:' {{ userdir_passfile }} > {{ tmp }} || true"
+          descr: Create tmp file, without credentials we want to insert
+        - command: sh -c 'echo "{{ pgpass_line_w_pwd }}" >> {{ tmp }}'
+          descr: Insert credentials line in tmp file
+        - command: mv {{ tmp }} {{ userdir_passfile }}
+          descr: Replace legitimate pgpass file with tmp one
+        - command: bash -c "chmod 600 {{ userdir_passfile }}"
+          descr: Ensure rights
+      loop_control:
+        label: "{{ item.descr }}"
+      kubernetes.core.k8s_exec:
+        namespace: "{{ pgadmin__namespace }}"
+        pod: "{{ pod_search.resources[0].metadata.name }}"
+        command: "{{ item.command }}"
+
+##
+##
+##
+
+- name: Updating server definitions
+  block:
+    - name: Update server definitions
+      vars:
+        dest: /tmp/servers.json
+      loop:
+        - command: bash -c "echo {{ updated_servers | to_json | b64encode }} | base64 -d > {{ dest }}"
+          descr: Create tmp JSON file
+        - command: /venv/bin/python /pgadmin4/setup.py load-servers --user {{ pgadmin__username_email }} --auth-source internal --replace {{ dest }}
+          descr: Update servers list
+        - command: rm {{ dest }}
+          descr: Remove tmp JSON file
+      loop_control:
+        label: "{{ item.descr }}"
+      kubernetes.core.k8s_exec:
+        namespace: "{{ pgadmin__namespace }}"
+        pod: "{{ pod_search.resources[0].metadata.name }}"
+        command: "{{ item.command }}"

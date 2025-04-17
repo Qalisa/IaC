@@ -1,12 +1,12 @@
 ---
 - name: Setup Server
-  ansible.builtin.import_tasks: setup-server.yml
+  ansible.builtin.import_tasks: setup.server.yml
 
 - name: Configure DNS records
-  ansible.builtin.import_tasks: config-dns.yml
+  ansible.builtin.import_tasks: config.dns.yml
 
 - name: Setup autoconfig services
-  ansible.builtin.import_tasks: setup-autoconf.yml
+  ansible.builtin.import_tasks: setup.autoconf.yml
 
 - name: Setup roundcube services
-  ansible.builtin.import_tasks: setup-roundcube.yml
+  ansible.builtin.import_tasks: setup.roundcube.yml
