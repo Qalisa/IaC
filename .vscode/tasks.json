@@ -4,96 +4,33 @@
     "version": "2.0.0",
     "inputs": [
         {
-            "id": "nsToDelete",
-            "description": "Please input the namespace to delete",
-            "default": "",
-            "type": "promptString"
+          "description": "CAREFUL - Branch name to override",
+          "type": "promptString",
+          "default": "",
+          "id": "branch-to-override"
         },
         {
-            "id": "helmPackage",
-            "description": "Please input the helm installation to remove",
-            "default": "",
-            "type": "promptString"
+          "description": "CAREFUL - Branch name to copy from",
+          "type": "promptString",
+          "default": "",
+          "id": "branch-to-copy"
         },
         {
-            "id": "helmNamespace",
-            "description": "Please input the namespace to remove the helm installation from",
-            "default": "",
-            "type": "promptString"
-        },
-        {
-            "id": "imageToPull",
-            "description": "Registry path (like \"harbor-core.harbor/<org>/<image>:<tag>\")",
-            "default": "",
-            "type": "promptString"
+          "id": "confirmation",
+          "type": "promptString",
+          "description": "CAREFUL !!!! You will override a branch on the remote, this is irreversible. Type 'agree' to continue",
+          "default": ""
         }
-    ],
+      ],
     "tasks": [
-        {
-            "label": "👮‍♀️ k8s: Delete namespace",
-            "type": "shell",
-            "command": [
-                "kubectl delete namespace ${input:nsToDelete}"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "👮‍♀️ helm: Uninstall",
-            "type": "shell",
-            "command": [
-                "helm uninstall ${input:helmPackage} -n ${input:helmNamespace}"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "👮‍♀️ k3s: DELETE !!!",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_reset.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Try to pull from private registry",
-            "detail": "Helps debugging registry auth issues",
-            "type": "shell",
-            "command": [
-                "systemctl restart containerd && crictl -r /run/containerd/containerd.sock pull ${input:imageToPull}"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        //
-        //
-        //
         {
             "label": "✅ CF Zero-Trust: apply application policies",
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_.site.services.yml",
+                "-i ansible/inventories/production",
+                // "--vault-password-file .ansible-vault-pw",
+                "ansible/playbooks/site.services.yml",
                 "--tags", "zto-app"
             ],
             "options": {
@@ -108,7 +45,8 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
+                "-i ansible/inventories/production",
+                // "--vault-password-file .ansible-vault-pw",
                 "ansible/playbooks/_.site.services.yml",
                 "--tags", "kyverno-policy"
             ],
@@ -124,7 +62,8 @@
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
+                "-i ansible/inventories/production",
+                // "--vault-password-file .ansible-vault-pw",
                 "ansible/playbooks/_.site.services.yml",
                 "--tags", "argocd-apps"
             ],
@@ -139,77 +78,14 @@
         //
         //
         {
-            "label": "🔓 Hachicorp Vault: Unseal",
+            "label": "📝 Ensure [site.services] playbook exist",
             "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_unseal-vault.yml",
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
+            "linux": {
+                "command": "cp -R -u -p _.site.services.yml site.services.yml",
             },
-            "problemMatcher": []
-        },
-        {
-            "label": "✅ mailserver: Ensure Mail Accounts Folder Permissions",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_mail-ensure-permissions.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
+            "osx": {
+                "command": "rsync -a --update _.site.services.yml site.services.yml",
             },
-            "problemMatcher": []
-        },
-        {
-            "label": "✅ OpenLDAP: List Users",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_ldap_list_users.yml"
-            ],
-            "options": {
-                "env": {
-                    "ANSIBLE_DISPLAY_OK_HOSTS": "1"
-                },
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        //
-        //
-        //
-        {
-            "label": "🚀 Install: K3s",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.k3s.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Ensure services playbook exists",
-            "type": "shell",
-            "command": "[ ! -f site.services.yml ] && cp -p _.site.services.yml site.services.yml || true",
             "options": {
                 "cwd": "${workspaceFolder}/ansible/playbooks",
                 "statusbar": {
@@ -219,15 +95,45 @@
         },
         {
             "label": "🚀 Install: Services",
-            "dependsOn": "Ensure services playbook exists",
+            "detail": "Ensure EE is built before running this",
+            "dependsOn": "📝 Ensure [site.services] playbook exist",
             "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.services.yml"
+            "command": "ansible-navigator",
+            "args": [
+                "run", "playbooks/site.services.yml",
+                "-i", "inventories/production",
+                "--execution-environment-image", "iac_ee:latest", 
+                "--eev", "~/.ssh:/runner/.ssh:ro",
+                "--mode", "stdout", 
+                "--pull-policy", "never",
+                "--enable-prompts", 
+                "-u", "root", 
+                // "-k", "-K"
             ],
+            "options": {
+                "cwd": "${workspaceFolder}/ansible"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🚀 Install: k3s",
+            "detail": "Ensure EE is built before running this",
+            "type": "shell",
+            "command": "ansible-navigator",
+            "args": [
+                "run", "playbooks/site.k3s.yml",
+                "-i", "inventories/production",
+                "--execution-environment-image", "iac_ee:latest", 
+                "--eev", "~/.ssh:/runner/.ssh:ro",
+                "--mode", "stdout", 
+                "--pull-policy", "never",
+                "--enable-prompts", 
+                "-u", "root", 
+                // "-k", "-K"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/ansible"
+            },
             "problemMatcher": []
         },
         ///
@@ -265,73 +171,71 @@
             },
             "problemMatcher": []
         },
-        //
-        //
-        //
-
         {
             "label": "🧶 Lint: Autofix whole project",
             "type": "shell",
-            "command": "ansible-lint  --fix"
+            "command": "ansible-lint --fix"
         },
-
+        //
+        //
+        //
         {
-            "label": "🐶 Run K9s",
+            "label": "⛏0. Install Builder Dependencies",
+            "detail": "python3, pipx, container daemon... See https://github.com/pypa/pipx, https://docs.ansible.com/ansible/latest/getting_started_ee/setup_environment.html.",
             "type": "shell",
-            "command": "k9s",
+            "osx": {
+                "command": [
+                    "brew install --cask orbstack", "&&", 
+                    "brew install python3 pipx", "&&",
+                    "pipx ensurepath", "&&", "sudo pipx ensurepath --global"
+                ]
+            },
             "options": {
-                "env": {
-                    "EDITOR": "nano"
+                "statusbar": {
+                    "hide": true
                 }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "⛏1. Install Ansible Tools",
+            "detail": "Linter, EE Builder and Navigator... See https://ansible.readthedocs.io/projects/dev-tools/installation/",
+            "type": "shell",
+            "command": "pipx install --include-deps ansible-dev-tools",
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "⛏2. Build EE",
+            "detail": "See https://docs.ansible.com/ansible/latest/getting_started_ee/build_execution_environment.html#building-execution-environment",
+            "type": "shell",
+            "command": "ansible-builder",
+            "args": [
+                "build", 
+                "--tag", "iac_ee", 
+                "--container-runtime","docker"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/ansible/ee"
             }
         },
-        ///
-        ///
-        ///
+        //
+        //
+        //
         {
-            "label": "⛏1. Install Ansible & tools",
+            "label": "⚠️ Override branch with another",
             "type": "shell",
-            "command": [
-                //
-                "python3 -m pip install --break-system-packages --user pipx", "&&",
-                "python3 -m pipx ensurepath", "&&",
-                "python3 -m pipx ensurepath --global", "&&", // requires implicit "sudo" !! please be logged as root !!
-                //
-                "python3 -m pipx install --include-deps ansible", "&&",
-                "python3 -m pipx install --include-deps ansible-dev-tools"
-            ],
+            "command": "if [ \"${input:confirmation}\" = \"agree\" ]; then git checkout ${input:branch-to-override} && git reset --hard ${input:branch-to-copy} && git push --force; else echo 'Did not agree explicitely'; exit 0; fi",
+            "problemMatcher": [],
             "options": {
                 "statusbar": {
                     "hide": true
                 }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "⛏2a. Install IaC requirements",
-            "type": "shell",
-            "command": "ansible-galaxy collection install --force -r ansible/requirements.yml",
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "⛏2b. Upgrade IaC requirements",
-            "type": "shell",
-            "command": [
-                "pipx upgrade --include-injected ansible", "&&",
-                "pipx upgrade --include-injected ansible-dev-tools", "&&",
-                "ansible-galaxy collection install --force -U -r ansible/requirements.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
+            }
         },
     ]
 }

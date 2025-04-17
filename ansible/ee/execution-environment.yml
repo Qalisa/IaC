@@ -1,0 +1,22 @@
+---
+version: 3
+
+images:
+  base_image:
+    name: quay.io/fedora/fedora:39
+
+dependencies:
+  ansible_core:
+    package_pip: ansible-core
+  ansible_runner:
+    package_pip: ansible-runner
+  system:
+    - openssh-clients
+    - sshpass
+  galaxy:
+    collections:
+      - name: community.docker
+      - name: kubernetes.core
+      - name: ansible.posix
+      - name: community.general
+      - name: amazon.aws

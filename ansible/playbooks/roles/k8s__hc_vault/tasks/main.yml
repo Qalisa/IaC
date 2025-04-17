@@ -1,6 +1,0 @@
----
-- name: Setup HC Vault
-  ansible.builtin.import_tasks: setup.yml
-
-- name: Configure HC Vault
-  ansible.builtin.import_tasks: configure.yml

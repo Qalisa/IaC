@@ -1,6 +1,6 @@
 ---
 - name: Uninstall k3s
-  hosts: all
+  hosts: k3s_master
   become: true
   vars:
     path_root: "{{ '/' if ansible_user == 'root' else '/home/' }}"

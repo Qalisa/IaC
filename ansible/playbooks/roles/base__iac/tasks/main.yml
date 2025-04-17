@@ -4,22 +4,16 @@
   community.general.snap:
     name:
       - helm
+    classic: true
 - name: Install helm-diff
   kubernetes.core.helm_plugin:
     plugin_path: https://github.com/databus23/helm-diff
 
-###
+### https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_info_module.html#id2
 - name: Update python's Kubernetes lib
-  community.general.pipx:
-    name: kubernetes
-    state: latest
-    install_deps: true
-
-###
-- name: Inject jmespath
-  community.general.pipx:
-    name: ansible
-    state: inject
-    install_deps: true
-    inject_packages:
+  ansible.builtin.pip:
+    break_system_packages: true
+    name:
+      - kubernetes>=24.2.0
+      - pyyaml>=3.11
       - jmespath
