@@ -27,7 +27,7 @@ spec:
           - apiVersion: apps/v1
             kind: Deployment
             name: dashboard
-            namespace: "[[ k8s__ingress_dashboard__namespace ]]"
+            namespace: "[[ k8s__ingress_book__namespace ]]"
         patchStrategicMerge:
           spec:
             template:

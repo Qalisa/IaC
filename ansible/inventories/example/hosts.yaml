@@ -1,5 +1,5 @@
 ---
-k3s-master:
+k3s_master:
   hosts:
     ###
     ## ADD HERE hostnames / IPs
@@ -8,6 +8,7 @@ k3s-master:
     ### Example: (LAN)
     # 192.168.0.10:
     #   ansible_port: 2222  
+    #   ansible_ssh_private_key_file: ~/.ssh/id_rsa
 
     ### Example: (localhost)
     # node1: # name of machine not relevant when using "ansible_connection: local"

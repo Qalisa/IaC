@@ -13,3 +13,5 @@ creds
 
 # ansible-lint cache, MUST create
 .cache
+
+**/ansible-navigator.log

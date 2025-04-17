@@ -1,8 +1,8 @@
 ---
 - name: Install K3s on Master Node
-  hosts: k3s-master
+  hosts: k3s_master
   become: true
   roles:
     - role: base__iac # Prerequisites to this SDK usage
-    - role: base__k3s # Lightweight k8s cluster
     - role: base__k9s # Terminal dashboard à-la Kubernetes Dashboard
+    - role: base__k3s # Lightweight k8s cluster

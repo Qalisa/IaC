@@ -1,0 +1,3 @@
+---
+k8s__ingress_book__external_hostname: book.{{ iac__root_domain }}
+k8s__ingress_book__namespace: ingress-dashboard

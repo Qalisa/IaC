@@ -1,7 +1,7 @@
 ---
 # ensure services roles are installed and configured AFTER kubernetes is set
 - name: Install Services w/in Kubernetes
-  hosts: k3s-master
+  hosts: k3s_master
   become: true
   roles:
     ##################
@@ -17,7 +17,7 @@
     #############################
     - role: k8s__traefik # Ingress and Routing dashboard
     - role: k8s__dashboard # K8s dashboard
-    - role: k8s__ingress_dashboard # List all ingresses available externally
+    - role: k8s__ingress_book # List all ingresses available externally
     # - role: k8s__prometheus_stack     # OPTIONAL, tracks insights from apps
     ########################
     ### Safety & Backups ###

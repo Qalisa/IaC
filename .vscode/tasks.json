@@ -58,44 +58,62 @@
         //
         //
         {
-            "label": "Ensure services playbook exists",
+            "label": "📝 Ensure [site.services] playbook exist",
             "type": "shell",
-            "command": "cp -R -u -p ./ansible/playbooks/_.site.services.yml ./ansible/playbooks/site.services.yml",
+            "linux": {
+                "command": "cp -R -u -p _.site.services.yml site.services.yml",
+            },
+            "osx": {
+                "command": "rsync -a --update _.site.services.yml site.services.yml",
+            },
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}/ansible/playbooks",
                 "statusbar": {
                     "hide": true
                 },
             }
         },
         {
-            "label": "🚀 Install: K3s",
+            "label": "🚀 Install: Services",
+            "detail": "Ensure EE is built before running this",
+            "dependsOn": "📝 Ensure [site.services] playbook exist",
             "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production",
-                // "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.k3s.yml"
+            "command": "ansible-navigator",
+            "args": [
+                "run", "playbooks/site.services.yml",
+                "-i", "inventories/production",
+                "--execution-environment-image", "iac_ee:latest", 
+                "--eev", "~/.ssh:/runner/.ssh:ro",
+                "--mode", "stdout", 
+                "--pull-policy", "never",
+                "--enable-prompts", 
+                "-u", "root", 
+                // "-k", "-K"
             ],
             "options": {
-                "statusbar": {
-                    "hide": true
-                }
+                "cwd": "${workspaceFolder}/ansible"
             },
             "problemMatcher": []
         },
         {
-            "label": "🚀 Install: Services",
-            "dependsOn": "Ensure services playbook exists",
+            "label": "🚀 Install: k3s",
+            "detail": "Ensure EE is built before running this",
             "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production",
-                // "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.services.yml"
+            "command": "ansible-navigator",
+            "args": [
+                "run", "playbooks/site.k3s.yml",
+                "-i", "inventories/production",
+                "--execution-environment-image", "iac_ee:latest", 
+                "--eev", "~/.ssh:/runner/.ssh:ro",
+                "--mode", "stdout", 
+                "--pull-policy", "never",
+                "--enable-prompts", 
+                "-u", "root", 
+                // "-k", "-K"
             ],
+            "options": {
+                "cwd": "${workspaceFolder}/ansible"
+            },
             "problemMatcher": []
         },
         ///
@@ -133,9 +151,6 @@
             },
             "problemMatcher": []
         },
-        //
-        //
-        //
         {
             "label": "🧶 Lint: Autofix whole project",
             "type": "shell",
@@ -144,23 +159,6 @@
         //
         //
         //
-        {
-            "label": "Build EE",
-            "detail": "See https://docs.ansible.com/ansible/latest/getting_started_ee/build_execution_environment.html#building-execution-environment",
-            "type": "shell",
-            "command": "ansible-builder",
-            "args": [
-                "build", 
-                "--tag", "iac_ee", 
-                "--container-runtime","docker"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/ansible/ee"
-            }
-        },
-        ///
-        ///
-        ///
         {
             "label": "⛏0. Install Builder Dependencies",
             "detail": "python3, pipx, container daemon... See https://github.com/pypa/pipx, https://docs.ansible.com/ansible/latest/getting_started_ee/setup_environment.html.",
@@ -189,8 +187,21 @@
                     "hide": true
                 }
             },
-            "dependsOn": "⛏0. Install Builder Dependencies",
             "problemMatcher": []
+        },
+        {
+            "label": "⛏2. Build EE",
+            "detail": "See https://docs.ansible.com/ansible/latest/getting_started_ee/build_execution_environment.html#building-execution-environment",
+            "type": "shell",
+            "command": "ansible-builder",
+            "args": [
+                "build", 
+                "--tag", "iac_ee", 
+                "--container-runtime","docker"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/ansible/ee"
+            }
         },
     ]
 }

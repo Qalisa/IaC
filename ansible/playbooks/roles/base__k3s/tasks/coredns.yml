@@ -4,8 +4,9 @@
     pod_ready.resources is defined and
     pod_ready.resources | length > 0 and
     pod_ready.resources[0].status.phase == "Running"
-  retries: 20
-  delay: 5
+  retries: 0
+  # retries: 20
+  # delay: 5
   kubernetes.core.k8s_info:
     kind: Pod
     namespace: "{{ k3s__default_namespace }}"

@@ -1,10 +1,8 @@
 ---
 - name: Run Pip w/ requisites
-  community.general.pipx:
-    name: ansible
-    state: inject
-    install_deps: true
-    inject_packages:
+  ansible.builtin.pip:
+    break_system_packages: true
+    name:
       - botocore
       - boto3
 

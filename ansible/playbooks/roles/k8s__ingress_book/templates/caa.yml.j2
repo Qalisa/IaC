@@ -1,15 +1,15 @@
 apiVersion: cloudflare.zelic.io/v1alpha1
 kind: CloudflareAccessApplication
 metadata:
-  name: "{{ k8s__ingress_dashboard__external_hostname }}"
+  name: "{{ k8s__ingress_book__external_hostname }}"
   namespace: "{{ cf_zto__namespace }}"
   annotations:
     # (optional) default: "false"
     #   ensures that the resource isn't removed from cloudflare if the CR is deleted
     cloudflare.zelic.io/prevent-destroy: "false"
 spec:
-  name: "{{ k8s__ingress_dashboard__external_hostname }}"
-  domain: "{{ k8s__ingress_dashboard__external_hostname }}"
+  name: "{{ k8s__ingress_book__external_hostname }}"
+  domain: "{{ k8s__ingress_book__external_hostname }}"
   autoRedirectToIdentity: false # allow multiple providers to be displayed on appLauncher 
   appLauncherVisible: true
   type: self_hosted

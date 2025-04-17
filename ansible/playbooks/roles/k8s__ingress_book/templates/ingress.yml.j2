@@ -10,11 +10,11 @@ metadata:
     ingress-dashboard/assume-tls: "true"
     ingress-dashboard/hide: "false"
     #
-    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__ingress_dashboard__external_hostname }}"
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__ingress_book__external_hostname }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
 spec:
   rules:
-    - host: "{{ k8s__ingress_dashboard__external_hostname }}"
+    - host: "{{ k8s__ingress_book__external_hostname }}"
       http:
         paths:
           - path: /
