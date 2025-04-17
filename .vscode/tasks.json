@@ -234,27 +234,42 @@
         //
         //
         //
-
         {
             "label": "🧶 Lint: Autofix whole project",
             "type": "shell",
-            "command": "ansible-lint  --fix"
+            "command": "ansible-lint --fix"
+        },
+        //
+        //
+        //
+        {
+            "label": "Build EE",
+            "detail": "See https://docs.ansible.com/ansible/latest/getting_started_ee/build_execution_environment.html#building-execution-environment",
+            "type": "shell",
+            "command": "ansible-builder",
+            "args": [
+                "build", 
+                "--tag", "iac_ee", 
+                "--container-runtime","docker"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/ansible/ee"
+            }
         },
         ///
         ///
         ///
         {
-            "label": "⛏1. Install Ansible & tools",
+            "label": "⛏0. Install Builder Dependencies",
+            "detail": "python3, pipx, container daemon... See https://github.com/pypa/pipx, https://docs.ansible.com/ansible/latest/getting_started_ee/setup_environment.html.",
             "type": "shell",
-            "command": [
-                //
-                "python3 -m pip install --break-system-packages --user pipx", "&&",
-                "python3 -m pipx ensurepath", "&&",
-                "python3 -m pipx ensurepath --global", "&&", // requires implicit "sudo" !! please be logged as root !!
-                //
-                "python3 -m pipx install --include-deps ansible", "&&",
-                "python3 -m pipx install --include-deps ansible-dev-tools"
-            ],
+            "osx": {
+                "command": [
+                    "brew install --cask orbstack", "&&", 
+                    "brew install python3 pipx", "&&",
+                    "pipx ensurepath", "&&", "sudo pipx ensurepath --global"
+                ]
+            },
             "options": {
                 "statusbar": {
                     "hide": true
@@ -263,29 +278,16 @@
             "problemMatcher": []
         },
         {
-            "label": "⛏2a. Install IaC requirements",
+            "label": "⛏1. Install Ansible Tools",
+            "detail": "Linter, EE Builder and Navigator... See https://ansible.readthedocs.io/projects/dev-tools/installation/",
             "type": "shell",
-            "command": "ansible-galaxy collection install --force -r ansible/requirements.yml",
+            "command": "pipx install --include-deps ansible-dev-tools",
             "options": {
                 "statusbar": {
                     "hide": true
                 }
             },
-            "problemMatcher": []
-        },
-        {
-            "label": "⛏2b. Upgrade IaC requirements",
-            "type": "shell",
-            "command": [
-                "pipx upgrade --include-injected ansible", "&&",
-                "pipx upgrade --include-injected ansible-dev-tools", "&&",
-                "ansible-galaxy collection install --force -U -r ansible/requirements.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
+            "dependsOn": "⛏0. Install Builder Dependencies",
             "problemMatcher": []
         },
     ]
