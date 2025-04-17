@@ -2,97 +2,14 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
-    "inputs": [
-        {
-            "id": "nsToDelete",
-            "description": "Please input the namespace to delete",
-            "default": "",
-            "type": "promptString"
-        },
-        {
-            "id": "helmPackage",
-            "description": "Please input the helm installation to remove",
-            "default": "",
-            "type": "promptString"
-        },
-        {
-            "id": "helmNamespace",
-            "description": "Please input the namespace to remove the helm installation from",
-            "default": "",
-            "type": "promptString"
-        },
-        {
-            "id": "imageToPull",
-            "description": "Registry path (like \"harbor-core.harbor/<org>/<image>:<tag>\")",
-            "default": "",
-            "type": "promptString"
-        }
-    ],
     "tasks": [
-        {
-            "label": "👮‍♀️ k8s: Delete namespace",
-            "type": "shell",
-            "command": [
-                "kubectl delete namespace ${input:nsToDelete}"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "👮‍♀️ helm: Uninstall",
-            "type": "shell",
-            "command": [
-                "helm uninstall ${input:helmPackage} -n ${input:helmNamespace}"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "👮‍♀️ k3s: DELETE !!!",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_reset.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Try to pull from private registry",
-            "detail": "Helps debugging registry auth issues",
-            "type": "shell",
-            "command": [
-                "systemctl restart containerd && crictl -r /run/containerd/containerd.sock pull ${input:imageToPull}"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        //
-        //
-        //
         {
             "label": "✅ CF Zero-Trust: apply application policies",
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
+                "-i ansible/inventories/production",
+                // "--vault-password-file .ansible-vault-pw",
                 "ansible/playbooks/site.services.yml",
                 "--tags", "zto-app"
             ],
@@ -104,13 +21,14 @@
             "problemMatcher": []
         },
         {
-            "label": "🔓 Hachicorp Vault: Unseal",
+            "label": "✅ Kyverno: apply policies",
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_unseal-vault.yml",
-                "--tags", "unseal"
+                "-i ansible/inventories/production",
+                // "--vault-password-file .ansible-vault-pw",
+                "ansible/playbooks/_.site.services.yml",
+                "--tags", "kyverno-policy"
             ],
             "options": {
                 "statusbar": {
@@ -120,32 +38,16 @@
             "problemMatcher": []
         },
         {
-            "label": "✅ mailserver: Ensure Mail Accounts Folder Permissions",
+            "label": "✅ ArgoCD: Install Applications",
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_mail-ensure-permissions.yml"
+                "-i ansible/inventories/production",
+                // "--vault-password-file .ansible-vault-pw",
+                "ansible/playbooks/_.site.services.yml",
+                "--tags", "argocd-apps"
             ],
             "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "✅ OpenLDAP: List Users",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "ansible/playbooks/_ldap_list_users.yml"
-            ],
-            "options": {
-                "env": {
-                    "ANSIBLE_DISPLAY_OK_HOSTS": "1"
-                },
                 "statusbar": {
                     "hide": true
                 }
@@ -155,23 +57,6 @@
         //
         //
         //
-        {
-            "label": "🚀 Install: K3s",
-            "type": "shell",
-            "command": [
-                "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "--vault-password-file .ansible-vault-pw",
-                "--become --become-user=root",
-                "ansible/playbooks/site.k3s.yml"
-            ],
-            "options": {
-                "statusbar": {
-                    "hide": true
-                }
-            },
-            "problemMatcher": []
-        },
         {
             "label": "Ensure services playbook exists",
             "type": "shell",
@@ -184,13 +69,30 @@
             }
         },
         {
+            "label": "🚀 Install: K3s",
+            "type": "shell",
+            "command": [
+                "ansible-playbook",
+                "-i ansible/inventories/production",
+                // "--vault-password-file .ansible-vault-pw",
+                "--become --become-user=root",
+                "ansible/playbooks/site.k3s.yml"
+            ],
+            "options": {
+                "statusbar": {
+                    "hide": true
+                }
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "🚀 Install: Services",
             "dependsOn": "Ensure services playbook exists",
             "type": "shell",
             "command": [
                 "ansible-playbook",
-                "-i ansible/inventories/production/hosts.yaml",
-                "--vault-password-file .ansible-vault-pw",
+                "-i ansible/inventories/production",
+                // "--vault-password-file .ansible-vault-pw",
                 "--become --become-user=root",
                 "ansible/playbooks/site.services.yml"
             ],

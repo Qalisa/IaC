@@ -101,9 +101,6 @@ iac__ldap__admin__bind_pw: "{{ vault_iac__ldap__admin__bind_pw }}"
 openldap_stack__lam_password: "{{ vault_openldap_stack__lam_password }}"
 openldap_stack__ssp_keyphrase: "{{ vault_openldap_stack__ssp_keyphrase }}"
 
-# password for "admin" user on Hashicorp Vault
-hc_vault__admin_password: "{{ vault_hc_vault__admin_password }}"
-
 #
 prometheus_stack__grafana_admin_pwd: "{{ vault_prometheus_stack__grafana_admin_pwd }}"
 
