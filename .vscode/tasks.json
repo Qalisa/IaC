@@ -107,7 +107,8 @@
                 "--mode", "stdout", 
                 "--pull-policy", "never",
                 "--enable-prompts", 
-                "-u", "root", 
+                "-u", "root",
+                // "--skip-tags", "zto-app"
                 // "-k", "-K"
             ],
             "options": {

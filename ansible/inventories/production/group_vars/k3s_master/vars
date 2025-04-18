@@ -90,6 +90,9 @@ longhorn__backup_storage__endpoint: "{{ u_vault_longhorn__backup_storage__endpoi
 # s3://<your-bucket-name>@<region>/
 longhorn__backup_storage__bucket_url: "{{ u_vault_longhorn__backup_storage__bucket_url }}"
 
+#
+pierceflare_server_url: "{{ u_vault_pierceflare_server_url }}"
+
 #################
 ### SECRETS ! ###
 #################
@@ -191,6 +194,9 @@ iac__cloudflare__zone_ids: "{{ vault_iac__cloudflare__zone_ids }}" # should corr
 # then generate a cert in CloudFlare dashboard > /ssl-tls/origin/certificate-form
 iac__cloudflare__origin_ca__cert: "{{ vault_iac__cloudflare__origin_ca__cert }}"
 iac__cloudflare__origin_ca__priv_key: "{{ vault_iac__cloudflare__origin_ca__priv_key }}"
+
+# Generate your API key from the Pierceflare Server / Service
+pierceflare_api_key: "{{ vault_pierceflare_api_key }}"
 
 ### MAKE SURE GITHUB APP HAS BELOW RIGHTS:
 # +> https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/#github-app-credential

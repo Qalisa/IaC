@@ -1,0 +1,20 @@
+---
+- name: Add stable chart repo
+  kubernetes.core.helm_repository:
+    name: pierceflare
+    repo_url: https://qalisa.github.io/pierceflare
+    force_update: true
+
+# https://github.com/moby/buildkit/tree/master/examples/kubernetes
+- name: Install Pierceflare CLI
+  kubernetes.core.helm:
+    name: buildkit
+    chart_ref: pierceflare/pierceflare-cli
+    release_namespace: pierceflare
+    create_namespace: true
+    wait: true
+    values:
+      secret:
+        pierceflare:
+          PIERCEFLARE_API_KEY: "{{ pierceflare_api_key }}"
+          PIERCEFLARE_SERVER_URL: "{{ pierceflare_server_url }}"
