@@ -8,13 +8,16 @@
 # https://github.com/moby/buildkit/tree/master/examples/kubernetes
 - name: Install Pierceflare CLI
   kubernetes.core.helm:
-    name: buildkit
+    name: pierceflare-cli
     chart_ref: pierceflare/pierceflare-cli
     release_namespace: pierceflare
     create_namespace: true
     wait: true
     values:
-      secret:
-        pierceflare:
+      secrets:
+        env:
           PIERCEFLARE_API_KEY: "{{ pierceflare_api_key }}"
-          PIERCEFLARE_SERVER_URL: "{{ pierceflare_server_url }}"
+      # config:
+      #   env:
+      #     PIERCEFLARE_LOG_LEVEL: debug
+      #     PIERCEFLARE_SERVER_URL: "{{ pierceflare_server_url }}"
