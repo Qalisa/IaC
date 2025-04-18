@@ -1,7 +1,7 @@
 apiVersion: traefik.io/v1alpha1
 kind: TLSStore
 metadata:
-  name: default
+  name: "{{ k8s__traefik__cf_tls_mode__full_strict__cert_resolver_name }}"
   namespace: "{{ k3s__default_namespace }}"
 spec:
   defaultCertificate:

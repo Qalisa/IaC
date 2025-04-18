@@ -18,12 +18,12 @@
     - role: k8s__traefik # Ingress and Routing dashboard
     - role: k8s__dashboard # K8s dashboard
     - role: k8s__ingress_book # List all ingresses available externally
-    # - role: k8s__prometheus_stack     # OPTIONAL, tracks insights from apps
+    # - role: k8s__prometheus_stack # OPTIONAL, tracks insights from apps
     ########################
     ### Safety & Backups ###
     ########################
-    # - role: k8s__minio                # OPTIONAL, S3 compatible Storage Object service
-    # - role: k8s__velero               # OPTIONAL, tool to orchestrate K8s backups (Volumes, custom CRDs...)
+    # - role: k8s__minio # OPTIONAL, S3 compatible Storage Object service
+    # - role: k8s__velero # OPTIONAL, tool to orchestrate K8s backups (Volumes, custom CRDs...)
     ####################
     ### Org Services ###
     ####################
@@ -33,13 +33,13 @@
     ### DevOps ###
     ##############
     - role: k8s__harbor # Docker images private registry
-    # - role: k8s__github_arc           # OPTIONAL, allow github actions local runners
-    # - role: k8s__sentry               # OPTIONAL, receive debug reports (careful, high resources usage !)
-    # - role: k8s__matomo               # OPTIONAL, allow usage tracking of apps / websites
-    - role: k8s__argo_cd # Automatize Continuous Delivery
+    # - role: k8s__github_arc # OPTIONAL, allow github actions local runners
+    # - role: k8s__sentry # OPTIONAL, receive debug reports (careful, high resources usage !)
+    # - role: k8s__matomo # OPTIONAL, allow usage tracking of apps / websites
+    - role: k8s__argocd # Automatize Continuous Delivery
     ############
     ### Apps ###
     ############
-    # - role: k8s__odoo_community       # All-in-one, with alot of free apps (CRM and such)
-    # - role: k8s__listmonk             # Allow marketing campaigns
-    # - role: k8s__ez_appointments      # Allow clients to secure appointments
+    # - role: k8s__odoo_community # All-in-one, with alot of free apps (CRM and such)
+    # - role: k8s__listmonk # Allow marketing campaigns
+    # - role: k8s__ez_appointments # Allow clients to secure appointments

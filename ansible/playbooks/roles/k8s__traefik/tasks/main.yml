@@ -51,8 +51,14 @@
               - "{{ iac__k3s__servicelb__ip_range }}"
           tls: {}
 
+- name: Find out if we need Cloudflare's Full (Strict) SSL/TLS
+  ansible.builtin.set_fact:
+    k8s__traefik__cf_tls_mode__full_strict__enabled: >-
+      {{ (vault_argocd__github_app__priv_key | default('') | length > 0)
+         and (vault_iac__cloudflare__origin_ca__cert | default('') | length > 0) }}
+
 - name: Add Cloudflare's Full (Strict) SSL/TLS termination support for Traefik
-  when: k8s__traefik__cf_strict_tls__enabled | bool
+  when: k8s__traefik__cf_tls_mode__full_strict__enabled | bool
   block:
     - name: Add definitions (resolver + origin CA)
       kubernetes.core.k8s:
@@ -68,7 +74,7 @@
                 'ports': {
                   'websecure': {
                     'tls': {
-                      'certResolver': 'default'
+                      'certResolver': k8s__traefik__cf_tls_mode__full_strict__cert_resolver_name
                     }
                   }
                 }
