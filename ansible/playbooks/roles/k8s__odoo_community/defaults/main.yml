@@ -1,6 +1,6 @@
 ---
 k8s__odoo_community__namespace: odoo-community
-k8s__odoo_community__external_hostname: odoo.{{ iac__root_domain }}
+k8s__odoo_community__external_hostname: odoo-mosellane1.{{ iac__root_domain }}
 
 # name of postgres's helm setup manifests
 k8s__odoo_community__db__name: odoo-postgresql
@@ -43,9 +43,10 @@ k8s__odoo_community__addons__repo__qalisa: https://github.com/Qalisa/odoo-apps
 k8s__odoo_community__addons__branch__qalisa: "18-0" # enhance compatibility with argocd
 
 k8s__odoo_community__odoo_instance__addons_paths: >-
-  {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odooapps,
+  {{ k8s__odoo_community__odoo_instance__addons_dir }}/odoomates/odooapps,
   {{ k8s__odoo_community__odoo_instance__addons_dir }}/qalisa/odoo-apps/addons
 
-k8s__odoo_community__odoo_included_modules: ["l10n_{{ iac__prefered_lang__sub }}_account", "contacts", "sale_management"]
+k8s__odoo_community__odoo_included_modules:
+  ["l10n_{{ iac__prefered_lang__sub }}_account", "contacts", "sale_management"]
 #
 k8s__odoo_community__add_server_definitions_into_pgadmin: false
