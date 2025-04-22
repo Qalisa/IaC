@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: odoo
+  name: "{{ k8s__odoo_community__metadata_name }}"
   namespace: "{{ k8s__odoo_community__namespace }}"
   annotations:
     #
@@ -24,13 +24,13 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: odoo
+                name: "{{ k8s__odoo_community__metadata_name }}"
                 port:
                   name: longpolling
           - path: /
             pathType: Prefix
             backend:
               service: 
-                name: odoo
+                name: "{{ k8s__odoo_community__metadata_name }}"
                 port:
                   name: http

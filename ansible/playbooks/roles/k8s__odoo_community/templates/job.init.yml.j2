@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: odoo-init
+  name: "{{ k8s__odoo_community__metadata_name }}-init"
   namespace: "{{ k8s__odoo_community__namespace }}"
 spec:
   # Optionally, set a backoff limit to control retries (default is 6)
@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        app: odoo
+        app: "{{ k8s__odoo_community__app_selector_name }}"
     spec:
       restartPolicy: Never
       initContainers:
@@ -75,10 +75,10 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: odoo
+            claimName: "{{ k8s__odoo_community__metadata_name }}"
         - name: config
           secret:
-            secretName: odoo
+            secretName: "{{ k8s__odoo_community__metadata_name }}"
         - name: extra-addons
           persistentVolumeClaim:
             claimName: extra-addons
