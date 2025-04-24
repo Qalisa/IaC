@@ -19,11 +19,12 @@ spec:
     spec:
       restartPolicy: Always
       initContainers:
-        - name: odoomates-addons
+{% for addon_name, addon_info in k8s__odoo_community__addons.items() %}
+        - name: {{ addon_name }}-addons
           image: registry.k8s.io/git-sync/git-sync:v4.4.0
           args:
-            - "--repo={{ k8s__odoo_community__addons__repo__odoomates }}"
-            - "--ref={{ k8s__odoo_community__addons__branch__odoomates }}"
+            - "--repo={{ addon_info.url }}"
+            - "--ref={{ addon_info.branch }}"
             - "--root=/tmp/git"
             - "--period=30s"
             - "--depth=1"
@@ -32,30 +33,16 @@ spec:
             runAsUser: 0
           volumeMounts:
             - mountPath: /tmp/git
-              subPath: odoomates
+              subPath: {{ addon_name }}
               name: extra-addons
-        - name: qalisa-addons
-          image: registry.k8s.io/git-sync/git-sync:v4.4.0
-          args:
-            - "--repo={{ k8s__odoo_community__addons__repo__qalisa }}"
-            - "--ref={{ k8s__odoo_community__addons__branch__qalisa }}"
-            - "--root=/tmp/git"
-            - "--period=30s"
-            - "--depth=1"
-            - "--one-time"
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - mountPath: /tmp/git
-              subPath: qalisa
-              name: extra-addons
+{% endfor %}
 
       containers:
         - name: odoo
           image: odoo:latest
           imagePullPolicy: IfNotPresent
           securityContext:
-            runAsUser: 0 # required
+            runAsUser: 0 # required
             runAsGroup: 0 # required
 
           # copied from bitnami/odoo's helm
