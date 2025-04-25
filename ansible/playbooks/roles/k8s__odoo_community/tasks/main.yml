@@ -1,8 +1,4 @@
 ---
-- name: Test
-  ansible.builtin.debug:
-    var: k8s__odoo_community__odoo_instance__addons_paths
-
 - name: Install postgres
   ansible.builtin.import_tasks: setup.postgres.yml
 

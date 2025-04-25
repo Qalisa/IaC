@@ -8,6 +8,12 @@
       - path: templates/pvc.addons.yml.j2
       - path: templates/secret.yml.j2
 
+- name: Maybe install PVC for local backups
+  when: k8s__odoo_community__use_local_backup_pvc | bool
+  kubernetes.core.k8s:
+    template:
+      - path: templates/pvc.local-backups.yml.j2
+
 - name: Wait for Longhorn to bind the PVC
   kubernetes.core.k8s_info:
     api_version: v1

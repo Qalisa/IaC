@@ -50,6 +50,7 @@ k8s__odoo_community__odoo_included_modules:
 
 #
 k8s__odoo_community__add_server_definitions_into_pgadmin: false
+k8s__odoo_community__use_local_backup_pvc: true
 
 ##
 ##

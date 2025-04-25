@@ -77,7 +77,11 @@ spec:
             - name: config
               mountPath: /etc/odoo
               readOnly: true
-
+{% if k8s__odoo_community__use_local_backup_pvc | default(false) %}
+            - name: local-backups
+              mountPath: /backups/local
+              readOnly: false
+{% endif %}
           ports:
             - name: http
               containerPort: 8069
@@ -96,3 +100,8 @@ spec:
         - name: extra-addons
           persistentVolumeClaim:
             claimName: extra-addons
+{% if k8s__odoo_community__use_local_backup_pvc | default(false) %}
+        - name: local-backups
+          persistentVolumeClaim:
+            claimName: local-backups
+{% endif %}
