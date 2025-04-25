@@ -13,6 +13,9 @@ k8s__odoo_community__app_selector_name: odoo
 k8s__odoo_community__db__name: odoo-postgresql
 
 #
+k8s__odoo_community__odoo_docker_image: ghcr.io/qalisa/odoo:18-0
+
+#
 k8s__odoo_community__db__config__admin_password: odoo-admin_PwD1231.L14d
 # https://github.com/odoo/odoo/issues/182551
 # https://hub.docker.com/_/odoo

@@ -39,7 +39,7 @@ spec:
 
       containers:
         - name: odoo
-          image: odoo:latest
+          image: "{{ k8s__odoo_community__odoo_docker_image }}"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0 # required
