@@ -4,5 +4,5 @@
   become: true
   roles:
     - role: base__iac # Prerequisites to this SDK usage
-    - role: base__k9s # Terminal dashboard à-la Kubernetes Dashboard
+    - role: base__k9s # OPTIONAL, Terminal dashboard à-la Kubernetes Dashboard
     - role: base__k3s # Lightweight k8s cluster

@@ -1,7 +1,7 @@
 ---
 # ensure services roles are installed and configured AFTER kubernetes is set
 - name: Install Services w/in Kubernetes
-  hosts: k3s_master
+  hosts: node1
   become: true
   roles:
     ##################
@@ -12,12 +12,14 @@
     - role: k8s__external_dns # Bind ingresses to DNS rules on Cloudflare
     - role: k8s__kyverno # Policies enforcement and metadata injection
     - role: k8s__longhorn # Distributed blocks storage
+    # - role: k8s__dnsutils # OPTIONAL, utility to test DNS behavior within cluster
     #############################
     ### MANAGEMENT & INSIGHTS ###
     #############################
     - role: k8s__traefik # Ingress and Routing dashboard
     - role: k8s__dashboard # K8s dashboard
     - role: k8s__ingress_book # List all ingresses available externally
+    - role: k8s__pgadmin # allow database management of postgresql DBs
     # - role: k8s__prometheus_stack # OPTIONAL, tracks insights from apps
     ########################
     ### Safety & Backups ###
@@ -34,14 +36,18 @@
     ##############
     - role: k8s__harbor # Docker images private registry
     # - role: k8s__github_arc # OPTIONAL, allow github actions local runners
-    # - role: k8s__sentry # OPTIONAL, receive debug reports (careful, high resources usage !)
-    # - role: k8s__matomo # OPTIONAL, allow usage tracking of apps / websites
+    # - role: k8s__hc_vault # OPTIONAL, allow secure storage of private keys
+    # - role: k8s__sentry # DEPRECATED, receive debug reports (careful, high resources usage !) - Prefer sentry/on-premise
+    # - role: k8s__matomo # DEPRECATED, allow usage tracking of apps / websites - Prefer Posthog Cloud free tier
     - role: k8s__argocd # Automatize Continuous Delivery
+    ########################
+    ### Custom operators ###
+    ########################
+    - role: k8s__github_actions_secrets_operator # Allow synchronization of secrets and variables to Github CI
     ############
     ### Apps ###
     ############
-    # - role: k8s__pierceflare_cli # like external-dns for cloudflare, be externalized
-    #   when: pierceflare_api_key is defined
-    # - role: k8s__odoo_community # All-in-one, with alot of free apps (CRM and such)
+    # - role: k8s__posthog_proxy # OPTIONAL, redirects official Posthog Cloud SAAS endpoints to owned domains subdomains prevents trafic blocking
+    - role: k8s__odoo_community # All-in-one, with alot of free apps (CRM and such)
     # - role: k8s__listmonk # Allow marketing campaigns
-    # - role: k8s__ez_appointments # Allow clients to secure appointments
+    # - role: k8s__calcom # Allow clients to secure appointments
