@@ -1,22 +1,14 @@
 ---
-- name: Create directory for PostHog installation
-  ansible.builtin.file:
-    path: "{{ sidekick__posthog__install_dir }}"
-    state: directory
-    mode: "0755"
-    owner: "{{ ansible_user | default('root') }}"
-    group: "{{ ansible_user | default('root') }}"
+- name: Clone posthog GH repo to tag
+  ansible.builtin.git:
+    repo: "{{ sidekick__posthog__github_repo }}"
+    version: master
+    single_branch: true
+    depth: 1
+    force: true
+    dest: "{{ sidekick__posthog__install_dir }}"
 
-- name: Download PostHog files from GitHub
-  ansible.builtin.get_url:
-    url: "{{ sidekick__posthog__github_head }}/{{ item }}"
-    dest: "{{ sidekick__posthog__install_dir }}/{{ item }}"
-    mode: "0644"
-    owner: "{{ ansible_user | default('root') }}"
-    group: "{{ ansible_user | default('root') }}"
-  with_items: "{{ sidekick__posthog__github_files_to_dl }}"
-
-- name: Rename modified docker-compose.hobby.yml to docker-compose.yml
+- name: Rename docker-compose.hobby.yml to docker-compose.yml
   ansible.builtin.copy:
     src: "{{ sidekick__posthog__install_dir }}/docker-compose.hobby.yml"
     dest: "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
@@ -24,6 +16,10 @@
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
     remote_src: true
+
+##
+##
+##
 
 - name: Remove caddy from docker-compose.yml using yq (inplace mandatory)
   ansible.builtin.command:
@@ -35,6 +31,21 @@
       - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
   register: yq_result
   changed_when: yq_result.rc == 0
+
+- name: Add env_file to worker
+  ansible.builtin.command:
+    argv:
+      - yq
+      - -y
+      - -i
+      - .services.worker.env_file[0] = "./.env.worker"
+      - "{{ sidekick__posthog__install_dir }}/docker-compose.base.yml"
+  register: yq_result
+  changed_when: yq_result.rc == 0
+
+##
+##
+##
 
 - name: Check if .env file exists
   ansible.builtin.stat:
@@ -49,24 +60,12 @@
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
   when: not env_file.stat.exists
-##
-##
-##
 
-# environment:
-#   # https://posthog.com/docs/self-host/configure/environment-variables
-#   SITE_URL: "{{ sidekick__posthog__site_url }}"
-#   SECRET_KEY: "{{ posthog_secret_key }}"
-#   ##
-#   IS_BEHIND_PROXY: "1"
-#   # TRUSTED_PROXIES: "<IPs>"
-#   TRUST_ALL_PROXIES: "1"
-#   #
-#   EMAIL_ENABLED: "1"
-#   EMAIL_HOST: "{{ docker_mailserver__external_hostname }}"
-#   EMAIL_PORT: "587"
-#   EMAIL_DEFAULT_FROM: "{{ iac__donotreply_email }}"
-#   EMAIL_HOST_USER: "{{ iac__donotreply_username }}"
-#   EMAIL_HOST_PASSWORD: "{{ iac__donotreply_password }}"
-#   EMAIL_USE_TLS: "1"
-#   EMAIL_USE_SSL: "0"
+- name: Create .env.worker file from template
+  ansible.builtin.template:
+    src: .env.worker.j2
+    dest: "{{ sidekick__posthog__install_dir }}/.env.worker"
+    mode: "0644"
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+  when: not env_file.stat.exists

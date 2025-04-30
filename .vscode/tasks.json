@@ -243,7 +243,7 @@
             "args": [
                 "build", 
                 "--tag", "iac_ee", 
-                "--container-runtime","docker"
+                "--container-runtime", "docker"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/ansible/ee"

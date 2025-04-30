@@ -9,6 +9,6 @@ sidekick__posthog__posthog_secret: "{{ posthog_secret }}"
 
 #
 sidekick__posthog__install_dir: "/opt/posthog"
-sidekick__posthog__github_head: "https://raw.githubusercontent.com/posthog/posthog/HEAD"
+sidekick__posthog__github_repo: https://github.com/PostHog/posthog.git
 sidekick__posthog__github_files_to_dl:
   ["docker-compose.hobby.yml", "docker-compose.base.yml"]
