@@ -7,13 +7,20 @@
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
 
+# Téléchargement du script de déploiement PostHog
+- name: Download PostHog deployment script
+  ansible.builtin.get_url:
+    url: "{{ sidekick__posthog__deploy_script_url }}"
+    dest: "{{ sidekick__posthog__deploy_script_dest }}"
+    mode: "0755"
+    force: true
+    validate_certs: true
+
 # https://posthog.com/docs/self-host#setting-up-the-stack
 - name: Run PostHog hobby deployment script
-  ansible.builtin.shell:
-    cmd: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/posthog/posthog/HEAD/bin/deploy-hobby)"
+  ansible.builtin.command:
+    cmd: /bin/bash {{ sidekick__posthog__deploy_script_dest }}
     chdir: "{{ sidekick__posthog__install_dir }}"
-  args:
-    creates: "{{ sidekick__posthog__install_dir }}/docker-compose.yml" # Évite de réexécuter si déjà installé
   environment:
     # https://posthog.com/docs/self-host/configure/environment-variables
     SITE_URL: "{{ sidekick__posthog__site_url }}"
