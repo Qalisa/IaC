@@ -1,4 +1,14 @@
 ---
+#####################
+### NON - SECRETS ###
+#####################
+
+###
+### DEFINED - Org identity related
+### 
+
+posthog_sentry_project_dns: "{{ u_vault_posthog_sentry_project_dns }}"
+
 #################
 ### SECRETS ! ###
 #################
@@ -12,5 +22,8 @@
 ### DEFINED
 ### 
 
-# generate a random passphrase with https://randomkeygen.com/
-posthog_secret_key: "{{ vault_posthog_secret_key }}"
+# $(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
+posthog_secret: "{{ vault_posthog_secret }}"
+
+# $(openssl rand -hex 16)
+posthog_encryption_salt_keys: "{{ vault_posthog_encryption_salt_keys }}"

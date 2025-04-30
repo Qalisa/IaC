@@ -1,9 +1,14 @@
 ---
-sidekick__posthog__install_dir: "/opt/posthog"
-sidekick__posthog__origin: posthog.{{ iac__root_domain }}
-sidekick__posthog__site_url: "https://{{ sidekick__posthog__origin }}"
-sidekick__posthog__version_tag: latest
+# inspired by https://raw.githubusercontent.com/posthog/posthog/HEAD/bin/deploy-hobby
+sidekick__posthog__registry_url: posthog/posthog
+sidekick__posthog__posthog_app_tag: latest
+sidekick__posthog__domain: posthog.{{ iac__root_domain }}
+sidekick__posthog__sentry_dsn: "{{ posthog_sentry_project_dns }}"
+sidekick__posthog__encryption_salt_keys: "{{ posthog_encryption_salt_keys }}"
+sidekick__posthog__posthog_secret: "{{ posthog_secret }}"
 
-# Script de déploiement PostHog
-sidekick__posthog__deploy_script_url: "https://raw.githubusercontent.com/posthog/posthog/HEAD/bin/deploy-hobby"
-sidekick__posthog__deploy_script_dest: "{{ sidekick__posthog__install_dir }}/deploy-hobby"
+#
+sidekick__posthog__install_dir: "/opt/posthog"
+sidekick__posthog__github_head: "https://raw.githubusercontent.com/posthog/posthog/HEAD"
+sidekick__posthog__github_files_to_dl:
+  ["docker-compose.hobby.yml", "docker-compose.base.yml"]

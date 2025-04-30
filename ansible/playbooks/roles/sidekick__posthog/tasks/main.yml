@@ -7,34 +7,67 @@
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
 
-# Téléchargement du script de déploiement PostHog
-- name: Download PostHog deployment script
+- name: Download PostHog files from GitHub
   ansible.builtin.get_url:
-    url: "{{ sidekick__posthog__deploy_script_url }}"
-    dest: "{{ sidekick__posthog__deploy_script_dest }}"
-    mode: "0755"
-    force: true
-    validate_certs: true
+    url: "{{ sidekick__posthog__github_head }}/{{ item }}"
+    dest: "{{ sidekick__posthog__install_dir }}/{{ item }}"
+    mode: "0644"
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+  with_items: "{{ sidekick__posthog__github_files_to_dl }}"
 
-# https://posthog.com/docs/self-host#setting-up-the-stack
-- name: Run PostHog hobby deployment script
-  ansible.builtin.command:
-    cmd: /bin/bash {{ sidekick__posthog__deploy_script_dest }}
-    chdir: "{{ sidekick__posthog__install_dir }}"
-  environment:
-    # https://posthog.com/docs/self-host/configure/environment-variables
-    SITE_URL: "{{ sidekick__posthog__site_url }}"
-    SECRET_KEY: "{{ posthog_secret_key }}"
-    ##
-    IS_BEHIND_PROXY: "1"
-    # TRUSTED_PROXIES: "<IPs>"
-    TRUST_ALL_PROXIES: "1"
-    #
-    EMAIL_ENABLED: "1"
-    EMAIL_HOST: "{{ docker_mailserver__external_hostname }}"
-    EMAIL_PORT: "587"
-    EMAIL_DEFAULT_FROM: "{{ iac__donotreply_email }}"
-    EMAIL_HOST_USER: "{{ iac__donotreply_username }}"
-    EMAIL_HOST_PASSWORD: "{{ iac__donotreply_password }}"
-    EMAIL_USE_TLS: "1"
-    EMAIL_USE_SSL: "0"
+- name: Read docker-compose.hobby.yml file
+  ansible.builtin.slurp:
+    src: "{{ sidekick__posthog__install_dir }}/docker-compose.hobby.yml"
+  register: compose_file_content
+
+- name: Remove caddy as front proxy from docker-compose
+  ansible.builtin.set_fact:
+    compose_yaml: "{{ compose_file_content.content | b64decode | from_yaml }}"
+
+- name: Remove caddy service and related volumes
+  ansible.builtin.set_fact:
+    compose_yaml: >-
+      {{ compose_yaml | combine({
+        'services': compose_yaml.services | default({}) | dict2items |
+                     rejectattr('key', 'eq', 'caddy') | items2dict,
+        'volumes': compose_yaml.volumes | default({}) | dict2items |
+                   rejectattr('key', 'match', 'caddy-.*') | items2dict
+      }, recursive=True) }}
+
+- name: Write modified content to docker-compose.yml
+  ansible.builtin.copy:
+    content: "{{ compose_yaml | to_nice_yaml(indent=2) }}"
+    dest: "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+    mode: "0644"
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+
+- name: Create .env file from template
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ sidekick__posthog__install_dir }}/.env"
+    mode: "0644"
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+##
+##
+##
+
+# environment:
+#   # https://posthog.com/docs/self-host/configure/environment-variables
+#   SITE_URL: "{{ sidekick__posthog__site_url }}"
+#   SECRET_KEY: "{{ posthog_secret_key }}"
+#   ##
+#   IS_BEHIND_PROXY: "1"
+#   # TRUSTED_PROXIES: "<IPs>"
+#   TRUST_ALL_PROXIES: "1"
+#   #
+#   EMAIL_ENABLED: "1"
+#   EMAIL_HOST: "{{ docker_mailserver__external_hostname }}"
+#   EMAIL_PORT: "587"
+#   EMAIL_DEFAULT_FROM: "{{ iac__donotreply_email }}"
+#   EMAIL_HOST_USER: "{{ iac__donotreply_username }}"
+#   EMAIL_HOST_PASSWORD: "{{ iac__donotreply_password }}"
+#   EMAIL_USE_TLS: "1"
+#   EMAIL_USE_SSL: "0"
