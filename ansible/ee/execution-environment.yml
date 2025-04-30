@@ -13,6 +13,7 @@ dependencies:
   system:
     - openssh-clients
     - sshpass
+    - yq
   galaxy:
     collections:
       - name: community.docker

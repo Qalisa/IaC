@@ -16,32 +16,25 @@
     group: "{{ ansible_user | default('root') }}"
   with_items: "{{ sidekick__posthog__github_files_to_dl }}"
 
-- name: Read docker-compose.hobby.yml file
-  ansible.builtin.slurp:
-    src: "{{ sidekick__posthog__install_dir }}/docker-compose.hobby.yml"
-  register: compose_file_content
-
-- name: Remove caddy as front proxy from docker-compose
-  ansible.builtin.set_fact:
-    compose_yaml: "{{ compose_file_content.content | b64decode | from_yaml }}"
-
-- name: Remove caddy service and related volumes
-  ansible.builtin.set_fact:
-    compose_yaml: >-
-      {{ compose_yaml | combine({
-        'services': compose_yaml.services | default({}) | dict2items |
-                     rejectattr('key', 'eq', 'caddy') | items2dict,
-        'volumes': compose_yaml.volumes | default({}) | dict2items |
-                   rejectattr('key', 'match', 'caddy-.*') | items2dict
-      }, recursive=True) }}
-
-- name: Write modified content to docker-compose.yml
+- name: Rename modified docker-compose.hobby.yml to docker-compose.yml
   ansible.builtin.copy:
-    content: "{{ compose_yaml | to_nice_yaml(indent=2) }}"
+    src: "{{ sidekick__posthog__install_dir }}/docker-compose.hobby.yml"
     dest: "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
     mode: "0644"
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
+    remote_src: true
+
+- name: Remove caddy from docker-compose.yml using yq (inplace mandatory)
+  ansible.builtin.command:
+    argv:
+      - yq
+      - -y
+      - -i
+      - del(.services.caddy, .volumes."caddy-config", .volumes."caddy-data")
+      - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+  register: yq_result
+  changed_when: yq_result.rc == 0
 
 - name: Check if .env file exists
   ansible.builtin.stat:
