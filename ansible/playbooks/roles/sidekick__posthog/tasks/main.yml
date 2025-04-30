@@ -43,6 +43,11 @@
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
 
+- name: Check if .env file exists
+  ansible.builtin.stat:
+    path: "{{ sidekick__posthog__install_dir }}/.env"
+  register: env_file
+
 - name: Create .env file from template
   ansible.builtin.template:
     src: .env.j2
@@ -50,6 +55,7 @@
     mode: "0644"
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
+  when: not env_file.stat.exists
 ##
 ##
 ##
