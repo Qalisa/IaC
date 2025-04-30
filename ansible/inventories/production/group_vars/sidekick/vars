@@ -1,0 +1,16 @@
+---
+#################
+### SECRETS ! ###
+#################
+
+# https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html#keep-vaulted-variables-safely-visible
+# requires an encrypted file named "vault"
+# "ansible-vault encrypt ansible/inventories/production/group_vars/all/vault"
+# "ansible-vault decrypt ansible/inventories/production/group_vars/all/vault"
+
+###
+### DEFINED
+### 
+
+# generate a random passphrase with https://randomkeygen.com/
+posthog_secret_key: "{{ vault_posthog_secret_key }}"

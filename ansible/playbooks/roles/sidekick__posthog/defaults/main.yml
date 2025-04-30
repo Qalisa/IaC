@@ -1,1 +1,4 @@
 ---
+sidekick__posthog__install_dir: "/opt/posthog"
+sidekick__posthog__origin: posthog.{{ iac__root_domain }}
+sidekick__posthog__site_url: "https://{{ sidekick__posthog__origin }}"
