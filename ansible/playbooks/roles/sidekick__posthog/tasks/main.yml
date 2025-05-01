@@ -6,12 +6,21 @@
     single_branch: true
     depth: 1
     force: true
-    dest: "{{ sidekick__posthog__install_dir }}"
+    dest: "{{ sidekick__posthog__gh_install_dir }}"
 
 - name: Rename docker-compose.hobby.yml to docker-compose.yml
   ansible.builtin.copy:
-    src: "{{ sidekick__posthog__install_dir }}/docker-compose.hobby.yml"
+    src: "{{ sidekick__posthog__gh_install_dir }}/docker-compose.hobby.yml"
     dest: "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+    mode: "0644"
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+    remote_src: true
+
+- name: Copy base docker-compose
+  ansible.builtin.copy:
+    src: "{{ sidekick__posthog__gh_install_dir }}/docker-compose.base.yml"
+    dest: "{{ sidekick__posthog__install_dir }}/docker-compose.base.yml"
     mode: "0644"
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
@@ -25,7 +34,6 @@
   ansible.builtin.command:
     argv:
       - yq
-      - -y
       - -i
       - del(.services.caddy, .volumes."caddy-config", .volumes."caddy-data")
       - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
@@ -36,7 +44,6 @@
   ansible.builtin.command:
     argv:
       - yq
-      - -y
       - -i
       - .services.worker.env_file[0] = "./.env.worker"
       - "{{ sidekick__posthog__install_dir }}/docker-compose.base.yml"
