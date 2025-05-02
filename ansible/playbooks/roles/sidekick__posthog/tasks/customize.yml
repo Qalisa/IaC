@@ -120,3 +120,24 @@
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
   when: not env_file.stat.exists
+
+##
+## Install GeoLite2 database for IP geolocation
+##
+
+- name: Ensure shared directory exists
+  ansible.builtin.file:
+    path: "{{ sidekick__posthog__install_dir }}/shared"
+    state: directory
+    mode: "0755"
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+
+- name: Download GeoLite2-City.mmdb from GitHub
+  ansible.builtin.get_url:
+    url: "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb"
+    dest: "{{ sidekick__posthog__install_dir }}/shared/GeoLite2-City.mmdb"
+    mode: "0644"
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+    force: false
