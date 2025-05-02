@@ -98,7 +98,10 @@
       changed_when: yq_result_labels_livestream.rc == 0
       loop: "{{ sidekick__posthog__traefik_exposed__livestream }}"
 
-- name: Link services to traefik
+##
+##
+
+- name: Link exposed services to traefik
   ansible.builtin.command:
     argv:
       - yq
@@ -110,6 +113,16 @@
   loop:
     - web
     - livestream
+
+- name: Link all other services between each other
+  ansible.builtin.command:
+    argv:
+      - yq
+      - -i
+      - .services.*.networks += ["default"]
+      - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+  register: yq_result_networks
+  changed_when: yq_result_networks.rc == 0
 
 ##
 ## UPDATE docker-compose.base-iac.yml
