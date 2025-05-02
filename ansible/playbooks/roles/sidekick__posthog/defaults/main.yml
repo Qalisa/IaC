@@ -2,7 +2,7 @@
 # inspired by https://raw.githubusercontent.com/posthog/posthog/HEAD/bin/deploy-hobby
 sidekick__posthog__registry_url: posthog/posthog
 # https://github.com/PostHog/posthog/issues/29706
-sidekick__posthog__posthog_app_tag: 1b49d06a5b0a41021c4976a74d1bb1db0f2614a3
+sidekick__posthog__posthog_app_tag: 6bda8cb363ae86e6fb925137315ae035df937a8e
 sidekick__posthog__domain: posthog.{{ iac__root_domain }}
 sidekick__posthog__sentry_dsn: "{{ posthog_sentry_project_dns }}"
 sidekick__posthog__encryption_salt_keys: "{{ posthog_encryption_salt_keys }}"
