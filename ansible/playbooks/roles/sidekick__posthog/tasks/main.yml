@@ -6,29 +6,77 @@
     single_branch: true
     depth: 1
     force: true
-    dest: "{{ sidekick__posthog__gh_install_dir }}"
+    dest: "{{ sidekick__posthog__install_dir }}"
+
+- name: Copy compose directory to installation directory
+  ansible.builtin.copy:
+    src: "compose"
+    dest: "{{ sidekick__posthog__install_dir }}"
+    mode: "0644"
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+
+##
+##
+##
 
 - name: Rename docker-compose.hobby.yml to docker-compose.yml
   ansible.builtin.copy:
-    src: "{{ sidekick__posthog__gh_install_dir }}/docker-compose.hobby.yml"
+    src: "{{ sidekick__posthog__install_dir }}/docker-compose.hobby.yml"
     dest: "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
     mode: "0644"
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
     remote_src: true
 
-- name: Copy base docker-compose
+- name: Rename docker-compose.base.yml to docker-compose.base-iac.yml
   ansible.builtin.copy:
-    src: "{{ sidekick__posthog__gh_install_dir }}/docker-compose.base.yml"
-    dest: "{{ sidekick__posthog__install_dir }}/docker-compose.base.yml"
+    src: "{{ sidekick__posthog__install_dir }}/docker-compose.base.yml"
+    dest: "{{ sidekick__posthog__install_dir }}/docker-compose.base-iac.yml"
     mode: "0644"
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"
     remote_src: true
 
 ##
+## UPDATE docker-compose.yml
 ##
-##
+
+- name: Replace references to docker-compose.base.yml
+  ansible.builtin.replace:
+    path: "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+    regexp: "{{ item.regex }}"
+    replace: "{{ item.replace }}"
+  register: replace_result
+  changed_when: replace_result.changed
+  loop:
+    - regex: '\./posthog/'
+      replace: "./"
+    - regex: 'docker-compose\.base\.yml'
+      replace: docker-compose.base-iac.yml
+
+- name: Add traefik labels
+  block:
+    - name: Add traefik labels to "web"
+      ansible.builtin.command:
+        argv:
+          - yq
+          - -i
+          - .services.web.labels += ["{{ item }}"]
+          - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+      register: yq_result_labels_web
+      changed_when: yq_result_labels_web.rc == 0
+      loop: "{{ sidekick__posthog__traefik_exposed__web }}"
+    - name: Add traefik labels to "livestream"
+      ansible.builtin.command:
+        argv:
+          - yq
+          - -i
+          - .services.livestream.labels += ["{{ item }}"]
+          - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+      register: yq_result_labels_livestream
+      changed_when: yq_result_labels_livestream.rc == 0
+      loop: "{{ sidekick__posthog__traefik_exposed__livestream }}"
 
 - name: Remove caddy from docker-compose.yml using yq (inplace mandatory)
   ansible.builtin.command:
@@ -40,15 +88,20 @@
   register: yq_result
   changed_when: yq_result.rc == 0
 
-- name: Add env_file to worker
+##
+## UPDATE docker-compose.base-iac.yml
+##
+
+- name: Add additional environment variables to worker
   ansible.builtin.command:
     argv:
       - yq
       - -i
-      - .services.worker.env_file[0] = "./.env.worker"
-      - "{{ sidekick__posthog__install_dir }}/docker-compose.base.yml"
-  register: yq_result
-  changed_when: yq_result.rc == 0
+      - '.services.worker.environment."{{ item.key }}" = "{{ item.value }}"'
+      - "{{ sidekick__posthog__install_dir }}/docker-compose.base-iac.yml"
+  register: yq_result_env
+  changed_when: yq_result_env.rc == 0
+  loop: "{{ sidekick__posthog__more_env_vars | dict2items }}"
 
 ##
 ##
@@ -63,15 +116,6 @@
   ansible.builtin.template:
     src: .env.j2
     dest: "{{ sidekick__posthog__install_dir }}/.env"
-    mode: "0644"
-    owner: "{{ ansible_user | default('root') }}"
-    group: "{{ ansible_user | default('root') }}"
-  when: not env_file.stat.exists
-
-- name: Create .env.worker file from template
-  ansible.builtin.template:
-    src: .env.worker.j2
-    dest: "{{ sidekick__posthog__install_dir }}/.env.worker"
     mode: "0644"
     owner: "{{ ansible_user | default('root') }}"
     group: "{{ ansible_user | default('root') }}"

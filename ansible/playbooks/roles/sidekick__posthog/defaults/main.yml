@@ -9,7 +9,32 @@ sidekick__posthog__posthog_secret: "{{ posthog_secret }}"
 
 #
 sidekick__posthog__install_dir: "/opt/iac_posthog"
-sidekick__posthog__gh_install_dir: "{{ sidekick__posthog__install_dir }}/posthog"
 sidekick__posthog__github_repo: https://github.com/PostHog/posthog.git
 sidekick__posthog__github_files_to_dl:
   ["docker-compose.hobby.yml", "docker-compose.base.yml"]
+
+# https://posthog.com/docs/self-host/configure/environment-variables
+sidekick__posthog__more_env_vars:
+  IS_BEHIND_PROXY: "True"
+  # TRUSTED_PROXIES: "<IPs>"
+  TRUST_ALL_PROXIES: "True"
+  #
+  EMAIL_ENABLED: "True"
+  EMAIL_HOST: "{{ docker_mailserver__external_hostname }}"
+  EMAIL_PORT: "587"
+  EMAIL_DEFAULT_FROM: "{{ iac__donotreply_email }}"
+  EMAIL_HOST_USER: "{{ iac__donotreply_username }}"
+  EMAIL_HOST_PASSWORD: "{{ iac__donotreply_password }}"
+  EMAIL_USE_TLS: "True"
+  EMAIL_USE_SSL: "False"
+
+sidekick__posthog__traefik_exposed__web:
+  - traefik.enable=true
+  - traefik.http.routers.posthog-web.rule=Host(`${DOMAIN}`)
+  - traefik.http.routers.posthog-web.entrypoints=websecure
+  - traefik.http.services.posthog-web.loadbalancer.server.port=8000
+sidekick__posthog__traefik_exposed__livestream:
+  - traefik.enable=true
+  - traefik.http.routers.posthog-web.rule=Host(`${DOMAIN}`)
+  - traefik.http.routers.posthog-web.entrypoints=websecure
+  - traefik.http.services.posthog-web.loadbalancer.server.port=8666
