@@ -1,7 +1,8 @@
 ---
 # inspired by https://raw.githubusercontent.com/posthog/posthog/HEAD/bin/deploy-hobby
 sidekick__posthog__registry_url: posthog/posthog
-sidekick__posthog__posthog_app_tag: latest
+# https://github.com/PostHog/posthog/issues/29706
+sidekick__posthog__posthog_app_tag: 1b49d06a5b0a41021c4976a74d1bb1db0f2614a3
 sidekick__posthog__domain: posthog.{{ iac__root_domain }}
 sidekick__posthog__sentry_dsn: "{{ posthog_sentry_project_dns }}"
 sidekick__posthog__encryption_salt_keys: "{{ posthog_encryption_salt_keys }}"
@@ -33,11 +34,13 @@ sidekick__posthog__traefik_network: "{{ sidekick_traefik_external_network }}"
 
 sidekick__posthog__traefik_exposed__web:
   - traefik.enable=true
+  - traefik.docker.network={{ sidekick__posthog__traefik_network }}
   - traefik.http.routers.posthog-web.rule=Host(`${DOMAIN}`)
   - traefik.http.routers.posthog-web.entrypoints=web
   - traefik.http.services.posthog-web.loadbalancer.server.port=8000
 sidekick__posthog__traefik_exposed__livestream:
   - traefik.enable=true
+  - traefik.docker.network={{ sidekick__posthog__traefik_network }}
   - traefik.http.routers.posthog-livestream.rule=Host(`${DOMAIN}`)
   - traefik.http.routers.posthog-livestream.entrypoints=web
   - traefik.http.services.posthog-livestream.loadbalancer.server.port=8666
