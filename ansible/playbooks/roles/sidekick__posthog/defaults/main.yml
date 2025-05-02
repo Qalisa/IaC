@@ -31,10 +31,10 @@ sidekick__posthog__more_env_vars:
 sidekick__posthog__traefik_exposed__web:
   - traefik.enable=true
   - traefik.http.routers.posthog-web.rule=Host(`${DOMAIN}`)
-  - traefik.http.routers.posthog-web.entrypoints=websecure
+  - traefik.http.routers.posthog-web.entrypoints=web
   - traefik.http.services.posthog-web.loadbalancer.server.port=8000
 sidekick__posthog__traefik_exposed__livestream:
   - traefik.enable=true
-  - traefik.http.routers.posthog-web.rule=Host(`${DOMAIN}`)
-  - traefik.http.routers.posthog-web.entrypoints=websecure
-  - traefik.http.services.posthog-web.loadbalancer.server.port=8666
+  - traefik.http.routers.posthog-livestream.rule=Host(`${DOMAIN}`)
+  - traefik.http.routers.posthog-livestream.entrypoints=web
+  - traefik.http.services.posthog-livestream.loadbalancer.server.port=8666
