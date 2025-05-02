@@ -28,6 +28,9 @@ sidekick__posthog__more_env_vars:
   EMAIL_USE_TLS: "True"
   EMAIL_USE_SSL: "False"
 
+#
+sidekick__posthog__traefik_network: "{{ sidekick_traefik_external_network }}"
+
 sidekick__posthog__traefik_exposed__web:
   - traefik.enable=true
   - traefik.http.routers.posthog-web.rule=Host(`${DOMAIN}`)

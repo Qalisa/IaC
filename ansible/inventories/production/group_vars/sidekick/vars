@@ -7,6 +7,9 @@
 ### DEFINED - Org identity related
 ### 
 
+# must refer the network fullname (including stack prefix !) which Traefik is using within Docker
+sidekick_traefik_external_network: "{{ u_vault_sidekick_traefik_external_network }}"
+
 posthog_sentry_project_dns: "{{ u_vault_posthog_sentry_project_dns }}"
 
 #################

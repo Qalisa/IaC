@@ -42,6 +42,16 @@
 ## UPDATE docker-compose.yml
 ##
 
+- name: Add traefik network to compose script
+  ansible.builtin.command:
+    argv:
+      - yq
+      - -i
+      - .networks."{{ sidekick__posthog__traefik_network }}".external = true
+      - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+  register: yq_network_result
+  changed_when: yq_network_result.rc == 0
+
 - name: Replace references to docker-compose.base.yml
   ansible.builtin.replace:
     path: "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
@@ -54,6 +64,16 @@
       replace: "./"
     - regex: 'docker-compose\.base\.yml'
       replace: docker-compose.base-iac.yml
+
+- name: Remove caddy from docker-compose.yml
+  ansible.builtin.command:
+    argv:
+      - yq
+      - -i
+      - del(.services.caddy, .volumes."caddy-config", .volumes."caddy-data")
+      - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+  register: yq_result
+  changed_when: yq_result.rc == 0
 
 - name: Add traefik labels
   block:
@@ -78,15 +98,18 @@
       changed_when: yq_result_labels_livestream.rc == 0
       loop: "{{ sidekick__posthog__traefik_exposed__livestream }}"
 
-- name: Remove caddy from docker-compose.yml using yq (inplace mandatory)
+- name: Link services to traefik
   ansible.builtin.command:
     argv:
       - yq
       - -i
-      - del(.services.caddy, .volumes."caddy-config", .volumes."caddy-data")
+      - .services."{{ item }}".networks += ["{{ sidekick__posthog__traefik_network }}"]
       - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
-  register: yq_result
-  changed_when: yq_result.rc == 0
+  register: yq_result_networks
+  changed_when: yq_result_networks.rc == 0
+  loop:
+    - web
+    - livestream
 
 ##
 ## UPDATE docker-compose.base-iac.yml
