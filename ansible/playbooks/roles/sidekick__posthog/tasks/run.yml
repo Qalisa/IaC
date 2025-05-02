@@ -1,0 +1,7 @@
+---
+- name: Run PostHog with Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ sidekick__posthog__install_dir }}"
+    state: present
+    pull: missing
+    remove_orphans: true
