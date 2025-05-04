@@ -1,4 +1,6 @@
-- name: Customize hobby setup
-  ansible.builtin.import_tasks: customize.yml
+# - name: Customize hobby setup
+#   ansible.builtin.import_tasks: customize_hobby.yml
 # - name: Run posthog stack
 #   ansible.builtin.import_tasks: run.yml
+- name: Configure posthog
+  ansible.builtin.import_tasks: configure.yml

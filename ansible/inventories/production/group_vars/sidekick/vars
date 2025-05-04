@@ -12,6 +12,9 @@ sidekick_traefik_external_network: "{{ u_vault_sidekick_traefik_external_network
 
 posthog_sentry_project_dns: "{{ u_vault_posthog_sentry_project_dns }}"
 
+posthog_admin_username: "{{ u_vault_posthog_admin_username }}"
+posthog_admin_email: "{{ u_vault_posthog_admin_email }}"
+
 #################
 ### SECRETS ! ###
 #################
@@ -30,3 +33,6 @@ posthog_secret: "{{ vault_posthog_secret }}"
 
 # $(openssl rand -hex 16)
 posthog_encryption_salt_keys: "{{ vault_posthog_encryption_salt_keys }}"
+
+#
+posthog_admin_password: "{{ vault_posthog_admin_password }}"

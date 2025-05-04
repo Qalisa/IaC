@@ -10,6 +10,7 @@ sidekick__posthog__posthog_secret: "{{ posthog_secret }}"
 
 #
 sidekick__posthog__install_dir: "/opt/iac_posthog"
+sidekick__posthog__web_container: "{{ sidekick__posthog__install_dir | basename }}-web-1"
 sidekick__posthog__github_repo: https://github.com/PostHog/posthog.git
 sidekick__posthog__github_files_to_dl:
   ["docker-compose.hobby.yml", "docker-compose.base.yml"]
@@ -28,6 +29,10 @@ sidekick__posthog__more_env_vars:
   EMAIL_HOST_PASSWORD: "{{ iac__donotreply_password }}"
   EMAIL_USE_TLS: "True"
   EMAIL_USE_SSL: "False"
+
+##
+##
+##
 
 #
 sidekick__posthog__traefik_network: "{{ sidekick_traefik_external_network }}"

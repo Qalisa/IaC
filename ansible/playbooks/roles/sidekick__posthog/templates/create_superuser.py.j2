@@ -1,0 +1,25 @@
+from posthog.models import User, Organization, OrganizationMembership
+
+# Optional: Find existing organization
+#org = Organization.objects.first()
+
+# Check if user already exists
+try:
+    existing_user = User.objects.get(email="{{ posthog_admin_email }}")
+    print(f"User with email {{ posthog_admin_email }} already exists. Skipping creation.")
+except User.DoesNotExist:
+    # Create the user only if it doesn't exist
+    user = User.objects.create_user(
+        email="{{ posthog_admin_email }}",
+        password="{{ posthog_admin_password }}",
+        first_name="{{ posthog_admin_username }}",
+        is_staff=True
+    )
+    print(f"Created new superuser with email {{ posthog_admin_email }}")
+
+    # Link user to organization
+    {# OrganizationMembership.objects.create(
+        organization=org,
+        user=user,
+        level=OrganizationMembership.Level.ADMIN
+    ) #}
