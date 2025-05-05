@@ -12,7 +12,6 @@
     method: GET
     validate_certs: false
     status_code: 200
-    follow_redirects: true
   register: posthog_status
   until: posthog_status.status == 200
   retries: 40 # Vérifie toutes les 30 secondes pendant 20 minutes maximum

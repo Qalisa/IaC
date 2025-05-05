@@ -8,13 +8,14 @@
     group_id: 0 # root
     mode: "0755" # readable and executable by all users, writable by root
   loop:
-    #  - templates/create_superuser.py.j2
-    - templates/test_mail.py.j2
+    - templates/create_superuser.py.j2
+    - templates/configure_mail.py.j2
 
-- name: Execute Python script to create superuser
+#
+- name: Execute Python scripts
   community.docker.docker_container_exec:
     container: "{{ sidekick__posthog__web_container }}"
     command: sh -c 'python manage.py shell < {{ item }}'
   loop:
-    #  - /tmp/create_superuser.py
-    - /tmp/test_mail.py
+    - /tmp/create_superuser.py
+    - /tmp/configure_mail.py

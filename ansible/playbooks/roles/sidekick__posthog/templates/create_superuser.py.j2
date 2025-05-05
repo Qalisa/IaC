@@ -13,7 +13,8 @@ except User.DoesNotExist:
         email="{{ posthog_admin_email }}",
         password="{{ posthog_admin_password }}",
         first_name="{{ posthog_admin_username }}",
-        is_staff=True
+        is_staff=True,
+        is_email_verified=True
     )
     print(f"Created new superuser with email {{ posthog_admin_email }}")
 

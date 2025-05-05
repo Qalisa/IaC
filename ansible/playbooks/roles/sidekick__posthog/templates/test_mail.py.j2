@@ -1,5 +1,0 @@
-from django.conf import settings
-print(settings.EMAIL_BACKEND)
-
-from django.core.mail import send_mail
-send_mail("Test Email", "This is a test", "{{ iac__donotreply_email }}", ["{{ posthog_admin_email }}"])

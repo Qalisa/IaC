@@ -87,16 +87,16 @@
       register: yq_result_labels_web
       changed_when: yq_result_labels_web.rc == 0
       loop: "{{ sidekick__posthog__traefik_exposed__web }}"
-    - name: Add traefik labels to "livestream"
-      ansible.builtin.command:
-        argv:
-          - yq
-          - -i
-          - .services.livestream.labels += ["{{ item }}"]
-          - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
-      register: yq_result_labels_livestream
-      changed_when: yq_result_labels_livestream.rc == 0
-      loop: "{{ sidekick__posthog__traefik_exposed__livestream }}"
+    # - name: Add traefik labels to "livestream"
+    #   ansible.builtin.command:
+    #     argv:
+    #       - yq
+    #       - -i
+    #       - .services.livestream.labels += ["{{ item }}"]
+    #       - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+    #   register: yq_result_labels_livestream
+    #   changed_when: yq_result_labels_livestream.rc == 0
+    #   loop: "{{ sidekick__posthog__traefik_exposed__livestream }}"
 
 ##
 ##
