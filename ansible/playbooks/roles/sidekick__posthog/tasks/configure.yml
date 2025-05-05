@@ -10,6 +10,7 @@
   loop:
     - templates/create_superuser.py.j2
     - templates/configure_mail.py.j2
+    # - templates/test_mail.py.j2
 
 #
 - name: Execute Python scripts
@@ -19,3 +20,4 @@
   loop:
     - /tmp/create_superuser.py
     - /tmp/configure_mail.py
+    # - /tmp/test_mail.py

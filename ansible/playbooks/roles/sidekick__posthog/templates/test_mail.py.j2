@@ -1,0 +1,2 @@
+from posthog.tasks.email import send_canary_email
+send_canary_email.apply_async(kwargs={"user_email": '{{ posthog_admin_email }}'})

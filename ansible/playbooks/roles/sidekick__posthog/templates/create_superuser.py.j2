@@ -1,11 +1,17 @@
 from posthog.models import User, Organization, OrganizationMembership
 
-# Optional: Find existing organization
-#org = Organization.objects.first()
+# Find existing organization or create one if none exists
+org = Organization.objects.first()
+if org is None:
+    org = Organization.objects.create(name="{{ sidekick__posthog__organization_name }}")
+    print(f"Created new organization: {org.name}")
+
+# Variable to store the user object
+user = None
 
 # Check if user already exists
 try:
-    existing_user = User.objects.get(email="{{ posthog_admin_email }}")
+    user = User.objects.get(email="{{ posthog_admin_email }}")
     print(f"User with email {{ posthog_admin_email }} already exists. Skipping creation.")
 except User.DoesNotExist:
     # Create the user only if it doesn't exist
@@ -14,13 +20,27 @@ except User.DoesNotExist:
         password="{{ posthog_admin_password }}",
         first_name="{{ posthog_admin_username }}",
         is_staff=True,
-        is_email_verified=True
+        # is_email_verified=True
     )
     print(f"Created new superuser with email {{ posthog_admin_email }}")
 
-    # Link user to organization
-    {# OrganizationMembership.objects.create(
+# Ensure user is linked to organization
+if user:
+    # Check if membership already exists
+    existing_membership = OrganizationMembership.objects.filter(
         organization=org,
-        user=user,
-        level=OrganizationMembership.Level.ADMIN
-    ) #}
+        user=user
+    ).first()
+    
+    if existing_membership:
+        print(f"User {{ posthog_admin_email }} is already a member of the organization. Updating level to ADMIN.")
+        existing_membership.level = OrganizationMembership.Level.ADMIN
+        existing_membership.save()
+    else:
+        # Create new membership
+        OrganizationMembership.objects.create(
+            organization=org,
+            user=user,
+            level=OrganizationMembership.Level.ADMIN
+        )
+        print(f"Linked user {{ posthog_admin_email }} to organization as ADMIN.")
