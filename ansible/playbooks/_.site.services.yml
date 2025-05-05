@@ -1,7 +1,7 @@
 ---
 # ensure services roles are installed and configured AFTER kubernetes is set
 - name: Install Services w/in Kubernetes
-  hosts: node1
+  hosts: k3s_master
   become: true
   roles:
     ##################

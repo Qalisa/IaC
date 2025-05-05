@@ -3,7 +3,8 @@
 sidekick__posthog__registry_url: posthog/posthog
 # https://github.com/PostHog/posthog/issues/29706
 sidekick__posthog__posthog_app_tag: latest # 6bda8cb363ae86e6fb925137315ae035df937a8e
-sidekick__posthog__domain: posthog.{{ iac__root_domain }}
+sidekick__posthog__subdomain: posthog
+sidekick__posthog__domain: "{{ sidekick__posthog__subdomain }}.{{ iac__root_domain }}"
 sidekick__posthog__sentry_dsn: "{{ posthog_sentry_project_dns }}"
 sidekick__posthog__encryption_salt_keys: "{{ posthog_encryption_salt_keys }}"
 sidekick__posthog__posthog_secret: "{{ posthog_secret }}"
@@ -54,7 +55,7 @@ sidekick__posthog__traefik_network: "{{ sidekick_traefik_external_network }}"
 sidekick__posthog__traefik_exposed__web:
   - traefik.enable=true
   - traefik.docker.network={{ sidekick__posthog__traefik_network }}
-  - traefik.http.routers.posthog-web.rule=Host(`${DOMAIN}`)
+  - "traefik.http.routers.posthog-web.rule={% for domain in iac__all_domains %}{% if not loop.first %} || {% endif %}Host(`{{ sidekick__posthog__subdomain }}.{{ domain }}`){% endfor %}"
   - traefik.http.routers.posthog-web.middlewares=testheader@docker
   - traefik.http.routers.posthog-web.entrypoints=web
   - traefik.http.services.posthog-web.loadbalancer.server.port=8000
@@ -64,7 +65,7 @@ sidekick__posthog__traefik_exposed__web:
 sidekick__posthog__traefik_exposed__livestream:
   - traefik.enable=true
   - traefik.docker.network={{ sidekick__posthog__traefik_network }}
-  - traefik.http.routers.posthog-livestream.rule=Host(`${DOMAIN}`)
+  - "traefik.http.routers.posthog-livestream.rule={% for domain in iac__all_domains %}{% if not loop.first %} || {% endif %}Host(`{{ sidekick__posthog__subdomain }}.{{ domain }}`){% endfor %}"
   - traefik.http.routers.posthog-livestream.middlewares=testheader@docker
   - traefik.http.routers.posthog-livestream.entrypoints=web
   - traefik.http.services.posthog-livestream.loadbalancer.server.port=8666
