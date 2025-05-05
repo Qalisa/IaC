@@ -18,10 +18,11 @@ sidekick__posthog__github_files_to_dl:
 
 # https://posthog.com/docs/self-host/configure/environment-variables
 sidekick__posthog__more_env_vars:
+  NEW_CAPTURE_ENDPOINT: "/e/" # see https://github.com/PostHog/posthog/issues/28804
   IS_BEHIND_PROXY: "true"
   # TRUSTED_PROXIES: "<IPs>"
   TRUST_ALL_PROXIES: "true"
-  #
+  # Below is outdated (by official docs)
   # EMAIL_ENABLED: "true"
   # EMAIL_HOST: "{{ docker_mailserver__external_hostname }}"
   # EMAIL_PORT: "587"

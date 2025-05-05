@@ -87,6 +87,8 @@
       register: yq_result_labels_web
       changed_when: yq_result_labels_web.rc == 0
       loop: "{{ sidekick__posthog__traefik_exposed__web }}"
+    # TODO: looking at hobby setup, "livestream" is also used as a backup reverse proxy for web. Yet, if we want to use alternative server for
+    #       a service in Traefik, we cannot use Docker labels...
     # - name: Add traefik labels to "livestream"
     #   ansible.builtin.command:
     #     argv:
