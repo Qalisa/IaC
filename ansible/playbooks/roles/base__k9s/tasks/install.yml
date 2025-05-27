@@ -1,0 +1,15 @@
+---
+- name: Download K9s .deb
+  ansible.builtin.get_url:
+    url: https://github.com/derailed/k9s/releases/latest/download/k9s_linux_amd64.deb
+    dest: /tmp/k9s_linux_amd64.deb
+    mode: "0755"
+
+- name: Install K9s .deb package
+  ansible.builtin.apt:
+    deb: /tmp/k9s_linux_amd64.deb
+
+- name: Remove downloaded .deb file
+  ansible.builtin.file:
+    path: /tmp/k9s_linux_amd64.deb
+    state: absent

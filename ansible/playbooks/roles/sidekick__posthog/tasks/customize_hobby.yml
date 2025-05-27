@@ -60,9 +60,9 @@
   register: replace_result
   changed_when: replace_result.changed
   loop:
-    - regex: '\./posthog/'
+    - regex: "\\./posthog/"
       replace: "./"
-    - regex: 'docker-compose\.base\.yml'
+    - regex: "docker-compose\\.base\\.yml"
       replace: docker-compose.base-iac.yml
 
 - name: Remove caddy from docker-compose.yml
@@ -87,18 +87,18 @@
       register: yq_result_labels_web
       changed_when: yq_result_labels_web.rc == 0
       loop: "{{ sidekick__posthog__traefik_exposed__web }}"
-    # TODO: looking at hobby setup, "livestream" is also used as a backup reverse proxy for web. Yet, if we want to use alternative server for
-    #       a service in Traefik, we cannot use Docker labels...
-    # - name: Add traefik labels to "livestream"
-    #   ansible.builtin.command:
-    #     argv:
-    #       - yq
-    #       - -i
-    #       - .services.livestream.labels += ["{{ item }}"]
-    #       - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
-    #   register: yq_result_labels_livestream
-    #   changed_when: yq_result_labels_livestream.rc == 0
-    #   loop: "{{ sidekick__posthog__traefik_exposed__livestream }}"
+# TODO: looking at hobby setup, "livestream" is also used as a backup reverse proxy for web. Yet, if we want to use alternative server for
+#       a service in Traefik, we cannot use Docker labels...
+# - name: Add traefik labels to "livestream"
+#   ansible.builtin.command:
+#     argv:
+#       - yq
+#       - -i
+#       - .services.livestream.labels += ["{{ item }}"]
+#       - "{{ sidekick__posthog__install_dir }}/docker-compose.yml"
+#   register: yq_result_labels_livestream
+#   changed_when: yq_result_labels_livestream.rc == 0
+#   loop: "{{ sidekick__posthog__traefik_exposed__livestream }}"
 
 ##
 ##

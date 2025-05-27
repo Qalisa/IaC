@@ -1,0 +1,4 @@
+---
+iac__local_path__as_default_class: true # since we will not use Longhorn
+odoo_community__custom_tld: odoo-mosellane
+odoo_community__auto_install: true

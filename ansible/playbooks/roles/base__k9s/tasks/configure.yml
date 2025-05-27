@@ -1,0 +1,6 @@
+---
+- name: Ensure EDITOR is set to nano in ~/.bashrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'export K9S_EDITOR=nano'
+    state: present

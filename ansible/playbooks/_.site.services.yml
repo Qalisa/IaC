@@ -51,3 +51,4 @@
     - role: k8s__odoo_community # All-in-one, with alot of free apps (CRM and such)
     # - role: k8s__listmonk # Allow marketing campaigns
     # - role: k8s__calcom # Allow clients to secure appointments
+    # - role: k8s__pierceflare_cli # Allows automatic sync of IP address against a DDNS

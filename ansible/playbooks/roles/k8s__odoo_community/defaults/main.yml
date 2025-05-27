@@ -1,11 +1,15 @@
 ---
-# Name of the "database" that Odoo will create on its own; must be separate from previous db names
-# make sure to bind
-k8s__odoo_community__odoo_instance__db_name: odoo
+k8s__odoo_community__custom_tld: "{{ odoo_community__custom_tld | default('odoo') }}"
+k8s__odoo_community__auto_install: "{{ odoo_community__auto_install | default(true) }}"
+
+# Name of the "database" that Odoo will create on its own
+# @note: Since Odoo can automatically handle DB binding by scanning its Third Level Domain;
+# even if the feature is not used and by convention, use TLD as initial database name.
+k8s__odoo_community__odoo_instance__db_name: "{{ odoo_community__auto_install | ternary(k8s__odoo_community__custom_tld, 'False') }}"
 
 #
 k8s__odoo_community__namespace: odoo-community
-k8s__odoo_community__external_hostname: "{{ k8s__odoo_community__odoo_instance__db_name }}.{{ iac__root_domain }}"
+k8s__odoo_community__external_hostname: "{{ k8s__odoo_community__custom_tld }}.{{ iac__root_domain }}"
 k8s__odoo_community__metadata_name: odoo
 k8s__odoo_community__app_selector_name: odoo
 
@@ -28,7 +32,7 @@ k8s__odoo_community__db__config__host: "{{ k8s__odoo_community__db__name }}.{{ k
 k8s__odoo_community__odoo_instance__jsonrpc: >-
   http://{{ k8s__odoo_community__metadata_name }}.{{ k8s__odoo_community__namespace }}.{{ iac__svc_cluster_host }}/jsonrpc
 
-# these are the default, that will be replaced
+# these are the default expected by a fresh install of Odoo; these ought to be replaced
 k8s__odoo_community__odoo_instance__default__admin_username: admin
 k8s__odoo_community__odoo_instance__default__admin_password: admin
 k8s__odoo_community__odoo_instance__default__company_name: My Company

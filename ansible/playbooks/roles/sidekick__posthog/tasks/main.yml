@@ -1,3 +1,4 @@
+---
 - name: Customize hobby setup
   ansible.builtin.import_tasks: customize_hobby.yml
 - name: Run posthog stack

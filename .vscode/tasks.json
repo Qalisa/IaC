@@ -97,6 +97,28 @@
         //
         //
         {
+            "label": "🚀 Install: Odoo Standalone",
+            "detail": "Ensure EE is built before running this",
+            "type": "shell",
+            "command": "ansible-navigator",
+            "args": [
+                "run", "playbooks/site.odoo_standalone.yml",
+                "-i", "inventories/production",
+                "--execution-environment-image", "iac_ee:latest", 
+                "--eev", "~/.ssh:/runner/.ssh:ro",
+                "--mode", "stdout", 
+                "--pull-policy", "never",
+                "--enable-prompts", 
+                "-u", "root",
+                // "--skip-tags", "zto-app"
+                // "-k", "-K"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/ansible"
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "🚀 Install: Sidekick",
             "detail": "Ensure EE is built before running this",
             "type": "shell",
@@ -247,7 +269,8 @@
             ],
             "options": {
                 "cwd": "${workspaceFolder}/ansible/ee"
-            }
+            },
+            "problemMatcher": []
         },
         //
         //

@@ -1,1 +1,2 @@
 ---
+base__k3s__local_path_as_default_class: "{{ iac__local_path__as_default_class | default(false) }}"
