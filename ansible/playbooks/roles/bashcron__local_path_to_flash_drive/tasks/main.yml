@@ -1,0 +1,26 @@
+---
+- name: Ensure git is installed
+  ansible.builtin.package:
+    name: git
+    state: present
+
+- name: Clone the k8s-local-path-flashdrive-rsync repo
+  ansible.builtin.git:
+    repo: https://github.com/{{ bashcron__local_path_to_flash_drive__github_path }}
+    dest: "{{ bashcron__local_path_to_flash_drive__tmp_path }}"
+    version: main
+    force: true
+
+- name: Copy lp-fd-rsync.sh to /usr/local/bin/
+  ansible.builtin.copy:
+    src: "{{ bashcron__local_path_to_flash_drive__tmp_path }}/{{ bashcron__local_path_to_flash_drive__script_name }}"
+    dest: "{{ bashcron__local_path_to_flash_drive__script_dest }}"
+    mode: '0755'
+    remote_src: true
+
+- name: Ensure cron job is present to run lp-fd-rsync.sh every 15min, as root
+  ansible.builtin.cron:
+    name: "Run [{{ bashcron__local_path_to_flash_drive__github_path }}] script every 15min, as root"
+    minute: "*/15"
+    job: "{{ bashcron__local_path_to_flash_drive__script_dest }}"
+    user: root

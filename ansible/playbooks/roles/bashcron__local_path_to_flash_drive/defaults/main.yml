@@ -1,0 +1,5 @@
+---
+bashcron__local_path_to_flash_drive__github_path: Qalisa/k8s-local-path-flashdrive-rsync
+bashcron__local_path_to_flash_drive__tmp_path: /tmp/k8s-local-path-flashdrive-rsync
+bashcron__local_path_to_flash_drive__script_name: lp-fd-rsync.sh
+bashcron__local_path_to_flash_drive__script_dest: /usr/local/bin/{{ bashcron__local_path_to_flash_drive__script_name }}
