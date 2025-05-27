@@ -1,0 +1,12 @@
+---
+- name: Install K3s on an On-Premise server
+  hosts: odoo_standalone
+  become: true
+  roles:
+    - role: base__iac # Prerequisites to this SDK usage
+    - role: base__k9s # OPTIONAL, Terminal dashboard à-la Kubernetes Dashboard
+    - role: base__k3s # Lightweight k8s cluster
+    ###
+    ###
+    - role: k8s__pierceflare_cli # Allows automatic sync of IP address against a DDNS
+    - role: k8s__odoo_community # All-in-one, with alot of free apps (CRM and such)

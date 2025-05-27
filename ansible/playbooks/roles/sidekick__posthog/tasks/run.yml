@@ -1,0 +1,19 @@
+---
+- name: Run PostHog with Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ sidekick__posthog__install_dir }}"
+    state: present
+    pull: missing
+    remove_orphans: true
+
+- name: Wait for posthog to be ready (can be extensively long)
+  ansible.builtin.uri:
+    url: "https://{{ sidekick__posthog__domain }}"
+    method: GET
+    validate_certs: false
+    status_code: 200
+  register: posthog_status
+  until: posthog_status.status == 200
+  retries: 40 # Vérifie toutes les 30 secondes pendant 20 minutes maximum
+  delay: 30 # Attente de 30 secondes entre chaque tentative
+  ignore_errors: true

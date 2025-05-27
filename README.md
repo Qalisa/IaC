@@ -86,6 +86,18 @@ If and only if having multiple odoo databases on your postgres: when sending inv
 
 https://github.com/Qalisa/IaC/issues/37
 
-## Odoo - in case of backing up
-- You might want to disable postgres StatefulSet probes because of intensive backup operations might render it unresponsive (because bitnami's helm chart allocates too low ressources to it), which would result in an unwanted automatic-restart.
-- You also maybe want to disabe `odoo.conf`'s `db_name`, to see any other instances of backup'd databases 
+## Odoo 
+### In case of restoring a backup
+- Regarding Addons:
+  - If your backup expects some addons to be installed on your Odoo instance, especially if those are heavy, please install them before restoring; you might dodge a timeout which can break your recovery.
+- Regarding Postgres DB comming with Odoo: 
+  - You might want to disable StatefulSet probes (`livelinessProbe` espacilly), because of intensive backup operations might render it unresponsive, which would result in an unwanted automatic-restart.
+  - Along with it, you might want to set `primary.resourcesPreset` to `large` at least. It will boost speed of backup recovery and would prevent DB to hand and stop unexpectedly under pressure, which would break database recovery altogether.
+- Regarding `/web/database/restore`
+  - If you are using Cloudflare's proxying feature or similar, which includes default timeouts sub 100 secs, this might break your database recovery process. Disable this temporary.
+    - https://www.reddit.com/r/webdev/comments/kzgozy/til_you_can_type_thisisunsafe_on_chrome_ssl_error/
+- Regarding Odoo configuration:
+  - If after recoverying, you do not see your recovered database, You might want to set `odoo.conf`'s `db_name` to `False`.
+  - If Odoo is too slow, you can tweak these values: https://www.odoo.com/documentation/18.0/administration/on_premise/deploy.html#id4
+- Regarding using `local-path` StorageClass
+  - `capacity` has no effect (https://github.com/rancher/local-path-provisioner?tab=readme-ov-file#cons)

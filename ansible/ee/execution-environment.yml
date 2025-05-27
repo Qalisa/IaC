@@ -13,6 +13,7 @@ dependencies:
   system:
     - openssh-clients
     - sshpass
+    # - yq
   galaxy:
     collections:
       - name: community.docker
@@ -20,3 +21,11 @@ dependencies:
       - name: ansible.posix
       - name: community.general
       - name: amazon.aws
+
+# we use this yq and not system yq, since this one is more powerful
+additional_build_steps:
+  prepend_base:
+    - ARG TARGETARCH
+    - ARG TARGETOS
+    - ADD https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_${TARGETOS}_${TARGETARCH} /usr/bin/yq
+    - RUN chmod +x /usr/bin/yq

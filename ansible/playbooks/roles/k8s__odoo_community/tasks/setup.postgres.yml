@@ -19,6 +19,8 @@
     wait: true
     values:
       primary:
+        # will boost performances
+        resourcesPreset: "xlarge"
         livenessProbe:
           # postgres might not respond under heavy load, which is frequent with odoo.
           # A livenessProbe that fails would restart service automatically, behavior which we do not want

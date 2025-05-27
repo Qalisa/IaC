@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: posthog-proxy
+  name: posthog-proxy-{{ external_hostname }}
   namespace: "{{ k8s__posthog_proxy__namespace }}"
   annotations:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"

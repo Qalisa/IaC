@@ -1,0 +1,10 @@
+from posthog.models.instance_setting import set_instance_setting
+
+#
+{% for key, value in sidekick__posthog__mail_config.items() %}
+set_instance_setting('{{ key }}', {{ value }})
+{% endfor %}
+
+{# #
+from posthog.tasks.email import send_canary_email
+send_canary_email.apply_async(kwargs={"user_email": '{{ posthog_admin_email }}'}) #}

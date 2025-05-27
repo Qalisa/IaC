@@ -1,0 +1,7 @@
+---
+- name: Install sidekick services
+  hosts: sidekick
+  become: true
+  roles:
+    # - role: sidekick__sentry
+    - role: sidekick__posthog
