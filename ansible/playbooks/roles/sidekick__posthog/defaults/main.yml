@@ -11,7 +11,7 @@ sidekick__posthog__posthog_secret: "{{ posthog_secret }}"
 sidekick__posthog__organization_name: "{{ iac__ldap_org }}"
 
 #
-sidekick__posthog__install_dir: "/opt/iac_posthog"
+sidekick__posthog__install_dir: "/opt/iac_sidekick_posthog"
 sidekick__posthog__web_container: "{{ sidekick__posthog__install_dir | basename }}-web-1"
 sidekick__posthog__github_repo: https://github.com/PostHog/posthog.git
 sidekick__posthog__github_files_to_dl:
