@@ -6,7 +6,9 @@
   ansible.builtin.import_tasks: issuers.yml
 
 - name: Install trust-manager
+  when: k8s__cert_manager__handle_trust_bundles
   ansible.builtin.import_tasks: trust-manager.yml
 
 - name: Create bundle for Root CA and make it known
+  when: k8s__cert_manager__handle_trust_bundles
   ansible.builtin.import_tasks: root-ca.yml

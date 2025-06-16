@@ -1,21 +1,26 @@
 ---
-- name: Declare Root CA Cert + CIssuer
-  kubernetes.core.k8s:
-    template:
-      - path: templates/c-issuers/root-ca.yml.j2
-
-- name: Adds Solvers - DNS01 + HTTP01
+- name: Adds Solvers secrets
+  when: k8s__cert_manager__solve_with == "cloudflare_dns01"
   kubernetes.core.k8s:
     template:
       # cloudflare
       - path: templates/solvers-secrets/cloudflare.yml.j2
 
-- name: Configure remote certificate providers
+- name: Configure remote certificate providers (using Cloudflare's DNS01)
+  when: k8s__cert_manager__solve_with == "cloudflare_dns01"
   kubernetes.core.k8s:
     template:
       # let's encrypt (default)
-      - path: templates/c-issuers/letsencrypt/production.yml.j2
-      - path: templates/c-issuers/letsencrypt/staging.yml.j2
+      - path: templates/c-issuers/cloudflare_dns01/letsencrypt/production.yml.j2
+      - path: templates/c-issuers/cloudflare_dns01/letsencrypt/staging.yml.j2
       # ZeroSSL
       # - path: templates/c-issuers/zerossl/secret.yml.j2
       # - path: templates/c-issuers/zerossl/production.yml.j2
+
+- name: Configure remote certificate providers (using Traefik's HTTP01)
+  when: k8s__cert_manager__solve_with == "traefik_http01"
+  kubernetes.core.k8s:
+    template:
+      # let's encrypt (default)
+      - path: templates/c-issuers/traefik_http01/acme/production.yml.j2
+      - path: templates/c-issuers/traefik_http01/acme/staging.yml.j2

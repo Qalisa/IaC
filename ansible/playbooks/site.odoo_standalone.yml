@@ -6,6 +6,8 @@
     - role: base__iac # Prerequisites to this SDK usage
     - role: base__k9s # OPTIONAL, Terminal dashboard à-la Kubernetes Dashboard
     - role: base__k3s # Lightweight k8s cluster
+    - role: k8s__cert_manager # allows auto-provision of free SSL certificates for HTTPS
+    ### - role: k8s_more__traefik # customize k3s's traefik behavior
     ###
     ###
     - role: k8s__pierceflare_cli # Allows automatic sync of IP address against a DDNS

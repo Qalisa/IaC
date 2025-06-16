@@ -1,0 +1,8 @@
+---
+k8s_more__traefik__expose_dashboard: "{{ traefik__expose_dashboard | default(true) }}"
+k8s_more__traefik__external_hostname: traefik.{{ iac__root_domain }}
+k8s_more__traefik__app_name: traefik
+
+#
+k8s_more__traefik__cf_tls_mode__full_strict__enabled: "{{ vault_iac__cloudflare__origin_ca__cert | default('') | length > 0 }}"
+k8s_more__traefik__cf_tls_mode__full_strict__cert_resolver_name: default

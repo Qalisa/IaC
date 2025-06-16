@@ -1,0 +1,12 @@
+---
+- name: Install Zero-Trust configuration
+  tags: [zto-app]
+  kubernetes.core.k8s:
+    template:
+      - path: templates/caa.yml.j2
+
+- name: Expose Traefik dashboard
+  kubernetes.core.k8s:
+    template:
+      - path: templates/dashboard/service.yml.j2
+      - path: templates/dashboard/ingress.yml.j2

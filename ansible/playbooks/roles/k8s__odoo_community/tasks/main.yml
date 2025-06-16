@@ -1,25 +1,20 @@
 ---
-- name: Install Odoo (prerequisites)
-  kubernetes.core.k8s:
-    template:
-      - path: templates/secret.yml.j2
+- name: Install postgres
+  ansible.builtin.import_tasks: setup.postgres.yml
 
-# - name: Install postgres
-#   ansible.builtin.import_tasks: setup.postgres.yml
+#
 
-# #
+- name: Init Odoo (Prewarm)
+  ansible.builtin.import_tasks: prewarm.odoo.yml
 
-# - name: Init Odoo (Prewarm)
-#   ansible.builtin.import_tasks: prewarm.odoo.yml
+- name: Run Odoo (Ignite)
+  ansible.builtin.import_tasks: ignite.odoo.yml
 
-# - name: Run Odoo (Ignite)
-#   ansible.builtin.import_tasks: ignite.odoo.yml
+#
 
-# #
+- name: Update default credentials (Only run this once !)
+  when: odoo_community__auto_install
+  ansible.builtin.import_tasks: credentials.odoo.yml
 
-# - name: Update default credentials (Only run this once !)
-#   when: odoo_community__auto_install
-#   ansible.builtin.import_tasks: credentials.odoo.yml
-
-# - name: Configure Odoo
-#   ansible.builtin.import_tasks: configure.odoo.yml
+- name: Configure Odoo
+  ansible.builtin.import_tasks: configure.odoo.yml

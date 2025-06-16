@@ -66,9 +66,17 @@ pgadmin__username_email: "{{ iac__postmaster_username }}@{{ iac__root_domain }}"
 
 #
 odoo_community__custom_tld: "odoo" # <odoo_community__custom_tld>.whatever.com, to access Odoo
+# odoo_community__external_hostname_acme: "whatever.mycustomdns.org"
 
 #
 odoo_community__auto_install: true # automatic configuration of your Odoo; set it as false when you have a backup that you would restore yourself
+
+#
+# cert_manager__handle_trust_bundles: false
+# cert_manager__solve_with: traefik_http01
+# cert_manager__acme_email: "{{ iac__postmaster_email }}"
+
+# traefik__expose_dashboard: false
 
 ############################
 ### SHOULD NOT CUSTOMIZE ###

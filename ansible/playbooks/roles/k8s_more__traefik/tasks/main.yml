@@ -1,0 +1,7 @@
+---
+- name: Reconfigure Traefik
+  ansible.builtin.import_tasks: reconfig.yml
+
+- name: Expose Dashboard
+  when: k8s_more__traefik__expose_dashboard
+  ansible.builtin.import_tasks: dashboard.yml

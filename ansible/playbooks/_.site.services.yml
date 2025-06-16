@@ -16,7 +16,7 @@
     #############################
     ### MANAGEMENT & INSIGHTS ###
     #############################
-    - role: k8s__traefik # Ingress and Routing dashboard
+    - role: k8s_more__traefik # customize shipped traefik w/ Ingress and Routing dashboard
     - role: k8s__dashboard # K8s dashboard
     - role: k8s__ingress_book # List all ingresses available externally
     - role: k8s__pgadmin # allow database management of postgresql DBs

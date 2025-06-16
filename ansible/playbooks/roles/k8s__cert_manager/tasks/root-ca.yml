@@ -1,4 +1,9 @@
 ---
+- name: Declare Root CA Cert + CIssuer
+  kubernetes.core.k8s:
+    template:
+      - path: templates/c-issuers/root-ca.yml.j2
+
 #
 # Generate Bundle
 #

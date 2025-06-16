@@ -13,6 +13,9 @@ k8s__odoo_community__external_hostname: "{{ k8s__odoo_community__custom_tld }}.{
 k8s__odoo_community__metadata_name: odoo
 k8s__odoo_community__app_selector_name: odoo
 
+#
+k8s__odoo_community__external_hostname_acme: "{{ odoo_community__external_hostname_acme | default('') }}"
+
 # name of postgres's helm setup manifests
 k8s__odoo_community__db__name: odoo-postgresql
 

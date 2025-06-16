@@ -5,3 +5,10 @@
       - path: templates/service.yml.j2
       - path: templates/deploy.yml.j2
       - path: templates/ingress.yml.j2
+
+- name: Use ACME ingress
+  when: k8s__odoo_community__external_hostname_acme | bool
+  kubernetes.core.k8s:
+    template:
+      - path: templates/middleware-acme.yml.j2
+      - path: templates/ingress-acme.yml.j2

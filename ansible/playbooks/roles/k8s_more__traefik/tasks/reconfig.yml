@@ -10,7 +10,7 @@
     kind: Pod
     namespace: "{{ k3s__default_namespace }}"
     label_selectors:
-      - app.kubernetes.io/name={{ k8s__traefik__app_name }}
+      - app.kubernetes.io/name={{ k8s_more__traefik__app_name }}
   register: traefik_pod
 
 ###
@@ -18,11 +18,6 @@
 - name: Define default custom traefik config
   ansible.builtin.set_fact:
     custom_traefik_config:
-      experimental:
-        plugins:
-          ldapAuth:
-            moduleName: "github.com/wiltonsr/ldapAuth"
-            version: "v0.1.10"
       globalArguments:
         - "--serversTransport.insecureSkipVerify=true"
       additionalArguments:
@@ -36,6 +31,11 @@
         kubernetesIngress:
           allowExternalNameServices: true
       ports:
+        websecure:
+          forwardedHeaders:
+            trustedIPs:
+              - "{{ iac__k3s__servicelb__ip_range }}"
+          tls: {}
         web:
           forwardedHeaders:
             trustedIPs:
@@ -45,26 +45,26 @@
               to: "websecure"
               scheme: "https"
               permanent: true
-        websecure:
-          forwardedHeaders:
-            trustedIPs:
-              - "{{ iac__k3s__servicelb__ip_range }}"
-          tls: {}
+      experimental:
+        plugins:
+          ldapAuth:
+            moduleName: "github.com/wiltonsr/ldapAuth"
+            version: "v0.1.10"
 
-- name: Find out if we need Cloudflare's Full (Strict) SSL/TLS
-  ansible.builtin.set_fact:
-    k8s__traefik__cf_tls_mode__full_strict__enabled: >-
-      {{ (vault_argocd__github_app__priv_key | default('') | length > 0)
-         and (vault_iac__cloudflare__origin_ca__cert | default('') | length > 0) }}
+##
+##
+##
 
 - name: Add Cloudflare's Full (Strict) SSL/TLS termination support for Traefik
-  when: k8s__traefik__cf_tls_mode__full_strict__enabled | bool
+  when: k8s_more__traefik__cf_tls_mode__full_strict__enabled
   block:
+    #
     - name: Add definitions (resolver + origin CA)
       kubernetes.core.k8s:
         template:
           - path: templates/cf-strict-tls/origin-ca.yml.j2
           - path: templates/cf-strict-tls/tlsstore.yml.j2
+    #
     - name: Update custom traefik config
       ansible.builtin.set_fact:
         custom_traefik_config: >-
@@ -74,7 +74,7 @@
                 'ports': {
                   'websecure': {
                     'tls': {
-                      'certResolver': k8s__traefik__cf_tls_mode__full_strict__cert_resolver_name
+                      'certResolver': k8s_more__traefik__cf_tls_mode__full_strict__cert_resolver_name
                     }
                   }
                 }
@@ -83,23 +83,13 @@
             )
           }}
 
+###
+###
+###
+
 - name: Process new Traefik configuration
   kubernetes.core.k8s:
     template:
       - path: templates/hcc.yml.j2
   notify:
     - Wait pod restart
-
-###
-
-- name: Install Zero-Trust configuration
-  tags: [zto-app]
-  kubernetes.core.k8s:
-    template:
-      - path: templates/caa.yml.j2
-
-- name: Expose Traefik dashboard
-  kubernetes.core.k8s:
-    template:
-      - path: templates/dashboard/service.yml.j2
-      - path: templates/dashboard/ingress.yml.j2

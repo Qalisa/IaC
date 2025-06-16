@@ -5,7 +5,7 @@ metadata:
   namespace: "{{ k3s__default_namespace }}"  # Replace with the namespace where Traefik is installed
   annotations:
     #
-    external-dns.alpha.kubernetes.io/hostname: "{{ k8s__traefik__external_hostname }}"
+    external-dns.alpha.kubernetes.io/hostname: "{{ k8s_more__traefik__external_hostname }}"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     #
     ingress-dashboard/title: Traefik Dashboard
@@ -15,7 +15,7 @@ metadata:
     ingress-dashboard/hide: "false"
 spec:
   rules:
-  - host: "{{ k8s__traefik__external_hostname }}"
+  - host: "{{ k8s_more__traefik__external_hostname }}"
     http:
       paths:
       - path: /

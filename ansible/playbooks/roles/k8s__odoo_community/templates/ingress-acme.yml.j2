@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ k8s__odoo_community__metadata_name }}-acme"
+  namespace: "{{ k8s__odoo_community__namespace }}"
+  annotations:
+    #
+    traefik.ingress.kubernetes.io/router.middlewares: >
+      {{ k8s__odoo_community__namespace }}-security-headers@kubernetescrd,
+      {{ k8s__odoo_community__namespace }}-redirect-to-https@kubernetescrd
+    #
+    cert-manager.io/cluster-issuer: "{{ cert_manager__org__issuer }}" # necessary
+    #
+    ingress-dashboard/title: Odoo
+    ingress-dashboard/description: All-in-one CRM-like app
+    ingress-dashboard/logo-url: /web/static/img/favicon.ico
+    ingress-dashboard/assume-tls: "true"
+    ingress-dashboard/hide: "false"
+spec:
+  rules:
+    - host: "{{ k8s__odoo_community__external_hostname_acme }}"
+      http:
+        paths:
+          - path: /websocket
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: "{{ k8s__odoo_community__metadata_name }}"
+                port:
+                  name: longpolling
+          - path: /
+            pathType: Prefix
+            backend:
+              service: 
+                name: "{{ k8s__odoo_community__metadata_name }}"
+                port:
+                  name: http
+  tls:
+    - hosts:
+      - "{{ k8s__odoo_community__external_hostname_acme }}"
+      secretName: "{{ k8s__odoo_community__metadata_name }}-acme"
