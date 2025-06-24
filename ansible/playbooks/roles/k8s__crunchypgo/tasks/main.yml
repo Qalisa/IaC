@@ -1,9 +1,10 @@
 ---
-- name: Install NS + backup secret
+- name: Install NS + alt. services secrets (LDAP + S3 backup)
   kubernetes.core.k8s:
     template:
       - path: templates/ns.yml.j2
       - path: templates/backup.secret.yml.j2
+      - path: templates/ldap.secret.yml.j2
 
 - name: Install Crunchy Data's PG Operator w/ Helm
   kubernetes.core.helm:
