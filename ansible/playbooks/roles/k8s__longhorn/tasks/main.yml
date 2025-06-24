@@ -27,7 +27,7 @@
     wait: true
     values:
       defaultBackupStore:
-        backupTarget: "{{ longhorn__backup_storage__bucket_url }}"
+        backupTarget: "{{ k8s__longhorn__s3_backup__bucket_url }}"
         backupTargetCredentialSecret: "{{ k8s__longhorn__backup_credentials__secret_name }}"
       defaultSettings:
         defaultReplicaCount: 1

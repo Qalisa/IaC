@@ -82,13 +82,9 @@ github_actions_secrets_operator__github_app__app_id: "{{ u_vault_github_actions_
 sentry__github_appid: "{{ u_vault_sentry__github_appid }}"
 sentry__github_appname: "{{ u_vault_sentry__github_appname }}"
 
-# https://longhorn.io/docs/1.8.0/snapshots-and-backups/backup-and-restore/set-backup-target/#set-up-aws-s3-backupstore
-# https://oopflow.medium.com/how-to-backup-longhorn-to-minio-s3-9c8c126ae92e
-###
-# https://<s3host_proxy_dn>
-longhorn__backup_storage__endpoint: "{{ u_vault_longhorn__backup_storage__endpoint }}"
-# s3://<your-bucket-name>@<region>/
-longhorn__backup_storage__bucket_url: "{{ u_vault_longhorn__backup_storage__bucket_url }}"
+# get those from your backup storage provider
+s3_backup_storage__endpoint: "{{ u_vault_s3_backup_storage__endpoint }}" # like "https://<s3host_proxy_dn>"
+s3_backup_storage__region: "{{ u_vault_s3_backup_storage__region }}" # like "eu-west-1"
 
 #
 pierceflare_server_url: "{{ u_vault_pierceflare_server_url }}"
@@ -171,8 +167,8 @@ docker_mailserver__supervisord_ui__password: "{{ vault_docker_mailserver__superv
 calcom__google_api_credentials: "{{ vault_calcom__google_api_credentials | string }}"
 
 # get those from your backup storage provider
-longhorn__backup_storage__key_id: "{{ vault_longhorn__backup_storage__key_id }}"
-longhorn__backup_storage__access_key: "{{ vault_longhorn__backup_storage__access_key }}"
+s3_backup_storage__key_id: "{{ vault_s3__backup_storage__key_id }}"
+s3_backup_storage__access_key: "{{ vault_s3__backup_storage__access_key }}"
 
 # https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/#api-tokens
 # https://kubernetes-sigs.github.io/external-dns/v0.12.1/tutorials/cloudflare/#creating-cloudflare-credentials

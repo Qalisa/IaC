@@ -2,3 +2,13 @@
 k8s__longhorn__namespace: longhorn-system # required to be specifically "longhorn-system" ! (https://artifacthub.io/packages/helm/longhorn/longhorn)
 k8s__longhorn__external_hostname: longhorn.{{ iac__root_domain }}
 k8s__longhorn__backup_credentials__secret_name: backup-default
+
+# https://longhorn.io/docs/1.8.0/snapshots-and-backups/backup-and-restore/set-backup-target/#set-up-aws-s3-backupstore
+# https://oopflow.medium.com/how-to-backup-longhorn-to-minio-s3-9c8c126ae92e
+k8s__longhorn__s3_backup__bucket_name: "backups"
+k8s__longhorn__s3_backup__bucket_url: "s3://{{ k8s__longhorn__s3_backup__bucket_name }}@{{ s3_backup_storage__region }}/"
+
+#
+k8s__longhorn__s3_backup__endpoint: "{{ s3_backup_storage__endpoint }}"
+k8s__longhorn__s3_backup__key_id: "{{ s3_backup_storage__key_id }}"
+k8s__longhorn__s3_backup__access_key: "{{ s3_backup_storage__access_key }}"

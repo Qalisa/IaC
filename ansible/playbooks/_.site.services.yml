@@ -44,6 +44,7 @@
     ### Custom operators ###
     ########################
     - role: k8s__github_actions_secrets_operator # Allow synchronization of secrets and variables to Github CI
+    # - role: k8s__crunchypgo # OPTIONAL, handles declarative Postgres (databases, backups...)
     ############
     ### Apps ###
     ############

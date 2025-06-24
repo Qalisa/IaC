@@ -1,0 +1,8 @@
+---
+k8s__crunchypgo__namespace: cpgo-system
+# should be equal to "s3Backup.secretName" (https://github.com/Qalisa/crunchy-pgo/blob/main/.helm/values.yaml#L13)
+k8s__crunchypgo__s3_backup__secret_name: "crunchy-pgo-s3-backup-creds"
+
+#
+k8s__crunchypgo__s3_backup__key_id: "{{ s3_backup_storage__key_id }}"
+k8s__crunchypgo__s3_backup__access_key: "{{ s3_backup_storage__access_key }}"
