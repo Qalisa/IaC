@@ -34,12 +34,11 @@
         # MANDATORY HERE, default behavior makes "The CSRF token is missing. You need to refresh the page" issues when logged in
         # https://stackoverflow.com/questions/64394628/csrf-token-is-missing-error-in-docker-pgadmin
         enhanced_cookie_protection: "False"
-        # below, legacy way of doing what "enhanced_cookie_protection" do
-        # variables:
-        #   - name: "PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT"
-        #     value: "False"
-        #   - name: "PGADMIN_CONFIG_WTF_CSRF_ENABLED"
-        #     value: "False"
+        variables:
+          - name: "PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT"
+            value: "False"
+          - name: "PGADMIN_CONFIG_WTF_CSRF_ENABLED"
+            value: "False"
       ingress:
         enabled: true
         hosts:
