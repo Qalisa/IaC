@@ -69,6 +69,11 @@ By default, only 2 users are created: `postmaster` and `donotreply`, which are r
   - `Set Password` button to define a temporary password, that the user should change by using `https://pwd-ldap.<root_domain>`
   - use webmail service, or any e-mail client (`https://webmail.<root_domain>`)
 
+### In case of issues regarding access Dovecot rights
+https://doc.dovecot.org/2.3/admin_manual/filesystem_permission/#permissions-to-new-domain-user-directories
+We use a custom `user-patches.sh` to ensure permissions are correctly set at startup (`roles/k8s__docker_mailserver/template/mailserver/dms/user-patches.sh.j2`); if encountering errors, a basic reboot should fix this.
+
+
 ## Outdated supplementary services
 There is 2 services that are shipped with IaC but we do not recommend to use, but still keep them for documentary purposes:
 
