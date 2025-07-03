@@ -16,11 +16,13 @@ k8s__listmonk__api_url_part: http://{{ k8s__listmonk__internal_hostname }}/api
 
 #
 k8s__listmonk__app__port_name: app
+k8s__listmonk__app__port: "9000"
 
 #
-k8s__listmonk__db__db: listmonk-db
+k8s__listmonk__db__dbname: listmonk-db
 k8s__listmonk__db__user: listmonk
 k8s__listmonk__db__password: listmonk4.THeWiiN
+k8s__listmonk__db__port: "5432"
 
 #
 k8s__listmonk__admin_api__username: "{{ listmonk__admin_username ~ '_api' }}"

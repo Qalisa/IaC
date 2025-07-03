@@ -25,7 +25,7 @@
         username: "{{ k8s__listmonk__db__user }}"
         password: "{{ k8s__listmonk__db__password }}"
         #
-        database: "{{ k8s__listmonk__db__db }}"
+        database: "{{ k8s__listmonk__db__dbname }}"
 
 - name: Add server definition for pgadmin
   tags: [pgadmin]
@@ -37,6 +37,6 @@
     utilities__pgadmin__add_server_definition__id: listmonk
     utilities__pgadmin__add_server_definition__name: Listmonk
     utilities__pgadmin__add_server_definition__host: "{{ k8s__listmonk__internal_hostname__db }}"
-    utilities__pgadmin__add_server_definition__maintenance_db: "{{ k8s__listmonk__db__db }}"
+    utilities__pgadmin__add_server_definition__maintenance_db: "{{ k8s__listmonk__db__dbname }}"
     utilities__pgadmin__add_server_definition__username: "{{ k8s__listmonk__db__user }}"
     utilities__pgadmin__add_server_definition__password: "{{ k8s__listmonk__db__password }}"

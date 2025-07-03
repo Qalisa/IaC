@@ -19,13 +19,17 @@ spec:
       restartPolicy: Always
       initContainers:
         - name: database-ready
-          image: foobic/pg_isready:latest
+          image: alpine/psql:17.5
+          command: ["sh", "-c"]
+          args:
+            - |
+              psql "$POSTGRES_URI" -c "SELECT 1;" >/dev/null 2>&1 && echo "Database is available!" || { echo "Database unavailable"; exit 1; }
           env:
-            - name: HOST 
-              value: "{{ k8s__listmonk__internal_hostname__db }}"
-            - name: RETRIES
-              value: "50"
-          command: ["/scripts/pg_isready.sh"]
+            - name: POSTGRES_URI
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ k8s__listmonk__app_name }}"
+                  key: LISTMONK_db__uri
       containers:
         - name: listmonk
           image: ghcr.io/knadh/listmonk:v4.1.0
@@ -47,7 +51,7 @@ spec:
                 name: "{{ k8s__listmonk__app_name }}"
           ports:
             - name: "{{ k8s__listmonk__app__port_name }}"
-              containerPort: 9000
+              containerPort: {{ k8s__listmonk__app__port }}
               protocol: TCP
       volumes:
         - name: uploads
