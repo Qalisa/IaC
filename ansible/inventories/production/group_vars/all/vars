@@ -45,7 +45,7 @@ github_actions_secrets_operator__global_gass_name: default
 iac__cloudflare__zero_trust__team_name: "{{ u_vault_iac__cloudflare__zero_trust__team_name }}" # see https://one.dash.cloudflare.com/${accountId}/settings/custom_pages#TeamDomain
 
 # ArgoCD - Github App
-argocd__github_app__installation_id: "{{ u_vault_argocd__github_app__installation_id }}" # to get it, go to GH > [Org Profile] > Settings > Github Apps > [Select the App] > [see URL]
+argocd__github_app__installation_id: "{{ u_vault_argocd__github_app__installation_id }}" # to get it, go to GH > [Org Profile] > Settings > Github Apps > [Select the App] > [see URL]
 argocd__github_app__app_id: "{{ u_vault_argocd__github_app__app_id }}"
 
 # Github ARC - Github App

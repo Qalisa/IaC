@@ -50,7 +50,7 @@
     ############
     # - role: k8s__posthog_proxy # OPTIONAL, redirects official Posthog Cloud SAAS endpoints to owned domains subdomains prevents trafic blocking
     - role: k8s__odoo_community # All-in-one, with alot of free apps (CRM and such)
-    # - role: bashcron__local_path_to_flash_drive # Run continously a script that syncs Odoo PVC to flashdrive
+    # - role: bashcron__local_path_to_flash_drive # Run continously a script that syncs Odoo PVC to flashdrive
     # - role: k8s__listmonk # Allow marketing campaigns
     # - role: k8s__calcom # Allow clients to secure appointments
     # - role: k8s__pierceflare_cli # Allows automatic sync of IP address against a DDNS
