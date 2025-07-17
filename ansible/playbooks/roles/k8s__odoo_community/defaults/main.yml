@@ -71,11 +71,11 @@ k8s__odoo_community__addons:
     repoSubpath: /addons
   odoomates:
     branch: "18.0"
-    url: https://github.com/odoomates/odooapps
+    url: https://github.com/Qalisa/odooapps # *customized by Qalisa (mostly translated)*
     repoSubpath: ""
   eqp:
     branch: "18.0"
-    url: https://github.com/Qalisa/eqp_odoo_addons
+    url: https://github.com/Qalisa/eqp_odoo_addons # *customized by Qalisa (mostly translated)*
     repoSubpath: ""
 
 #
