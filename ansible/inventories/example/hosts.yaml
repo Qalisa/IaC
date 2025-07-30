@@ -1,4 +1,5 @@
 ---
+# all hosts that will fetch on `k3s_master` group_vars
 k3s_master:
   hosts:
     ###
@@ -11,11 +12,20 @@ k3s_master:
     #   ansible_ssh_private_key_file: ~/.ssh/id_rsa
 
     ### Example: (localhost)
-    # node1: # name of machine not relevant when using "ansible_connection: local"
+    # node1:                                                    # name of machine not relevant when using "ansible_connection: local"
     #   ansible_python_interpreter: /usr/bin/python3
     #   ansible_connection: local
     #   ansible_user: root
     #   local_release_dir: "{{ansible_env.HOME}}/releases"
+
+    ### Example: (remote)
+    # example.test.com                                          # name of the ./host_vars/<folder>
+    #   ansible_host: 1.2.3.4                                   # or FQDN like "example2.test.org"
+    #   ansible_port: 22
+    #   ansible_ssh_private_key_file: ~/.ssh/whatever-key
+    #   ansible_python_interpreter: /usr/bin/python3
+
+# all hosts that will fetch on `sidekick` group_vars
 sidekick:
   hosts:
     ###

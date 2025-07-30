@@ -1,10 +1,12 @@
 ---
 iac__local_path__as_default_class: true # since we will not use Longhorn
-odoo_community__custom_tld: odoo-mosellane
-odoo_community__auto_install: true
+traefik__expose_dashboard: false
+
 cert_manager__handle_trust_bundles: false
 cert_manager__solve_with: traefik_http01
-cert_manager__acme_email: agence@mosellanedelor.fr
-traefik__expose_dashboard: false
 cert_manager__org__issuer: acme-staging
-odoo_community__external_hostname_acme: odoo.or-achat-vente.fr
+
+odoo_community__auto_install: true
+cert_manager__acme_email: "{{ u_vault_cert_manager__acme_email }}"
+odoo_community__custom_tld: "{{ u_vault_odoo_community__custom_tld }}"
+odoo_community__external_hostname_acme:  "{{ u_vaul_odoo_community__external_hostname_acme }}"
