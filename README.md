@@ -1,5 +1,5 @@
 # Qalisa's IaC (Infrastructure as Code)
-Mainly scripts to automatize the setup of our simple, 1 master-node opinionated k8s infrastructure. 
+Mainly scripts to automatize the setup of our simple, 1 master-node opinionated k8s infrastructure / private cloud, which notably includes a GitOps ready pipeline and associated relevant services (LDAP, email...). 
 Also includes automation scripts to install on-premise services too heavy to sit on k8s clusters alone.
 
 > [!TIP]
@@ -41,6 +41,12 @@ As an alternative, you can leverage `ansible-vault` to encrypt your ansible sens
 ## Overlook of available services
 Have a look at `playbooks/_.site.services.yml` to review all availables roles.
 Once cluster is setup, you can review all availables services through `https://book.<root_domain>`.
+
+## Proposed GitOps Workflow
+One of the purposes of the main playbook is to allow quick bootstrapping of a full GitOps pipeline (configured via Helm), which sits between Github Actions, Harbor and ArgoCD (https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/). It allows flexible, both safe and automatic environment-based deployments of applications.
+
+<img width="1257" height="701" alt="Capture d’écran 2025-09-05 à 10 59 59" src="https://github.com/user-attachments/assets/562d8096-96ba-4ff2-8926-b6f9188ef03a" />
+
 
 ## Tips about services
 
