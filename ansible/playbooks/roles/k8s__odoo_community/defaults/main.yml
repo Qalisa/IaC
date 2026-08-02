@@ -77,6 +77,10 @@ k8s__odoo_community__addons:
     branch: "18.0"
     url: https://github.com/Qalisa/eqp_odoo_addons # *customized by Qalisa (mostly translated)*
     repoSubpath: ""
+  oca:
+    branch: "18.0"
+    url: https://github.com/OCA/partner-contact
+    repoSubpath: ""
 
 #
 k8s__odoo_community__odoo_instance__addons_paths_: >-
