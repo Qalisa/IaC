@@ -81,6 +81,10 @@ k8s__odoo_community__addons:
     branch: "18.0"
     url: https://github.com/OCA/partner-contact
     repoSubpath: ""
+  i10n_france:
+    branch: "18.0"
+    url: https://github.com/OCA/l10n-france
+    repoSubpath: ""
 
 #
 k8s__odoo_community__odoo_instance__addons_paths_: >-
