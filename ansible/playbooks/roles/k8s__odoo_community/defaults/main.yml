@@ -19,8 +19,8 @@ k8s__odoo_community__external_hostname_acme: "{{ odoo_community__external_hostna
 # name of postgres's helm setup manifests
 k8s__odoo_community__db__name: odoo-postgresql
 
-#
-k8s__odoo_community__odoo_docker_image: ghcr.io/qalisa/odoo:18-0
+# we rather pin this version; an Odoo bug with quotes notes not ported over invoices lingered in older versions
+k8s__odoo_community__odoo_docker_image: ghcr.io/qalisa/odoo:18-0-20250717
 
 #
 k8s__odoo_community__db__config__admin_password: odoo-admin_PwD1231.L14d
