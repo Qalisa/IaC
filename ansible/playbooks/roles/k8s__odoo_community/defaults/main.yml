@@ -72,17 +72,27 @@ k8s__odoo_community__use_local_backup_pvc: true
 ##
 ##
 
+# `upgrade: true` marks the repositories whose modules are passed to -u at each
+# pod start (see the upgrade-addons initContainer). Set it on the repositories
+# we author: their schema changes are the ones that would otherwise leave the
+# pod crashing on a missing column.
 #
+# Deliberately left off the OCA repositories. Upgrading a module reloads its
+# XML data, which resets records edited since -- access rules, views, email
+# templates. Their branches do move, so bump them by hand, knowingly.
 k8s__odoo_community__addons:
   qalisa:
+    upgrade: true
     branch: "18-0"
     url: https://github.com/Qalisa/odoo-apps
     repoSubpath: /addons
   odoomates:
+    upgrade: true
     branch: "18.0"
     url: https://github.com/Qalisa/odooapps # *customized by Qalisa (mostly translated)*
     repoSubpath: ""
   eqp:
+    upgrade: true
     branch: "18.0"
     url: https://github.com/Qalisa/eqp_odoo_addons # *customized by Qalisa (mostly translated)*
     repoSubpath: ""
