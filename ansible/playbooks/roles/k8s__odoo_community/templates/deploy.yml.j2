@@ -36,6 +36,66 @@ spec:
               subPath: {{ addon_name }}
               name: extra-addons
 {% endfor %}
+{% if k8s__odoo_community__upgrade_addons_on_deploy | default(true) | bool %}
+
+        # Runs after every git-sync above, so the freshly pulled code is on
+        # disk, and before the serving container starts.
+        #
+        # Why it exists: Odoo creates columns for new stored fields only during
+        # an explicit -i/-u. A plain boot loads the new model and never touches
+        # the schema, so a deploy that adds a stored field leaves every SELECT
+        # on that table failing -- pod 0/1, /web/health 500. That happened on
+        # 2026-08-08 and again on 2026-08-23, each time repaired by hand.
+        #
+        # The module list is read from disk rather than hardcoded: anything
+        # carrying a __manifest__.py in the addons paths is passed to -u. Odoo
+        # skips those that are not installed, and pulls in the modules that
+        # depend on them. Nothing to keep in sync here when an addon is added.
+        #
+        # Note it fails the rollout when a migration fails. That is the point:
+        # better a pod that refuses to start, with the error in these logs,
+        # than one serving a half-migrated database.
+        - name: upgrade-addons
+          image: "{{ k8s__odoo_community__odoo_docker_image }}"
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              set -euo pipefail
+              paths="{{ k8s__odoo_community__odoo_instance__addons_paths }}"
+              modules=$(
+                for path in ${paths//,/ }; do
+                  [ -d "$path" ] || continue
+                  for manifest in "$path"/*/__manifest__.py; do
+                    [ -e "$manifest" ] || continue
+                    basename "$(dirname "$manifest")"
+                  done
+                done | sort -u | paste -sd, -
+              )
+              if [ -z "$modules" ]; then
+                echo "No addon found in $paths -- nothing to upgrade."
+                exit 0
+              fi
+              echo "Upgrading: $modules"
+              # Through the entrypoint: it is what supplies the DB credentials,
+              # which odoo.conf deliberately leaves commented out. The database
+              # comes from db_name in that same file.
+              exec /entrypoint.sh odoo -u "$modules" --stop-after-init
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: data
+              mountPath: "{{ k8s__odoo_community__odoo_instance__data_dir }}"
+              subPath: data
+              readOnly: false
+            - name: extra-addons
+              mountPath: "{{ k8s__odoo_community__odoo_instance__addons_dir }}"
+              readOnly: true
+            - name: config
+              mountPath: /etc/odoo
+              readOnly: true
+{% endif %}
 
       containers:
         - name: odoo

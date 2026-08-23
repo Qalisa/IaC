@@ -55,6 +55,15 @@ k8s__odoo_community__odoo_instance__addons_dir: /mnt/extra-addons
 k8s__odoo_community__odoo_included_modules:
   ["l10n_{{ iac__prefered_lang__sub }}_account", "contacts", "sale_management"]
 
+# Upgrade every synced addon at each pod start, before Odoo begins to serve.
+#
+# Odoo only creates columns for new stored fields during an explicit -i/-u. A
+# plain boot loads the new model but never touches the DB, so any stored field
+# added by a deploy leaves the pod crashing on a missing column. Setting this
+# to false restores that behaviour -- do not, unless you intend to run the
+# upgrade by hand.
+k8s__odoo_community__upgrade_addons_on_deploy: true
+
 #
 k8s__odoo_community__add_server_definitions_into_pgadmin: false
 k8s__odoo_community__use_local_backup_pvc: true
