@@ -108,6 +108,10 @@ k8s__odoo_community__addons:
     branch: "18.0"
     url: https://github.com/OCA/server-tools
     repoSubpath: ""
+  oca-server-auth:
+    branch: "18.0"
+    url: https://github.com/OCA/server-auth
+    repoSubpath: ""
 
 #
 k8s__odoo_community__odoo_instance__addons_paths_: >-
