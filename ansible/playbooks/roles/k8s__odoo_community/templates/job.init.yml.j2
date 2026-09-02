@@ -16,7 +16,7 @@ spec:
       initContainers:
 {% for addon_name, addon_info in k8s__odoo_community__addons.items() %}
         - name: {{ addon_name }}-addons
-          image: registry.k8s.io/git-sync/git-sync:v4.4.0
+          image: registry.k8s.io/git-sync/git-sync:v4.7.1
           args:
             - "--repo={{ addon_info.url }}"
             - "--ref={{ addon_info.branch }}"
